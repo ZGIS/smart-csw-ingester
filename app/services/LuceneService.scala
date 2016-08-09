@@ -4,10 +4,10 @@ import javax.inject.{Inject, Singleton}
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer
 import org.apache.lucene.document.{Document, Field, TextField}
-import org.apache.lucene.index.{IndexReader, DirectoryReader, IndexWriter, IndexWriterConfig}
+import org.apache.lucene.index.{IndexWriter, IndexWriterConfig}
 import org.apache.lucene.queryparser.classic.QueryParser
 import org.apache.lucene.search.{MatchAllDocsQuery, SearcherManager}
-import org.apache.lucene.store.{Directory, RAMDirectory}
+import org.apache.lucene.store.RAMDirectory
 import org.apache.lucene.util.Version
 import play.api.Logger
 import play.api.inject.ApplicationLifecycle
@@ -43,7 +43,7 @@ case class SearchResult(header: SearchResultHeader, results: List[SearchResultDo
 @Singleton
 class LuceneService @Inject()(appLifecycle: ApplicationLifecycle, ws: WSClient) {
   //TODO decide if we want CSW or MD_Metadata as output schema
-  val XML_REQUEST:String  =
+  val XML_REQUEST: String =
     """
       |<?xml version="1.0" encoding="UTF-8"?>
       |<csw:GetRecords
@@ -66,12 +66,13 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle, ws: WSClient) 
   //stores the search index in RAM
   val directory = new RAMDirectory()
 
-  refreshIndex() //as long as there is no index, we cant have a searcher manager. Figure out how to do :-)
+  refreshIndex()
+  //as long as there is no index, we cant have a searcher manager. Figure out how to do :-)
 
-  val searcherManager  = new SearcherManager(directory, null);
+  val searcherManager = new SearcherManager(directory, null);
 
   appLifecycle.addStopHook { () =>
-    Future.successful( () => {
+    Future.successful(() => {
       Logger.info("Stopping Lucene Service")
       directory.close();
     })
@@ -91,9 +92,7 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle, ws: WSClient) 
     try {
       iwriter.deleteAll();
       iwriter.commit();
-      iwriter.addDocument(SearchResultDocument("Document 1", "Abstract 1", "dummy ctl").asLuceneDocument());
-      iwriter.addDocument(SearchResultDocument("Document 2", "Abstract 2", "dummy ctl").asLuceneDocument());
-      iwriter.addDocument(SearchResultDocument("Document 3", "Abstract 3", "other ctl").asLuceneDocument());
+      queryCsw().foreach(searchDocument => iwriter.addDocument(searchDocument.asLuceneDocument()))
       iwriter.commit();
     }
     finally {
@@ -101,15 +100,20 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle, ws: WSClient) 
     }
   }
 
-/*
   def queryCsw(): List[SearchResultDocument] = {
-    val future: Future[scala.xml.NodeSeq] = ws.url("http://data.linz.govt.nz/feeds/csw/csw")
-      .withHeaders("Content-Type" -> "application/xml")
-      .post(XML_REQUEST).map({response => response.xml})
 
-    future.
+    /*
+        val future: Future[scala.xml.NodeSeq] = ws.url("http://data.linz.govt.nz/feeds/csw/csw")
+          .withHeaders("Content-Type" -> "application/xml")
+          .post(XML_REQUEST).map({response => response.xml})
+    */
+    List(
+      SearchResultDocument("Document 1", "Abstract 1", "dummy ctl"),
+      SearchResultDocument("Document 2", "Abstract 2", "dummy ctl"),
+      SearchResultDocument("Document 3", "Abstract 3", "other ctl"),
+      SearchResultDocument("Document 4", "Abstract 4 is longer", "other ctl")
+    )
   }
-*/
 
   /**
     * Queries the Search Index
@@ -133,7 +137,7 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle, ws: WSClient) 
     val scoreDocs = search.scoreDocs
 
     val header = SearchResultHeader(search.totalHits, luceneQuery.toString())
-    val results = scoreDocs.map( scoreDoc => {
+    val results = scoreDocs.map(scoreDoc => {
       val doc = isearcher.doc(scoreDoc.doc)
       SearchResultDocument(title = doc.get("title"), abstrakt = doc.get("abstract"), catalogue = doc.get("catalogue"))
     })
