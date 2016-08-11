@@ -1,12 +1,10 @@
-This is your new Play application
-=================================
+# This is a Play application
 
 This file will be packaged with your application when using `activator dist`.
 
 There are several demonstration files available in this template.
 
-Controllers
-===========
+## Controllers
 
 - HomeController.scala:
 
@@ -21,8 +19,7 @@ Controllers
   Shows how to inject a component into a controller and use the component when
   handling requests.
 
-Components
-==========
+## Components
 
 - Module.scala:
 
@@ -37,8 +34,7 @@ Components
   An example of a component that starts when the application starts and stops
   when the application stops.
 
-Filters
-=======
+## Filters
 
 - Filters.scala:
 

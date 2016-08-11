@@ -1,5 +1,19 @@
+// Comment to get more information during initialization
+logLevel := Level.Warn
+
+// The Typesafe repository
+resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/"
+
+resolvers += Resolver.sonatypeRepo("releases")
+
+
 // The Play plugin
 addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.5.4")
+
+// for autoplugins
+addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.1.1")
+
+addSbtPlugin("de.johoop" % "findbugs4sbt" % "1.3.0")
 
 // web plugins
 
