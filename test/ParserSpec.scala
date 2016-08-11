@@ -32,7 +32,7 @@ class ParserSpec extends PlaySpec with OneAppPerSuite {
       val asResource1 = this.getClass().getResource("csw_getrecordbyid-md_metadata.xml")
       val xml1: scala.xml.NodeSeq = scala.xml.XML.load(asResource1)
 
-      (xml1 \\ "fileIdentifier" \ "CharacterString").text mustBe "23bdd7a3-fd21-daf1-7825-0d3bdc256f9d"
+      (xml1 \\ "GetRecordByIdResponse" \ "MD_Metadata" \ "fileIdentifier" \ "CharacterString").text mustBe "23bdd7a3-fd21-daf1-7825-0d3bdc256f9d"
 
       (xml1 \\ "identificationInfo" \ "MD_DataIdentification" \ "citation" \ "CI_Citation" \ "title" \ "CharacterString" ).text mustBe "NZ Primary Road Parcels"
 
