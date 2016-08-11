@@ -11,6 +11,7 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala).enablePlugins(Ja
 scalaVersion := "2.11.7"
 
 val luceneVersion = "4.7.2"
+// val luceneVersion = "6.1.0"
 
 libraryDependencies ++= Seq(
   jdbc,
@@ -22,13 +23,20 @@ libraryDependencies ++= Seq(
   "org.apache.lucene" % "lucene-core" % luceneVersion,
   "org.apache.lucene" % "lucene-analyzers-common" % luceneVersion,
   "org.apache.lucene" % "lucene-queryparser" % luceneVersion,
+//  "org.apache.lucene" % "lucene-spatial" % luceneVersion,
+//  "org.apache.lucene" % "lucene-spatial-extras" % luceneVersion,
+//  "com.vividsolutions" % "jts" 	% "1.13",
+//  "com.spatial4j" % "spatial4j" % "0.6",
 
-  "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test
+  "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test,
+  specs2 % Test
 )
 
 resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
 
+// resolvers += "Official Maven Repo" at "http://repo1.maven.org/maven2/"
 
+// resolvers += "maven2 central" at "http://central.maven.org/maven2/"
 
 scalacOptions in ThisBuild ++= Seq(
   "-encoding", "UTF-8",
