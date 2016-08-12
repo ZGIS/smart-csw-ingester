@@ -8,7 +8,7 @@ import org.apache.lucene.index.{IndexWriter, IndexWriterConfig}
 import org.apache.lucene.queryparser.classic.QueryParser
 import org.apache.lucene.search.{MatchAllDocsQuery, SearcherManager}
 import org.apache.lucene.store.RAMDirectory
-import org.apache.lucene.util.Version
+
 import play.api.Logger
 import play.api.inject.ApplicationLifecycle
 import play.api.libs.ws.WSClient
@@ -36,13 +36,14 @@ case class SearchResultHeader(noDocuments: Int, query: String)
 
 case class SearchResult(header: SearchResultHeader, results: List[SearchResultDocument])
 
-
 /**
   * Wraps around Lucene.
   */
 @Singleton
 class LuceneService @Inject()(appLifecycle: ApplicationLifecycle, ws: WSClient) {
-  //TODO decide if we want CSW or MD_Metadata as output schema
+
+  // TODO decide if we want CSW or MD_Metadata as output schema
+  // AK gmd:MD_Metadata preferred from my side
   val XML_REQUEST: String =
     """
       |<?xml version="1.0" encoding="UTF-8"?>
@@ -69,12 +70,12 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle, ws: WSClient) 
   refreshIndex()
   //as long as there is no index, we cant have a searcher manager. Figure out how to do :-)
 
-  val searcherManager = new SearcherManager(directory, null);
+  val searcherManager = new SearcherManager(directory, null)
 
   appLifecycle.addStopHook { () =>
     Future.successful(() => {
       Logger.info("Stopping Lucene Service")
-      directory.close();
+      directory.close()
     })
   }
 
@@ -84,19 +85,20 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle, ws: WSClient) 
   //FIXME use something like lib-lucene-sugar. Lib unfortunately seems very old/outdated? https://github.com/gilt/lib-lucene-sugar
   def refreshIndex(): Unit = {
     Logger.info("Refreshing Lucene Index")
-    val analyzer = new StandardAnalyzer(Version.LUCENE_47);
-    val config = new IndexWriterConfig(Version.LUCENE_47, analyzer);
+    val analyzer = new StandardAnalyzer()
+    val config = new IndexWriterConfig(analyzer)
+    config.setCommitOnClose(true) // Use true to match behavior of Lucene 4.x.
 
     //FIXME use SCALA_ARM (automted resource management)?
     val iwriter = new IndexWriter(directory, config)
     try {
-      iwriter.deleteAll();
-      iwriter.commit();
+      iwriter.deleteAll()
+      iwriter.commit()
       queryCsw().foreach(searchDocument => iwriter.addDocument(searchDocument.asLuceneDocument()))
-      iwriter.commit();
+      iwriter.commit()
     }
     finally {
-      iwriter.close(true);
+      iwriter.close()
     }
   }
 
@@ -126,14 +128,14 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle, ws: WSClient) 
     val luceneQuery = query.trim() match {
       case "" => new MatchAllDocsQuery()
       case _ => {
-        val parser = new QueryParser(Version.LUCENE_47, "catch_all", new StandardAnalyzer(Version.LUCENE_47));
+        val parser = new QueryParser("catch_all", new StandardAnalyzer())
         //FIXME errorhanding
         parser.parse(query)
       }
     }
 
-    val isearcher = searcherManager.acquire();
-    val search = isearcher.search(luceneQuery, null, isearcher.getIndexReader().numDocs())
+    val isearcher = searcherManager.acquire()
+    val search = isearcher.search(luceneQuery, isearcher.getIndexReader().numDocs())
     val scoreDocs = search.scoreDocs
 
     val header = SearchResultHeader(search.totalHits, luceneQuery.toString())

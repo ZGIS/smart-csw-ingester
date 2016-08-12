@@ -10,8 +10,7 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala).enablePlugins(Ja
 
 scalaVersion := "2.11.7"
 
-val luceneVersion = "4.7.2"
-// val luceneVersion = "6.1.0"
+val luceneVersion = "6.1.0"
 
 libraryDependencies ++= Seq(
   jdbc,
@@ -25,7 +24,7 @@ libraryDependencies ++= Seq(
   "org.apache.lucene" % "lucene-queryparser" % luceneVersion,
 //  "org.apache.lucene" % "lucene-spatial" % luceneVersion,
 //  "org.apache.lucene" % "lucene-spatial-extras" % luceneVersion,
-//  "com.vividsolutions" % "jts" 	% "1.13",
+//  "com.vividsolutions" % "jts" 	% "1.14",
   "org.locationtech.spatial4j" % "spatial4j" % "0.6",
 
   "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test,
@@ -33,10 +32,6 @@ libraryDependencies ++= Seq(
 )
 
 resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
-
-// resolvers += "Official Maven Repo" at "http://repo1.maven.org/maven2/"
-
-// resolvers += "maven2 central" at "http://central.maven.org/maven2/"
 
 scalacOptions in ThisBuild ++= Seq(
   "-encoding", "UTF-8",
@@ -79,7 +74,7 @@ dockerBaseImage := "java:8-jre"
 javaOptions in Universal ++= Seq(
   // others will be added as app parameters
  // "-DapplyEvolutions.default=true",
-  "-Dconfig.resource=prod.application.conf"
+  "-Dconfig.resource=application.conf"
   //"-Dapplication.base_url=http://test.smart-project.info/"
 )
 
