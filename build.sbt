@@ -26,7 +26,7 @@ libraryDependencies ++= Seq(
 //  "org.apache.lucene" % "lucene-spatial" % luceneVersion,
 //  "org.apache.lucene" % "lucene-spatial-extras" % luceneVersion,
 //  "com.vividsolutions" % "jts" 	% "1.13",
-//  "com.spatial4j" % "spatial4j" % "0.6",
+  "org.locationtech.spatial4j" % "spatial4j" % "0.6",
 
   "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test,
   specs2 % Test
