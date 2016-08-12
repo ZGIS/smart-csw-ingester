@@ -5,7 +5,7 @@
 
 ## Build
 
-- Travis CI [![Build Status](https://travis-ci.com/allixender/smartportal.svg?token=jRgqfyUzqqxpVMUEhEVz&branch=master)](https://travis-ci.com/allixender/smartportal)
+- Travis CI [![Build Status](https://travis-ci.org/ZGIS/smart-csw-ingester.svg)](https://travis-ci.org/ZGIS/smart-csw-ingester)
 
 - https://github.com/sbt/sbt-native-packager
 
