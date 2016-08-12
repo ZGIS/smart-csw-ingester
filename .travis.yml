@@ -1,6 +1,21 @@
 language: scala
+
+sudo: required
+
 jdk:
+  - openjdk8
   - oraclejdk8
+
 scala:
   - 2.11.7
-script: sbt test
+
+services:
+  - docker
+
+script:
+  - sbt test
+  - sbt docker:publishLocal
+
+notifications:
+  email:
+    - allixender@googlemail.com
