@@ -42,21 +42,21 @@ case class SearchResult(header: SearchResultHeader, results: List[SearchResultDo
 @Singleton
 class LuceneService @Inject()(appLifecycle: ApplicationLifecycle, ws: WSClient) {
 
-  // TODO decide if we want CSW or MD_Metadata as output schema
-  // AK gmd:MD_Metadata preferred from my side
+  // TODO parameters startPosition="1" maxRecords="15"
   val XML_REQUEST: String =
     """
       |<?xml version="1.0" encoding="UTF-8"?>
       |<csw:GetRecords
       |  xmlns:csw="http://www.opengis.net/cat/csw/2.0.2"
       |  xmlns:ogc="http://www.opengis.net/ogc"
+      |  xmlns:gmd="http://www.isotc211.org/2005/gmd"
       |  service="CSW" version="2.0.2"
       |  resultType="results" startPosition="1" maxRecords="15"
-      |  outputFormat="application/xml" outputSchema="http://www.opengis.net/cat/csw/2.0.2"
+      |  outputFormat="application/xml" outputSchema="http://www.isotc211.org/2005/gmd"
       |  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       |  xsi:schemaLocation="http://www.opengis.net/cat/csw/2.0.2 http://schemas.opengis.net/csw/2.0.2/CSW-discovery.xsd">
       |
-      |  <csw:Query typeNames="csw:Record">
+      |  <csw:Query typeNames="gmd:MD_Metadata">
       |    <csw:ElementSetName>full</csw:ElementSetName>
       |  </csw:Query>
       |</csw:GetRecords>
