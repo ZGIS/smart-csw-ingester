@@ -130,10 +130,11 @@ class LuceneSpec extends PlaySpec with OneAppPerSuite {
       val localDate1 = java.time.LocalDate.of(2012, Month.DECEMBER, 19)
       val localDate2 = java.time.LocalDate.of(2012, Month.DECEMBER, 21)
 
-      val dateParser = new QueryParser("dateStampCompare", new StandardAnalyzer())
       val luceneQuery4 = LongPoint.newRangeQuery("dateStampCompare", localDate1.toEpochDay, localDate2.toEpochDay)
       val search4 = isearcher.search(luceneQuery4, isearcher.getIndexReader().numDocs())
       val scoreDocs4 = search4.scoreDocs
+
+      search4.totalHits mustBe 1
 
       val results = scoreDocs4.map(scoreDoc => {
         val doc = isearcher.doc(scoreDoc.doc)
@@ -156,6 +157,12 @@ class LuceneSpec extends PlaySpec with OneAppPerSuite {
 
       results(0).fileIdentifier mustBe "23bdd7a3-fd21-daf1-7825-0d3bdc256f9d"
       println(results(0).toString())
+
+      val luceneQuery5 = LongPoint.newRangeQuery("dateStampCompare", localDate1.toEpochDay, localDate1.toEpochDay)
+      val search5 = isearcher.search(luceneQuery5, isearcher.getIndexReader().numDocs())
+      val scoreDocs5 = search5.scoreDocs
+
+      search5.totalHits mustBe 0
 
       directory.close()
     }
