@@ -1,9 +1,9 @@
 
 
-import java.util.{ArrayList, List}
 import java.time._
 import java.time.format._
 
+import models.GmdElementSet
 import org.scalatestplus.play._
 import play.api.inject.guice.GuiceApplicationBuilder
 
@@ -97,6 +97,8 @@ class ParserSpec extends PlaySpec with OneAppPerSuite {
     }
 
     "should compute bounding boxes" in {
+      import java.util.{ArrayList, List}
+
       val bboxXml = <gmd:extent><gmd:EX_Extent><gmd:geographicElement><gmd:EX_GeographicBoundingBox><gmd:westBoundLongitude><gco:Decimal>166.6899599</gco:Decimal></gmd:westBoundLongitude><gmd:eastBoundLongitude><gco:Decimal>-176.176448433</gco:Decimal></gmd:eastBoundLongitude><gmd:southBoundLatitude><gco:Decimal>-47.1549297167</gco:Decimal></gmd:southBoundLatitude><gmd:northBoundLatitude><gco:Decimal>-34.4322590833</gco:Decimal></gmd:northBoundLatitude></gmd:EX_GeographicBoundingBox></gmd:geographicElement></gmd:EX_Extent></gmd:extent>
 
       val west = (bboxXml \\ "extent" \ "EX_Extent" \ "geographicElement" \ "EX_GeographicBoundingBox" \ "westBoundLongitude" \ "Decimal").text.toDouble
@@ -146,6 +148,7 @@ class ParserSpec extends PlaySpec with OneAppPerSuite {
 
       rect1 mustEqual bboxs
 
+      // BBoxCalculator tests
       val calc2 = new BBoxCalculator(ctx)
       calc2.expandRange(p1.getBoundingBox)
       calc2.expandRange(p2.getBoundingBox)
@@ -153,8 +156,8 @@ class ParserSpec extends PlaySpec with OneAppPerSuite {
       calc2.expandRange(p4.getBoundingBox)
       val rect2 = calc2.getBoundary
 
-      // BBoxCalculator expandRange with point bboxes seems to calculate overall bbox wrong?
-      // rect2 mustEqual bboxs
+      // BBoxCalculator expandRange with point bboxes seems to calculate overall bbox wrong from only source points?
+      rect2 must not equal bboxs
 
       val points: java.util.List[Point] = new ArrayList[Point](4)
       points.add(p1)
@@ -164,8 +167,9 @@ class ParserSpec extends PlaySpec with OneAppPerSuite {
       val shapeCollection = new ShapeCollection(points, ctx)
 
       // shapecollection will therefore also fails, because uses internally bboxcalculatr as above
-      // shapeCollection.getBoundingBox mustEqual bboxs
+      shapeCollection.getBoundingBox must not equal bboxs
 
+      shapeCollection.getBoundingBox mustEqual rect2
     }
 
     "should compute date, times and datetimes" in {
@@ -174,9 +178,11 @@ class ParserSpec extends PlaySpec with OneAppPerSuite {
 
       val gmdDateStamp = <gmd:dateStamp><gco:Date>2012-12-20</gco:Date></gmd:dateStamp>
       val gmdDateType = <gmd:date><gmd:CI_Date><gmd:date><gco:Date>2016-05-17</gco:Date></gmd:date></gmd:CI_Date></gmd:date>
+      val emptyDate = <gmd:dateStamp><gco:Date/></gmd:dateStamp>
 
       val dateString1 = ( gmdDateStamp \\ "dateStamp" \ "Date" ).text
       val dateString2 = ( gmdDateType \\ "date" \ "CI_Date" \ "date" \ "Date").text
+      val dateString3 = ( emptyDate \\ "dateStamp" \ "Date" ).text
 
       val localDate1 = java.time.LocalDate.of(2012, Month.DECEMBER, 20)
       val localDate2 = java.time.LocalDate.of(2016, Month.MAY, 17)
@@ -192,12 +198,69 @@ class ParserSpec extends PlaySpec with OneAppPerSuite {
       println("ISO_DATE_TIME: " + auckland.format(DateTimeFormatter.ISO_DATE_TIME))
       println("RFC_1123_DATE_TIME: " + auckland.format(DateTimeFormatter.RFC_1123_DATE_TIME))
 
-      val parsedDate1 = LocalDate.parse(dateString1, DateTimeFormatter.ISO_LOCAL_DATE);
-      val parsedDate2 = LocalDate.parse(dateString2, DateTimeFormatter.ISO_LOCAL_DATE);
+      val parsedDate1 = LocalDate.parse(dateString1, DateTimeFormatter.ISO_LOCAL_DATE)
+      val parsedDate2 = LocalDate.parse(dateString2, DateTimeFormatter.ISO_LOCAL_DATE)
+
+      val thrown = the [DateTimeParseException] thrownBy LocalDate.parse(dateString3, DateTimeFormatter.ISO_LOCAL_DATE)
+      thrown.getMessage must equal ("Text '' could not be parsed at index 0")
 
       parsedDate1 mustEqual localDate1
       parsedDate2 mustEqual localDate2
     }
+
+    "should build format case classes" in {
+
+
+      val ctx = SpatialContext.GEO
+      val shpReader = ctx.getFormats().getReader(ShapeIO.WKT)
+      val shpWriter = ctx.getFormats().getWriter(ShapeIO.GeoJSON)
+
+      val asResource1 = this.getClass().getResource("csw_getrecordbyid-md_metadata.xml")
+      val xml1: scala.xml.NodeSeq = scala.xml.XML.load(asResource1)
+
+      val localDate = java.time.LocalDate.of(2012, Month.DECEMBER, 20)
+
+      val gmdElem1 = GmdElementSet.fromXml(xml1)
+
+      val bbox = GmdElementSet.bboxFromXml(xml1)
+      val bboxs = ctx.getShapeFactory().rect(-176.176448433, 166.6899599, -47.1549297167, -34.4322590833 )
+      bbox mustEqual bboxs
+
+      val gmdElem2 = GmdElementSet("23bdd7a3-fd21-daf1-7825-0d3bdc256f9d",
+        localDate,
+        "NZ Primary Road Parcels",
+        "This layer provides the **current** road parcel polygons with ...",
+        List("New Zealand"),
+        List("boundaries", "planningCadastre"),
+        "omit, Omit",
+        "LINZ - Land Information New Zealand, LINZ - Land Information New Zealand, ANZLIC the Spatial Information Council",
+        "info@linz.govt.nz, info@linz.govt.nz",
+        "Crown copyright reserved, Released under Creative Commons By with: Following Disclaimers..., Crown copyright reserved, Released under Creative Commons By",
+        bbox,
+        "")
+
+      gmdElem1.fileIdentifier mustEqual gmdElem2.fileIdentifier
+      gmdElem1.dateStamp mustEqual gmdElem2.dateStamp
+      gmdElem1.title mustEqual gmdElem2.title
+      gmdElem1.abstrakt mustEqual gmdElem2.abstrakt
+      gmdElem1.keywords mustEqual gmdElem2.keywords
+      gmdElem1.topicCategory mustEqual gmdElem2.topicCategory
+      gmdElem1.contactName mustEqual gmdElem2.contactName
+      gmdElem1.contactOrg mustEqual gmdElem2.contactOrg
+      gmdElem1.contactEmail mustEqual gmdElem2.contactEmail
+      gmdElem1.license mustEqual gmdElem2.license
+      gmdElem1.bbox mustEqual gmdElem2.bbox
+
+      gmdElem1 mustEqual gmdElem2
+
+      gmdElem1.isoLocalDateText() mustEqual("2012-12-20")
+      gmdElem1.getUuid() mustEqual(java.util.UUID.fromString("23bdd7a3-fd21-daf1-7825-0d3bdc256f9d"))
+
+      val thrown = the [java.lang.IllegalArgumentException] thrownBy java.util.UUID.fromString("urn:uuid:2c5f1309-d721-4299-88bf-e462c577b99a-horowhenua_ws:ewt_nzprj_new")
+      thrown.getMessage mustBe ("Invalid UUID string: urn:uuid:2c5f1309-d721-4299-88bf-e462c577b99a-horowhenua_ws:ewt_nzprj_new")
+
+    }
+
   }
 }
 
