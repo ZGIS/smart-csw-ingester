@@ -12,14 +12,14 @@ dist
 /.idea_modules
 *.iml
 
-##eclipse items
+##eclipse
 /.eclipse
 /.classpath
 /.project
 /.settings
+/.history
 
 #FIXME SR: why are they here? What are they for? Delete if not needed!
-.history
 *.eml
 .sbtserver/
 project/.sbtserver*
