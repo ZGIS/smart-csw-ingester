@@ -11,6 +11,7 @@ dist
 /.idea
 /.idea_modules
 *.iml
+*.eml
 
 ##eclipse items
 /.eclipse
@@ -18,9 +19,8 @@ dist
 /.project
 /.settings
 
-#FIXME SR: why are they here? What are they for? Delete if not needed!
+##other IDEs, activator ui, misc.
 .history
-*.eml
 .sbtserver/
 project/.sbtserver*
 /project/sbt-ui.sbt
