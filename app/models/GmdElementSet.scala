@@ -2,8 +2,10 @@ package models
 
 import java.time._
 import java.time.format._
+import java.util
 import java.util.UUID
 
+import org.apache.lucene.document.{Document, Field, LongPoint, TextField}
 import org.locationtech.spatial4j.context.SpatialContext
 import org.locationtech.spatial4j.io.ShapeIO
 import org.locationtech.spatial4j.shape.Rectangle
@@ -38,6 +40,21 @@ case class GmdElementSet (fileIdentifier: String,
                           bbox: Rectangle,
                           origin: String) {
 
+  override def toString() : String = {
+    f"GmdElementSet($fileIdentifier, " +
+      f"${isoLocalDateText()}, " +
+      f"${title}, " +
+      f"${abstrakt}, " +
+      f"keywords(${keywords.mkString(", ")}), " +
+      f"topicCategory(${topicCategory.mkString(", ")}), " +
+      f"${contactName}, " +
+      f"${contactOrg}, " +
+      f"${contactEmail}, " +
+      f"${license}, " +
+      f"${getWktBbox()}, " +
+      f"${origin})"
+  }
+
   def getWktBbox() : String = {
     val ctx = SpatialContext.GEO
     val shpWriter = ctx.getFormats().getWriter(ShapeIO.WKT)
@@ -52,6 +69,48 @@ case class GmdElementSet (fileIdentifier: String,
   def isoLocalDateText() : String = {
     dateStamp.format(DateTimeFormatter.ISO_LOCAL_DATE)
   }
+
+  def asLuceneDocument(): Document = {
+    val doc = new Document()
+
+    val longDate = dateStamp.toEpochDay
+    val a1: Array[Long] = Array(longDate)
+    val dateField = new LongPoint("dateStampCompare", 1)
+    dateField.setLongValue(longDate)
+    println(f"dateField.toString: ${dateField.toString}")
+    println(f"dateField.fieldType: ${dateField.fieldType()}")
+
+    doc.add(new Field("fileIdentifier", fileIdentifier, TextField.TYPE_STORED))
+    doc.add(new Field("title", title, TextField.TYPE_STORED))
+    doc.add(new Field("abstrakt", abstrakt, TextField.TYPE_STORED))
+    doc.add(new Field("dateStampText", isoLocalDateText(), TextField.TYPE_STORED))
+    doc.add(dateField)
+    doc.add(new Field("keywords", keywords.mkString(" "), TextField.TYPE_STORED))
+    doc.add(new Field("topicCategory", topicCategory.mkString(" "), TextField.TYPE_STORED))
+    doc.add(new Field("contactName", contactName, TextField.TYPE_STORED))
+    doc.add(new Field("contactOrg", contactOrg, TextField.TYPE_STORED))
+    doc.add(new Field("contactEmail", contactEmail, TextField.TYPE_STORED))
+    doc.add(new Field("license", license, TextField.TYPE_STORED))
+    doc.add(new Field("bboxText", getWktBbox(), TextField.TYPE_STORED))
+    doc.add(new Field("origin", origin, TextField.TYPE_STORED))
+    //FIXME decide if use catch_all field or how to build a query that queries all fields
+    doc.add(new Field("catch_all", fileIdentifier, TextField.TYPE_STORED))
+    doc.add(new Field("catch_all", title, TextField.TYPE_STORED))
+    doc.add(new Field("catch_all", abstrakt, TextField.TYPE_STORED))
+    doc.add(new Field("catch_all", isoLocalDateText(), TextField.TYPE_STORED))
+    // Range Query for Date as Long value
+    doc.add(new Field("catch_all", keywords.mkString(" "), TextField.TYPE_STORED))
+    doc.add(new Field("catch_all", topicCategory.mkString(" "), TextField.TYPE_STORED))
+    doc.add(new Field("catch_all", contactName, TextField.TYPE_STORED))
+    doc.add(new Field("catch_all", contactOrg, TextField.TYPE_STORED))
+    doc.add(new Field("catch_all", contactEmail, TextField.TYPE_STORED))
+    doc.add(new Field("catch_all", license, TextField.TYPE_STORED))
+    doc.add(new Field("catch_all", getWktBbox(), TextField.TYPE_STORED))
+    doc.add(new Field("catch_all", origin, TextField.TYPE_STORED))
+
+    doc
+  }
+
 }
 
 object GmdElementSet {
@@ -83,8 +142,7 @@ object GmdElementSet {
   // TODO check if ZoneInfo in date, alternatively either UTC or NZ TimeZone
   // check if Time info in date/datestamp
   // check decide dateStamp and/or/plus CI_Date date
-  def dateFromXml (nodeSeq: NodeSeq) : LocalDate = {
-    val dateString = ( nodeSeq \\"dateStamp" \ "Date" ).text
+  def dateFromString (dateString: String) : LocalDate = {
     val parsedDate = try {
       LocalDate.parse(dateString, DateTimeFormatter.ISO_LOCAL_DATE)
     } catch {
@@ -92,6 +150,11 @@ object GmdElementSet {
       // case e => _
     }
     parsedDate
+  }
+
+  def dateFromXml (nodeSeq: NodeSeq) : LocalDate = {
+    val dateString = ( nodeSeq \\"dateStamp" \ "Date" ).text
+    dateFromString(dateString)
   }
 
   def keywordsFromXml(nodeSeq: NodeSeq) : List[String] = {
@@ -119,6 +182,17 @@ object GmdElementSet {
     List(resConstraints, metaConstraints).mkString(", ")
   }
 
+  def bboxFromCoords(east: Double, west: Double, south: Double, north: Double) : Rectangle = {
+    ctx.getShapeFactory().rect(east, west, south, north )
+  }
+
+  def bboxFromWkt(envelope: String) : Rectangle = {
+    // https://github.com/locationtech/spatial4j/blob/master/FORMATS.md beware, typo?
+    // Rectangle	ENVELOPE(1, 2, 4, 3) (minX, maxX, maxY, minY)
+    // https://github.com/locationtech/spatial4j/blob/master/src/main/java/org/locationtech/spatial4j/io/WKTReader.java#L245
+    shpReader.read(envelope).asInstanceOf[Rectangle]
+  }
+
   def bboxFromXml (nodeSeq: NodeSeq) : Rectangle = {
 
     val bboxXml = ( nodeSeq \\ "extent" \ "EX_Extent")
@@ -128,7 +202,7 @@ object GmdElementSet {
     val south = (bboxXml \\ "geographicElement" \ "EX_GeographicBoundingBox" \ "southBoundLatitude" \ "Decimal").text.toDouble
 
     // Rectangle rect(double minX, double maxX, double minY, double maxY);
-    ctx.getShapeFactory().rect(east, west, south, north )
+    bboxFromCoords(east, west, south, north )
   }
 
 

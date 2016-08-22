@@ -253,6 +253,8 @@ class ParserSpec extends PlaySpec with OneAppPerSuite {
 
       gmdElem1 mustEqual gmdElem2
 
+      // println(gmdElem1.toString())
+
       gmdElem1.isoLocalDateText() mustEqual("2012-12-20")
       gmdElem1.getUuid() mustEqual(java.util.UUID.fromString("23bdd7a3-fd21-daf1-7825-0d3bdc256f9d"))
 

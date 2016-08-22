@@ -2,6 +2,8 @@ package services
 
 import javax.inject.{Inject, Singleton}
 
+import models.GmdElementSet
+
 import org.apache.lucene.analysis.standard.StandardAnalyzer
 import org.apache.lucene.document.{Document, Field, TextField}
 import org.apache.lucene.index.{IndexWriter, IndexWriterConfig}
