@@ -1,20 +1,26 @@
+##playframework as recommended by https://www.playframework.com/documentation/2.5.x/Anatomy#Typical-.gitignore-file
 logs
-target
 project/project
 project/target
+target
+tmp
+dist
+.cache
+
+##intellij
 /.idea
 /.idea_modules
+*.iml
+
+##eclipse items
 /.eclipse
 /.classpath
 /.project
 /.settings
-/RUNNING_PID
-tmp
+
+#FIXME SR: why are they here? What are they for? Delete if not needed!
 .history
-dist
-*.iml
 *.eml
-.cache
 .sbtserver/
 project/.sbtserver*
 /project/sbt-ui.sbt
