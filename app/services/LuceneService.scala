@@ -36,8 +36,9 @@ import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.ws.WSClient
 import utils.ClassnameLogger
 
-import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
+import scala.concurrent.{Await, Future}
+import scala.xml.NodeSeq
 
 
 // explanation see https://www.playframework.com/documentation/2.5.x/ScalaJsonAutomated and
@@ -59,22 +60,29 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle, wsClient: WSCl
 
   //TODO SR extract to 'RequestBuilder' class. Parameters startPosition="1" maxRecords="15"
   val XML_REQUEST: String =
-    """<?xml version="1.0" encoding="UTF-8"?>
-      |<csw:GetRecords
-      |  xmlns:csw="http://www.opengis.net/cat/csw/2.0.2"
-      |  xmlns:ogc="http://www.opengis.net/ogc"
-      |  xmlns:gmd="http://www.isotc211.org/2005/gmd"
-      |  service="CSW" version="2.0.2"
-      |  resultType="results" startPosition="1" maxRecords="15"
-      |  outputFormat="application/xml" outputSchema="http://www.isotc211.org/2005/gmd"
-      |  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      |  xsi:schemaLocation="http://www.opengis.net/cat/csw/2.0.2 http://schemas.opengis.net/csw/2.0.2/CSW-discovery.xsd">
-      |
+    """
+      |<csw:GetRecords xmlns:csw="http://www.opengis.net/cat/csw/2.0.2"
+      |                xmlns:ogc="http://www.opengis.net/ogc"
+      |                xmlns:gmd="http://www.isotc211.org/2005/gmd"
+      |                service="CSW" version="2.0.2"
+      |                resultType="results" startPosition="1" maxRecords="50"
+      |                outputFormat="application/xml" outputSchema="http://www.isotc211.org/2005/gmd"
+      |                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      |                xsi:schemaLocation="http://www.opengis.net/cat/csw/2.0.2 http://schemas.opengis.net/csw/2.0.2/CSW-discovery.xsd">
       |  <csw:Query typeNames="gmd:MD_Metadata">
       |    <csw:ElementSetName>full</csw:ElementSetName>
       |  </csw:Query>
       |</csw:GetRecords>
     """.stripMargin
+
+  val EMPTY_RESPONSE: NodeSeq = <csw:GetRecordsResponse xsi:schemaLocation="http://www.opengis.net/cat/csw/2.0.2 http://schemas.opengis.net/csw/2.0.2/CSW-discovery.xsd"
+                                                        version="2.0.2" xmlns:sitemap="http://www.sitemaps.org/schemas/sitemap/0.9"
+                                                        xmlns:csw="http://www.opengis.net/cat/csw/2.0.2">
+    <csw:SearchStatus timestamp="2016-08-24T02:01:33Z"/>
+    <csw:SearchResults elementSet="full" recordSchema="http://www.isotc211.org/2005/gmd"
+                       numberOfRecordsReturned="0" numberOfRecordsMatched="0" nextRecord="0">
+    </csw:SearchResults>
+  </csw:GetRecordsResponse>
 
   logger.info("Starting Lucene Service")
 
@@ -109,7 +117,7 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle, wsClient: WSCl
       iwriter.commit()
 
       val url = "http://data.linz.govt.nz/feeds/csw/csw"
-      val result = Await.result(queryCsw(url),120.seconds)
+      val result = Await.result(queryCsw(url, "linz"), 120.seconds)
       logger.info(f"Loaded ${result.size} documents from CSW.")
       result.foreach(searchDocument => iwriter.addDocument(searchDocument.asLuceneDocument()))
       iwriter.commit()
@@ -120,7 +128,7 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle, wsClient: WSCl
     }
   }
 
-  def queryCsw(url: String): Future[List[GmdElementSet]] = {
+  def queryCsw(url: String, catalogueId: String): Future[List[GmdElementSet]] = {
     logger.info(f"Loading data from CSW $url")
 
     val wsClientRequestFuture = wsClient.url(url)
@@ -129,29 +137,43 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle, wsClient: WSCl
       .post(XML_REQUEST)
 
     val requestResult = wsClientRequestFuture.map {
-      response =>
-        logger.debug(f"Response status: ${response.status} - ${response.statusText}")
-        if (response.status == 200) {
-          logger.debug(f"Response Content Type: ${response.allHeaders.get("Content-Type")}")
-          Some(response.xml)
-        }
-        else {
-          logger.warn(f"Error while executing CSW query.")
-          logger.debug(f"Response body: ${response.body}")
-          None
+      response => logger.debug(f"Response status: ${response.status} - ${response.statusText}")
+        response.status match {
+          case 200 => {
+            logger.debug(f"Response Content Type: ${response.allHeaders.get("Content-Type").getOrElse("Unknown")}")
+            logger.debug(f"Response-Length: ${response.body.length}")
+            logger.trace(f"Response-Body: ${response.body.toString}")
+            response.xml.label match {
+              case "ExceptionReport" => {
+                logger.warn(f"Got Exception Response. Text: ${(response.xml \ "Exception" \ "ExceptionText").text}")
+                None
+              }
+              case "GetRecordsResponse" => {
+                Some(response.xml)
+              }
+              case _ => {
+                logger.warn(f"Unknown response content. Body: ${response.xml.toString}")
+                None
+              }
+            }
+          }
+          case _ => {
+            logger.warn(f"Error while executing CSW query.")
+            logger.debug(f"Response body: ${response.body}")
+            None
+          }
         }
     }
+
     val gmdElementSets = requestResult.map(xmlOption => {
-//      case None => List[GmdElementSet]()
-//      case _ => {
-        val blubb = (xmlOption.get \\ "MD_Metadata").map {
-          node =>
-            logger.debug(f"Preparing ${(node \\ "fileIdentifier" \ "CharacterString").text}")
-            val gmdElem = GmdElementSet.fromXml(node, "linz")
-            gmdElem
-        }.toList
-        blubb
-//      }
+      val resultElements = (xmlOption.getOrElse(EMPTY_RESPONSE) \\ "MD_Metadata").map {
+        node => {
+          logger.debug(f"Preparing ${(node \\ "fileIdentifier" \ "CharacterString").text}")
+          logger.trace(node.toString())
+          GmdElementSet.fromXml(node, catalogueId)
+        }
+      }.toList
+      resultElements
     })
     gmdElementSets
   }

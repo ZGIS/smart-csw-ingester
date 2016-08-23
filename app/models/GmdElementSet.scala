@@ -139,7 +139,7 @@ object GmdElementSet {
 
   def fromXml(nodeSeq: NodeSeq, origin: String): GmdElementSet = {
     GmdElementSet(
-      (nodeSeq \\ "fileIdentifier" \ "CharacterString").text,
+      (nodeSeq \ "fileIdentifier" \ "CharacterString").text,
       dateFromXml(nodeSeq),
       (nodeSeq \\ "identificationInfo" \ "MD_DataIdentification" \ "citation" \ "CI_Citation" \ "title" \ "CharacterString").text,
       (nodeSeq \\ "identificationInfo" \ "MD_DataIdentification" \ "abstract" \ "CharacterString").text,
