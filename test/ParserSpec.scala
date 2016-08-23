@@ -75,12 +75,12 @@ class ParserSpec extends PlaySpec with OneAppPerSuite {
       val nsBindingGmd = new NamespaceBinding("gmd", nsGmd, null)
       val nsBindingGco = new NamespaceBinding("gco", nsGco, nsBindingGmd)
 
-      (xml1 \\ "GetRecordByIdResponse" \ "MD_Metadata" \ "fileIdentifier" \ "CharacterString").text mustBe "23bdd7a3-fd21-daf1-7825-0d3bdc256f9d"
+      (xml1 \ "fileIdentifier" \ "CharacterString").text mustBe "23bdd7a3-fd21-daf1-7825-0d3bdc256f9d"
 
-      val n1: NodeSeq = (xml1 \\ "GetRecordByIdResponse" \ "MD_Metadata" \ "fileIdentifier" \ "CharacterString")
+      val n1: NodeSeq = (xml1 \ "fileIdentifier" \ "CharacterString")
       n1.filter ( x => x.namespace == nsGmd ).isEmpty mustBe(true)
 
-      val n2: NodeSeq = (xml1 \\ "GetRecordByIdResponse" \ "MD_Metadata" \ "fileIdentifier" \ "CharacterString")
+      val n2: NodeSeq = (xml1 \ "fileIdentifier" \ "CharacterString")
       n2.filter ( x => x.namespace == nsGco ).size mustEqual 1
 
       (xml1 \\ "identificationInfo" \ "MD_DataIdentification" \ "citation" \ "CI_Citation" \ "title" \ "CharacterString" ).text mustBe "NZ Primary Road Parcels"
@@ -231,7 +231,7 @@ class ParserSpec extends PlaySpec with OneAppPerSuite {
 
       val localDate = java.time.LocalDate.of(2012, Month.DECEMBER, 20)
 
-      val gmdElem1 = GmdElementSet.fromXml(xml1)
+      val gmdElem1 = GmdElementSet.fromXml( xml1)
 
       val bbox = GmdElementSet.bboxFromXml(xml1)
       val bboxs = ctx.getShapeFactory().rect(-176.176448433, 166.6899599, -47.1549297167, -34.4322590833 )
@@ -279,7 +279,7 @@ class ParserSpec extends PlaySpec with OneAppPerSuite {
       val jsList = Json.toJson(gmdList)
       (jsList \\ "fileIdentifier").size mustBe 2
 
-      val textJson = """{"fileIdentifier":"23bdd7a3-fd21-daf1-7825-0d3bdc256f9d","dateStamp":"2012-12-20","title":"NZ Primary Road Parcels","abstrakt":"This layer provides the **current** road parcel polygons with ...","keywords":["New Zealand"],"topicCategory":["boundaries","planningCadastre"],"contactName":"omit, Omit","contactOrg":"LINZ - Land Information New Zealand, LINZ - Land Information New Zealand, ANZLIC the Spatial Information Council","contactEmail":"info@linz.govt.nz, info@linz.govt.nz","license":"Crown copyright reserved, Released under Creative Commons By with: Following Disclaimers..., Crown copyright reserved, Released under Creative Commons By","bxox":[-176.176448433,166.6899599,-34.4322590833,-47.1549297167],"origin":""}"""
+      val textJson = """{"fileIdentifier":"23bdd7a3-fd21-daf1-7825-0d3bdc256f9d","dateStamp":"2012-12-20","title":"NZ Primary Road Parcels","abstrakt":"This layer provides the **current** road parcel polygons with ...","keywords":["New Zealand"],"topicCategory":["boundaries","planningCadastre"],"contactName":"omit, Omit","contactOrg":"LINZ - Land Information New Zealand, LINZ - Land Information New Zealand, ANZLIC the Spatial Information Council","contactEmail":"info@linz.govt.nz, info@linz.govt.nz","license":"Crown copyright reserved, Released under Creative Commons By with: Following Disclaimers..., Crown copyright reserved, Released under Creative Commons By","bbox":[-176.176448433,166.6899599,-34.4322590833,-47.1549297167],"origin":""}"""
       Json.toJson(gmdElem2).toString() mustEqual(textJson)
 
     }

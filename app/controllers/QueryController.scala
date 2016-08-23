@@ -1,8 +1,8 @@
 /*
- * Copyright (c) 2011-2017 Interfaculty Department of Geoinformatics, University of Salzburg (Z_GIS)
- *                       & Institute of Geological and Nuclear Sciences Limited (GNS Science)
- *                       in the SMART Aquifer Characterisation (SAC) programme funded by the New Zealand
- *                       Ministry of Business, Innovation and Employment (MBIE)
+ * Copyright (c) 2011-2017 Interfaculty Department of Geoinformatics, University of
+ * Salzburg (Z_GIS) & Institute of Geological and Nuclear Sciences Limited (GNS Science)
+ * in the SMART Aquifer Characterisation (SAC) programme funded by the New Zealand
+ * Ministry of Business, Innovation and Employment (MBIE)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.

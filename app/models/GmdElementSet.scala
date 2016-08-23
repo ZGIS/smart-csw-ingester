@@ -1,8 +1,8 @@
 /*
- * Copyright (c) 2011-2017 Interfaculty Department of Geoinformatics, University of Salzburg (Z_GIS)
- *                       & Institute of Geological and Nuclear Sciences Limited (GNS Science)
- *                       in the SMART Aquifer Characterisation (SAC) programme funded by the New Zealand
- *                       Ministry of Business, Innovation and Employment (MBIE)
+ * Copyright (c) 2011-2017 Interfaculty Department of Geoinformatics, University of
+ * Salzburg (Z_GIS) & Institute of Geological and Nuclear Sciences Limited (GNS Science)
+ * in the SMART Aquifer Characterisation (SAC) programme funded by the New Zealand
+ * Ministry of Business, Innovation and Employment (MBIE)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -137,6 +137,12 @@ object GmdElementSet {
     fromXml(nodeSeq, "")
   }
 
+  /**
+    *
+    * @param nodeSeq should be MD_Metadata
+    * @param origin
+    * @return
+    */
   def fromXml(nodeSeq: NodeSeq, origin: String): GmdElementSet = {
     GmdElementSet(
       (nodeSeq \ "fileIdentifier" \ "CharacterString").text,
@@ -157,7 +163,7 @@ object GmdElementSet {
   def fromLuceneDoc(doc: Document): GmdElementSet = {
     GmdElementSet(
       fileIdentifier = doc.get("fileIdentifier"),
-      dateStamp = GmdElementSet.dateFromString(doc.get("dateStampText")),
+      dateStamp = GmdElementSet.dateFromStrings(List(doc.get("dateStampText"))),
       title = doc.get("title"),
       abstrakt = doc.get("abstrakt"),
       keywords = doc.get("keywords").split(",").toList,
@@ -174,19 +180,27 @@ object GmdElementSet {
   // TODO check if ZoneInfo in date, alternatively either UTC or NZ TimeZone
   // check if Time info in date/datestamp
   // check decide dateStamp and/or/plus CI_Date date
-  def dateFromString(dateString: String): LocalDate = {
-    val parsedDate = try {
-      LocalDate.parse(dateString, DateTimeFormatter.ISO_LOCAL_DATE)
-    } catch {
-      case ex: DateTimeParseException => LocalDate.of(1970, Month.JANUARY, 1)
-      // case e => _
-    }
-    parsedDate
+  // worst case create default date or maybe make optional at all, like BBOX suggestion?
+  def dateFromStrings(dateStrings: List[String]): LocalDate = {
+
+    dateStrings.filter(dateString => !dateString.isEmpty).map{
+      dateString =>
+        val parsedDate: Option[LocalDate] = try {
+          Some(LocalDate.parse(dateString, DateTimeFormatter.ISO_LOCAL_DATE))
+        } catch {
+          // case ex: DateTimeParseException => LocalDate.of(1970, Month.JANUARY, 1)
+          case e : Throwable => None
+        }
+        parsedDate
+    }.filter(dateOpt => dateOpt.isDefined).head.getOrElse(LocalDate.of(1970, Month.JANUARY, 1))
   }
 
   def dateFromXml(nodeSeq: NodeSeq): LocalDate = {
-    val dateString = (nodeSeq \\ "dateStamp" \ "Date").text
-    dateFromString(dateString)
+    val dateNodes = (nodeSeq \\ "dateStamp" \ "Date") ++
+    (nodeSeq \\ "dateStamp" \ "DateTime") ++
+    (nodeSeq \\ "date" \ "CI_Date" \ "date" \ "Date") ++
+    (nodeSeq \\ "date" \ "CI_Date" \ "date" \ "DateTime")
+    dateFromStrings(dateNodes.map( node => node.text).toList)
   }
 
   def keywordsFromXml(nodeSeq: NodeSeq): List[String] = {
@@ -244,7 +258,7 @@ object GmdElementSet {
     }
     else {
       logger.warn(f"${(nodeSeq \\ "fileIdentifier" \ "CharacterString").text} has no BBOX")
-      bboxFromCoords(0,0,0,0)
+      bboxFromCoords(-180,180,-90,90)
     }
   }
 }
