@@ -1,8 +1,8 @@
 /*
- * Copyright (c) 2011-2017 Interfaculty Department of Geoinformatics, University of
- * Salzburg (Z_GIS) & Institute of Geological and Nuclear Sciences Limited (GNS Science)
- * in the SMART Aquifer Characterisation (SAC) programme funded by the New Zealand
- * Ministry of Business, Innovation and Employment (MBIE)
+ * Copyright (c) 2011-2017 Interfaculty Department of Geoinformatics, University of Salzburg (Z_GIS)
+ *                       & Institute of Geological and Nuclear Sciences Limited (GNS Science)
+ *                       in the SMART Aquifer Characterisation (SAC) programme funded by the New Zealand
+ *                       Ministry of Business, Innovation and Employment (MBIE)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,14 +22,14 @@ package controllers
 import javax.inject._
 
 import models.GmdElementSetJsonWriter
-import play.api.libs.json.{JsString, JsValue, Json}
+import play.api.libs.json.Json
 import play.api.mvc._
 import services.{LuceneService, SearchResult, SearchResultHeader}
 
 /**
   * Controller that serves results from Lucene Index
   */
-class QueryController @Inject()(luceneService: LuceneService ) extends Controller {
+class QueryController @Inject()(luceneService: LuceneService) extends Controller {
 
   // FIXME AK: do we need Json Reads for search result encoding?
   // implicit val searchResultHeaderRead = Json.reads[SearchResultHeader]
@@ -38,7 +38,13 @@ class QueryController @Inject()(luceneService: LuceneService ) extends Controlle
   // implicit val searchResultRead = Json.reads[SearchResult]
   implicit val searchResultWrite = Json.writes[SearchResult]
 
-  /** passes query on to Lucene search and returns result */
+  /**
+    * Action that passes the query from URL to the [[services.LuceneService]].
+    *
+    * @param query
+    * @return
+    * @see services.LuceneService
+    */
   def query(query: String) = Action {
     //TODO this must be something like val result = Lucene.Search(query)
     val searchResult = luceneService.query(query)

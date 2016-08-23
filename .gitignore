@@ -18,9 +18,9 @@ dist
 /.classpath
 /.project
 /.settings
+/.history
 
 ##other IDEs, activator ui, misc.
-.history
 .sbtserver/
 project/.sbtserver*
 /project/sbt-ui.sbt

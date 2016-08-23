@@ -12,6 +12,7 @@ import services.Counter
  * `Action` that shows an incrementing count to users. The [[Counter]]
  * object is injected by the Guice dependency injection system.
  */
+@deprecated(message = "DEMO CONTROLLER - DELETE FOR PRODUCTION")
 @Singleton
 class CountController @Inject() (counter: Counter) extends Controller {
 

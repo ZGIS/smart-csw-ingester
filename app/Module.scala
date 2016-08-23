@@ -35,6 +35,8 @@ import services.{LuceneService, ApplicationTimer, AtomicCounter, Counter}
 class Module extends AbstractModule {
 
   override def configure() = {
+
+    //FIXME SR delete demo stuff for production
     // Use the system clock as the default implementation of Clock
     bind(classOf[Clock]).toInstance(Clock.systemDefaultZone)
     // Ask Guice to create an instance of ApplicationTimer when the
