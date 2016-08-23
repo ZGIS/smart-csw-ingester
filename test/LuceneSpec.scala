@@ -25,9 +25,12 @@ import org.apache.lucene.document.LongPoint
 import org.apache.lucene.index.{IndexWriter, IndexWriterConfig}
 import org.apache.lucene.queryparser.classic.QueryParser
 import org.apache.lucene.search.{MatchAllDocsQuery, SearcherManager}
+import org.apache.lucene.spatial.bbox.BBoxStrategy
 import org.apache.lucene.spatial.geopoint.search._
+import org.apache.lucene.spatial.query.{SpatialArgs, SpatialOperation}
 import org.apache.lucene.store.RAMDirectory
 import org.locationtech.spatial4j.context.SpatialContext
+import org.locationtech.spatial4j.shape.Shape
 import org.scalatestplus.play._
 import play.api.inject.guice.GuiceApplicationBuilder
 import services.SearchResultDocument
@@ -180,15 +183,24 @@ class LuceneSpec extends PlaySpec with OneAppPerSuite {
 
       search5.totalHits mustBe 0
 
-      val luceneQuery6 = new GeoPointInBBoxQuery("bboxCompare", -47.1549297167, -34.4322590833, -176.176448433, 166.6899599)
-      val search6 = isearcher.search(luceneQuery6, isearcher.getIndexReader().numDocs())
+      val bboxS = ctx.getShapeFactory().rect(-176.176448433, 166.6899599, -47.1549297167, -34.4322590833 )
+      val bboxT = ctx.getShapeFactory().rect(-180.0, 180.0, -90.0, 90.0 )
+      val bboxStrategy: BBoxStrategy = BBoxStrategy.newInstance(ctx, "bboxStrategy")
+
+      val luceneQuery6 = bboxStrategy.makeQuery(new SpatialArgs(SpatialOperation.IsEqualTo, bboxS))
+      val search6 =  isearcher.search(luceneQuery6, isearcher.getIndexReader().numDocs())
 
       search6.totalHits mustBe 1
 
-      val bboxT = ctx.getShapeFactory().rect(-180.0, 180.0, -90.0, 90.0 )
-      val luceneQuery7 = new GeoPointInBBoxQuery("bboxCompare", bboxT.getMinY(), bboxT.getMaxY(), bboxT.getMinX(), bboxT.getMaxX() )
-      val search7 = isearcher.search(luceneQuery7, isearcher.getIndexReader().numDocs())
-      search7.totalHits mustBe 2
+      val luceneQuery7 = bboxStrategy.makeQuery(new SpatialArgs(SpatialOperation.IsDisjointTo, bboxT))
+      val search7 =  isearcher.search(luceneQuery7, isearcher.getIndexReader().numDocs())
+
+      search7.totalHits mustBe 0
+
+      val luceneQuery8 = bboxStrategy.makeQuery(new SpatialArgs(SpatialOperation.Intersects, bboxT))
+      val search8 =  isearcher.search(luceneQuery8, isearcher.getIndexReader().numDocs())
+
+      search8.totalHits mustBe 2
 
       directory.close()
     }

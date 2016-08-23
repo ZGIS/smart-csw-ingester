@@ -25,7 +25,7 @@ import java.util
 import java.util.UUID
 
 import org.apache.lucene.document.{Document, Field, LongPoint, TextField}
-import org.apache.lucene.spatial.geopoint.document.GeoPointField
+import org.apache.lucene.spatial.bbox.BBoxStrategy
 import org.locationtech.spatial4j.context.SpatialContext
 import org.locationtech.spatial4j.io.ShapeIO
 import org.locationtech.spatial4j.shape.Rectangle
@@ -91,36 +91,34 @@ case class GmdElementSet (fileIdentifier: String,
   }
 
   def asLuceneDocument(): Document = {
+    val ctx = SpatialContext.GEO
     val doc = new Document()
 
     val longDate = dateStamp.toEpochDay
     val a1: Array[Long] = Array(longDate)
     val dateField = new LongPoint("dateStampCompare", 1)
     dateField.setLongValue(longDate)
+    doc.add(dateField)
 
-    // GeoPointField(name, latitude, longitude, getFieldType(stored))
-    // latitude double value[- 90.0: 90.0]
-    // longitude double value[- 180.0: 180.0]
-    val centerLat = ( ( bbox.getMaxY() - bbox.getMinY() ) / 2 ) + bbox.getMinY()
-    val centerLon = ( ( bbox.getMaxX() - bbox.getMinX() ) / 2 ) + bbox.getMinX()
-    // println(f"bbox ${bbox.toString}")
-    // println(f"GeoPointField(bboxCompare, centerLat $centerLat, centerLon $centerLon, Field.Store.NO")
-    val geoPointField = new GeoPointField("bboxCompare", centerLat, centerLon, Field.Store.NO)
+    val bboxStrategy: BBoxStrategy = BBoxStrategy.newInstance(ctx, "bboxStrategy")
+    val bboxFields = bboxStrategy.createIndexableFields(bbox)
+    bboxFields.foreach(field => doc.add(field))
 
     doc.add(new Field("fileIdentifier", fileIdentifier, TextField.TYPE_STORED))
     doc.add(new Field("title", title, TextField.TYPE_STORED))
     doc.add(new Field("abstrakt", abstrakt, TextField.TYPE_STORED))
+    // Range Query for Date as Long value, this field is to recreate the date object
     doc.add(new Field("dateStampText", isoLocalDateText(), TextField.TYPE_STORED))
-    doc.add(dateField)
     doc.add(new Field("keywords", keywords.mkString(" "), TextField.TYPE_STORED))
     doc.add(new Field("topicCategory", topicCategory.mkString(" "), TextField.TYPE_STORED))
     doc.add(new Field("contactName", contactName, TextField.TYPE_STORED))
     doc.add(new Field("contactOrg", contactOrg, TextField.TYPE_STORED))
     doc.add(new Field("contactEmail", contactEmail, TextField.TYPE_STORED))
     doc.add(new Field("license", license, TextField.TYPE_STORED))
+    // Bbox Query on spatial index, this textfield is to recreate the geometry
     doc.add(new Field("bboxText", getWktBbox(), TextField.TYPE_STORED))
-    doc.add(geoPointField)
     doc.add(new Field("origin", origin, TextField.TYPE_STORED))
+
     //FIXME decide if use catch_all field or how to build a query that queries all fields
     doc.add(new Field("catch_all", fileIdentifier, TextField.TYPE_STORED))
     doc.add(new Field("catch_all", title, TextField.TYPE_STORED))
