@@ -30,23 +30,10 @@ import org.locationtech.spatial4j.context.SpatialContext
 import org.locationtech.spatial4j.io.ShapeIO
 import org.locationtech.spatial4j.shape.Rectangle
 
+import play.api.libs.json._
+
 import scala.xml.NodeSeq
 
-/**
-  * from https://github.com/ZGIS/smart-csw-ingester/issues/4
-  *
-  *  file identifier / uuid
-  *  latest datestamp
-  *  keywords and keyword lists
-  *  title
-  *  abstract
-  *  contact names and organisation
-  *  license
-  *  BBOX
-  *  source / origon catalog url
-  *
-  * Created by kmoch on 22/08/2016.
-  */
 case class GmdElementSet (fileIdentifier: String,
                           dateStamp: LocalDate,
                           title: String,
@@ -137,7 +124,6 @@ case class GmdElementSet (fileIdentifier: String,
 
     doc
   }
-
 }
 
 object GmdElementSet {
@@ -163,6 +149,23 @@ object GmdElementSet {
       licenseFromXml(nodeSeq),
       bboxFromXml(nodeSeq),
       origin
+    )
+  }
+
+  def fromLuceneDoc (doc: Document) : GmdElementSet = {
+    GmdElementSet(
+      fileIdentifier = doc.get("fileIdentifier"),
+      dateStamp = GmdElementSet.dateFromString(doc.get("dateStampText")),
+      title = doc.get("title"),
+      abstrakt = doc.get("abstrakt"),
+      keywords = doc.get("keywords").split(",").toList,
+      topicCategory = doc.get("topicCategory").split(",").toList,
+      contactName = doc.get("contactName"),
+      contactOrg = doc.get("contactOrg"),
+      contactEmail = doc.get("contactEmail"),
+      license = doc.get("license"),
+      bbox = GmdElementSet.bboxFromWkt(doc.get("bboxText")),
+      origin = doc.get("origin")
     )
   }
 
@@ -231,8 +234,27 @@ object GmdElementSet {
     // Rectangle rect(double minX, double maxX, double minY, double maxY);
     bboxFromCoords(east, west, south, north )
   }
-
-
 }
 
-
+object GmdElementSetJsonWriter extends Writes[GmdElementSet] {
+  def writes(gmd: GmdElementSet) = Json.obj(
+  "fileIdentifier" -> gmd.fileIdentifier,
+  "dateStamp" -> gmd.isoLocalDateText(),
+  "title" -> gmd.title,
+  "abstrakt" -> gmd.abstrakt,
+  "keywords" -> gmd.keywords,
+  "topicCategory" -> gmd.topicCategory,
+  "contactName" -> gmd.contactName,
+  "contactOrg" -> gmd.contactOrg,
+  "contactEmail" -> gmd.contactEmail,
+  "license" -> gmd.license,
+  // extent is an array [10, 10, 40, 40] minX, maxX, maxY, minY
+  "bxox" -> Json.arr(
+    JsNumber(gmd.bbox.getMinX()),
+    JsNumber(gmd.bbox.getMaxX()),
+    JsNumber(gmd.bbox.getMaxY()),
+    JsNumber(gmd.bbox.getMinY())
+  ),
+  "origin" -> gmd.origin
+  )
+}

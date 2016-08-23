@@ -20,7 +20,7 @@
 import java.time._
 import java.time.format._
 
-import models.GmdElementSet
+import models.{GmdElementSet, GmdElementSetJsonWriter}
 import org.scalatestplus.play._
 import play.api.inject.guice.GuiceApplicationBuilder
 
@@ -29,7 +29,7 @@ import org.locationtech.spatial4j.context.SpatialContext
 import org.locationtech.spatial4j.io._
 import org.locationtech.spatial4j.shape._
 import org.locationtech.spatial4j.shape.impl.BBoxCalculator
-
+import play.api.libs.json.Json
 
 class ParserSpec extends PlaySpec with OneAppPerSuite {
 
@@ -58,14 +58,12 @@ class ParserSpec extends PlaySpec with OneAppPerSuite {
 
     /*
     Scala XML \, \\, and @ operators:
-
     - \ and \\ are "projection functions", and return a NodeSeq object
     - \ and \\ operators (functions) are based on XPath operators, but Scala uses backslashes instead of forward-slashes because forward-slashes are already used for math operations
     - The \ operator doesn't descend into child elements
     - "@" character to search for XML tag attributes
     - nameSpace handling can be omitted if obvious / unambiguous element name
     - http://www.codecommit.com/blog/scala/working-with-scalas-xml-support
-
      */
     "Evaluate Basic Xpath type queries" in {
       val asResource1 = this.getClass().getResource("csw_getrecordbyid-md_metadata.xml")
@@ -99,8 +97,6 @@ class ParserSpec extends PlaySpec with OneAppPerSuite {
       // gmd:dateStamp/gco:DateTime"
       // (xml1 \\ "dateStamp" \ "DateTime")
       (xml1 \\ "dateStamp" \ "Date").text mustBe "2012-12-20"
-
-      // gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:date/gmd:CI_Date/gmd:date/gco:DateTime
 
       // gmd:identificationInfo/gmd:MD_DataIdentification/gmd:status/gmd:MD_ProgressCode/codeList="./resources/codeList.xml#MD_ProgressCode" codeListValue="completed">completed
       println( pp.formatNodes(xml1 \\ "identificationInfo" \ "MD_DataIdentification" \ "status" \ "MD_ProgressCode" ))
@@ -191,7 +187,7 @@ class ParserSpec extends PlaySpec with OneAppPerSuite {
 
     "should compute date, times and datetimes" in {
       // Play 2.5 requires Java 8
-      // Java8 new date types or classic Joda DataTime
+      // Java8 new date types
 
       val gmdDateStamp = <gmd:dateStamp><gco:Date>2012-12-20</gco:Date></gmd:dateStamp>
       val gmdDateType = <gmd:date><gmd:CI_Date><gmd:date><gco:Date>2016-05-17</gco:Date></gmd:date></gmd:CI_Date></gmd:date>
@@ -226,8 +222,6 @@ class ParserSpec extends PlaySpec with OneAppPerSuite {
     }
 
     "should build format case classes" in {
-
-
       val ctx = SpatialContext.GEO
       val shpReader = ctx.getFormats().getReader(ShapeIO.WKT)
       val shpWriter = ctx.getFormats().getWriter(ShapeIO.GeoJSON)
@@ -270,16 +264,25 @@ class ParserSpec extends PlaySpec with OneAppPerSuite {
 
       gmdElem1 mustEqual gmdElem2
 
-      // println(gmdElem1.toString())
-
       gmdElem1.isoLocalDateText() mustEqual("2012-12-20")
       gmdElem1.getUuid() mustEqual(java.util.UUID.fromString("23bdd7a3-fd21-daf1-7825-0d3bdc256f9d"))
 
       val thrown = the [java.lang.IllegalArgumentException] thrownBy java.util.UUID.fromString("urn:uuid:2c5f1309-d721-4299-88bf-e462c577b99a-horowhenua_ws:ewt_nzprj_new")
       thrown.getMessage mustBe ("Invalid UUID string: urn:uuid:2c5f1309-d721-4299-88bf-e462c577b99a-horowhenua_ws:ewt_nzprj_new")
 
-    }
+      implicit val gmdElementSetWrite = GmdElementSetJsonWriter
 
+      val gmdList = List(gmdElem1,gmdElem2)
+      // println(gmdElem1.toString())
+      // println(Json.toJson(gmdElem2))
+      // println(Json.toJson(gmdList))
+      val jsList = Json.toJson(gmdList)
+      (jsList \\ "fileIdentifier").size mustBe 2
+
+      val textJson = """{"fileIdentifier":"23bdd7a3-fd21-daf1-7825-0d3bdc256f9d","dateStamp":"2012-12-20","title":"NZ Primary Road Parcels","abstrakt":"This layer provides the **current** road parcel polygons with ...","keywords":["New Zealand"],"topicCategory":["boundaries","planningCadastre"],"contactName":"omit, Omit","contactOrg":"LINZ - Land Information New Zealand, LINZ - Land Information New Zealand, ANZLIC the Spatial Information Council","contactEmail":"info@linz.govt.nz, info@linz.govt.nz","license":"Crown copyright reserved, Released under Creative Commons By with: Following Disclaimers..., Crown copyright reserved, Released under Creative Commons By","bxox":[-176.176448433,166.6899599,-34.4322590833,-47.1549297167],"origin":""}"""
+      Json.toJson(gmdElem2).toString() mustEqual(textJson)
+
+    }
   }
 }
 

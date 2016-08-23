@@ -21,24 +21,22 @@ package controllers
 
 import javax.inject._
 
+import models.GmdElementSetJsonWriter
 import play.api.libs.json.{JsString, JsValue, Json}
 import play.api.mvc._
-import services.{LuceneService, SearchResultDocument, SearchResultHeader, SearchResult}
-
+import services.{LuceneService, SearchResult, SearchResultHeader}
 
 /**
   * Controller that serves results from Lucene Index
   */
-class QueryController @Inject()(luceneService: LuceneService) extends Controller {
+class QueryController @Inject()(luceneService: LuceneService ) extends Controller {
 
-  // explanation see https://www.playframework.com/documentation/2.5.x/ScalaJsonAutomated
-  implicit val searchResultHeaderRead = Json.reads[SearchResultHeader]
+  // FIXME AK: do we need Json Reads for search result encoding?
+  // implicit val searchResultHeaderRead = Json.reads[SearchResultHeader]
   implicit val searchResultHeaderWrite = Json.writes[SearchResultHeader]
-  implicit val searchResultDocumentRead = Json.reads[SearchResultDocument]
-  implicit val searchResultDocumentWrite = Json.writes[SearchResultDocument]
-  implicit val searchResultRead = Json.reads[SearchResult]
+  implicit val gmdElementSetWrite = GmdElementSetJsonWriter
+  // implicit val searchResultRead = Json.reads[SearchResult]
   implicit val searchResultWrite = Json.writes[SearchResult]
-
 
   /** passes query on to Lucene search and returns result */
   def query(query: String) = Action {

@@ -22,66 +22,55 @@ package services
 import javax.inject.{Inject, Singleton}
 
 import models.GmdElementSet
-
 import org.apache.lucene.analysis.standard.StandardAnalyzer
-import org.apache.lucene.document.{Document, Field, TextField}
+import org.apache.lucene.document.{Document, Field, LongPoint, TextField}
 import org.apache.lucene.index.{IndexWriter, IndexWriterConfig}
 import org.apache.lucene.queryparser.classic.QueryParser
 import org.apache.lucene.search.{MatchAllDocsQuery, SearcherManager}
+import org.apache.lucene.spatial.bbox.BBoxStrategy
 import org.apache.lucene.store.RAMDirectory
-
+import org.locationtech.spatial4j.context.SpatialContext
 import play.api.Logger
 import play.api.inject.ApplicationLifecycle
 import play.api.libs.ws.WSClient
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
+import scala.concurrent.duration._
 import scala.concurrent.Future
 
 // explanation see https://www.playframework.com/documentation/2.5.x/ScalaJsonAutomated and
 // https://www.playframework.com/documentation/2.5.x/ScalaJsonCombinators
-case class SearchResultDocument(title: String, abstrakt: String, catalogue: String) {
-  def asLuceneDocument(): Document = {
-    val doc = new Document()
-    doc.add(new Field("title", title, TextField.TYPE_STORED))
-    doc.add(new Field("abstract", abstrakt, TextField.TYPE_STORED))
-    doc.add(new Field("catalogue", catalogue, TextField.TYPE_STORED))
-    //FIXME decide if use catch_all field or how to build a query that queries all fields
-    doc.add(new Field("catch_all", title, TextField.TYPE_STORED))
-    doc.add(new Field("catch_all", abstrakt, TextField.TYPE_STORED))
-    doc.add(new Field("catch_all", catalogue, TextField.TYPE_STORED))
-
-    doc
-  }
-}
 
 case class SearchResultHeader(noDocuments: Int, query: String)
 
-case class SearchResult(header: SearchResultHeader, results: List[SearchResultDocument])
+case class SearchResult(header: SearchResultHeader, results: List[GmdElementSet])
 
-/**
-  * Wraps around Lucene.
-  */
+trait IndexService {
+  def refreshIndex() : Unit
+  def query(query: String): SearchResult
+}
+
 @Singleton
-class LuceneService @Inject()(appLifecycle: ApplicationLifecycle, ws: WSClient) {
+class LuceneService @Inject()(appLifecycle: ApplicationLifecycle, ws: WSClient) extends IndexService {
 
   // TODO parameters startPosition="1" maxRecords="15"
   val XML_REQUEST: String =
-    """
-      |<?xml version="1.0" encoding="UTF-8"?>
-      |<csw:GetRecords
-      |  xmlns:csw="http://www.opengis.net/cat/csw/2.0.2"
-      |  xmlns:ogc="http://www.opengis.net/ogc"
-      |  xmlns:gmd="http://www.isotc211.org/2005/gmd"
-      |  service="CSW" version="2.0.2"
-      |  resultType="results" startPosition="1" maxRecords="15"
-      |  outputFormat="application/xml" outputSchema="http://www.isotc211.org/2005/gmd"
-      |  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      |  xsi:schemaLocation="http://www.opengis.net/cat/csw/2.0.2 http://schemas.opengis.net/csw/2.0.2/CSW-discovery.xsd">
-      |
-      |  <csw:Query typeNames="gmd:MD_Metadata">
-      |    <csw:ElementSetName>full</csw:ElementSetName>
-      |  </csw:Query>
-      |</csw:GetRecords>
-    """.stripMargin
+    """<?xml version="1.0" encoding="UTF-8"?>
+<csw:GetRecords
+  xmlns:csw="http://www.opengis.net/cat/csw/2.0.2"
+  xmlns:ogc="http://www.opengis.net/ogc"
+  xmlns:gmd="http://www.isotc211.org/2005/gmd"
+  service="CSW" version="2.0.2"
+  resultType="results" startPosition="1" maxRecords="15"
+  outputFormat="application/xml" outputSchema="http://www.isotc211.org/2005/gmd"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.opengis.net/cat/csw/2.0.2 http://schemas.opengis.net/csw/2.0.2/CSW-discovery.xsd">
+
+  <csw:Query typeNames="gmd:MD_Metadata">
+    <csw:ElementSetName>full</csw:ElementSetName>
+  </csw:Query>
+</csw:GetRecords>
+""".stripMargin
 
   Logger.info("Starting Lucene Service")
 
@@ -115,27 +104,43 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle, ws: WSClient) 
     try {
       iwriter.deleteAll()
       iwriter.commit()
-      queryCsw().foreach(searchDocument => iwriter.addDocument(searchDocument.asLuceneDocument()))
+      queryCsw().map { gmdElementSets =>
+        Logger.info(f"Loaded ${gmdElementSets.size} documents to index")
+        gmdElementSets.foreach(searchDocument => iwriter.addDocument(searchDocument.asLuceneDocument()))
+
+      }
       iwriter.commit()
+      Logger.info(f"Indexing ready")
     }
     finally {
       iwriter.close()
     }
   }
 
-  def queryCsw(): List[SearchResultDocument] = {
+  def queryCsw(): Future[List[GmdElementSet]] = {
 
-    /*
-        val future: Future[scala.xml.NodeSeq] = ws.url("http://data.linz.govt.nz/feeds/csw/csw")
-          .withHeaders("Content-Type" -> "application/xml")
-          .post(XML_REQUEST).map({response => response.xml})
-    */
-    List(
-      SearchResultDocument("Document 1", "Abstract 1", "dummy ctl"),
-      SearchResultDocument("Document 2", "Abstract 2", "dummy ctl"),
-      SearchResultDocument("Document 3", "Abstract 3", "other ctl"),
-      SearchResultDocument("Document 4", "Abstract 4 is longer", "other ctl")
-    )
+    val future: Future[scala.xml.NodeSeq] = ws.url("http://data.linz.govt.nz/feeds/csw/csw")
+      .withHeaders("Content-Type" -> "application/xml")
+      .post(XML_REQUEST).map{
+        response =>
+          // Logger.debug(response.body)
+          val xml1: scala.xml.NodeSeq = scala.xml.XML.load(response.body)
+          // response.xml
+          xml1
+       }
+
+    val gmdElementSets: Future[List[GmdElementSet]] = future.map { xml =>
+      // val gmdList: List[GmdElementSet] = (xml \\ "GetRecordsResponse" \ "SearchResults" \ "MD_Metadata" ).map{
+      val gmdList: List[GmdElementSet] = (xml \\ "MD_Metadata" ).map{
+        node =>
+          Logger.debug(f"Preparing ${node.size}")
+          val gmdElem = GmdElementSet.fromXml(node, "linz")
+          Logger.debug(f"Preparing ${gmdElem.fileIdentifier}")
+          gmdElem
+      }.toList
+      gmdList
+    }
+    gmdElementSets
   }
 
   /**
@@ -145,6 +150,11 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle, ws: WSClient) 
     * @return
     */
   def query(query: String): SearchResult = {
+
+    val ctx = SpatialContext.GEO
+
+    val bboxStrategy: BBoxStrategy = BBoxStrategy.newInstance(ctx, "bboxStrategy")
+    // Query = LongPoint.newRangeQuery("dateStampCompare", localDate1.toEpochDay, localDate2.toEpochDay)
 
     val luceneQuery = query.trim() match {
       case "" => new MatchAllDocsQuery()
@@ -162,7 +172,7 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle, ws: WSClient) 
     val header = SearchResultHeader(search.totalHits, luceneQuery.toString())
     val results = scoreDocs.map(scoreDoc => {
       val doc = isearcher.doc(scoreDoc.doc)
-      SearchResultDocument(title = doc.get("title"), abstrakt = doc.get("abstract"), catalogue = doc.get("catalogue"))
+      GmdElementSet.fromLuceneDoc(doc)
     })
     SearchResult(header, results.toList)
   }
