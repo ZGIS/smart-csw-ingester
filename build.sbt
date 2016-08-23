@@ -41,8 +41,8 @@ libraryDependencies ++= Seq(
   "org.apache.lucene" % "lucene-core" % luceneVersion,
   "org.apache.lucene" % "lucene-analyzers-common" % luceneVersion,
   "org.apache.lucene" % "lucene-queryparser" % luceneVersion,
-//  "org.apache.lucene" % "lucene-spatial" % luceneVersion,
-//  "org.apache.lucene" % "lucene-spatial-extras" % luceneVersion,
+  "org.apache.lucene" % "lucene-spatial" % luceneVersion,
+  "org.apache.lucene" % "lucene-spatial-extras" % luceneVersion,
 //  "com.vividsolutions" % "jts" 	% "1.14",
   "org.locationtech.spatial4j" % "spatial4j" % "0.6",
 

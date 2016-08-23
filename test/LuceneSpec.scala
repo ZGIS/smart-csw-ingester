@@ -17,22 +17,20 @@
  * limitations under the License.
  */
 
-import java.time.{Instant, LocalDate, Month, ZoneId}
+import java.time.Month
 
 import models.GmdElementSet
-import org.scalatestplus.play._
-import play.api.test._
-import play.api.test.Helpers._
-import play.api.inject.guice.GuiceApplicationBuilder
 import org.apache.lucene.analysis.standard.StandardAnalyzer
-import org.apache.lucene.document.{Document, Field, LongPoint, TextField}
+import org.apache.lucene.document.LongPoint
 import org.apache.lucene.index.{IndexWriter, IndexWriterConfig}
 import org.apache.lucene.queryparser.classic.QueryParser
-import org.apache.lucene.search.{MatchAllDocsQuery, PointRangeQuery, SearcherManager, TermQuery, TermRangeQuery}
+import org.apache.lucene.search.{MatchAllDocsQuery, SearcherManager}
+import org.apache.lucene.spatial.geopoint.search._
 import org.apache.lucene.store.RAMDirectory
 import org.locationtech.spatial4j.context.SpatialContext
-import org.locationtech.spatial4j.shape.Rectangle
-import services.{SearchResultDocument, SearchResultHeader}
+import org.scalatestplus.play._
+import play.api.inject.guice.GuiceApplicationBuilder
+import services.SearchResultDocument
 
 class LuceneSpec extends PlaySpec with OneAppPerSuite {
 
@@ -174,13 +172,23 @@ class LuceneSpec extends PlaySpec with OneAppPerSuite {
       })
 
       results(0).fileIdentifier mustBe "23bdd7a3-fd21-daf1-7825-0d3bdc256f9d"
-      println(results(0).toString())
+      println(f"search4 result: ${results(0).toString()}")
 
       val luceneQuery5 = LongPoint.newRangeQuery("dateStampCompare", localDate1.toEpochDay, localDate1.toEpochDay)
       val search5 = isearcher.search(luceneQuery5, isearcher.getIndexReader().numDocs())
       val scoreDocs5 = search5.scoreDocs
 
       search5.totalHits mustBe 0
+
+      val luceneQuery6 = new GeoPointInBBoxQuery("bboxCompare", -47.1549297167, -34.4322590833, -176.176448433, 166.6899599)
+      val search6 = isearcher.search(luceneQuery6, isearcher.getIndexReader().numDocs())
+
+      search6.totalHits mustBe 1
+
+      val bboxT = ctx.getShapeFactory().rect(-180.0, 180.0, -90.0, 90.0 )
+      val luceneQuery7 = new GeoPointInBBoxQuery("bboxCompare", bboxT.getMinY(), bboxT.getMaxY(), bboxT.getMinX(), bboxT.getMaxX() )
+      val search7 = isearcher.search(luceneQuery7, isearcher.getIndexReader().numDocs())
+      search7.totalHits mustBe 2
 
       directory.close()
     }

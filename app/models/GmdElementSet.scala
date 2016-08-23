@@ -25,6 +25,7 @@ import java.util
 import java.util.UUID
 
 import org.apache.lucene.document.{Document, Field, LongPoint, TextField}
+import org.apache.lucene.spatial.geopoint.document.GeoPointField
 import org.locationtech.spatial4j.context.SpatialContext
 import org.locationtech.spatial4j.io.ShapeIO
 import org.locationtech.spatial4j.shape.Rectangle
@@ -96,8 +97,15 @@ case class GmdElementSet (fileIdentifier: String,
     val a1: Array[Long] = Array(longDate)
     val dateField = new LongPoint("dateStampCompare", 1)
     dateField.setLongValue(longDate)
-    println(f"dateField.toString: ${dateField.toString}")
-    println(f"dateField.fieldType: ${dateField.fieldType()}")
+
+    // GeoPointField(name, latitude, longitude, getFieldType(stored))
+    // latitude double value[- 90.0: 90.0]
+    // longitude double value[- 180.0: 180.0]
+    val centerLat = ( ( bbox.getMaxY() - bbox.getMinY() ) / 2 ) + bbox.getMinY()
+    val centerLon = ( ( bbox.getMaxX() - bbox.getMinX() ) / 2 ) + bbox.getMinX()
+    // println(f"bbox ${bbox.toString}")
+    // println(f"GeoPointField(bboxCompare, centerLat $centerLat, centerLon $centerLon, Field.Store.NO")
+    val geoPointField = new GeoPointField("bboxCompare", centerLat, centerLon, Field.Store.NO)
 
     doc.add(new Field("fileIdentifier", fileIdentifier, TextField.TYPE_STORED))
     doc.add(new Field("title", title, TextField.TYPE_STORED))
@@ -111,19 +119,21 @@ case class GmdElementSet (fileIdentifier: String,
     doc.add(new Field("contactEmail", contactEmail, TextField.TYPE_STORED))
     doc.add(new Field("license", license, TextField.TYPE_STORED))
     doc.add(new Field("bboxText", getWktBbox(), TextField.TYPE_STORED))
+    doc.add(geoPointField)
     doc.add(new Field("origin", origin, TextField.TYPE_STORED))
     //FIXME decide if use catch_all field or how to build a query that queries all fields
     doc.add(new Field("catch_all", fileIdentifier, TextField.TYPE_STORED))
     doc.add(new Field("catch_all", title, TextField.TYPE_STORED))
     doc.add(new Field("catch_all", abstrakt, TextField.TYPE_STORED))
+    // Range Query for Date as Long value, this field is to recreate the date object
     doc.add(new Field("catch_all", isoLocalDateText(), TextField.TYPE_STORED))
-    // Range Query for Date as Long value
     doc.add(new Field("catch_all", keywords.mkString(" "), TextField.TYPE_STORED))
     doc.add(new Field("catch_all", topicCategory.mkString(" "), TextField.TYPE_STORED))
     doc.add(new Field("catch_all", contactName, TextField.TYPE_STORED))
     doc.add(new Field("catch_all", contactOrg, TextField.TYPE_STORED))
     doc.add(new Field("catch_all", contactEmail, TextField.TYPE_STORED))
     doc.add(new Field("catch_all", license, TextField.TYPE_STORED))
+    // Bbox Query on spatial index, this textfield is to recreate the geometry
     doc.add(new Field("catch_all", getWktBbox(), TextField.TYPE_STORED))
     doc.add(new Field("catch_all", origin, TextField.TYPE_STORED))
 
