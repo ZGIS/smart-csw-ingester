@@ -31,7 +31,7 @@ import services.{LuceneService, SearchResult, SearchResultHeader}
   */
 class QueryController @Inject()(luceneService: LuceneService) extends Controller {
 
-  // FIXME AK: do we need Json Reads for search result encoding?
+  // FIXME AK: do we need Json Reads for search result encoding? - SR not necessarily, this was for completeness :-)
   // implicit val searchResultHeaderRead = Json.reads[SearchResultHeader]
   implicit val searchResultHeaderWrite = Json.writes[SearchResultHeader]
   implicit val gmdElementSetWrite = GmdElementSetJsonWriter
@@ -46,7 +46,7 @@ class QueryController @Inject()(luceneService: LuceneService) extends Controller
     * @see services.LuceneService
     */
   def query(query: String) = Action {
-    //TODO this must be something like val result = Lucene.Search(query)
+    //FIXME SR error handling
     val searchResult = luceneService.query(query)
 
     Ok(Json.toJson(searchResult)).as(JSON)

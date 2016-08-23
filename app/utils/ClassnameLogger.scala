@@ -18,8 +18,14 @@
  *
  *
  */
-package models
 
-case class OwcEntry(name: String)
+package utils
 
-case class OwcDocument()
+import play.api.Logger
+
+/**
+  * Provides a Logger with the Classname
+  */
+trait ClassnameLogger {
+  val logger = Logger(this.getClass())
+}
