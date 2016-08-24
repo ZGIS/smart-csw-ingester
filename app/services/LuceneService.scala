@@ -34,6 +34,7 @@ import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.ws.WSClient
 import utils.ClassnameLogger
 
+import scala.collection.JavaConverters._
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 import scala.xml.NodeSeq
@@ -52,18 +53,23 @@ trait IndexService {
   def query(query: String): SearchResult
 }
 
+/**
+  * This service wraps around Lucene and controls all the CSW reading.
+  *
+  * @param appLifecycle
+  * @param wsClient
+  * @param configuration
+  */
 @Singleton
-class LuceneService @Inject()(appLifecycle: ApplicationLifecycle, wsClient: WSClient) extends IndexService with
-  ClassnameLogger {
+class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
+                              wsClient: WSClient,
+                              configuration: play.api.Configuration)
+  extends IndexService with ClassnameLogger {
 
-  //TODO SR extract to 'RequestBuilder' class.
-  val catalogues = Map("linz" -> "http://data.linz.govt.nz/feeds/csw/csw",
-    "mfe" -> "http://data.mfe.govt.nz/feeds/csw/csw",
-    "geogovt" -> "http://geodata.govt.nz/geonetwork/srv/en/csw",
-    "niwa" -> "http://dc.niwa.co.nz/niwa_dc/srv/eng/csw",
-    "landcare" -> "http://lris.scinfo.org.nz/feeds/csw/csw",
-    "doc" -> "http://geoportal.doc.govt.nz/geoportal/csw",
-    "gns" -> "http://data.gns.cri.nz/metadata/srv/eng/csw")
+  //get Object List gives a Java-List and not a Scala List, so we convert here.
+  val cataloguesConfig = configuration.getConfigList("csw.catalogues").get.asScala.toList
+  //this creates a list of tuples and converts them into a map
+  val catalogues = cataloguesConfig.map{ item => item.getString("name").get -> item.getString("url").get}.toMap
 
   /* TODO SR extract to 'RequestBuilder' class. Parameters or no parameters startPosition="1" maxRecords="15" ?
     https://github.com/ZGIS/smart-csw-ingester/issues/10
@@ -82,7 +88,8 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle, wsClient: WSCl
       |                resultType="results" startPosition="1" maxRecords="15"
       |                outputFormat="application/xml" outputSchema="http://www.isotc211.org/2005/gmd"
       |                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      |                xsi:schemaLocation="http://www.opengis.net/cat/csw/2.0.2 http://schemas.opengis.net/csw/2.0.2/CSW-discovery.xsd">
+      |                xsi:schemaLocation="http://www.opengis.net/cat/csw/2.0.2
+      |                                    http://schemas.opengis.net/csw/2.0.2/CSW-discovery.xsd">
       |  <csw:Query typeNames="gmd:MD_Metadata">
       |    <csw:ElementSetName>full</csw:ElementSetName>
       |  </csw:Query>
@@ -133,11 +140,12 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle, wsClient: WSCl
       // val url = "http://data.linz.govt.nz/feeds/csw/csw"
       // val result = Await.result(queryCsw(url, "linz"), 120.seconds)
 
-      val result = catalogues.map {
+      val result = catalogues.flatMap {
         case (csw, url) => {
+          //FIXME SR - for production this mustb e non-blocking!
           Await.result(queryCsw(url, csw), 120.seconds)
         }
-      }.toList.flatten
+      }.toList
 
       logger.info(f"Loaded ${result.size} documents from CSW.")
       result.foreach(searchDocument => iwriter.addDocument(searchDocument.asLuceneDocument()))
