@@ -272,7 +272,7 @@ object GmdElementSet extends ClassnameLogger {
   }
 
   def bboxFromCoords(east: Double, west: Double, south: Double, north: Double): Rectangle = {
-    // TODO WEIRD so much rubbish really?!
+    // TODO DATE Line Wraps :-(
     if (east < -180) logger.warn(f"e $east < -180")
     if (west > 180) logger.warn(f"w $west > 180")
     if (west < east) logger.warn(f"w $west < e $east")
