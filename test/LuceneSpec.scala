@@ -31,6 +31,10 @@ import org.apache.lucene.store.RAMDirectory
 import org.locationtech.spatial4j.context.SpatialContext
 import org.scalatestplus.play._
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
+
+import scala.concurrent.duration._
+import scala.concurrent.{Await, Future}
 
 class LuceneSpec extends PlaySpec with OneAppPerSuite {
 
@@ -48,6 +52,14 @@ class LuceneSpec extends PlaySpec with OneAppPerSuite {
 
       val ctx = SpatialContext.GEO
 
+      val catalogues = Map("linz" -> "http://data.linz.govt.nz/feeds/csw/csw",
+        "mfe" -> "http://data.mfe.govt.nz/feeds/csw/csw",
+        "geogovt" -> "http://geodata.govt.nz/geonetwork/srv/en/csw",
+        "niwa" -> "http://dc.niwa.co.nz/niwa_dc/srv/eng/csw",
+        "landcare" -> "http://lris.scinfo.org.nz/feeds/csw/csw",
+        "doc" -> "http://geoportal.doc.govt.nz/geoportal/csw",
+        "gns" -> "http://data.gns.cri.nz/metadata/srv/eng/csw")
+
       val asResource1 = this.getClass().getResource("csw_getrecordbyid-md_metadata.xml")
       val xml1: scala.xml.NodeSeq = scala.xml.XML.load(asResource1)
 
@@ -57,6 +69,22 @@ class LuceneSpec extends PlaySpec with OneAppPerSuite {
       val directory = new RAMDirectory()
       val analyzer = new StandardAnalyzer()
       val config = new IndexWriterConfig(analyzer)
+
+      def queryCsw(key: String, value: String) : Future[String] = {
+        Future {f"$key + $value"}
+      }
+
+      val result = catalogues.map {
+        case (csw, url) => {
+          println(f"$csw + $url")
+          val res: String = Await.result(queryCsw(url, csw), 120.seconds)
+          res
+        }
+      }
+
+      result.foreach(
+        str => println(str)
+      )
 
       val testList = List(
         GmdElementSet.fromXml(xml1),

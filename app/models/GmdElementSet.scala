@@ -204,11 +204,14 @@ object GmdElementSet extends ClassnameLogger {
         } catch {
           case ex: DateTimeParseException => {
             val yearMonthDayMatcher = new scala.util.matching.Regex("""(\d\d\d\d)-(\d\d)-(\d\d)""", "year", "month", "day")
+            val yearMonthDayMatcherTight = new scala.util.matching.Regex("""(\d\d\d\d)(\d\d)(\d\d)""", "year", "month", "day")
             val yearMonthMatcher = new scala.util.matching.Regex("""(\d\d\d\d)-(\d\d)""", "year", "month")
             val yearMatcher = new scala.util.matching.Regex("""(\d\d\d\d)""", "year")
 
             noOffsetDateString match {
               case yearMonthDayMatcher(year, month, day) =>
+                Some(LocalDate.of(year.toInt, Month.of(month.toInt), day.toInt))
+              case yearMonthDayMatcherTight(year, month, day) =>
                 Some(LocalDate.of(year.toInt, Month.of(month.toInt), day.toInt))
               case yearMonthMatcher(year, month) =>
                 Some(LocalDate.of(year.toInt, Month.of(month.toInt), 1))

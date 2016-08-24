@@ -248,6 +248,7 @@ class ParserSpec extends PlaySpec {
       val dateBroken1 =   <gmd:dateStamp><gco:Date/></gmd:dateStamp>
       val dateBroken2 =   <gmd:dateStamp><gco:Date>2012-12</gco:Date></gmd:dateStamp>
       val dateBroken3 =   <gmd:dateStamp><gco:Date>2012</gco:Date></gmd:dateStamp>
+      val dateBroken4 =   <gmd:dateStamp><gco:Date>20121220</gco:Date></gmd:dateStamp>
       val dateIsoTZ =   <gmd:dateStamp><gco:Date>2012-12-20+13:00</gco:Date></gmd:dateStamp>
       val isoDateTZInDateTime =   <gmd:dateStamp><gco:DateTime>2012-12-20+13:00</gco:DateTime></gmd:dateStamp>
       val wildDateTime =   <gmd:dateStamp><gco:DateTime>2012-12-20T00:00:00</gco:DateTime></gmd:dateStamp>
@@ -259,11 +260,13 @@ class ParserSpec extends PlaySpec {
       GmdElementSet.dateFromXml(dateBroken1) mustEqual LocalDate.of(1970, Month.JANUARY, 1)
       GmdElementSet.dateFromXml(dateBroken2) mustEqual LocalDate.of(2012, Month.of(12), 1)
       GmdElementSet.dateFromXml(dateBroken3) mustEqual LocalDate.of(2012, Month.JANUARY, 1)
+      GmdElementSet.dateFromXml(dateBroken4) mustEqual localDate1
       GmdElementSet.dateFromXml(dateIsoTZ) mustEqual localDate1
       GmdElementSet.dateFromXml(isoDateTZInDateTime) mustEqual localDate1
       GmdElementSet.dateFromXml(wildDateTime) mustEqual localDate1
       GmdElementSet.dateFromXml(wildCiDateTimeIsoT2) mustEqual localDate1
       GmdElementSet.dateFromXml(wildDateTimeIsoT3) mustEqual localDate1
+
     }
   }
 }

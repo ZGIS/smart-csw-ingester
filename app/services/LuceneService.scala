@@ -57,7 +57,7 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle, wsClient: WSCl
   ClassnameLogger {
 
   //TODO SR extract to 'RequestBuilder' class.
-  val catalogues = ("linz" -> "http://data.linz.govt.nz/feeds/csw/csw",
+  val catalogues = Map("linz" -> "http://data.linz.govt.nz/feeds/csw/csw",
     "mfe" -> "http://data.mfe.govt.nz/feeds/csw/csw",
     "geogovt" -> "http://geodata.govt.nz/geonetwork/srv/en/csw",
     "niwa" -> "http://dc.niwa.co.nz/niwa_dc/srv/eng/csw",
@@ -65,7 +65,14 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle, wsClient: WSCl
     "doc" -> "http://geoportal.doc.govt.nz/geoportal/csw",
     "gns" -> "http://data.gns.cri.nz/metadata/srv/eng/csw")
 
-  // TODO SR Parameters or no parameters startPosition="1" maxRecords="15" ?
+  /* TODO SR extract to 'RequestBuilder' class. Parameters or no parameters startPosition="1" maxRecords="15" ?
+    https://github.com/ZGIS/smart-csw-ingester/issues/10
+    typical GeoNetwortk problem!!!
+      Unknown response content. Body:
+      <response>
+        <info>No 'request' parameter found</info>
+      </response>
+  */
   val XML_REQUEST: String =
     """
       |<csw:GetRecords xmlns:csw="http://www.opengis.net/cat/csw/2.0.2"
@@ -123,10 +130,18 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle, wsClient: WSCl
       iwriter.deleteAll()
       iwriter.commit()
 
-      val url = "http://data.linz.govt.nz/feeds/csw/csw"
-      val result = Await.result(queryCsw(url, "linz"), 120.seconds)
+      // val url = "http://data.linz.govt.nz/feeds/csw/csw"
+      // val result = Await.result(queryCsw(url, "linz"), 120.seconds)
+
+      val result = catalogues.map {
+        case (csw, url) => {
+          Await.result(queryCsw(url, csw), 120.seconds)
+        }
+      }.toList.flatten
+
       logger.info(f"Loaded ${result.size} documents from CSW.")
       result.foreach(searchDocument => iwriter.addDocument(searchDocument.asLuceneDocument()))
+
       iwriter.commit()
       logger.info("Index ready")
     }
