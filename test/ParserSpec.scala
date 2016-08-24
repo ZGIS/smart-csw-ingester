@@ -20,6 +20,7 @@
 import java.time._
 import java.time.format._
 
+import models.GmdElementSet._
 import models.{GmdElementSet, GmdElementSetJsonWriter}
 import org.scalatestplus.play._
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -196,11 +197,46 @@ class ParserSpec extends PlaySpec {
       val duration = Duration.between(auckland, oneDayLater)
 
       println("ISO_LOCAL_DATE: " + auckland.format(DateTimeFormatter.ISO_LOCAL_DATE))
+      println("ISO_OFFSET_DATE: " + auckland.format(DateTimeFormatter.ISO_OFFSET_DATE))
       println("ISO_DATE: " + auckland.format(DateTimeFormatter.ISO_DATE))
-      println("ISO_OFFSET_DATE_TIME: " + auckland.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
-      println("ISO_DATE_TIME: " + auckland.format(DateTimeFormatter.ISO_DATE_TIME))
-      println("RFC_1123_DATE_TIME: " + auckland.format(DateTimeFormatter.RFC_1123_DATE_TIME))
 
+      println("BASIC_ISO_DATE: " + auckland.format(DateTimeFormatter.BASIC_ISO_DATE))
+      println("ISO_ORDINAL_DATE: " + auckland.format(DateTimeFormatter.ISO_ORDINAL_DATE))
+      println("ISO_WEEK_DATE: " + auckland.format(DateTimeFormatter.ISO_WEEK_DATE))
+
+      println("ISO_LOCAL_TIME: " + auckland.format(DateTimeFormatter.ISO_LOCAL_TIME))
+      println("ISO_OFFSET_TIME: " + auckland.format(DateTimeFormatter.ISO_OFFSET_TIME))
+      println("ISO_TIME: " + auckland.format(DateTimeFormatter.ISO_TIME))
+
+      println("ISO_LOCAL_DATE_TIME: " + auckland.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+      println("ISO_OFFSET_DATE_TIME: " + auckland.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
+      println("ISO_ZONED_DATE_TIME: " + auckland.format(DateTimeFormatter.ISO_ZONED_DATE_TIME))
+      println("ISO_DATE_TIME: " + auckland.format(DateTimeFormatter.ISO_DATE_TIME))
+
+      println("RFC_1123_DATE_TIME: " + auckland.format(DateTimeFormatter.RFC_1123_DATE_TIME))
+      println("ISO_INSTANT: " + auckland.format(DateTimeFormatter.ISO_INSTANT))
+
+      /*
+      ISO_LOCAL_DATE: 2012-12-20
+      ISO_OFFSET_DATE: 2012-12-20+13:00
+      ISO_DATE: 2012-12-20+13:00
+
+      BASIC_ISO_DATE: 20121220+1300
+      ISO_ORDINAL_DATE: 2012-355+13:00
+      ISO_WEEK_DATE: 2012-W51-4+13:00
+
+      ISO_LOCAL_TIME: 12:00:00
+      ISO_OFFSET_TIME: 12:00:00+13:00
+      ISO_TIME: 12:00:00+13:00
+
+      ISO_LOCAL_DATE_TIME: 2012-12-20T12:00:00
+      ISO_OFFSET_DATE_TIME: 2012-12-20T12:00:00+13:00
+      ISO_ZONED_DATE_TIME: 2012-12-20T12:00:00+13:00[Pacific/Auckland]
+      ISO_DATE_TIME: 2012-12-20T12:00:00+13:00[Pacific/Auckland]
+
+      RFC_1123_DATE_TIME: Thu, 20 Dec 2012 12:00:00 +1300
+      ISO_INSTANT: 2012-12-19T23:00:00Z
+       */
       val parsedDate1 = LocalDate.parse(dateString1, DateTimeFormatter.ISO_LOCAL_DATE)
       val parsedDate2 = LocalDate.parse(dateString2, DateTimeFormatter.ISO_LOCAL_DATE)
 
@@ -209,6 +245,42 @@ class ParserSpec extends PlaySpec {
 
       parsedDate1 mustEqual localDate1
       parsedDate2 mustEqual localDate2
+
+      val dateOk = <gmd:dateStamp><gco:Date>2012-12-20</gco:Date></gmd:dateStamp>
+      val ciDateOk =   <gmd:date><gmd:CI_Date><gmd:date><gco:Date>2012-12-20</gco:Date></gmd:date></gmd:CI_Date></gmd:date>
+      val dateBroken1 =   <gmd:dateStamp><gco:Date/></gmd:dateStamp>
+      val dateBroken2 =   <gmd:dateStamp><gco:Date>2012-12</gco:Date></gmd:dateStamp>
+      val dateIsoTZ =   <gmd:dateStamp><gco:Date>2012-12-20+13:00</gco:Date></gmd:dateStamp>
+      val isoDateTZInDateTime =   <gmd:dateStamp><gco:DateTime>2012-12-20+13:00</gco:DateTime></gmd:dateStamp>
+      val wildDateTime =   <gmd:dateStamp><gco:DateTime>2012-12-20T00:00:00</gco:DateTime></gmd:dateStamp>
+      val wildCiDateTimeIsoT2 =   <gmd:date><gmd:CI_Date><gmd:date><gco:DateTime>2012-12-20T12:00:00Z</gco:DateTime></gmd:date></gmd:CI_Date></gmd:date>
+      val wildDateTimeIsoT3 =   <gmd:dateStamp><gco:DateTime>2012-12-20T12:00:00+13:00</gco:DateTime></gmd:dateStamp>
+
+      // FIXME body of tests :-)
+      val str = "2012-12-20T23:00:00Z"
+      if (str.contains("T")) {
+        println (str)
+        val parsedDate: Option[LocalDate] = try {
+              if (str.contains("Z")) {
+                Some(LocalDate.parse(str.replace("Z",""), DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+              } else {
+                Some(LocalDate.parse(str, DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+              }
+        } catch {
+          case e : Throwable => None
+        }
+        println(parsedDate)
+      }
+      // TODO more date time parsing
+      GmdElementSet.dateFromXml(dateOk) mustEqual localDate1
+      GmdElementSet.dateFromXml(ciDateOk) mustEqual localDate1
+      GmdElementSet.dateFromXml(dateBroken1) mustEqual LocalDate.of(1970, Month.JANUARY, 1)
+      GmdElementSet.dateFromXml(dateBroken2) mustEqual LocalDate.of(1970, Month.JANUARY, 1)
+      GmdElementSet.dateFromXml(dateIsoTZ) mustEqual LocalDate.of(1970, Month.JANUARY, 1)
+      GmdElementSet.dateFromXml(isoDateTZInDateTime) mustEqual LocalDate.of(1970, Month.JANUARY, 1)
+      GmdElementSet.dateFromXml(wildDateTime) mustEqual localDate1
+      GmdElementSet.dateFromXml(wildCiDateTimeIsoT2) mustEqual localDate1
+      GmdElementSet.dateFromXml(wildDateTimeIsoT3) mustEqual LocalDate.of(1970, Month.JANUARY, 1)
     }
   }
 }

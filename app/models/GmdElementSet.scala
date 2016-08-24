@@ -30,6 +30,7 @@ import org.locationtech.spatial4j.io.ShapeIO
 import org.locationtech.spatial4j.shape.Rectangle
 import play.api.Logger
 import play.api.libs.json._
+import utils.ClassnameLogger
 
 import scala.xml.NodeSeq
 
@@ -44,7 +45,7 @@ case class GmdElementSet(fileIdentifier: String,
                          contactEmail: String,
                          license: String,
                          bbox: Rectangle,
-                         origin: String) {
+                         origin: String) extends ClassnameLogger {
 
   override def toString(): String = {
     f"""
@@ -127,8 +128,7 @@ case class GmdElementSet(fileIdentifier: String,
   }
 }
 
-object GmdElementSet {
-  val logger = Logger(this.getClass())
+object GmdElementSet extends ClassnameLogger {
 
   val ctx = SpatialContext.GEO
   val shpReader = ctx.getFormats().getReader(ShapeIO.WKT)
@@ -183,16 +183,34 @@ object GmdElementSet {
   // worst case create default date or maybe make optional at all, like BBOX suggestion?
   def dateFromStrings(dateStrings: List[String]): LocalDate = {
 
-    dateStrings.filter(dateString => !dateString.isEmpty).map{
+    val datesList = dateStrings.filter(dateString => !dateString.isEmpty).map{
       dateString =>
         val parsedDate: Option[LocalDate] = try {
-          Some(LocalDate.parse(dateString, DateTimeFormatter.ISO_LOCAL_DATE))
+          dateString match {
+          case str if str.contains("T") => {
+            if (str.contains("Z")) {
+              Some(LocalDate.parse(str.replace("Z",""), DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+            } else {
+              Some(LocalDate.parse(str, DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+            }
+          }
+          case _ =>
+            Some(LocalDate.parse(dateString, DateTimeFormatter.ISO_LOCAL_DATE))
+          }
         } catch {
-          // case ex: DateTimeParseException => LocalDate.of(1970, Month.JANUARY, 1)
+          case ex: DateTimeParseException => {
+            logger.info(f"Bad date $dateString")
+            None
+          }
           case e : Throwable => None
         }
         parsedDate
-    }.filter(dateOpt => dateOpt.isDefined).head.getOrElse(LocalDate.of(1970, Month.JANUARY, 1))
+    }.filter(dateOpt => dateOpt.isDefined)
+
+    if (datesList.isEmpty)
+      LocalDate.of(1970, Month.JANUARY, 1)
+    else
+      datesList.head.getOrElse(LocalDate.of(1970, Month.JANUARY, 1))
   }
 
   def dateFromXml(nodeSeq: NodeSeq): LocalDate = {
