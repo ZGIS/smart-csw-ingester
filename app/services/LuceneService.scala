@@ -166,7 +166,7 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle, wsClient: WSCl
     val gmdElementSets = requestResult.map(xmlOption => {
       val resultElements = (xmlOption.getOrElse(EMPTY_RESPONSE) \\ "MD_Metadata").map {
         node => {
-          logger.debug(f"Preparing ${(node \\ "fileIdentifier" \ "CharacterString").text}")
+          logger.debug(f"Preparing ${(node \ "fileIdentifier" \ "CharacterString").text}")
           logger.trace(node.toString())
           GmdElementSet.fromXml(node, catalogueId)
         }
