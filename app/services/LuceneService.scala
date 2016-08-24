@@ -56,14 +56,23 @@ trait IndexService {
 class LuceneService @Inject()(appLifecycle: ApplicationLifecycle, wsClient: WSClient) extends IndexService with
   ClassnameLogger {
 
-  //TODO SR extract to 'RequestBuilder' class. Parameters startPosition="1" maxRecords="15"
+  //TODO SR extract to 'RequestBuilder' class.
+  val catalogues = ("linz" -> "http://data.linz.govt.nz/feeds/csw/csw",
+    "mfe" -> "http://data.mfe.govt.nz/feeds/csw/csw",
+    "geogovt" -> "http://geodata.govt.nz/geonetwork/srv/en/csw",
+    "niwa" -> "http://dc.niwa.co.nz/niwa_dc/srv/eng/csw",
+    "landcare" -> "http://lris.scinfo.org.nz/feeds/csw/csw",
+    "doc" -> "http://geoportal.doc.govt.nz/geoportal/csw",
+    "gns" -> "http://data.gns.cri.nz/metadata/srv/eng/csw")
+
+  // TODO SR Parameters or no parameters startPosition="1" maxRecords="15" ?
   val XML_REQUEST: String =
     """
       |<csw:GetRecords xmlns:csw="http://www.opengis.net/cat/csw/2.0.2"
       |                xmlns:ogc="http://www.opengis.net/ogc"
       |                xmlns:gmd="http://www.isotc211.org/2005/gmd"
       |                service="CSW" version="2.0.2"
-      |                resultType="results" startPosition="1" maxRecords="50"
+      |                resultType="results" startPosition="1" maxRecords="15"
       |                outputFormat="application/xml" outputSchema="http://www.isotc211.org/2005/gmd"
       |                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       |                xsi:schemaLocation="http://www.opengis.net/cat/csw/2.0.2 http://schemas.opengis.net/csw/2.0.2/CSW-discovery.xsd">

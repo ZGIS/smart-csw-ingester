@@ -272,6 +272,15 @@ object GmdElementSet extends ClassnameLogger {
   }
 
   def bboxFromCoords(east: Double, west: Double, south: Double, north: Double): Rectangle = {
+    // TODO WEIRD so much rubbish really?!
+    if (east < -180) logger.warn(f"e $east < -180")
+    if (west > 180) logger.warn(f"w $west > 180")
+    if (west < east) logger.warn(f"w $west < e $east")
+
+    if (south < -90) logger.warn(f"s $south > -90")
+    if (north > 90) logger.warn(f"n $north > 90")
+    if (north < south) logger.warn(f"n $north < s $south")
+
     ctx.getShapeFactory().rect(east, west, south, north)
   }
 
@@ -282,14 +291,41 @@ object GmdElementSet extends ClassnameLogger {
     shpReader.read(envelope).asInstanceOf[Rectangle]
   }
 
+  def extractLatLonNumber(textIn: String, default: Double) : Double = {
+
+    if (textIn.isEmpty) {
+      default
+
+    } else {
+      val parsedDouble = try {
+        Some(textIn.toDouble)
+
+      } catch {
+        case ex: java.lang.NumberFormatException => {
+          logger.warn(f"Bad latlon value $textIn")
+          Some(default)
+        }
+        case e : Throwable => {
+          logger.error(e.getLocalizedMessage, e.getCause)
+          None
+        }
+      }
+      parsedDouble.getOrElse(default)
+    }
+  }
+
   def bboxFromXml(nodeSeq: NodeSeq): Rectangle = {
     val bboxXml = (nodeSeq \\ "extent" \ "EX_Extent")
     logger.trace(f"bboxFromXml: ${bboxXml}")
     if (bboxXml.size == 1) {
-      val west = (bboxXml \\ "geographicElement" \ "EX_GeographicBoundingBox" \ "westBoundLongitude" \ "Decimal").text.toDouble
-      val east = (bboxXml \\ "geographicElement" \ "EX_GeographicBoundingBox" \ "eastBoundLongitude" \ "Decimal").text.toDouble
-      val north = (bboxXml \\ "geographicElement" \ "EX_GeographicBoundingBox" \ "northBoundLatitude" \ "Decimal").text.toDouble
-      val south = (bboxXml \\ "geographicElement" \ "EX_GeographicBoundingBox" \ "southBoundLatitude" \ "Decimal").text.toDouble
+      val eastText = (bboxXml \\ "geographicElement" \ "EX_GeographicBoundingBox" \ "eastBoundLongitude" \ "Decimal").text
+      val westText = (bboxXml \\ "geographicElement" \ "EX_GeographicBoundingBox" \ "westBoundLongitude" \ "Decimal").text
+      val southText = (bboxXml \\ "geographicElement" \ "EX_GeographicBoundingBox" \ "southBoundLatitude" \ "Decimal").text
+      val northText = (bboxXml \\ "geographicElement" \ "EX_GeographicBoundingBox" \ "northBoundLatitude" \ "Decimal").text
+      val east = extractLatLonNumber(eastText,-180)
+      val west = extractLatLonNumber(westText,180)
+      val south = extractLatLonNumber(southText,-90)
+      val north = extractLatLonNumber(northText,90)
       // Rectangle rect(double minX, double maxX, double minY, double maxY);
       bboxFromCoords(east, west, south, north)
     }
