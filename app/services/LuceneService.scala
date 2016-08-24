@@ -19,6 +19,7 @@
 
 package services
 
+import java.util.concurrent.TimeoutException
 import javax.inject.{Inject, Singleton}
 
 import models.GmdElementSet
@@ -29,16 +30,16 @@ import org.apache.lucene.search.{MatchAllDocsQuery, SearcherManager}
 import org.apache.lucene.spatial.bbox.BBoxStrategy
 import org.apache.lucene.store.RAMDirectory
 import org.locationtech.spatial4j.context.SpatialContext
+import play.api.Configuration
 import play.api.inject.ApplicationLifecycle
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.ws.WSClient
 import utils.ClassnameLogger
+import utils.csw.{CswGetRecordsRequest, CswGetRecordsResponse}
 
 import scala.collection.JavaConverters._
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
-import scala.xml.NodeSeq
-
 
 // explanation see https://www.playframework.com/documentation/2.5.x/ScalaJsonAutomated and
 // https://www.playframework.com/documentation/2.5.x/ScalaJsonCombinators
@@ -48,7 +49,7 @@ case class SearchResultHeader(noDocuments: Int, query: String)
 case class SearchResult(header: SearchResultHeader, results: List[GmdElementSet])
 
 trait IndexService {
-  def refreshIndex(): Unit
+  def buildIndex(): Unit
 
   def query(query: String): SearchResult
 }
@@ -56,63 +57,31 @@ trait IndexService {
 /**
   * This service wraps around Lucene and controls all the CSW reading.
   *
-  * @param appLifecycle
-  * @param wsClient
-  * @param configuration
+  * @param appLifecycle  injected [[play.api.inject.ApplicationLifecycle]]
+  * @param wsClient      injected [[play.api.libs.ws.WSClient]]
+  * @param configuration injected [[play.api.Configuration]]
   */
 @Singleton
 class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
                               wsClient: WSClient,
-                              configuration: play.api.Configuration)
+                              configuration: Configuration)
   extends IndexService with ClassnameLogger {
-
-  //get Object List gives a Java-List and not a Scala List, so we convert here.
-  val cataloguesConfig = configuration.getConfigList("csw.catalogues").get.asScala.toList
-  //this creates a list of tuples and converts them into a map
-  val catalogues = cataloguesConfig.map{ item => item.getString("name").get -> item.getString("url").get}.toMap
-
-  /* TODO SR extract to 'RequestBuilder' class. Parameters or no parameters startPosition="1" maxRecords="15" ?
-    https://github.com/ZGIS/smart-csw-ingester/issues/10
-    typical GeoNetwortk problem!!!
-      Unknown response content. Body:
-      <response>
-        <info>No 'request' parameter found</info>
-      </response>
-  */
-  val XML_REQUEST: String =
-    """
-      |<csw:GetRecords xmlns:csw="http://www.opengis.net/cat/csw/2.0.2"
-      |                xmlns:ogc="http://www.opengis.net/ogc"
-      |                xmlns:gmd="http://www.isotc211.org/2005/gmd"
-      |                service="CSW" version="2.0.2"
-      |                resultType="results" startPosition="1" maxRecords="15"
-      |                outputFormat="application/xml" outputSchema="http://www.isotc211.org/2005/gmd"
-      |                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      |                xsi:schemaLocation="http://www.opengis.net/cat/csw/2.0.2
-      |                                    http://schemas.opengis.net/csw/2.0.2/CSW-discovery.xsd">
-      |  <csw:Query typeNames="gmd:MD_Metadata">
-      |    <csw:ElementSetName>full</csw:ElementSetName>
-      |  </csw:Query>
-      |</csw:GetRecords>
-    """.stripMargin
-
-  val EMPTY_RESPONSE: NodeSeq = <csw:GetRecordsResponse xsi:schemaLocation="http://www.opengis.net/cat/csw/2.0.2 http://schemas.opengis.net/csw/2.0.2/CSW-discovery.xsd"
-                                                        version="2.0.2" xmlns:sitemap="http://www.sitemaps.org/schemas/sitemap/0.9"
-                                                        xmlns:csw="http://www.opengis.net/cat/csw/2.0.2">
-    <csw:SearchStatus timestamp="2016-08-24T02:01:33Z"/>
-    <csw:SearchResults elementSet="full" recordSchema="http://www.isotc211.org/2005/gmd"
-                       numberOfRecordsReturned="0" numberOfRecordsMatched="0" nextRecord="0">
-    </csw:SearchResults>
-  </csw:GetRecordsResponse>
-
   logger.info("Starting Lucene Service")
+
+  logger.debug("Reading config: csw.catalogues ")
+  //get Object List gives a Java-List and not a Scala List, so we convert here.
+  private val cataloguesConfig = configuration.getConfigList("csw.catalogues").get.asScala.toList
+  //this creates a list of tuples and converts them into a map
+  val catalogues = cataloguesConfig.map { item => item.getString("name").get -> item.getString("url").get }.toMap
+  val maxDocsPerFetch = configuration.getInt("csw.maxDocs").getOrElse(500)
+  logger.error(s"max docs $maxDocsPerFetch")
 
   //stores the search index in RAM
   val directory = new RAMDirectory()
-  refreshIndex()
-  //as long as there is no index, we cant have a searcher manager. Figure out how to do :-)
 
-  val searcherManager = new SearcherManager(directory, null)
+  buildIndex()
+  //FIXME SR without an index we can't create the searcherManager. How to deal with that?
+  //val searcherManager = new SearcherManager(directory, null)
 
   appLifecycle.addStopHook { () =>
     Future.successful(() => {
@@ -122,33 +91,30 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
   }
 
   /**
-    * Refreshes the Search index
+    * Builds the Search index
     */
   //FIXME SR use something like lib-lucene-sugar. Lib unfortunately seems very old/outdated? https://github.com/gilt/lib-lucene-sugar
-  def refreshIndex(): Unit = {
-    logger.info("Refreshing Lucene Index")
+  def buildIndex(): Unit = {
+    logger.info("Building Lucene Index")
+
+    val gmdElemSetsFutures = Future.sequence(catalogues.map {
+      case (catName, url) => {
+        queryCatalogue(catName, url)
+      }
+    }.toList)
+
+    val gmdElemSets = Await.result(gmdElemSetsFutures, 5 minutes).flatten
+    logger.info(f"Loaded ${gmdElemSets.size} documents from CSW.")
+
     val analyzer = new StandardAnalyzer()
     val config = new IndexWriterConfig(analyzer)
     config.setCommitOnClose(true)
-
     //FIXME SR use SCALA_ARM (automated resource management)?
     val iwriter = new IndexWriter(directory, config)
     try {
       iwriter.deleteAll()
       iwriter.commit()
-
-      // val url = "http://data.linz.govt.nz/feeds/csw/csw"
-      // val result = Await.result(queryCsw(url, "linz"), 120.seconds)
-
-      val result = catalogues.flatMap {
-        case (csw, url) => {
-          //FIXME SR - for production this mustb e non-blocking!
-          Await.result(queryCsw(url, csw), 120.seconds)
-        }
-      }.toList
-
-      logger.info(f"Loaded ${result.size} documents from CSW.")
-      result.foreach(searchDocument => iwriter.addDocument(searchDocument.asLuceneDocument()))
+      gmdElemSets.foreach(searchDocument => iwriter.addDocument(searchDocument.asLuceneDocument()))
 
       iwriter.commit()
       logger.info("Index ready")
@@ -158,54 +124,91 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
     }
   }
 
-  def queryCsw(url: String, catalogueId: String): Future[List[GmdElementSet]] = {
-    logger.info(f"Loading data from CSW $url")
+  /**
+    * Sends a GetRecords POST request to a catalogue and returns the response as a future.
+    *
+    * @param url           String containing URL to catalogue
+    * @param startPosition Int with the first element to grab (pagination)
+    * @param maxDocuments  Int with the max number of documents to return
+    */
+  //TODO SR maybe we should also return the exception object to give more meaningful error messages in the GUI?
+  private def postGetRecordsRequest(url: String, startPosition: Int,
+                                    maxDocuments: Int,
+                                    f: Future[List[CswGetRecordsResponse]]): Future[List[CswGetRecordsResponse]] = {
+    logger.info(f"Sending GetRecords request to $url")
 
-    val wsClientRequestFuture = wsClient.url(url)
-      .withRequestTimeout(60.seconds)
-      .withHeaders("Content-Type" -> "application/xml")
-      .post(XML_REQUEST)
+    val wsClientResponseFuture =
+      wsClient.url(url)
+        .withRequestTimeout(20.seconds)
+        .withHeaders("Content-Type" -> "application/xml")
+        .post(CswGetRecordsRequest(startPosition, maxDocuments))
 
-    val requestResult = wsClientRequestFuture.map {
-      response => logger.debug(f"Response status: ${response.status} - ${response.statusText}")
-        response.status match {
-          case 200 => {
-            logger.debug(f"Response Content Type: ${response.allHeaders.get("Content-Type").getOrElse("Unknown")}")
-            logger.debug(f"Response-Length: ${response.body.length}")
-            logger.trace(f"Response-Body: ${response.body.toString}")
-            response.xml.label match {
-              case "ExceptionReport" => {
-                logger.warn(f"Got Exception Response. Text: ${(response.xml \ "Exception" \ "ExceptionText").text}")
-                None
-              }
-              case "GetRecordsResponse" => {
-                Some(response.xml)
-              }
-              case _ => {
-                logger.warn(f"Unknown response content. Body: ${response.xml.toString}")
-                None
-              }
+    val cswGetRecordsResponseListFuture = wsClientResponseFuture.flatMap { wsClientResponse =>
+      logger.info(f"Response status: ${wsClientResponse.status} - ${wsClientResponse.statusText} ($url)")
+      wsClientResponse.status match {
+        case 200 => {
+          logger.debug(f"Response Content Type: ${wsClientResponse.allHeaders.getOrElse("Content-Type", "Unknown")}")
+          logger.debug(f"Response-Length: ${wsClientResponse.body.length}")
+          logger.trace(f"Response-Body: ${wsClientResponse.body.toString}")
+          wsClientResponse.xml.label match {
+            case "ExceptionReport" => {
+              logger.warn(
+                f"Got Exception Response. Text: ${(wsClientResponse.xml \ "Exception" \ "ExceptionText").text}")
+              Future.successful(List())
+            }
+            case "GetRecordsResponse" => {
+              val cswGetRecResp = CswGetRecordsResponse(wsClientResponse.xml)
+              logger.info(f"nextRecord: ${cswGetRecResp.nextRecord}, numberOfRec ${cswGetRecResp.numberOfRecordsMatched}")
+              if ((cswGetRecResp.nextRecord > cswGetRecResp.numberOfRecordsMatched) ||
+                (cswGetRecResp.nextRecord == 0))
+                f.flatMap(l => {
+                  Future.successful(cswGetRecResp :: l)
+                })
+              else
+                f.flatMap(l => {
+                  postGetRecordsRequest(url, cswGetRecResp.nextRecord, maxDocuments,
+                    Future.successful(cswGetRecResp :: l))
+                })
+            }
+            case _ => {
+              logger.warn(f"Unknown response content. Body: ${wsClientResponse.xml.toString}")
+              Future.successful(List())
             }
           }
-          case _ => {
-            logger.warn(f"Error while executing CSW query.")
-            logger.debug(f"Response body: ${response.body}")
-            None
-          }
+        }
+        case _ => {
+          logger.warn(f"Error while executing CSW query.")
+          logger.debug(f"Response body: ${wsClientResponse.body}")
+          Future.successful(List())
+        }
+      }
+    } recover {
+        case e => {
+          logger.warn(f"Exception on $url", e)
+          List()
         }
     }
+    cswGetRecordsResponseListFuture
+  }
 
-    val gmdElementSets = requestResult.map(xmlOption => {
-      val resultElements = (xmlOption.getOrElse(EMPTY_RESPONSE) \\ "MD_Metadata").map {
-        node => {
-          logger.debug(f"Preparing ${(node \ "fileIdentifier" \ "CharacterString").text}")
-          logger.trace(node.toString())
-          GmdElementSet.fromXml(node, catalogueId)
-        }
-      }.toList
-      resultElements
+  /**
+    *
+    * @param catalogueName
+    * @param url
+    * @return
+    */
+  private def queryCatalogue(catalogueName: String, url: String): Future[List[GmdElementSet]] = {
+    val getRecordsFuture = postGetRecordsRequest(url, 1, maxDocsPerFetch, Future.successful(Nil))
+    val gmdElementsFuture = getRecordsFuture.map(cswGetRecordsResponses => {
+      cswGetRecordsResponses.flatMap(cswGetRecordsResponse => {
+        (cswGetRecordsResponse.xml \\ "MD_Metadata").map(mdMetadataNode => {
+          logger.debug(f"Preparing($catalogueName): ${(mdMetadataNode \ "fileIdentifier" \ "CharacterString").text}")
+          logger.trace(mdMetadataNode.toString)
+          GmdElementSet.fromXml(mdMetadataNode, catalogueName)
+        })
+      })
     })
-    gmdElementSets
+    gmdElementsFuture
   }
 
   /**
@@ -230,11 +233,13 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
       }
     }
 
+    val searcherManager = new SearcherManager(directory, null)
+
     searcherManager.maybeRefreshBlocking()
     val isearcher = searcherManager.acquire()
 
     //FIXME SR when index empty, the next
-    val search = isearcher.search(luceneQuery, isearcher.getIndexReader().numDocs())
+    val search = isearcher.search(luceneQuery, isearcher.getIndexReader.numDocs())
     val scoreDocs = search.scoreDocs
 
     val header = SearchResultHeader(search.totalHits, luceneQuery.toString())
