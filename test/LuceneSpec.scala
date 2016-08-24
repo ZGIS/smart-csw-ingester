@@ -31,7 +31,6 @@ import org.apache.lucene.store.RAMDirectory
 import org.locationtech.spatial4j.context.SpatialContext
 import org.scalatestplus.play._
 import play.api.inject.guice.GuiceApplicationBuilder
-import services.{IndexService, SearchResult, SearchResultHeader}
 
 class LuceneSpec extends PlaySpec with OneAppPerSuite {
 

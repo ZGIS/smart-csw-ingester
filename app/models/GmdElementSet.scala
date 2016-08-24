@@ -28,7 +28,6 @@ import org.apache.lucene.spatial.bbox.BBoxStrategy
 import org.locationtech.spatial4j.context.SpatialContext
 import org.locationtech.spatial4j.io.ShapeIO
 import org.locationtech.spatial4j.shape.Rectangle
-import play.api.Logger
 import play.api.libs.json._
 import utils.ClassnameLogger
 
@@ -177,36 +176,56 @@ object GmdElementSet extends ClassnameLogger {
     )
   }
 
-  // TODO check if ZoneInfo in date, alternatively either UTC or NZ TimeZone
+  // TODO check if ZoneInfo for parsedDate needed, alternatively either UTC or NZ TimeZone
   // check if Time info in date/datestamp
   // check decide dateStamp and/or/plus CI_Date date
-  // worst case create default date or maybe make optional at all, like BBOX suggestion?
+  // worst case create default date, suggestions?
   def dateFromStrings(dateStrings: List[String]): LocalDate = {
 
     val datesList = dateStrings.filter(dateString => !dateString.isEmpty).map{
       dateString =>
+        val offsetMatcher = new scala.util.matching.Regex("""\+\d\d:\d\d""", "offset")
+        val noOffsetDateString = offsetMatcher.replaceFirstIn(dateString, "")
+
         val parsedDate: Option[LocalDate] = try {
-          dateString match {
-          case str if str.contains("T") => {
-            if (str.contains("Z")) {
-              Some(LocalDate.parse(str.replace("Z",""), DateTimeFormatter.ISO_LOCAL_DATE_TIME))
-            } else {
-              Some(LocalDate.parse(str, DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+
+          noOffsetDateString match {
+            case str if str.contains("T") => {
+              if (str.contains("Z")) {
+                Some(LocalDate.parse(str.replace("Z",""), DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+              } else {
+                Some(LocalDate.parse(str, DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+              }
             }
-          }
-          case _ =>
-            Some(LocalDate.parse(dateString, DateTimeFormatter.ISO_LOCAL_DATE))
+
+            case _ =>
+              Some(LocalDate.parse(noOffsetDateString, DateTimeFormatter.ISO_LOCAL_DATE))
           }
         } catch {
           case ex: DateTimeParseException => {
-            logger.info(f"Bad date $dateString")
-            None
+            val yearMonthDayMatcher = new scala.util.matching.Regex("""(\d\d\d\d)-(\d\d)-(\d\d)""", "year", "month", "day")
+            val yearMonthMatcher = new scala.util.matching.Regex("""(\d\d\d\d)-(\d\d)""", "year", "month")
+            val yearMatcher = new scala.util.matching.Regex("""(\d\d\d\d)""", "year")
+
+            noOffsetDateString match {
+              case yearMonthDayMatcher(year, month, day) =>
+                Some(LocalDate.of(year.toInt, Month.of(month.toInt), day.toInt))
+              case yearMonthMatcher(year, month) =>
+                Some(LocalDate.of(year.toInt, Month.of(month.toInt), 1))
+              case yearMatcher(year) =>
+                Some(LocalDate.of(year.toInt, Month.JANUARY, 1))
+              case _ => {
+                logger.warn(f"Bad date $dateString $noOffsetDateString")
+                None
+              }
+            }
           }
           case e : Throwable => None
         }
         parsedDate
     }.filter(dateOpt => dateOpt.isDefined)
 
+    // finally, either there is something or epoch 0 worst case
     if (datesList.isEmpty)
       LocalDate.of(1970, Month.JANUARY, 1)
     else

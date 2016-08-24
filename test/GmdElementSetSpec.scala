@@ -25,8 +25,6 @@ import org.locationtech.spatial4j.io.ShapeIO
 import org.scalatestplus.play.PlaySpec
 import play.api.libs.json.Json
 
-import scala.xml.Elem
-
 /**
   * Created by steffen on 23.08.16.
   */

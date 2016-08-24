@@ -20,17 +20,14 @@
 import java.time._
 import java.time.format._
 
-import models.GmdElementSet._
-import models.{GmdElementSet, GmdElementSetJsonWriter}
-import org.scalatestplus.play._
-import play.api.inject.guice.GuiceApplicationBuilder
-
-import scala.xml._
+import models.GmdElementSet
 import org.locationtech.spatial4j.context.SpatialContext
 import org.locationtech.spatial4j.io._
 import org.locationtech.spatial4j.shape._
 import org.locationtech.spatial4j.shape.impl.BBoxCalculator
-import play.api.libs.json.Json
+import org.scalatestplus.play._
+
+import scala.xml._
 
 class ParserSpec extends PlaySpec {
 
@@ -101,7 +98,7 @@ class ParserSpec extends PlaySpec {
     }
 
     "should compute bounding boxes" in {
-      import java.util.{ArrayList, List}
+      import java.util.ArrayList
 
       val bboxXml = <gmd:extent><gmd:EX_Extent><gmd:geographicElement><gmd:EX_GeographicBoundingBox><gmd:westBoundLongitude><gco:Decimal>166.6899599</gco:Decimal></gmd:westBoundLongitude><gmd:eastBoundLongitude><gco:Decimal>-176.176448433</gco:Decimal></gmd:eastBoundLongitude><gmd:southBoundLatitude><gco:Decimal>-47.1549297167</gco:Decimal></gmd:southBoundLatitude><gmd:northBoundLatitude><gco:Decimal>-34.4322590833</gco:Decimal></gmd:northBoundLatitude></gmd:EX_GeographicBoundingBox></gmd:geographicElement></gmd:EX_Extent></gmd:extent>
 
@@ -250,37 +247,23 @@ class ParserSpec extends PlaySpec {
       val ciDateOk =   <gmd:date><gmd:CI_Date><gmd:date><gco:Date>2012-12-20</gco:Date></gmd:date></gmd:CI_Date></gmd:date>
       val dateBroken1 =   <gmd:dateStamp><gco:Date/></gmd:dateStamp>
       val dateBroken2 =   <gmd:dateStamp><gco:Date>2012-12</gco:Date></gmd:dateStamp>
+      val dateBroken3 =   <gmd:dateStamp><gco:Date>2012</gco:Date></gmd:dateStamp>
       val dateIsoTZ =   <gmd:dateStamp><gco:Date>2012-12-20+13:00</gco:Date></gmd:dateStamp>
       val isoDateTZInDateTime =   <gmd:dateStamp><gco:DateTime>2012-12-20+13:00</gco:DateTime></gmd:dateStamp>
       val wildDateTime =   <gmd:dateStamp><gco:DateTime>2012-12-20T00:00:00</gco:DateTime></gmd:dateStamp>
       val wildCiDateTimeIsoT2 =   <gmd:date><gmd:CI_Date><gmd:date><gco:DateTime>2012-12-20T12:00:00Z</gco:DateTime></gmd:date></gmd:CI_Date></gmd:date>
       val wildDateTimeIsoT3 =   <gmd:dateStamp><gco:DateTime>2012-12-20T12:00:00+13:00</gco:DateTime></gmd:dateStamp>
 
-      // FIXME body of tests :-)
-      val str = "2012-12-20T23:00:00Z"
-      if (str.contains("T")) {
-        println (str)
-        val parsedDate: Option[LocalDate] = try {
-              if (str.contains("Z")) {
-                Some(LocalDate.parse(str.replace("Z",""), DateTimeFormatter.ISO_LOCAL_DATE_TIME))
-              } else {
-                Some(LocalDate.parse(str, DateTimeFormatter.ISO_LOCAL_DATE_TIME))
-              }
-        } catch {
-          case e : Throwable => None
-        }
-        println(parsedDate)
-      }
-      // TODO more date time parsing
       GmdElementSet.dateFromXml(dateOk) mustEqual localDate1
       GmdElementSet.dateFromXml(ciDateOk) mustEqual localDate1
       GmdElementSet.dateFromXml(dateBroken1) mustEqual LocalDate.of(1970, Month.JANUARY, 1)
-      GmdElementSet.dateFromXml(dateBroken2) mustEqual LocalDate.of(1970, Month.JANUARY, 1)
-      GmdElementSet.dateFromXml(dateIsoTZ) mustEqual LocalDate.of(1970, Month.JANUARY, 1)
-      GmdElementSet.dateFromXml(isoDateTZInDateTime) mustEqual LocalDate.of(1970, Month.JANUARY, 1)
+      GmdElementSet.dateFromXml(dateBroken2) mustEqual LocalDate.of(2012, Month.of(12), 1)
+      GmdElementSet.dateFromXml(dateBroken3) mustEqual LocalDate.of(2012, Month.JANUARY, 1)
+      GmdElementSet.dateFromXml(dateIsoTZ) mustEqual localDate1
+      GmdElementSet.dateFromXml(isoDateTZInDateTime) mustEqual localDate1
       GmdElementSet.dateFromXml(wildDateTime) mustEqual localDate1
       GmdElementSet.dateFromXml(wildCiDateTimeIsoT2) mustEqual localDate1
-      GmdElementSet.dateFromXml(wildDateTimeIsoT3) mustEqual LocalDate.of(1970, Month.JANUARY, 1)
+      GmdElementSet.dateFromXml(wildDateTimeIsoT3) mustEqual localDate1
     }
   }
 }
