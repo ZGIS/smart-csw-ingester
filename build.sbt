@@ -18,7 +18,6 @@
  */
 
 import com.typesafe.sbt.packager.archetypes.JavaAppPackaging
-import de.johoop.findbugs4sbt.FindBugs._
 import com.typesafe.sbt.packager.docker._
 
 name := """smart-csw-ingester"""
@@ -65,29 +64,9 @@ scalacOptions in ThisBuild ++= Seq(
   "-language:reflectiveCalls"
 )
 
-findbugsSettings
-
-findbugsExcludeFilters := Some(
-  <FindBugsFilter>
-    <!-- See docs/examples at http://findbugs.sourceforge.net/manual/filter.html -->
-    <Match>
-      <Class name="~views\.html\..*"/>
-    </Match>
-    <Match>
-      <Class name="~Routes.*"/>
-    </Match>
-    <Match>
-      <Class name="~controllers\.routes.*"/>
-    </Match>
-  </FindBugsFilter>
-)
-
 version in Docker := version.value
-
 maintainer in Docker := "allixender@googlemail.com"
-
 dockerBaseImage in Docker := "java:8-jre"
-
 dockerBaseImage := "java:8-jre"
 
 javaOptions in Universal ++= Seq(

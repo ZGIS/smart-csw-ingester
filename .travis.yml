@@ -13,8 +13,7 @@ services:
   - docker
 
 script:
-  - sbt test
-  - sbt docker:publishLocal
+  - sbt test scalastyle
 
 notifications:
   email:
