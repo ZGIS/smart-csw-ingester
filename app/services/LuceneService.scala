@@ -30,7 +30,7 @@ import org.apache.lucene.search.{MatchAllDocsQuery, SearcherManager}
 import org.apache.lucene.spatial.bbox.BBoxStrategy
 import org.apache.lucene.store.RAMDirectory
 import org.locationtech.spatial4j.context.SpatialContext
-import play.api.Configuration
+import play.api.{Application, Configuration, Environment}
 import play.api.inject.ApplicationLifecycle
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.ws.WSClient
@@ -64,15 +64,25 @@ trait IndexService {
 @Singleton
 class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
                               wsClient: WSClient,
-                              configuration: Configuration)
+                              configuration: Configuration,
+                              environment: Environment)
+
   extends IndexService with ClassnameLogger {
   logger.info("Starting Lucene Service")
 
   logger.debug("Reading config: csw.catalogues ")
-  //get Object List gives a Java-List and not a Scala List, so we convert here.
-  private val cataloguesConfig = configuration.getConfigList("csw.catalogues").get.asScala.toList
-  //this creates a list of tuples and converts them into a map
-  val catalogues = cataloguesConfig.map { item => item.getString("name").get -> item.getString("url").get }.toMap
+
+  // FIXME testing small number of catalogue for dev & test mode
+  val catalogues = if (environment.mode.equals(play.api.Mode.Prod) ) {
+    //get Object List gives a Java-List and not a Scala List, so we convert here.
+    val cataloguesConfigProd = configuration.getConfigList("csw.catalogues").get.asScala.toList
+    //this creates a list of tuples and converts them into a map
+    cataloguesConfigProd.map { item => item.getString("name").get -> item.getString("url").get }.toMap
+  } else {
+    Map("mfe" -> "http://data.mfe.govt.nz/feeds/csw/csw")
+  }
+
+
   val maxDocsPerFetch = configuration.getInt("csw.maxDocs").getOrElse(500)
   logger.error(s"max docs $maxDocsPerFetch")
 
@@ -95,6 +105,8 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
     */
   //FIXME SR use something like lib-lucene-sugar. Lib unfortunately seems very old/outdated? https://github.com/gilt/lib-lucene-sugar
   def buildIndex(): Unit = {
+    import scala.language.postfixOps
+
     logger.info("Building Lucene Index")
 
     val gmdElemSetsFutures = Future.sequence(catalogues.map {
