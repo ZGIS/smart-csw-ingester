@@ -20,8 +20,7 @@
 package controllers
 
 import javax.inject._
-
-import models.GmdElementSetJsonWriter
+import models.gmd.MdMetadataSetWriter
 import play.api.libs.json.Json
 import play.api.mvc._
 import services.{LuceneService, SearchResult, SearchResultHeader}
@@ -34,7 +33,7 @@ class QueryController @Inject()(luceneService: LuceneService) extends Controller
   // FIXME AK: do we need Json Reads for search result encoding? - SR not necessarily, this was for completeness :-)
   // implicit val searchResultHeaderRead = Json.reads[SearchResultHeader]
   implicit val searchResultHeaderWrite = Json.writes[SearchResultHeader]
-  implicit val gmdElementSetWrite = GmdElementSetJsonWriter
+  implicit val gmdElementSetWrite = MdMetadataSetWriter
   // implicit val searchResultRead = Json.reads[SearchResult]
   implicit val searchResultWrite = Json.writes[SearchResult]
 

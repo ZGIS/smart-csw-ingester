@@ -1,4 +1,4 @@
-package utils.csw
+package models.csw
 
 import java.time.format.DateTimeFormatter
 
@@ -11,8 +11,7 @@ import scala.xml.Elem
   */
 class CswGetRecordsResponse(val xml: Elem) {
   //Parse XML
-  //TODO SR I don't know yet, if I find that readable or not.
-  private val temp =
+  val (numberOfRecordsReturned: Int, numberOfRecordsMatched: Int, nextRecord: Int) =
     xml.label match {
       case "GetRecordsResponse" => {
         (asInt(xml \ "SearchResults" \@ "numberOfRecordsReturned"),
@@ -21,16 +20,13 @@ class CswGetRecordsResponse(val xml: Elem) {
       }
       case _ => throw new IllegalArgumentException(f"Expected Root Element <csw:GetRecordsResponse> but found ${xml.label}")
     }
-  val numberOfRecordsReturned = temp._1
-  val numberOfRecordsMatched = temp._2
-  val nextRecord = temp._3
 
   /**
     * converts string to int and assigns default value if exception.
-    * this should be something like an "extension" to string. https://www.safaribooksonline.com/library/view/scala-cookbook/9781449340292/ch01s11.html
     * @param s
     * @return
     */
+  //FIXME SR this should be something like an "extension" to string. https://www.safaribooksonline.com/library/view/scala-cookbook/9781449340292/ch01s11.html
   private def asInt(s: String): Int = {
     try {
       s.toInt

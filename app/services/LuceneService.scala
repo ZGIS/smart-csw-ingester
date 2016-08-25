@@ -21,8 +21,7 @@ package services
 
 import java.util.concurrent.TimeoutException
 import javax.inject.{Inject, Singleton}
-
-import models.GmdElementSet
+import models.gmd.MdMetadataSet
 import org.apache.lucene.analysis.standard.StandardAnalyzer
 import org.apache.lucene.index.{IndexWriter, IndexWriterConfig}
 import org.apache.lucene.queryparser.classic.QueryParser
@@ -35,7 +34,7 @@ import play.api.inject.ApplicationLifecycle
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.ws.WSClient
 import utils.ClassnameLogger
-import utils.csw.{CswGetRecordsRequest, CswGetRecordsResponse}
+import models.csw.{CswGetRecordsRequest, CswGetRecordsResponse}
 
 import scala.collection.JavaConverters._
 import scala.concurrent.duration._
@@ -46,7 +45,7 @@ import scala.concurrent.{Await, Future}
 
 case class SearchResultHeader(noDocuments: Int, query: String)
 
-case class SearchResult(header: SearchResultHeader, results: List[GmdElementSet])
+case class SearchResult(header: SearchResultHeader, results: List[MdMetadataSet])
 
 trait IndexService {
   def buildIndex(): Unit
@@ -68,13 +67,12 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
   extends IndexService with ClassnameLogger {
   logger.info("Starting Lucene Service")
 
-  logger.debug("Reading config: csw.catalogues ")
-  //get Object List gives a Java-List and not a Scala List, so we convert here.
+  logger.debug("Reading configuration: csw.catalogues ")
   private val cataloguesConfig = configuration.getConfigList("csw.catalogues").get.asScala.toList
-  //this creates a list of tuples and converts them into a map
   val catalogues = cataloguesConfig.map { item => item.getString("name").get -> item.getString("url").get }.toMap
+
+  logger.debug("Reading configuration: csw.maxDocs ")
   val maxDocsPerFetch = configuration.getInt("csw.maxDocs").getOrElse(500)
-  logger.error(s"max docs $maxDocsPerFetch")
 
   //stores the search index in RAM
   val directory = new RAMDirectory()
@@ -103,7 +101,8 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
       }
     }.toList)
 
-    val gmdElemSets = Await.result(gmdElemSetsFutures, 5 minutes).flatten
+    //FIXME SR 5 minutes seem quite arbitraty... what is a good timeout here?
+    val gmdElemSets = Await.result(gmdElemSetsFutures, 5.minutes).flatten
     logger.info(f"Loaded ${gmdElemSets.size} documents from CSW.")
 
     val analyzer = new StandardAnalyzer()
@@ -197,16 +196,16 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
     * @param url
     * @return
     */
-  private def queryCatalogue(catalogueName: String, url: String): Future[List[GmdElementSet]] = {
+  private def queryCatalogue(catalogueName: String, url: String): Future[List[MdMetadataSet]] = {
     val getRecordsFuture = postGetRecordsRequest(url, 1, maxDocsPerFetch, Future.successful(Nil))
     val gmdElementsFuture = getRecordsFuture.map(cswGetRecordsResponses => {
       cswGetRecordsResponses.flatMap(cswGetRecordsResponse => {
         (cswGetRecordsResponse.xml \\ "MD_Metadata").map(mdMetadataNode => {
           logger.debug(f"Preparing($catalogueName): ${(mdMetadataNode \ "fileIdentifier" \ "CharacterString").text}")
           logger.trace(mdMetadataNode.toString)
-          GmdElementSet.fromXml(mdMetadataNode, catalogueName)
+          MdMetadataSet.fromXml(mdMetadataNode, catalogueName)
         })
-      })
+      }).filter(item => item.isDefined).map(item => item.get) //filter out all None values
     })
     gmdElementsFuture
   }
@@ -233,19 +232,18 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
       }
     }
 
+    //FIXME SR when index empty, the next call will fail
     val searcherManager = new SearcherManager(directory, null)
-
     searcherManager.maybeRefreshBlocking()
     val isearcher = searcherManager.acquire()
 
-    //FIXME SR when index empty, the next
     val search = isearcher.search(luceneQuery, isearcher.getIndexReader.numDocs())
     val scoreDocs = search.scoreDocs
 
     val header = SearchResultHeader(search.totalHits, luceneQuery.toString())
     val results = scoreDocs.map(scoreDoc => {
       val doc = isearcher.doc(scoreDoc.doc)
-      GmdElementSet.fromLuceneDoc(doc)
+      MdMetadataSet.fromLuceneDoc(doc)
     })
     //FIXME SR use ARM --> possible mem leak
     searcherManager.release(isearcher)

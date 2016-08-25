@@ -37,7 +37,7 @@ import filters.ExampleFilter
  * @param exampleFilter A demonstration filter that adds a header to
  * each response.
  */
-@deprecated(message = "DEMO FILE - DELETE FOR PRODUCTION")
+@deprecated(message = "DEMO FILE - DELETE FOR PRODUCTION", since = "0.0.0")
 @Singleton
 class Filters @Inject() (
   env: Environment,

@@ -17,7 +17,7 @@ import scala.concurrent.duration._
  * @param exec We need an `ExecutionContext` to execute our
  * asynchronous code.
  */
-@deprecated(message = "DEMO CONTROLLER - DELETE FOR PRODUCTION")
+@deprecated(message = "DEMO CONTROLLER - DELETE FOR PRODUCTION", since = "0.0.0")
 @Singleton
 class AsyncController @Inject() (actorSystem: ActorSystem)(implicit exec: ExecutionContext) extends Controller {
 

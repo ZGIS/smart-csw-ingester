@@ -19,12 +19,14 @@
  *
  */
 
-package utils.csw
+package models.csw
+
+import utils.ClassnameLogger
 
 /**
   * Simple Request Builder for GetRecords-Request.
   */
-object CswGetRecordsRequest extends utils.ClassnameLogger {
+object CswGetRecordsRequest extends ClassnameLogger {
   def apply(startPosition: Int, maxDocuments: Int): String = {
     val result =
       f"""
