@@ -19,6 +19,8 @@
 
 import com.typesafe.sbt.packager.archetypes.JavaAppPackaging
 import com.typesafe.sbt.packager.docker._
+import com.sksamuel.scapegoat.sbt._
+import scoverage.ScoverageKeys._
 
 name := """smart-csw-ingester"""
 
@@ -63,6 +65,10 @@ scalacOptions in ThisBuild ++= Seq(
   "-Ywarn-dead-code",
   "-language:reflectiveCalls"
 )
+
+scapegoatVersion := "1.1.0"
+
+coverageEnabled := true
 
 version in Docker := version.value
 maintainer in Docker := "allixender@googlemail.com"
