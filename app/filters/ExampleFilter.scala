@@ -15,7 +15,7 @@ import scala.concurrent.{ExecutionContext, Future}
  * @param exec This class is needed to execute code asynchronously.
  * It is used below by the `map` method.
  */
-@deprecated(message = "DEMO FILE - DELETE FOR PRODUCTION")
+@deprecated(message = "DEMO FILE - DELETE FOR PRODUCTION", since = "0.0.0")
 @Singleton
 class ExampleFilter @Inject()(
     implicit override val mat: Materializer,

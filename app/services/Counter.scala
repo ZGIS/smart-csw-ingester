@@ -8,7 +8,7 @@ import javax.inject._
  * into a controller. The trait represents a counter that returns a
  * incremented number each time it is called.
  */
-@deprecated(message = "DEMO FILE - DELETE FOR PRODUCTION")
+@deprecated(message = "DEMO FILE - DELETE FOR PRODUCTION", since = "0.0.0")
 trait Counter {
   def nextCount(): Int
 }
@@ -23,7 +23,7 @@ trait Counter {
  * annotation we would get a new instance every time a [[Counter]] is
  * injected.
  */
-@deprecated(message = "DEMO FILE - DELETE FOR PRODUCTION")
+@deprecated(message = "DEMO FILE - DELETE FOR PRODUCTION", since = "0.0.0")
 @Singleton
 class AtomicCounter extends Counter {  
   private val atomicCounter = new AtomicInteger()

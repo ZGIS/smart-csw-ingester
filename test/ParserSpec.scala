@@ -20,7 +20,7 @@
 import java.time._
 import java.time.format._
 
-import models.GmdElementSet
+import models.gmd.MdMetadataSet
 import org.locationtech.spatial4j.context.SpatialContext
 import org.locationtech.spatial4j.io._
 import org.locationtech.spatial4j.shape._
@@ -36,11 +36,11 @@ class ParserSpec extends PlaySpec {
     "Load XML Test Resource" in {
       val asResource1 = this.getClass().getResource("csw_getrecordbyid-md_metadata.xml")
       val xml1: scala.xml.NodeSeq = scala.xml.XML.load(asResource1)
-      xml1.toString() must include ("Land Information New Zealand")
+      xml1.toString() must include("Land Information New Zealand")
 
       val asResource2 = this.getClass().getResource("sac_rs_ewt_metadata.xml")
       val xml2: scala.xml.NodeSeq = scala.xml.XML.load(asResource2)
-      xml2.text.contains("Hydrogeology") mustEqual(true)
+      xml2.text.contains("Hydrogeology") mustEqual (true)
 
     }
 
@@ -54,10 +54,11 @@ class ParserSpec extends PlaySpec {
     - http://www.codecommit.com/blog/scala/working-with-scalas-xml-support
      */
     "Evaluate Basic Xpath type queries" in {
+      //TODO SR This tests the Scala XML library and not our parser?
       val asResource1 = this.getClass().getResource("csw_getrecordbyid-md_metadata.xml")
       val xml1: scala.xml.NodeSeq = scala.xml.XML.load(asResource1)
 
-      val pp = new scala.xml.PrettyPrinter(80,5)
+      val pp = new scala.xml.PrettyPrinter(80, 5)
       val nsGmd = "http://www.isotc211.org/2005/gmd"
       val nsGco = "http://www.isotc211.org/2005/gco"
       val nsBindingGmd = new NamespaceBinding("gmd", nsGmd, null)
@@ -66,41 +67,60 @@ class ParserSpec extends PlaySpec {
       (xml1 \ "fileIdentifier" \ "CharacterString").text mustBe "23bdd7a3-fd21-daf1-7825-0d3bdc256f9d"
 
       val n1: NodeSeq = (xml1 \ "fileIdentifier" \ "CharacterString")
-      n1.filter ( x => x.namespace == nsGmd ).isEmpty mustBe(true)
+      n1.filter(x => x.namespace == nsGmd).isEmpty mustBe (true)
 
       val n2: NodeSeq = (xml1 \ "fileIdentifier" \ "CharacterString")
-      n2.filter ( x => x.namespace == nsGco ).size mustEqual 1
+      n2.filter(x => x.namespace == nsGco).size mustEqual 1
 
-      (xml1 \\ "identificationInfo" \ "MD_DataIdentification" \ "citation" \ "CI_Citation" \ "title" \ "CharacterString" ).text mustBe "NZ Primary Road Parcels"
+      (xml1 \\ "identificationInfo" \ "MD_DataIdentification" \ "citation" \ "CI_Citation" \ "title" \ "CharacterString").text mustBe "NZ Primary Road Parcels"
 
       // gmd:hierarchyLevel/gmd:MD_ScopeCode
-      (xml1 \\ "hierarchyLevel" \ "MD_ScopeCode" ).text mustBe "dataset"
+      (xml1 \\ "hierarchyLevel" \ "MD_ScopeCode").text mustBe "dataset"
 
       //gmd:contact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:onlineResource/gmd:CI_OnlineResource/gmd:linkage/gmd:URL");
-      (xml1 \\ "CI_OnlineResource" \ "linkage" \ "URL" ).text mustBe "https://data.linz.govt.nz/layer/796-nz-primary-road-parcels/"
+      (xml1 \\ "CI_OnlineResource" \ "linkage" \ "URL").text mustBe "https://data.linz.govt.nz/layer/796-nz-primary-road-parcels/"
 
       //gmd:contact/gmd:CI_ResponsibleParty/gmd:role/gmd:CI_RoleCode/codeList="./resources/codeList.xml#CI_RoleCode" codeListValue="pointOfContact"
-      (xml1 \\ "contact" \ "CI_ResponsibleParty" \ "role" \ "CI_RoleCode" ).text mustBe "resourceProvider"
+      (xml1 \\ "contact" \ "CI_ResponsibleParty" \ "role" \ "CI_RoleCode").text mustBe "resourceProvider"
 
       // gmd:dateStamp/gco:DateTime"
       // (xml1 \\ "dateStamp" \ "DateTime")
       (xml1 \\ "dateStamp" \ "Date").text mustBe "2012-12-20"
 
       // gmd:identificationInfo/gmd:MD_DataIdentification/gmd:status/gmd:MD_ProgressCode/codeList="./resources/codeList.xml#MD_ProgressCode" codeListValue="completed">completed
-      println( pp.formatNodes(xml1 \\ "identificationInfo" \ "MD_DataIdentification" \ "status" \ "MD_ProgressCode" ))
-      (xml1 \\ "identificationInfo" \ "MD_DataIdentification" \ "status" \ "MD_ProgressCode" ).text mustBe "onGoing"
+      println(pp.formatNodes(xml1 \\ "identificationInfo" \ "MD_DataIdentification" \ "status" \ "MD_ProgressCode"))
+      (xml1 \\ "identificationInfo" \ "MD_DataIdentification" \ "status" \ "MD_ProgressCode").text mustBe "onGoing"
 
-      (xml1 \\ "identificationInfo" \ "MD_DataIdentification" \ "status" \ "MD_ProgressCode" \ "@codeList" ).text mustBe "http://asdd.ga.gov.au/asdd/profileinfo/gmxCodelists.xml#MD_ProgressCode"
-      val at1 = (xml1 \\ "identificationInfo" \ "MD_DataIdentification" \ "status" \ "MD_ProgressCode").filter(node => node.attribute("codeList")
-        .exists(codeList => codeList.text == "http://asdd.ga.gov.au/asdd/profileinfo/gmxCodelists.xml#MD_ProgressCode"))
+      (xml1 \\ "identificationInfo" \ "MD_DataIdentification" \ "status" \ "MD_ProgressCode" \ "@codeList").text mustBe "http://asdd.ga.gov.au/asdd/profileinfo/gmxCodelists.xml#MD_ProgressCode"
+      val at1 = (xml1 \\ "identificationInfo" \ "MD_DataIdentification" \ "status" \ "MD_ProgressCode").filter(
+        node => node.attribute("codeList")
+          .exists(
+            codeList => codeList.text == "http://asdd.ga.gov.au/asdd/profileinfo/gmxCodelists.xml#MD_ProgressCode"))
 
       at1.size mustEqual 1
     }
 
     "should compute bounding boxes" in {
+      //TODO SR This basically tests the ShapeFactory and not our parser?
       import java.util.ArrayList
 
-      val bboxXml = <gmd:extent><gmd:EX_Extent><gmd:geographicElement><gmd:EX_GeographicBoundingBox><gmd:westBoundLongitude><gco:Decimal>166.6899599</gco:Decimal></gmd:westBoundLongitude><gmd:eastBoundLongitude><gco:Decimal>-176.176448433</gco:Decimal></gmd:eastBoundLongitude><gmd:southBoundLatitude><gco:Decimal>-47.1549297167</gco:Decimal></gmd:southBoundLatitude><gmd:northBoundLatitude><gco:Decimal>-34.4322590833</gco:Decimal></gmd:northBoundLatitude></gmd:EX_GeographicBoundingBox></gmd:geographicElement></gmd:EX_Extent></gmd:extent>
+      val bboxXml = <gmd:extent>
+        <gmd:EX_Extent>
+          <gmd:geographicElement>
+            <gmd:EX_GeographicBoundingBox>
+              <gmd:westBoundLongitude>
+                <gco:Decimal>166.6899599</gco:Decimal>
+              </gmd:westBoundLongitude> <gmd:eastBoundLongitude>
+              <gco:Decimal>-176.176448433</gco:Decimal>
+            </gmd:eastBoundLongitude> <gmd:southBoundLatitude>
+              <gco:Decimal>-47.1549297167</gco:Decimal>
+            </gmd:southBoundLatitude> <gmd:northBoundLatitude>
+              <gco:Decimal>-34.4322590833</gco:Decimal>
+            </gmd:northBoundLatitude>
+            </gmd:EX_GeographicBoundingBox>
+          </gmd:geographicElement>
+        </gmd:EX_Extent>
+      </gmd:extent>
 
       val west = (bboxXml \\ "extent" \ "EX_Extent" \ "geographicElement" \ "EX_GeographicBoundingBox" \ "westBoundLongitude" \ "Decimal").text.toDouble
       val east = (bboxXml \\ "extent" \ "EX_Extent" \ "geographicElement" \ "EX_GeographicBoundingBox" \ "eastBoundLongitude" \ "Decimal").text.toDouble
@@ -139,7 +159,7 @@ class ParserSpec extends PlaySpec {
 
       // but rect builder method is logical
       // Rectangle rect(double minX, double maxX, double minY, double maxY);
-      val bboxs = ctx.getShapeFactory().rect(east, west, south, north )
+      val bboxs = ctx.getShapeFactory().rect(east, west, south, north)
 
       bbox mustEqual bboxs
 
@@ -177,13 +197,23 @@ class ParserSpec extends PlaySpec {
       // Play 2.5 requires Java 8
       // Java8 new date types
 
-      val gmdDateStamp = <gmd:dateStamp><gco:Date>2012-12-20</gco:Date></gmd:dateStamp>
-      val gmdDateType = <gmd:date><gmd:CI_Date><gmd:date><gco:Date>2016-05-17</gco:Date></gmd:date></gmd:CI_Date></gmd:date>
-      val emptyDate = <gmd:dateStamp><gco:Date/></gmd:dateStamp>
+      val gmdDateStamp = <gmd:dateStamp>
+        <gco:Date>2012-12-20</gco:Date>
+      </gmd:dateStamp>
+      val gmdDateType = <gmd:date>
+        <gmd:CI_Date>
+          <gmd:date>
+            <gco:Date>2016-05-17</gco:Date>
+          </gmd:date>
+        </gmd:CI_Date>
+      </gmd:date>
+      val emptyDate = <gmd:dateStamp>
+        <gco:Date/>
+      </gmd:dateStamp>
 
-      val dateString1 = ( gmdDateStamp \\ "dateStamp" \ "Date" ).text
-      val dateString2 = ( gmdDateType \\ "date" \ "CI_Date" \ "date" \ "Date").text
-      val dateString3 = ( emptyDate \\ "dateStamp" \ "Date" ).text
+      val dateString1 = (gmdDateStamp \\ "dateStamp" \ "Date").text
+      val dateString2 = (gmdDateType \\ "date" \ "CI_Date" \ "date" \ "Date").text
+      val dateString3 = (emptyDate \\ "dateStamp" \ "Date").text
 
       val localDate1 = java.time.LocalDate.of(2012, Month.DECEMBER, 20)
       val localDate2 = java.time.LocalDate.of(2016, Month.MAY, 17)
@@ -237,36 +267,65 @@ class ParserSpec extends PlaySpec {
       val parsedDate1 = LocalDate.parse(dateString1, DateTimeFormatter.ISO_LOCAL_DATE)
       val parsedDate2 = LocalDate.parse(dateString2, DateTimeFormatter.ISO_LOCAL_DATE)
 
-      val thrown = the [DateTimeParseException] thrownBy LocalDate.parse(dateString3, DateTimeFormatter.ISO_LOCAL_DATE)
-      thrown.getMessage must equal ("Text '' could not be parsed at index 0")
+      val thrown = the[DateTimeParseException] thrownBy LocalDate.parse(dateString3, DateTimeFormatter.ISO_LOCAL_DATE)
+      thrown.getMessage must equal("Text '' could not be parsed at index 0")
 
       parsedDate1 mustEqual localDate1
       parsedDate2 mustEqual localDate2
 
-      val dateOk = <gmd:dateStamp><gco:Date>2012-12-20</gco:Date></gmd:dateStamp>
-      val ciDateOk =   <gmd:date><gmd:CI_Date><gmd:date><gco:Date>2012-12-20</gco:Date></gmd:date></gmd:CI_Date></gmd:date>
-      val dateBroken1 =   <gmd:dateStamp><gco:Date/></gmd:dateStamp>
-      val dateBroken2 =   <gmd:dateStamp><gco:Date>2012-12</gco:Date></gmd:dateStamp>
-      val dateBroken3 =   <gmd:dateStamp><gco:Date>2012</gco:Date></gmd:dateStamp>
-      val dateBroken4 =   <gmd:dateStamp><gco:Date>20121220</gco:Date></gmd:dateStamp>
-      val dateIsoTZ =   <gmd:dateStamp><gco:Date>2012-12-20+13:00</gco:Date></gmd:dateStamp>
-      val isoDateTZInDateTime =   <gmd:dateStamp><gco:DateTime>2012-12-20+13:00</gco:DateTime></gmd:dateStamp>
-      val wildDateTime =   <gmd:dateStamp><gco:DateTime>2012-12-20T00:00:00</gco:DateTime></gmd:dateStamp>
-      val wildCiDateTimeIsoT2 =   <gmd:date><gmd:CI_Date><gmd:date><gco:DateTime>2012-12-20T12:00:00Z</gco:DateTime></gmd:date></gmd:CI_Date></gmd:date>
-      val wildDateTimeIsoT3 =   <gmd:dateStamp><gco:DateTime>2012-12-20T12:00:00+13:00</gco:DateTime></gmd:dateStamp>
+      val dateOk = <gmd:dateStamp>
+        <gco:Date>2012-12-20</gco:Date>
+      </gmd:dateStamp>
+      val ciDateOk = <gmd:date>
+        <gmd:CI_Date>
+          <gmd:date>
+            <gco:Date>2012-12-20</gco:Date>
+          </gmd:date>
+        </gmd:CI_Date>
+      </gmd:date>
+      val dateBroken1 = <gmd:dateStamp>
+        <gco:Date/>
+      </gmd:dateStamp>
+      val dateBroken2 = <gmd:dateStamp>
+        <gco:Date>2012-12</gco:Date>
+      </gmd:dateStamp>
+      val dateBroken3 = <gmd:dateStamp>
+        <gco:Date>2012</gco:Date>
+      </gmd:dateStamp>
+      val dateBroken4 = <gmd:dateStamp>
+        <gco:Date>20121220</gco:Date>
+      </gmd:dateStamp>
+      val dateIsoTZ = <gmd:dateStamp>
+        <gco:Date>2012-12-20+13:00</gco:Date>
+      </gmd:dateStamp>
+      val isoDateTZInDateTime = <gmd:dateStamp>
+        <gco:DateTime>2012-12-20+13:00</gco:DateTime>
+      </gmd:dateStamp>
+      val wildDateTime = <gmd:dateStamp>
+        <gco:DateTime>2012-12-20T00:00:00</gco:DateTime>
+      </gmd:dateStamp>
+      val wildCiDateTimeIsoT2 = <gmd:date>
+        <gmd:CI_Date>
+          <gmd:date>
+            <gco:DateTime>2012-12-20T12:00:00Z</gco:DateTime>
+          </gmd:date>
+        </gmd:CI_Date>
+      </gmd:date>
+      val wildDateTimeIsoT3 = <gmd:dateStamp>
+        <gco:DateTime>2012-12-20T12:00:00+13:00</gco:DateTime>
+      </gmd:dateStamp>
 
-      GmdElementSet.dateFromXml(dateOk) mustEqual localDate1
-      GmdElementSet.dateFromXml(ciDateOk) mustEqual localDate1
-      GmdElementSet.dateFromXml(dateBroken1) mustEqual LocalDate.of(1970, Month.JANUARY, 1)
-      GmdElementSet.dateFromXml(dateBroken2) mustEqual LocalDate.of(2012, Month.of(12), 1)
-      GmdElementSet.dateFromXml(dateBroken3) mustEqual LocalDate.of(2012, Month.JANUARY, 1)
-      GmdElementSet.dateFromXml(dateBroken4) mustEqual localDate1
-      GmdElementSet.dateFromXml(dateIsoTZ) mustEqual localDate1
-      GmdElementSet.dateFromXml(isoDateTZInDateTime) mustEqual localDate1
-      GmdElementSet.dateFromXml(wildDateTime) mustEqual localDate1
-      GmdElementSet.dateFromXml(wildCiDateTimeIsoT2) mustEqual localDate1
-      GmdElementSet.dateFromXml(wildDateTimeIsoT3) mustEqual localDate1
-
+      MdMetadataSet.dateFromXml(dateOk) mustEqual localDate1
+      MdMetadataSet.dateFromXml(ciDateOk) mustEqual localDate1
+      MdMetadataSet.dateFromXml(dateBroken1) mustEqual LocalDate.of(1970, Month.JANUARY, 1)
+      MdMetadataSet.dateFromXml(dateBroken2) mustEqual LocalDate.of(2012, Month.of(12), 1)
+      MdMetadataSet.dateFromXml(dateBroken3) mustEqual LocalDate.of(2012, Month.JANUARY, 1)
+      MdMetadataSet.dateFromXml(dateBroken4) mustEqual localDate1
+      MdMetadataSet.dateFromXml(dateIsoTZ) mustEqual localDate1
+      MdMetadataSet.dateFromXml(isoDateTZInDateTime) mustEqual localDate1
+      MdMetadataSet.dateFromXml(wildDateTime) mustEqual localDate1
+      MdMetadataSet.dateFromXml(wildCiDateTimeIsoT2) mustEqual localDate1
+      MdMetadataSet.dateFromXml(wildDateTimeIsoT3) mustEqual localDate1
     }
   }
 }

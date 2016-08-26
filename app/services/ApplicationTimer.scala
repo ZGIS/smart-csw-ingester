@@ -20,7 +20,7 @@ import scala.concurrent.Future
  * This class needs to run code when the server stops. It uses the
  * application's [[ApplicationLifecycle]] to register a stop hook.
  */
-@deprecated(message = "DEMO FILE - DELETE FOR PRODUCTION")
+@deprecated(message = "DEMO FILE - DELETE FOR PRODUCTION", since = "0.0.0")
 @Singleton
 class ApplicationTimer @Inject() (clock: Clock, appLifecycle: ApplicationLifecycle) {
 

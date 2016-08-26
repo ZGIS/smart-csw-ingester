@@ -1,0 +1,676 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<csw:GetRecordsResponse xmlns:csw="http://www.opengis.net/cat/csw/2.0.2">
+    <csw:SearchStatus timestamp="2016-08-26T07:36:07+12:00"/>
+    <csw:SearchResults elementSet="full" nextRecord="3" numberOfRecordsMatched="2" numberOfRecordsReturned="2" recordSchema="http://www.isotc211.org/2005/gmd">
+        <gmd:MD_Metadata xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:gml="http://www.opengis.net/gml" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.isotc211.org/2005/gmd http://www.isotc211.org/2005/gmd/gmd.xsd http://www.opengis.net/gml http://www.isotc211.org/2005/gml/gml.xsd http://www.w3.org/1999/xlink http://www.isotc211.org/2005/xlink/xlinks.xsd">
+            <gmd:fileIdentifier>
+                <gco:CharacterString>0326a6b1-c163-405b-a3c7-9136ab4f4807</gco:CharacterString>
+            </gmd:fileIdentifier>
+            <gmd:language>
+                <gco:CharacterString>eng</gco:CharacterString>
+            </gmd:language>
+            <gmd:characterSet>
+                <gmd:MD_CharacterSetCode codeList="http://asdd.ga.gov.au/asdd/profileinfo/gmxCodelists.xml#MD_CharacterSetCode" codeListValue="utf8">utf8</gmd:MD_CharacterSetCode>
+            </gmd:characterSet>
+            <gmd:hierarchyLevel>
+                <gmd:MD_ScopeCode codeList="http://asdd.ga.gov.au/asdd/profileinfo/GAScopeCodeList.xml#MD_ScopeCode" codeListValue="dataset">dataset</gmd:MD_ScopeCode>
+            </gmd:hierarchyLevel>
+            <gmd:hierarchyLevelName>
+                <gco:CharacterString>dataset</gco:CharacterString>
+            </gmd:hierarchyLevelName>
+            <gmd:contact>
+                <gmd:CI_ResponsibleParty>
+                    <gmd:organisationName>
+                        <gco:CharacterString>Department of Conservation Te Papa Atawhai</gco:CharacterString>
+                    </gmd:organisationName>
+                    <gmd:positionName>
+                        <gco:CharacterString>Senior GIS Analyst</gco:CharacterString>
+                    </gmd:positionName>
+                    <gmd:contactInfo>
+                        <gmd:CI_Contact>
+                            <gmd:phone>
+                                <gmd:CI_Telephone>
+                                    <gmd:voice>
+                                        <gco:CharacterString>+64 4 471 0726</gco:CharacterString>
+                                    </gmd:voice>
+                                    <gmd:facsimile>
+                                        <gco:CharacterString>+64 4 381 3057</gco:CharacterString>
+                                    </gmd:facsimile>
+                                </gmd:CI_Telephone>
+                            </gmd:phone>
+                            <gmd:address>
+                                <gmd:CI_Address>
+                                    <gmd:deliveryPoint>
+                                        <gco:CharacterString>18-32 Manners Street</gco:CharacterString>
+                                    </gmd:deliveryPoint>
+                                    <gmd:city>
+                                        <gco:CharacterString>Wellington</gco:CharacterString>
+                                    </gmd:city>
+                                    <gmd:postalCode>
+                                        <gco:CharacterString>6011</gco:CharacterString>
+                                    </gmd:postalCode>
+                                    <gmd:country>
+                                        <gco:CharacterString>New Zealand</gco:CharacterString>
+                                    </gmd:country>
+                                    <gmd:electronicMailAddress>
+                                        <gco:CharacterString>geodata@doc.govt.nz</gco:CharacterString>
+                                    </gmd:electronicMailAddress>
+                                </gmd:CI_Address>
+                            </gmd:address>
+                        </gmd:CI_Contact>
+                    </gmd:contactInfo>
+                    <gmd:role>
+                        <gmd:CI_RoleCode codeList="http://asdd.ga.gov.au/asdd/profileinfo/gmxCodelists.xml#CI_RoleCode" codeListValue="pointOfContact">pointOfContact</gmd:CI_RoleCode>
+                    </gmd:role>
+                </gmd:CI_ResponsibleParty>
+            </gmd:contact>
+            <gmd:dateStamp>
+                <gco:Date>2015-01-15</gco:Date>
+            </gmd:dateStamp>
+            <gmd:metadataStandardName>
+                <gco:CharacterString>ANZLIC Metadata Profile: An Australian/New Zealand Profile of AS/NZS ISO 19115:2005, Geographic information - Metadata</gco:CharacterString>
+            </gmd:metadataStandardName>
+            <gmd:metadataStandardVersion>
+                <gco:CharacterString>1.1</gco:CharacterString>
+            </gmd:metadataStandardVersion>
+            <gmd:referenceSystemInfo>
+                <gmd:MD_ReferenceSystem>
+                    <gmd:referenceSystemIdentifier>
+                        <gmd:RS_Identifier>
+                            <gmd:code>
+                                <gco:CharacterString>NZGD2000 / New Zealand Transverse Mercator 2000</gco:CharacterString>
+                            </gmd:code>
+                        </gmd:RS_Identifier>
+                    </gmd:referenceSystemIdentifier>
+                </gmd:MD_ReferenceSystem>
+            </gmd:referenceSystemInfo>
+            <gmd:identificationInfo>
+                <gmd:MD_DataIdentification>
+                    <gmd:citation>
+                        <gmd:CI_Citation>
+                            <gmd:title>
+                                <gco:CharacterString>DOC Pesticide Summary Operational Areas 01/07/2015 to 31/08/2015</gco:CharacterString>
+                            </gmd:title>
+                            <gmd:date>
+                                <gmd:CI_Date>
+                                    <gmd:date>
+                                        <gco:Date>2013-07-10</gco:Date>
+                                    </gmd:date>
+                                    <gmd:dateType>
+                                        <gmd:CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="creation" codeSpace="ISOTC211/19115">creation</gmd:CI_DateTypeCode>
+                                    </gmd:dateType>
+                                </gmd:CI_Date>
+                            </gmd:date>
+                            <gmd:date>
+                                <gmd:CI_Date>
+                                    <gmd:date>
+                                        <gco:Date>2015-10-23</gco:Date>
+                                    </gmd:date>
+                                    <gmd:dateType>
+                                        <gmd:CI_DateTypeCode codeList="http://asdd.ga.gov.au/asdd/profileinfo/gmxCodelists.xml#CI_DateTypeCode" codeListValue="publication">publication</gmd:CI_DateTypeCode>
+                                    </gmd:dateType>
+                                </gmd:CI_Date>
+                            </gmd:date>
+                        </gmd:CI_Citation>
+                    </gmd:citation>
+                    <gmd:abstract>
+                        <gco:CharacterString>This dataset represents those areas published on the DOC website – Pesticide Sumaries for the period as contained with the ‘NotificationPeriod’ field (01/07/2015 to 31/08/2015).This dataset pertains to both ‘has been laid’ and ‘will be laid’ as defined in the Pesticide Use SOP operational extents. Actual ground distribution of toxins may have a smaller footprint that that shown in this dataset, but they will be within the planned area.
+
+                            *****LICENCE*****
+
+                            This work is licensed under the Creative Commons Attribution 3.0 New Zealand License. To view a copy of this license, visit http://creativecommons.org/licenses/by/3.0/nz/ or send a letter to Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
+
+                            *****DISCLAIMER*****
+
+                            1. DOC makes no express or implied warranties as to the accuracy or completeness of the data or information, nor its suitability for any purpose. Errors are inevitably part of any database, and can arise by a number of means, from errors during field data collection, to errors during data entry.
+                            2. DOC makes no warranties or representations as to possible infringement upon copyrights or other intellectual property rights of others in the data or information.
+                            3. DOC will not accept liability for any direct, indirect, special or consequential damages, losses or expenses howsoever arising and relating to use, or lack of use, of the data or information supplied.
+
+                            *****GUIDELINES FOR THE USE OF THE INFORMATION*****
+
+                            4. Care should be taken in deriving conclusions from any data or information supplied.
+                            5. Any use of the data or information supplied should state when the data or information was acquired and that it may now be out-of-date.
+
+                            *****COPYRIGHT OBLIGATIONS*****
+
+                            6. All proprietary rights to the intellectual property in the data or information remain with the Crown as its sole property.
+                            7. Modification of the data and information or the addition of the information does not confer copyright or any other form of property of the original material to a user.
+                            8. All maps or reports that are derived from the data or information must acknowledge the Crown copyright, in the following way: Crown Copyright: Department of Conservation Te Papa Atawhai [year].
+                            9. This information resource may be passed onto another party, in either hard copy or electronic form. If a user does this, then it is recommended that they also supply this metadata record with the information resource.</gco:CharacterString>
+                    </gmd:abstract>
+                    <gmd:purpose>
+                        <gco:CharacterString>The central repository for the spatial component of planned pesticides operations on public conservation land. This dataset is specifically designed to drive the pesticides summary requirement that the department undertakes thirdly. It includes all pest operations on public conservation land regardless of their originator for the period of 01/1/2014 to 28/02/2015.</gco:CharacterString>
+                    </gmd:purpose>
+                    <gmd:status>
+                        <gmd:MD_ProgressCode codeList="http://asdd.ga.gov.au/asdd/profileinfo/gmxCodelists.xml#MD_ProgressCode" codeListValue="onGoing">asneeded</gmd:MD_ProgressCode>
+                    </gmd:status>
+                    <gmd:resourceMaintenance>
+                        <gmd:MD_MaintenanceInformation>
+                            <gmd:maintenanceAndUpdateFrequency>
+                                <gmd:MD_MaintenanceFrequencyCode codeList="http://asdd.ga.gov.au/asdd/profileinfo/gmxCodelists.xml#MD_MaintenanceFrequencyCode" codeListValue="daily">thirdly</gmd:MD_MaintenanceFrequencyCode>
+                            </gmd:maintenanceAndUpdateFrequency>
+                        </gmd:MD_MaintenanceInformation>
+                    </gmd:resourceMaintenance>
+                    <gmd:resourceFormat xlink:type="simple">
+                        <gmd:MD_Format>
+                            <gmd:name>
+                                <gco:CharacterString>*.xml</gco:CharacterString>
+                            </gmd:name>
+                            <gmd:version>
+                                <gco:CharacterString>Unknown</gco:CharacterString>
+                            </gmd:version>
+                        </gmd:MD_Format>
+                    </gmd:resourceFormat>
+                    <gmd:descriptiveKeywords>
+                        <gmd:MD_Keywords>
+                            <gmd:keyword>
+                                <gco:CharacterString>Controlling unwanted organisms</gco:CharacterString>
+                            </gmd:keyword>
+                            <gmd:keyword>
+                                <gco:CharacterString>Ensuring public safety</gco:CharacterString>
+                            </gmd:keyword>
+                            <gmd:keyword>
+                                <gco:CharacterString>Downloadable Data</gco:CharacterString>
+                            </gmd:keyword>
+                            <gmd:keyword>
+                                <gco:CharacterString>Conserving the environment</gco:CharacterString>
+                            </gmd:keyword>
+                            <gmd:keyword>
+                                <gco:CharacterString>Protecting heritage</gco:CharacterString>
+                            </gmd:keyword>
+                            <gmd:keyword>
+                                <gco:CharacterString>Downloadable Data</gco:CharacterString>
+                            </gmd:keyword>
+                            <gmd:type>
+                                <gmd:MD_KeywordTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_KeywordTypeCode" codeListValue="theme" codeSpace="ISOTC211/19115">theme</gmd:MD_KeywordTypeCode>
+                            </gmd:type>
+                        </gmd:MD_Keywords>
+                    </gmd:descriptiveKeywords>
+                    <gmd:resourceConstraints>
+                        <gmd:MD_LegalConstraints>
+                            <gmd:accessConstraints>
+                                <gmd:MD_RestrictionCode codeList="http://asdd.ga.gov.au/asdd/profileinfo/gmxCodelists.xml#MD_RestrictionCode" codeListValue="copyright">copyright</gmd:MD_RestrictionCode>
+                            </gmd:accessConstraints>
+                        </gmd:MD_LegalConstraints>
+                    </gmd:resourceConstraints>
+                    <gmd:resourceConstraints>
+                        <gmd:MD_LegalConstraints>
+                            <gmd:useConstraints>
+                                <gmd:MD_RestrictionCode codeList="http://asdd.ga.gov.au/asdd/profileinfo/gmxCodelists.xml#MD_RestrictionCode" codeListValue="copyright">copyright</gmd:MD_RestrictionCode>
+                            </gmd:useConstraints>
+                        </gmd:MD_LegalConstraints>
+                    </gmd:resourceConstraints>
+                    <gmd:resourceConstraints>
+                        <gmd:MD_LegalConstraints>
+                            <gmd:useLimitation>
+                                <gco:CharacterString>This work is licensed under the Creative Commons Attribution 3.0 New Zealand License. To view a copy of this license, visit http://creativecommons.org/licenses/by/3.0/nz/ or send a letter to Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.</gco:CharacterString>
+                            </gmd:useLimitation>
+                            <gmd:useConstraints>
+                                <gmd:MD_RestrictionCode codeList="http://asdd.ga.gov.au/asdd/profileinfo/gmxCodelists.xml#MD_RestrictionCode" codeListValue="license">license</gmd:MD_RestrictionCode>
+                            </gmd:useConstraints>
+                        </gmd:MD_LegalConstraints>
+                    </gmd:resourceConstraints>
+                    <gmd:resourceConstraints>
+                        <gmd:MD_LegalConstraints>
+                            <gmd:useLimitation>
+                                <gco:CharacterString>The areas and attributes contained within this dataset are designed to "support" the published Pesticide Summary on the DOC website. If there is any question around accuracy or specific attributes contained within this dataset, the Authoratative source for the information will be contained within the published Pesticide Summary document found on the DOC website. This document overides any attributes within this dataset.See Legal Constraints for any licences attached to this dataset. Disclaimers 1. DOC makes no express or implied warranties as to the accuracy or completeness of the data or information, nor its suitability for any purpose. Errors are inevitably part of any database, and can arise by a number of means, from errors during field data collection, to errors during data entry. 2. DOC makes no warranties or representations as to possible infringement upon copyrights or other intellectual property rights of others in the data or information. 3. DOC will not accept liability for any direct, indirect, special or consequential damages, losses or expenses howsoever arising and relating to use, or lack of use, of the data or information supplied. Guidelines for Use of the Information 4. Care should be taken in deriving conclusions from any data or information supplied. 5. Any use of the data or information supplied should state when the data or information was acquired and that it may now be out-of-date. Copyright Obligations 6. All proprietary rights to the intellectual property in the data or information remain with the Crown as its sole property. 7. Modification of the data and information or the addition of the information does not confer copyright or any other form of property of the original material to a user. 8. All maps or reports that are derived from the data or information must acknowledge the Crown copyright, in the following way: Crown Copyright: Department of Conservation Te Papa Atawhai [year]. 9. This information resource may be passed onto another party, in either hard copy or electronic form. If a user does this, then it is recommended that they also supply this metadata record with the information resource.
+
+                                    *****DISCLAIMER*****
+
+                                    1. DOC makes no express or implied warranties as to the accuracy or completeness of the data or information, nor its suitability for any purpose. Errors are inevitably part of any database, and can arise by a number of means, from errors during field data collection, to errors during data entry.
+                                    2. DOC makes no warranties or representations as to possible infringement upon copyrights or other intellectual property rights of others in the data or information.
+                                    3. DOC will not accept liability for any direct, indirect, special or consequential damages, losses or expenses howsoever arising and relating to use, or lack of use, of the data or information supplied.
+
+                                    *****GUIDELINES FOR THE USE OF THE INFORMATION*****
+
+                                    4. Care should be taken in deriving conclusions from any data or information supplied.
+                                    5. Any use of the data or information supplied should state when the data or information was acquired and that it may now be out-of-date.
+
+                                    *****COPYRIGHT OBLIGATIONS*****
+
+                                    6. All proprietary rights to the intellectual property in the data or information remain with the Crown as its sole property.
+                                    7. Modification of the data and information or the addition of the information does not confer copyright or any other form of property of the original material to a user.
+                                    8. All maps or reports that are derived from the data or information must acknowledge the Crown copyright, in the following way: Crown Copyright: Department of Conservation Te Papa Atawhai [year].
+                                    9. This information resource may be passed onto another party, in either hard copy or electronic form. If a user does this, then it is recommended that they also supply this metadata record with the information resource.</gco:CharacterString>
+                            </gmd:useLimitation>
+                            <gmd:useConstraints>
+                                <gmd:MD_RestrictionCode codeList="http://asdd.ga.gov.au/asdd/profileinfo/gmxCodelists.xml#MD_RestrictionCode" codeListValue="otherRestrictions">otherRestrictions</gmd:MD_RestrictionCode>
+                            </gmd:useConstraints>
+                            <gmd:otherConstraints>
+                                <gco:CharacterString>DISCLAIMER</gco:CharacterString>
+                            </gmd:otherConstraints>
+                        </gmd:MD_LegalConstraints>
+                    </gmd:resourceConstraints>
+                    <gmd:spatialRepresentationType>
+                        <gmd:MD_SpatialRepresentationTypeCode codeList="http://asdd.ga.gov.au/asdd/profileinfo/gmxCodelists.xml#MD_SpatialRepresentationTypeCode" codeListValue="vector">vector</gmd:MD_SpatialRepresentationTypeCode>
+                    </gmd:spatialRepresentationType>
+                    <gmd:language>
+                        <gco:CharacterString>eng</gco:CharacterString>
+                    </gmd:language>
+                    <gmd:characterSet>
+                        <gmd:MD_CharacterSetCode codeList="http://asdd.ga.gov.au/asdd/profileinfo/gmxCodelists.xml#MD_CharacterSetCode" codeListValue="utf8">utf8</gmd:MD_CharacterSetCode>
+                    </gmd:characterSet>
+                    <gmd:topicCategory>
+                        <gmd:MD_TopicCategoryCode>biota</gmd:MD_TopicCategoryCode>
+                    </gmd:topicCategory>
+                    <gmd:topicCategory>
+                        <gmd:MD_TopicCategoryCode>environment</gmd:MD_TopicCategoryCode>
+                    </gmd:topicCategory>
+                    <gmd:extent>
+                        <gmd:EX_Extent>
+                            <gmd:geographicElement>
+                                <gmd:EX_GeographicBoundingBox>
+                                    <gmd:westBoundLongitude>
+                                        <gco:Decimal>-180</gco:Decimal>
+                                    </gmd:westBoundLongitude>
+                                    <gmd:eastBoundLongitude>
+                                        <gco:Decimal>180</gco:Decimal>
+                                    </gmd:eastBoundLongitude>
+                                    <gmd:southBoundLatitude>
+                                        <gco:Decimal>-47.175142</gco:Decimal>
+                                    </gmd:southBoundLatitude>
+                                    <gmd:northBoundLatitude>
+                                        <gco:Decimal>-34.120108</gco:Decimal>
+                                    </gmd:northBoundLatitude>
+                                </gmd:EX_GeographicBoundingBox>
+                            </gmd:geographicElement>
+                        </gmd:EX_Extent>
+                    </gmd:extent>
+                </gmd:MD_DataIdentification>
+            </gmd:identificationInfo>
+            <gmd:distributionInfo>
+                <gmd:MD_Distribution>
+                    <gmd:transferOptions>
+                        <gmd:MD_DigitalTransferOptions>
+                            <gmd:onLine>
+                                <gmd:CI_OnlineResource>
+                                    <gmd:linkage>
+                                        <gmd:URL>http://geoportal.doc.govt.nz/ArcGIS/rest/services/GeoportalServices/DOC_Pesticide_Summary_Operational_Areas_01_07_2015_to_31_08_2015/MapServer</gmd:URL>
+                                    </gmd:linkage>
+                                    <gmd:function>
+                                        <gmd:CI_OnLineFunctionCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode" codeListValue="">information</gmd:CI_OnLineFunctionCode>
+                                    </gmd:function>
+                                </gmd:CI_OnlineResource>
+                            </gmd:onLine>
+                        </gmd:MD_DigitalTransferOptions>
+                    </gmd:transferOptions>
+                </gmd:MD_Distribution>
+            </gmd:distributionInfo>
+            <gmd:dataQualityInfo>
+                <gmd:DQ_DataQuality>
+                    <gmd:scope>
+                        <gmd:DQ_Scope>
+                            <gmd:level>
+                                <gmd:MD_ScopeCode codeList="http://asdd.ga.gov.au/asdd/profileinfo/gmxCodelists.xml#MD_ScopeCode" codeListValue="dataset">dataset</gmd:MD_ScopeCode>
+                            </gmd:level>
+                            <gmd:levelDescription>
+                                <gmd:MD_ScopeDescription>
+                                    <gmd:other>
+                                        <gco:CharacterString>dataset</gco:CharacterString>
+                                    </gmd:other>
+                                </gmd:MD_ScopeDescription>
+                            </gmd:levelDescription>
+                        </gmd:DQ_Scope>
+                    </gmd:scope>
+                    <gmd:lineage>
+                        <gmd:LI_Lineage>
+                            <gmd:statement>
+                                <gco:CharacterString>The schema of this dataset was updated on 18/09/2013. The existing featureclass at date time was renamed in the NEGIS NATIS1 geodatabase and called OPERATIONAL_DOC_PesticideOpSummaries_PreNov2013.
+                                    The datset's source data varies from source to source and may be based on; LINZ Topo50, LINZ property cadastra or had drawn maps. It is an output from the departments standard operating procedure (SOP) called "Pesticide Summaries SOP" DOCDM-1146129.</gco:CharacterString>
+                            </gmd:statement>
+                        </gmd:LI_Lineage>
+                    </gmd:lineage>
+                </gmd:DQ_DataQuality>
+            </gmd:dataQualityInfo>
+            <gmd:metadataConstraints>
+                <gmd:MD_LegalConstraints>
+                    <gmd:accessConstraints>
+                        <gmd:MD_RestrictionCode codeList="http://asdd.ga.gov.au/asdd/profileinfo/gmxCodelists.xml#MD_RestrictionCode" codeListValue="copyright">copyright</gmd:MD_RestrictionCode>
+                    </gmd:accessConstraints>
+                </gmd:MD_LegalConstraints>
+            </gmd:metadataConstraints>
+            <gmd:metadataConstraints>
+                <gmd:MD_LegalConstraints>
+                    <gmd:useConstraints>
+                        <gmd:MD_RestrictionCode codeList="http://asdd.ga.gov.au/asdd/profileinfo/gmxCodelists.xml#MD_RestrictionCode" codeListValue="copyright">copyright</gmd:MD_RestrictionCode>
+                    </gmd:useConstraints>
+                </gmd:MD_LegalConstraints>
+            </gmd:metadataConstraints>
+        </gmd:MD_Metadata>
+        <gmd:MD_Metadata xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:gml="http://www.opengis.net/gml" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.isotc211.org/2005/gmd http://www.isotc211.org/2005/gmd/gmd.xsd http://www.opengis.net/gml http://www.isotc211.org/2005/gml/gml.xsd http://www.w3.org/1999/xlink http://www.isotc211.org/2005/xlink/xlinks.xsd">
+            <gmd:fileIdentifier>
+                <gco:CharacterString>4A467BBC-E7BA-4A98-AD9E-58A781041913</gco:CharacterString>
+            </gmd:fileIdentifier>
+            <gmd:language>
+                <gco:CharacterString>eng</gco:CharacterString>
+            </gmd:language>
+            <gmd:characterSet>
+                <gmd:MD_CharacterSetCode codeList="http://asdd.ga.gov.au/asdd/profileinfo/gmxCodelists.xml#MD_CharacterSetCode" codeListValue="utf8">utf8</gmd:MD_CharacterSetCode>
+            </gmd:characterSet>
+            <gmd:hierarchyLevel>
+                <gmd:MD_ScopeCode codeList="http://asdd.ga.gov.au/asdd/profileinfo/GAScopeCodeList.xml#MD_ScopeCode" codeListValue="dataset">dataset</gmd:MD_ScopeCode>
+            </gmd:hierarchyLevel>
+            <gmd:hierarchyLevelName>
+                <gco:CharacterString>dataset</gco:CharacterString>
+            </gmd:hierarchyLevelName>
+            <gmd:contact>
+                <gmd:CI_ResponsibleParty>
+                    <gmd:organisationName>
+                        <gco:CharacterString>Department of Conservation Te Papa Atawhai</gco:CharacterString>
+                    </gmd:organisationName>
+                    <gmd:positionName>
+                        <gco:CharacterString>Senior GIS Analyst</gco:CharacterString>
+                    </gmd:positionName>
+                    <gmd:contactInfo>
+                        <gmd:CI_Contact>
+                            <gmd:phone>
+                                <gmd:CI_Telephone>
+                                    <gmd:voice>
+                                        <gco:CharacterString>+64 4 471 0726</gco:CharacterString>
+                                    </gmd:voice>
+                                    <gmd:facsimile>
+                                        <gco:CharacterString>+64 4 381 3057</gco:CharacterString>
+                                    </gmd:facsimile>
+                                </gmd:CI_Telephone>
+                            </gmd:phone>
+                            <gmd:address>
+                                <gmd:CI_Address>
+                                    <gmd:deliveryPoint>
+                                        <gco:CharacterString>18-32 Manners Street</gco:CharacterString>
+                                    </gmd:deliveryPoint>
+                                    <gmd:city>
+                                        <gco:CharacterString>Wellington</gco:CharacterString>
+                                    </gmd:city>
+                                    <gmd:postalCode>
+                                        <gco:CharacterString>6011</gco:CharacterString>
+                                    </gmd:postalCode>
+                                    <gmd:country>
+                                        <gco:CharacterString>New Zealand</gco:CharacterString>
+                                    </gmd:country>
+                                    <gmd:electronicMailAddress>
+                                        <gco:CharacterString>geodata@doc.govt.nz</gco:CharacterString>
+                                    </gmd:electronicMailAddress>
+                                </gmd:CI_Address>
+                            </gmd:address>
+                        </gmd:CI_Contact>
+                    </gmd:contactInfo>
+                    <gmd:role>
+                        <gmd:CI_RoleCode codeList="http://asdd.ga.gov.au/asdd/profileinfo/gmxCodelists.xml#CI_RoleCode" codeListValue="pointOfContact">pointOfContact</gmd:CI_RoleCode>
+                    </gmd:role>
+                </gmd:CI_ResponsibleParty>
+            </gmd:contact>
+            <gmd:dateStamp>
+                <gco:Date>2015-01-15</gco:Date>
+            </gmd:dateStamp>
+            <gmd:metadataStandardName>
+                <gco:CharacterString>ANZLIC Metadata Profile: An Australian/New Zealand Profile of AS/NZS ISO 19115:2005, Geographic information - Metadata</gco:CharacterString>
+            </gmd:metadataStandardName>
+            <gmd:metadataStandardVersion>
+                <gco:CharacterString>1.1</gco:CharacterString>
+            </gmd:metadataStandardVersion>
+            <gmd:referenceSystemInfo>
+                <gmd:MD_ReferenceSystem>
+                    <gmd:referenceSystemIdentifier>
+                        <gmd:RS_Identifier>
+                            <gmd:code>
+                                <gco:CharacterString>NZGD2000 / New Zealand Transverse Mercator 2000</gco:CharacterString>
+                            </gmd:code>
+                        </gmd:RS_Identifier>
+                    </gmd:referenceSystemIdentifier>
+                </gmd:MD_ReferenceSystem>
+            </gmd:referenceSystemInfo>
+            <gmd:identificationInfo>
+                <gmd:MD_DataIdentification>
+                    <gmd:citation>
+                        <gmd:CI_Citation>
+                            <gmd:title>
+                                <gco:CharacterString>DOC Pesticide Summary Operational Areas 01/11/2014 to 28/02/2015</gco:CharacterString>
+                            </gmd:title>
+                            <gmd:date>
+                                <gmd:CI_Date>
+                                    <gmd:date>
+                                        <gco:Date>2013-07-10</gco:Date>
+                                    </gmd:date>
+                                    <gmd:dateType>
+                                        <gmd:CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="creation" codeSpace="ISOTC211/19115">creation</gmd:CI_DateTypeCode>
+                                    </gmd:dateType>
+                                </gmd:CI_Date>
+                            </gmd:date>
+                            <gmd:date>
+                                <gmd:CI_Date>
+                                    <gmd:date>
+                                        <gco:Date>2015-10-23</gco:Date>
+                                    </gmd:date>
+                                    <gmd:dateType>
+                                        <gmd:CI_DateTypeCode codeList="http://asdd.ga.gov.au/asdd/profileinfo/gmxCodelists.xml#CI_DateTypeCode" codeListValue="publication">publication</gmd:CI_DateTypeCode>
+                                    </gmd:dateType>
+                                </gmd:CI_Date>
+                            </gmd:date>
+                        </gmd:CI_Citation>
+                    </gmd:citation>
+                    <gmd:abstract>
+                        <gco:CharacterString>This dataset represents those areas published on the DOC website – Pesticide Sumaries for the period as contained with the ‘NotificationPeriod’ field.This dataset pertains to both ‘has been laid’ and ‘will be laid’ as defined in the Pesticide Use SOP operational extents. Actual ground distribution of toxins may have a smaller footprint that that shown in this dataset, but they will be within the planned area.
+
+                            *****LICENCE*****
+
+                            This work is licensed under the Creative Commons Attribution 3.0 New Zealand License. To view a copy of this license, visit http://creativecommons.org/licenses/by/3.0/nz/ or send a letter to Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
+
+                            *****DISCLAIMER*****
+
+                            1. DOC makes no express or implied warranties as to the accuracy or completeness of the data or information, nor its suitability for any purpose. Errors are inevitably part of any database, and can arise by a number of means, from errors during field data collection, to errors during data entry.
+                            2. DOC makes no warranties or representations as to possible infringement upon copyrights or other intellectual property rights of others in the data or information.
+                            3. DOC will not accept liability for any direct, indirect, special or consequential damages, losses or expenses howsoever arising and relating to use, or lack of use, of the data or information supplied.
+
+                            *****GUIDELINES FOR THE USE OF THE INFORMATION*****
+
+                            4. Care should be taken in deriving conclusions from any data or information supplied.
+                            5. Any use of the data or information supplied should state when the data or information was acquired and that it may now be out-of-date.
+
+                            *****COPYRIGHT OBLIGATIONS*****
+
+                            6. All proprietary rights to the intellectual property in the data or information remain with the Crown as its sole property.
+                            7. Modification of the data and information or the addition of the information does not confer copyright or any other form of property of the original material to a user.
+                            8. All maps or reports that are derived from the data or information must acknowledge the Crown copyright, in the following way: Crown Copyright: Department of Conservation Te Papa Atawhai [year].
+                            9. This information resource may be passed onto another party, in either hard copy or electronic form. If a user does this, then it is recommended that they also supply this metadata record with the information resource.</gco:CharacterString>
+                    </gmd:abstract>
+                    <gmd:purpose>
+                        <gco:CharacterString>The central repository for the spatial component of planned pesticides operations on public conservation land. This dataset is specifically designed to drive the pesticides summary requirement that the department undertakes thirdly. It includes all pest operations on public conservation land regardless of their originator for the period of 01/1/2014 to 28/02/2015.</gco:CharacterString>
+                    </gmd:purpose>
+                    <gmd:status>
+                        <gmd:MD_ProgressCode codeList="http://asdd.ga.gov.au/asdd/profileinfo/gmxCodelists.xml#MD_ProgressCode" codeListValue="onGoing">asneeded</gmd:MD_ProgressCode>
+                    </gmd:status>
+                    <gmd:resourceMaintenance>
+                        <gmd:MD_MaintenanceInformation>
+                            <gmd:maintenanceAndUpdateFrequency>
+                                <gmd:MD_MaintenanceFrequencyCode codeList="http://asdd.ga.gov.au/asdd/profileinfo/gmxCodelists.xml#MD_MaintenanceFrequencyCode" codeListValue="daily">thirdly</gmd:MD_MaintenanceFrequencyCode>
+                            </gmd:maintenanceAndUpdateFrequency>
+                        </gmd:MD_MaintenanceInformation>
+                    </gmd:resourceMaintenance>
+                    <gmd:resourceFormat xlink:type="simple">
+                        <gmd:MD_Format>
+                            <gmd:name>
+                                <gco:CharacterString>*.xml</gco:CharacterString>
+                            </gmd:name>
+                            <gmd:version>
+                                <gco:CharacterString>Unknown</gco:CharacterString>
+                            </gmd:version>
+                        </gmd:MD_Format>
+                    </gmd:resourceFormat>
+                    <gmd:descriptiveKeywords>
+                        <gmd:MD_Keywords>
+                            <gmd:keyword>
+                                <gco:CharacterString>Controlling unwanted organisms</gco:CharacterString>
+                            </gmd:keyword>
+                            <gmd:keyword>
+                                <gco:CharacterString>Ensuring public safety</gco:CharacterString>
+                            </gmd:keyword>
+                            <gmd:keyword>
+                                <gco:CharacterString>Downloadable Data</gco:CharacterString>
+                            </gmd:keyword>
+                            <gmd:keyword>
+                                <gco:CharacterString>Conserving the environment</gco:CharacterString>
+                            </gmd:keyword>
+                            <gmd:keyword>
+                                <gco:CharacterString>Protecting heritage</gco:CharacterString>
+                            </gmd:keyword>
+                            <gmd:keyword>
+                                <gco:CharacterString>Downloadable Data</gco:CharacterString>
+                            </gmd:keyword>
+                            <gmd:type>
+                                <gmd:MD_KeywordTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_KeywordTypeCode" codeListValue="theme" codeSpace="ISOTC211/19115">theme</gmd:MD_KeywordTypeCode>
+                            </gmd:type>
+                        </gmd:MD_Keywords>
+                    </gmd:descriptiveKeywords>
+                    <gmd:resourceConstraints>
+                        <gmd:MD_LegalConstraints>
+                            <gmd:accessConstraints>
+                                <gmd:MD_RestrictionCode codeList="http://asdd.ga.gov.au/asdd/profileinfo/gmxCodelists.xml#MD_RestrictionCode" codeListValue="copyright">copyright</gmd:MD_RestrictionCode>
+                            </gmd:accessConstraints>
+                        </gmd:MD_LegalConstraints>
+                    </gmd:resourceConstraints>
+                    <gmd:resourceConstraints>
+                        <gmd:MD_LegalConstraints>
+                            <gmd:useConstraints>
+                                <gmd:MD_RestrictionCode codeList="http://asdd.ga.gov.au/asdd/profileinfo/gmxCodelists.xml#MD_RestrictionCode" codeListValue="copyright">copyright</gmd:MD_RestrictionCode>
+                            </gmd:useConstraints>
+                        </gmd:MD_LegalConstraints>
+                    </gmd:resourceConstraints>
+                    <gmd:resourceConstraints>
+                        <gmd:MD_LegalConstraints>
+                            <gmd:useLimitation>
+                                <gco:CharacterString>This work is licensed under the Creative Commons Attribution 3.0 New Zealand License. To view a copy of this license, visit http://creativecommons.org/licenses/by/3.0/nz/ or send a letter to Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.</gco:CharacterString>
+                            </gmd:useLimitation>
+                            <gmd:useConstraints>
+                                <gmd:MD_RestrictionCode codeList="http://asdd.ga.gov.au/asdd/profileinfo/gmxCodelists.xml#MD_RestrictionCode" codeListValue="license">license</gmd:MD_RestrictionCode>
+                            </gmd:useConstraints>
+                        </gmd:MD_LegalConstraints>
+                    </gmd:resourceConstraints>
+                    <gmd:resourceConstraints>
+                        <gmd:MD_LegalConstraints>
+                            <gmd:useLimitation>
+                                <gco:CharacterString>The areas and attributes contained within this dataset are designed to "support" the published Pesticide Summary on the DOC website. If there is any question around accuracy or specific attributes contained within this dataset, the Authoratative source for the information will be contained within the published Pesticide Summary document found on the DOC website. This document overides any attributes within this dataset.See Legal Constraints for any licences attached to this dataset. Disclaimers 1. DOC makes no express or implied warranties as to the accuracy or completeness of the data or information, nor its suitability for any purpose. Errors are inevitably part of any database, and can arise by a number of means, from errors during field data collection, to errors during data entry. 2. DOC makes no warranties or representations as to possible infringement upon copyrights or other intellectual property rights of others in the data or information. 3. DOC will not accept liability for any direct, indirect, special or consequential damages, losses or expenses howsoever arising and relating to use, or lack of use, of the data or information supplied. Guidelines for Use of the Information 4. Care should be taken in deriving conclusions from any data or information supplied. 5. Any use of the data or information supplied should state when the data or information was acquired and that it may now be out-of-date. Copyright Obligations 6. All proprietary rights to the intellectual property in the data or information remain with the Crown as its sole property. 7. Modification of the data and information or the addition of the information does not confer copyright or any other form of property of the original material to a user. 8. All maps or reports that are derived from the data or information must acknowledge the Crown copyright, in the following way: Crown Copyright: Department of Conservation Te Papa Atawhai [year]. 9. This information resource may be passed onto another party, in either hard copy or electronic form. If a user does this, then it is recommended that they also supply this metadata record with the information resource.
+
+                                    *****DISCLAIMER*****
+
+                                    1. DOC makes no express or implied warranties as to the accuracy or completeness of the data or information, nor its suitability for any purpose. Errors are inevitably part of any database, and can arise by a number of means, from errors during field data collection, to errors during data entry.
+                                    2. DOC makes no warranties or representations as to possible infringement upon copyrights or other intellectual property rights of others in the data or information.
+                                    3. DOC will not accept liability for any direct, indirect, special or consequential damages, losses or expenses howsoever arising and relating to use, or lack of use, of the data or information supplied.
+
+                                    *****GUIDELINES FOR THE USE OF THE INFORMATION*****
+
+                                    4. Care should be taken in deriving conclusions from any data or information supplied.
+                                    5. Any use of the data or information supplied should state when the data or information was acquired and that it may now be out-of-date.
+
+                                    *****COPYRIGHT OBLIGATIONS*****
+
+                                    6. All proprietary rights to the intellectual property in the data or information remain with the Crown as its sole property.
+                                    7. Modification of the data and information or the addition of the information does not confer copyright or any other form of property of the original material to a user.
+                                    8. All maps or reports that are derived from the data or information must acknowledge the Crown copyright, in the following way: Crown Copyright: Department of Conservation Te Papa Atawhai [year].
+                                    9. This information resource may be passed onto another party, in either hard copy or electronic form. If a user does this, then it is recommended that they also supply this metadata record with the information resource.</gco:CharacterString>
+                            </gmd:useLimitation>
+                            <gmd:useConstraints>
+                                <gmd:MD_RestrictionCode codeList="http://asdd.ga.gov.au/asdd/profileinfo/gmxCodelists.xml#MD_RestrictionCode" codeListValue="otherRestrictions">otherRestrictions</gmd:MD_RestrictionCode>
+                            </gmd:useConstraints>
+                            <gmd:otherConstraints>
+                                <gco:CharacterString>DISCLAIMER</gco:CharacterString>
+                            </gmd:otherConstraints>
+                        </gmd:MD_LegalConstraints>
+                    </gmd:resourceConstraints>
+                    <gmd:spatialRepresentationType>
+                        <gmd:MD_SpatialRepresentationTypeCode codeList="http://asdd.ga.gov.au/asdd/profileinfo/gmxCodelists.xml#MD_SpatialRepresentationTypeCode" codeListValue="vector">vector</gmd:MD_SpatialRepresentationTypeCode>
+                    </gmd:spatialRepresentationType>
+                    <gmd:language>
+                        <gco:CharacterString>eng</gco:CharacterString>
+                    </gmd:language>
+                    <gmd:characterSet>
+                        <gmd:MD_CharacterSetCode codeList="http://asdd.ga.gov.au/asdd/profileinfo/gmxCodelists.xml#MD_CharacterSetCode" codeListValue="utf8">utf8</gmd:MD_CharacterSetCode>
+                    </gmd:characterSet>
+                    <gmd:topicCategory>
+                        <gmd:MD_TopicCategoryCode>biota</gmd:MD_TopicCategoryCode>
+                    </gmd:topicCategory>
+                    <gmd:topicCategory>
+                        <gmd:MD_TopicCategoryCode>environment</gmd:MD_TopicCategoryCode>
+                    </gmd:topicCategory>
+                    <gmd:extent>
+                        <gmd:EX_Extent>
+                            <gmd:geographicElement>
+                                <gmd:EX_GeographicBoundingBox>
+                                    <gmd:westBoundLongitude>
+                                        <gco:Decimal>-180</gco:Decimal>
+                                    </gmd:westBoundLongitude>
+                                    <gmd:eastBoundLongitude>
+                                        <gco:Decimal>180</gco:Decimal>
+                                    </gmd:eastBoundLongitude>
+                                    <gmd:southBoundLatitude>
+                                        <gco:Decimal>-47.175142</gco:Decimal>
+                                    </gmd:southBoundLatitude>
+                                    <gmd:northBoundLatitude>
+                                        <gco:Decimal>-34.120108</gco:Decimal>
+                                    </gmd:northBoundLatitude>
+                                </gmd:EX_GeographicBoundingBox>
+                            </gmd:geographicElement>
+                        </gmd:EX_Extent>
+                    </gmd:extent>
+                </gmd:MD_DataIdentification>
+            </gmd:identificationInfo>
+            <gmd:distributionInfo>
+                <gmd:MD_Distribution>
+                    <gmd:transferOptions>
+                        <gmd:MD_DigitalTransferOptions>
+                            <gmd:onLine>
+                                <gmd:CI_OnlineResource>
+                                    <gmd:linkage>
+                                        <gmd:URL>http://geoportal.doc.govt.nz/ArcGIS/rest/services/GeoportalServices/DOC_Pesticide_Summary_Operational_Areas_01_11_2014_to_28_02_2015/MapServer</gmd:URL>
+                                    </gmd:linkage>
+                                    <gmd:function>
+                                        <gmd:CI_OnLineFunctionCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode" codeListValue="">information</gmd:CI_OnLineFunctionCode>
+                                    </gmd:function>
+                                </gmd:CI_OnlineResource>
+                            </gmd:onLine>
+                        </gmd:MD_DigitalTransferOptions>
+                    </gmd:transferOptions>
+                </gmd:MD_Distribution>
+            </gmd:distributionInfo>
+            <gmd:dataQualityInfo>
+                <gmd:DQ_DataQuality>
+                    <gmd:scope>
+                        <gmd:DQ_Scope>
+                            <gmd:level>
+                                <gmd:MD_ScopeCode codeList="http://asdd.ga.gov.au/asdd/profileinfo/gmxCodelists.xml#MD_ScopeCode" codeListValue="dataset">dataset</gmd:MD_ScopeCode>
+                            </gmd:level>
+                            <gmd:levelDescription>
+                                <gmd:MD_ScopeDescription>
+                                    <gmd:other>
+                                        <gco:CharacterString>dataset</gco:CharacterString>
+                                    </gmd:other>
+                                </gmd:MD_ScopeDescription>
+                            </gmd:levelDescription>
+                        </gmd:DQ_Scope>
+                    </gmd:scope>
+                    <gmd:lineage>
+                        <gmd:LI_Lineage>
+                            <gmd:statement>
+                                <gco:CharacterString>The schema of this dataset was updated on 18/09/2013. The existing featureclass at date time was renamed in the NEGIS NATIS1 geodatabase and called OPERATIONAL_DOC_PesticideOpSummaries_PreNov2013.
+                                    The datset's source data varies from source to source and may be based on; LINZ Topo50, LINZ property cadastra or had drawn maps. It is an output from the departments standard operating procedure (SOP) called "Pesticide Summaries SOP" DOCDM-1146129.</gco:CharacterString>
+                            </gmd:statement>
+                        </gmd:LI_Lineage>
+                    </gmd:lineage>
+                </gmd:DQ_DataQuality>
+            </gmd:dataQualityInfo>
+            <gmd:metadataConstraints>
+                <gmd:MD_LegalConstraints>
+                    <gmd:accessConstraints>
+                        <gmd:MD_RestrictionCode codeList="http://asdd.ga.gov.au/asdd/profileinfo/gmxCodelists.xml#MD_RestrictionCode" codeListValue="copyright">copyright</gmd:MD_RestrictionCode>
+                    </gmd:accessConstraints>
+                </gmd:MD_LegalConstraints>
+            </gmd:metadataConstraints>
+            <gmd:metadataConstraints>
+                <gmd:MD_LegalConstraints>
+                    <gmd:useConstraints>
+                        <gmd:MD_RestrictionCode codeList="http://asdd.ga.gov.au/asdd/profileinfo/gmxCodelists.xml#MD_RestrictionCode" codeListValue="copyright">copyright</gmd:MD_RestrictionCode>
+                    </gmd:useConstraints>
+                </gmd:MD_LegalConstraints>
+            </gmd:metadataConstraints>
+        </gmd:MD_Metadata>
+    </csw:SearchResults>
+</csw:GetRecordsResponse>
