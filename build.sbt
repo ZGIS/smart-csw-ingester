@@ -70,6 +70,8 @@ scapegoatVersion := "1.1.0"
 
 coverageEnabled := true
 
+target in Compile in doc := baseDirectory.value / "docs/api"
+
 version in Docker := version.value
 maintainer in Docker := "allixender@googlemail.com"
 dockerBaseImage in Docker := "java:8-jre"
