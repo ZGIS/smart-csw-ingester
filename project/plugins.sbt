@@ -13,6 +13,10 @@ addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.5.4")
 // for autoplugins
 addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.1.1")
 
+addSbtPlugin("net.vonbuchholtz" % "sbt-dependency-check" % "0.1.1")
+
+// code quality etc documentation plugins
+
 addSbtPlugin("org.scalastyle" %% "scalastyle-sbt-plugin" % "0.8.0")
 
 addSbtPlugin("com.sksamuel.scapegoat" %% "sbt-scapegoat" % "1.0.4")
