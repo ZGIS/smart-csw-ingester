@@ -52,8 +52,6 @@ libraryDependencies ++= Seq(
   specs2 % Test
 )
 
-
-
 scalacOptions in ThisBuild ++= Seq(
   "-encoding", "UTF-8",
   "-deprecation", // warning and location for usages of deprecated APIs
@@ -67,10 +65,16 @@ scalacOptions in ThisBuild ++= Seq(
   "-language:reflectiveCalls"
 )
 
+fork in run := true
+
+// coverage, style and dependency checks
+
 // Scala style task for compile, config file is scalastyle-config.xml
 lazy val compileScalastyle = taskKey[Unit]("compileScalastyle")
 compileScalastyle := org.scalastyle.sbt.ScalastylePlugin.scalastyle.in(Compile).toTask("").value
 (compile in Compile) <<= (compile in Compile) dependsOn compileScalastyle
+
+target in Compile in doc := baseDirectory.value / "docs/api"
 
 // Scala style task to run with tests
 lazy val testScalastyle = taskKey[Unit]("testScalastyle")
@@ -78,12 +82,41 @@ testScalastyle := org.scalastyle.sbt.ScalastylePlugin.scalastyle.in(Test).toTask
 (test in Test) <<= (test in Test) dependsOn testScalastyle
 
 scapegoatVersion := "1.2.0"
-// scalacOption only for the scapegoat task!!!
+
+scapegoatOutputPath := "docs/scapegoat"
+
+// scalacOptions only for the scapegoat task
 scalacOptions in Scapegoat ++= Seq("-P:scapegoat:overrideLevels:TraversableHead=Warning:OptionGet=Warning")
 
 coverageEnabled := true
 
-target in Compile in doc := baseDirectory.value / "docs/api"
+lazy val coverageCopyTask = TaskKey[Unit]("copy-coverage")
+
+coverageCopyTask := {
+  println(s"Copying: ./target/scala-2.11/scoverage-report/ to ./docs")
+  val result = Seq("cp", "-r", "./target/scala-2.11/scoverage-report", "./docs/scoverage-report") !!
+}
+
+dependencyCheckOutputDirectory := Some(file("docs/dep-sec"))
+
+// Use e.g. yEd to format the graph
+dependencyGraphMLFile := file("docs/dep-sec/dependencies.graphml")
+
+// Use e.g.graphviz to render
+dependencyDotFile := file("docs/dep-sec/dependencies.dot")
+
+lazy val renderDepsGraphsTask = TaskKey[Unit]("render-deps")
+
+renderDepsGraphsTask := {
+  println(s"dependencyGraphMl - Use e.g. yEd to format the graph")
+  // val resultGraphML = dependencyGraphMl.value
+  println(s"dependencyDot - Use e.g.graphviz to render")
+  // val resultDot = dependencyDot.value
+  println(s"dependencyLicenseInfo")
+  // val resultLic = dependencyLicenseInfo.value
+}
+
+// packaging options
 
 version in Docker := version.value
 maintainer in Docker := "allixender@googlemail.com"
@@ -96,5 +129,3 @@ javaOptions in Universal ++= Seq(
   "-Dconfig.resource=application.conf"
   //"-Dapplication.base_url=http://test.smart-project.info/"
 )
-
-fork in run := true
