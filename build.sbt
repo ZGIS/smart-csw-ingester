@@ -20,6 +20,7 @@
 import com.typesafe.sbt.packager.archetypes.JavaAppPackaging
 import com.typesafe.sbt.packager.docker._
 import com.sksamuel.scapegoat.sbt._
+import com.sksamuel.scapegoat.sbt.ScapegoatSbtPlugin.autoImport._
 import scoverage.ScoverageKeys._
 
 name := """smart-csw-ingester"""
@@ -51,7 +52,7 @@ libraryDependencies ++= Seq(
   specs2 % Test
 )
 
-resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
+
 
 scalacOptions in ThisBuild ++= Seq(
   "-encoding", "UTF-8",
@@ -66,20 +67,19 @@ scalacOptions in ThisBuild ++= Seq(
   "-language:reflectiveCalls"
 )
 
-// Create a default Scala style task to run with tests
-lazy val testScalastyle = taskKey[Unit]("testScalastyle")
-
-testScalastyle := org.scalastyle.sbt.ScalastylePlugin.scalastyle.in(Test).toTask("").value
-
-(test in Test) <<= (test in Test) dependsOn testScalastyle
-
+// Scala style task for compile, config file is scalastyle-config.xml
 lazy val compileScalastyle = taskKey[Unit]("compileScalastyle")
-
 compileScalastyle := org.scalastyle.sbt.ScalastylePlugin.scalastyle.in(Compile).toTask("").value
-
 (compile in Compile) <<= (compile in Compile) dependsOn compileScalastyle
 
-scapegoatVersion := "1.1.0"
+// Scala style task to run with tests
+lazy val testScalastyle = taskKey[Unit]("testScalastyle")
+testScalastyle := org.scalastyle.sbt.ScalastylePlugin.scalastyle.in(Test).toTask("").value
+(test in Test) <<= (test in Test) dependsOn testScalastyle
+
+scapegoatVersion := "1.2.0"
+// scalacOption only for the scapegoat task!!!
+scalacOptions in Scapegoat ++= Seq("-P:scapegoat:overrideLevels:TraversableHead=Warning:OptionGet=Warning")
 
 coverageEnabled := true
 

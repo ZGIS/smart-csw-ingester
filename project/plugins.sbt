@@ -6,6 +6,7 @@ resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/release
 
 resolvers += Resolver.sonatypeRepo("releases")
 
+resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
 
 // The Play plugin
 addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.5.4")
