@@ -13,8 +13,6 @@ addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.5.4")
 // for autoplugins
 addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.1.1")
 
-addSbtPlugin("net.vonbuchholtz" % "sbt-dependency-check" % "0.1.1")
-
 // code quality etc documentation plugins
 
 addSbtPlugin("org.scalastyle" %% "scalastyle-sbt-plugin" % "0.8.0")
@@ -22,6 +20,10 @@ addSbtPlugin("org.scalastyle" %% "scalastyle-sbt-plugin" % "0.8.0")
 addSbtPlugin("com.sksamuel.scapegoat" %% "sbt-scapegoat" % "1.0.4")
 
 addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.3.5")
+
+addSbtPlugin("net.virtual-void" % "sbt-dependency-graph" % "0.8.2")
+
+addSbtPlugin("net.vonbuchholtz" % "sbt-dependency-check" % "0.1.1")
 
 // FIXME web plugins (not needed for this project?)
 

@@ -21,6 +21,7 @@ import com.typesafe.sbt.packager.archetypes.JavaAppPackaging
 import com.typesafe.sbt.packager.docker._
 import com.sksamuel.scapegoat.sbt._
 import scoverage.ScoverageKeys._
+import com.markatta.sbttaglist.TagListPlugin.tagListSettings
 
 name := """smart-csw-ingester"""
 
