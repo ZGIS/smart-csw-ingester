@@ -21,7 +21,6 @@ import com.typesafe.sbt.packager.archetypes.JavaAppPackaging
 import com.typesafe.sbt.packager.docker._
 import com.sksamuel.scapegoat.sbt._
 import scoverage.ScoverageKeys._
-import com.markatta.sbttaglist.TagListPlugin.tagListSettings
 
 name := """smart-csw-ingester"""
 
@@ -66,6 +65,19 @@ scalacOptions in ThisBuild ++= Seq(
   "-Ywarn-dead-code",
   "-language:reflectiveCalls"
 )
+
+// Create a default Scala style task to run with tests
+lazy val testScalastyle = taskKey[Unit]("testScalastyle")
+
+testScalastyle := org.scalastyle.sbt.ScalastylePlugin.scalastyle.in(Test).toTask("").value
+
+(test in Test) <<= (test in Test) dependsOn testScalastyle
+
+lazy val compileScalastyle = taskKey[Unit]("compileScalastyle")
+
+compileScalastyle := org.scalastyle.sbt.ScalastylePlugin.scalastyle.in(Compile).toTask("").value
+
+(compile in Compile) <<= (compile in Compile) dependsOn compileScalastyle
 
 scapegoatVersion := "1.1.0"
 
