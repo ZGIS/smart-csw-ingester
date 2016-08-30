@@ -11,7 +11,7 @@ sbt scalastyle
 ### sbt-scapegoat
 
 - uses scapegoat version 1.2.0 and provides not only style but also static code analysis
-- generates report under `target/site/scapegoat` and is so included in `ghpagesPushSite`
+- generates report under `src/site/scapegoat` and is so included in `ghpagesPushSite`
 
 ```scala
 sbt scapegoat
@@ -34,8 +34,8 @@ sbt copyCoverage
 Don't use `publishSite` from sbt-site, but the `ghpagesPushSite` from sbt-ghpages
 
 ```scala
-sbt previewSite
 sbt makeSite
+sbt previewSite
 ```
 
 ### sbt-ghpages
