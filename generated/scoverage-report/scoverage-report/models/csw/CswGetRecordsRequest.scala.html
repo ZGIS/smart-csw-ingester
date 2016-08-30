@@ -1,0 +1,140 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          models/csw/CswGetRecordsRequest.scala.html
+        </title>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="http://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier;'>1 <span style=''>/*
+</span>2 <span style=''> * Copyright (c) 2011-2017 Interfaculty Department of Geoinformatics, University of Salzburg (Z_GIS)
+</span>3 <span style=''> *                       & Institute of Geological and Nuclear Sciences Limited (GNS Science)
+</span>4 <span style=''> *                       in the SMART Aquifer Characterisation (SAC) programme funded by the New Zealand
+</span>5 <span style=''> *                       Ministry of Business, Innovation and Employment (MBIE)
+</span>6 <span style=''> *
+</span>7 <span style=''> * Licensed under the Apache License, Version 2.0 (the "License");
+</span>8 <span style=''> * you may not use this file except in compliance with the License.
+</span>9 <span style=''> * You may obtain a copy of the License at
+</span>10 <span style=''> *
+</span>11 <span style=''> *    http://www.apache.org/licenses/LICENSE-2.0
+</span>12 <span style=''> *
+</span>13 <span style=''> * Unless required by applicable law or agreed to in writing, software
+</span>14 <span style=''> * distributed under the License is distributed on an "AS IS" BASIS,
+</span>15 <span style=''> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+</span>16 <span style=''> * See the License for the specific language governing permissions and
+</span>17 <span style=''> * limitations under the License.
+</span>18 <span style=''> *
+</span>19 <span style=''> *
+</span>20 <span style=''> */
+</span>21 <span style=''>
+</span>22 <span style=''>package models.csw
+</span>23 <span style=''>
+</span>24 <span style=''>import utils.ClassnameLogger
+</span>25 <span style=''>
+</span>26 <span style=''>/**
+</span>27 <span style=''>  * Simple Request Builder for GetRecords-Request.
+</span>28 <span style=''>  */
+</span>29 <span style=''>object CswGetRecordsRequest extends ClassnameLogger {
+</span>30 <span style=''>  def apply(startPosition: Int, maxDocuments: Int): String = {
+</span>31 <span style=''>    val result =
+</span>32 <span style=''>      </span><span style='background: #AEF1AE'>f"""
+</span>33 <span style=''></span><span style='background: #AEF1AE'>         |<csw:GetRecords xmlns:csw="http://www.opengis.net/cat/csw/2.0.2"
+</span>34 <span style=''></span><span style='background: #AEF1AE'>         |                xmlns:ogc="http://www.opengis.net/ogc"
+</span>35 <span style=''></span><span style='background: #AEF1AE'>         |                xmlns:gmd="http://www.isotc211.org/2005/gmd"
+</span>36 <span style=''></span><span style='background: #AEF1AE'>         |                service="CSW" version="2.0.2"
+</span>37 <span style=''></span><span style='background: #AEF1AE'>         |                resultType="results" startPosition="${startPosition}" maxRecords="${maxDocuments}"
+</span>38 <span style=''></span><span style='background: #AEF1AE'>         |                outputFormat="application/xml" outputSchema="http://www.isotc211.org/2005/gmd"
+</span>39 <span style=''></span><span style='background: #AEF1AE'>         |                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+</span>40 <span style=''></span><span style='background: #AEF1AE'>         |                xsi:schemaLocation="http://www.opengis.net/cat/csw/2.0.2
+</span>41 <span style=''></span><span style='background: #AEF1AE'>         |                                    http://schemas.opengis.net/csw/2.0.2/CSW-discovery.xsd">
+</span>42 <span style=''></span><span style='background: #AEF1AE'>         |  <csw:Query typeNames="gmd:MD_Metadata">
+</span>43 <span style=''></span><span style='background: #AEF1AE'>         |    <csw:ElementSetName>full</csw:ElementSetName>
+</span>44 <span style=''></span><span style='background: #AEF1AE'>         |  </csw:Query>
+</span>45 <span style=''></span><span style='background: #AEF1AE'>         |</csw:GetRecords>
+</span>46 <span style=''></span><span style='background: #AEF1AE'>      """.stripMargin</span><span style=''>
+</span>47 <span style=''>    </span><span style='background: #AEF1AE'>logger.debug(f"GetRecords Request: ${result}")</span><span style=''>
+</span>48 <span style=''>    result
+</span>49 <span style=''>  }
+</span>50 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          46
+        </td>
+        <td>
+          53
+        </td>
+        <td>
+          1201
+          -
+          2139
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.collection.immutable.StringLike.stripMargin
+        </td>
+        <td style="background: #AEF1AE">
+          scala.this.Predef.augmentString(({
+  val arg$macro$1: Any = startPosition;
+  val arg$macro$2: Any = maxDocuments;
+  new scala.collection.immutable.StringOps(&quot;\n         |&lt;csw:GetRecords xmlns:csw=\&quot;http://www.opengis.net/cat/csw/2.0.2\&quot;\n         |                xmlns:ogc=\&quot;http://www.opengis.net/ogc\&quot;\n         |                xmlns:gmd=\&quot;http://www.isotc211.org/2005/gmd\&quot;\n         |                service=\&quot;CSW\&quot; version=\&quot;2.0.2\&quot;\n         |                resultType=\&quot;results\&quot; startPosition=\&quot;%s\&quot; maxRecords=\&quot;%s\&quot;\n         |                outputFormat=\&quot;application/xml\&quot; outputSchema=\&quot;http://www.isotc211.org/2005/gmd\&quot;\n         |                xmlns:xsi=\&quot;http://www.w3.org/2001/XMLSchema-instance\&quot;\n         |                xsi:schemaLocation=\&quot;http://www.opengis.net/cat/csw/2.0.2\n         |                                    http://schemas.opengis.net/csw/2.0.2/CSW-discovery.xsd\&quot;&gt;\n         |  &lt;csw:Query typeNames=\&quot;gmd:MD_Metadata\&quot;&gt;\n         |    &lt;csw:ElementSetName&gt;full&lt;/csw:ElementSetName&gt;\n         |  &lt;/csw:Query&gt;\n         |&lt;/csw:GetRecords&gt;\n      &quot;).format(arg$macro$1, arg$macro$2)
+}: String)).stripMargin
+        </td>
+      </tr><tr>
+        <td>
+          47
+        </td>
+        <td>
+          54
+        </td>
+        <td>
+          2144
+          -
+          2190
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.LoggerLike.debug
+        </td>
+        <td style="background: #AEF1AE">
+          CswGetRecordsRequest.this.logger.debug(({
+  val arg$macro$3: Any = result;
+  new scala.collection.immutable.StringOps(&quot;GetRecords Request: %s&quot;).format(arg$macro$3)
+}: String))
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

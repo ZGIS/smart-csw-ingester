@@ -44,17 +44,18 @@ sbt previewSite
 sbt ghpagesPushSite
 ```
 
+### sbt-dependency-check
+
+```scala
+sbt
+```
+
 ### sbt-dependency-graph
 
 ```scala
 sbt
 ```
 
-### sbt-dependency-check
-
-```scala
-sbt
-```
 
 ### sbt-native-packager
 
