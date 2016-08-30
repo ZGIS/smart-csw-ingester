@@ -5,9 +5,8 @@
 
 ## Build
 
-- Travis CI [![Build Status](https://travis-ci.org/ZGIS/smart-csw-ingester.svg)](https://travis-ci.org/ZGIS/smart-csw-ingester)
-- https://github.com/sbt/sbt-native-packager
-
+- [Travis CI Build](https://travis-ci.org/ZGIS/smart-csw-ingester)
+- [![Builds Feed](https://upload.wikimedia.org/wikipedia/en/4/43/Feed-icon.svg)](https://api.travis-ci.org/repos/ZGIS/smart-csw-ingester/builds.atom)
 
 ## Licenses
 
