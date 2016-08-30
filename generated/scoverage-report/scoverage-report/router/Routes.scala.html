@@ -25,7 +25,7 @@
             <pre style='font-size: 12pt; font-family: courier;'>1 <span style=''>
 </span>2 <span style=''>// @GENERATOR:play-routes-compiler
 </span>3 <span style=''>// @SOURCE:/home/akmoch/dev/build/smart-csw-ingester/conf/routes
-</span>4 <span style=''>// @DATE:Tue Aug 30 18:27:33 NZST 2016
+</span>4 <span style=''>// @DATE:Tue Aug 30 18:55:14 NZST 2016
 </span>5 <span style=''>
 </span>6 <span style=''>package router
 </span>7 <span style=''>
@@ -77,18 +77,18 @@
 </span>53 <span style=''>    if (</span><span style='background: #AEF1AE'>this.prefix.endsWith("/")</span><span style=''>) </span><span style='background: #AEF1AE'>""</span><span style=''> else </span><span style='background: #F0ADAD'>"/"</span><span style=''>
 </span>54 <span style=''>  }
 </span>55 <span style=''>
-</span>56 <span style=''>  def documentation = </span><span style='background: #F0ADAD'>List(
-</span>57 <span style=''></span><span style='background: #F0ADAD'>    ("""GET""", this.prefix, """controllers.HomeController.index"""),
-</span>58 <span style=''></span><span style='background: #F0ADAD'>    ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """count""", """controllers.CountController.count"""),
-</span>59 <span style=''></span><span style='background: #F0ADAD'>    ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """message""", """controllers.AsyncController.message"""),
-</span>60 <span style=''></span><span style='background: #F0ADAD'>    ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """query""", """controllers.QueryController.query(query:String = "")"""),
-</span>61 <span style=''></span><span style='background: #F0ADAD'>    ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """query/""" + "$" + """query<[^/]+>""", """controllers.QueryController.query(query:String)"""),
-</span>62 <span style=''></span><span style='background: #F0ADAD'>    ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """assets/""" + "$" + """file<.+>""", """controllers.Assets.versioned(path:String = "/public", file:Asset)"""),
-</span>63 <span style=''></span><span style='background: #F0ADAD'>    Nil
-</span>64 <span style=''></span><span style='background: #F0ADAD'>  ).foldLeft(List.empty[(String,String,String)]) { (s,e) => e.asInstanceOf[Any] match {
-</span>65 <span style=''></span><span style='background: #F0ADAD'>    case r @ (_,_,_) => s :+ r.asInstanceOf[(String,String,String)]
-</span>66 <span style=''></span><span style='background: #F0ADAD'>    case l => s ++ l.asInstanceOf[List[(String,String,String)]]
-</span>67 <span style=''></span><span style='background: #F0ADAD'>  }}</span><span style=''>
+</span>56 <span style=''>  def documentation = </span><span style='background: #AEF1AE'>List(
+</span>57 <span style=''></span><span style='background: #AEF1AE'>    ("""GET""", this.prefix, """controllers.HomeController.index"""),
+</span>58 <span style=''></span><span style='background: #AEF1AE'>    ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """count""", """controllers.CountController.count"""),
+</span>59 <span style=''></span><span style='background: #AEF1AE'>    ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """message""", """controllers.AsyncController.message"""),
+</span>60 <span style=''></span><span style='background: #AEF1AE'>    ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """query""", """controllers.QueryController.query(query:String = "")"""),
+</span>61 <span style=''></span><span style='background: #AEF1AE'>    ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """query/""" + "$" + """query<[^/]+>""", """controllers.QueryController.query(query:String)"""),
+</span>62 <span style=''></span><span style='background: #AEF1AE'>    ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """assets/""" + "$" + """file<.+>""", """controllers.Assets.versioned(path:String = "/public", file:Asset)"""),
+</span>63 <span style=''></span><span style='background: #AEF1AE'>    Nil
+</span>64 <span style=''></span><span style='background: #AEF1AE'>  ).foldLeft(List.empty[(String,String,String)]) { (s,e) => e.asInstanceOf[Any] match {
+</span>65 <span style=''></span><span style='background: #AEF1AE'>    case r @ (_,_,_) => s :+ r.asInstanceOf[(String,String,String)]
+</span>66 <span style=''></span><span style='background: #AEF1AE'>    case l => s ++ l.asInstanceOf[List[(String,String,String)]]
+</span>67 <span style=''></span><span style='background: #AEF1AE'>  }}</span><span style=''>
 </span>68 <span style=''>
 </span>69 <span style=''>
 </span>70 <span style=''>  // @LINE:6
@@ -112,18 +112,18 @@
 </span>88 <span style=''>  private[this] lazy val controllers_CountController_count1_route = </span><span style='background: #AEF1AE'>Route("GET",
 </span>89 <span style=''></span><span style='background: #AEF1AE'>    PathPattern(List(StaticPart(this.prefix), StaticPart(this.defaultPrefix), StaticPart("count")))
 </span>90 <span style=''></span><span style='background: #AEF1AE'>  )</span><span style=''>
-</span>91 <span style=''>  private[this] lazy val controllers_CountController_count1_invoker = </span><span style='background: #F0ADAD'>createInvoker(
-</span>92 <span style=''></span><span style='background: #F0ADAD'>    CountController_0.count,
-</span>93 <span style=''></span><span style='background: #F0ADAD'>    HandlerDef(this.getClass.getClassLoader,
-</span>94 <span style=''></span><span style='background: #F0ADAD'>      "router",
-</span>95 <span style=''></span><span style='background: #F0ADAD'>      "controllers.CountController",
-</span>96 <span style=''></span><span style='background: #F0ADAD'>      "count",
-</span>97 <span style=''></span><span style='background: #F0ADAD'>      Nil,
-</span>98 <span style=''></span><span style='background: #F0ADAD'>      "GET",
-</span>99 <span style=''></span><span style='background: #F0ADAD'>      """ An example controller showing how to use dependency injection""",
-</span>100 <span style=''></span><span style='background: #F0ADAD'>      this.prefix + """count"""
-</span>101 <span style=''></span><span style='background: #F0ADAD'>    )
-</span>102 <span style=''></span><span style='background: #F0ADAD'>  )</span><span style=''>
+</span>91 <span style=''>  private[this] lazy val controllers_CountController_count1_invoker = </span><span style='background: #AEF1AE'>createInvoker(
+</span>92 <span style=''></span><span style='background: #AEF1AE'>    </span><span style='background: #F0ADAD'>CountController_0.count</span><span style='background: #AEF1AE'>,
+</span>93 <span style=''></span><span style='background: #AEF1AE'>    HandlerDef(this.getClass.getClassLoader,
+</span>94 <span style=''></span><span style='background: #AEF1AE'>      "router",
+</span>95 <span style=''></span><span style='background: #AEF1AE'>      "controllers.CountController",
+</span>96 <span style=''></span><span style='background: #AEF1AE'>      "count",
+</span>97 <span style=''></span><span style='background: #AEF1AE'>      Nil,
+</span>98 <span style=''></span><span style='background: #AEF1AE'>      "GET",
+</span>99 <span style=''></span><span style='background: #AEF1AE'>      """ An example controller showing how to use dependency injection""",
+</span>100 <span style=''></span><span style='background: #AEF1AE'>      this.prefix + """count"""
+</span>101 <span style=''></span><span style='background: #AEF1AE'>    )
+</span>102 <span style=''></span><span style='background: #AEF1AE'>  )</span><span style=''>
 </span>103 <span style=''>
 </span>104 <span style=''>  // @LINE:10
 </span>105 <span style=''>  private[this] lazy val controllers_AsyncController_message2_route = </span><span style='background: #AEF1AE'>Route("GET",
@@ -205,9 +205,9 @@
 </span>181 <span style=''>  
 </span>182 <span style=''>    // @LINE:8
 </span>183 <span style=''>    case controllers_CountController_count1_route(params) =>
-</span>184 <span style=''>      </span><span style='background: #F0ADAD'>call { 
-</span>185 <span style=''></span><span style='background: #F0ADAD'>        controllers_CountController_count1_invoker.call(CountController_0.count)
-</span>186 <span style=''></span><span style='background: #F0ADAD'>      }</span><span style=''>
+</span>184 <span style=''>      </span><span style='background: #AEF1AE'>call { 
+</span>185 <span style=''></span><span style='background: #AEF1AE'>        controllers_CountController_count1_invoker.call(CountController_0.count)
+</span>186 <span style=''></span><span style='background: #AEF1AE'>      }</span><span style=''>
 </span>187 <span style=''>  
 </span>188 <span style=''>    // @LINE:10
 </span>189 <span style=''>    case controllers_AsyncController_message2_route(params) =>
@@ -578,7 +578,7 @@
         <td>
           router.Routes.prefix
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           this.prefix
         </td>
       </tr><tr>
@@ -599,7 +599,7 @@
         <td>
           scala.Tuple3.apply
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           scala.Tuple3.apply[String, String, String](&quot;GET&quot;, this.prefix, &quot;controllers.HomeController.index&quot;)
         </td>
       </tr><tr>
@@ -620,7 +620,7 @@
         <td>
           &lt;nosymbol&gt;
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           &quot;GET&quot;
         </td>
       </tr><tr>
@@ -641,7 +641,7 @@
         <td>
           &lt;nosymbol&gt;
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           &quot;controllers.HomeController.index&quot;
         </td>
       </tr><tr>
@@ -662,7 +662,7 @@
         <td>
           java.lang.String.+
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           this.prefix.+(if (this.prefix.endsWith(&quot;/&quot;))
   &quot;&quot;
 else
@@ -686,7 +686,7 @@ else
         <td>
           scala.Tuple3.apply
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           scala.Tuple3.apply[String, String, String](&quot;GET&quot;, this.prefix.+(if (this.prefix.endsWith(&quot;/&quot;))
   &quot;&quot;
 else
@@ -710,7 +710,7 @@ else
         <td>
           &lt;nosymbol&gt;
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           &quot;GET&quot;
         </td>
       </tr><tr>
@@ -731,7 +731,7 @@ else
         <td>
           &lt;nosymbol&gt;
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           &quot;controllers.CountController.count&quot;
         </td>
       </tr><tr>
@@ -752,7 +752,7 @@ else
         <td>
           &lt;nosymbol&gt;
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           &quot;GET&quot;
         </td>
       </tr><tr>
@@ -773,7 +773,7 @@ else
         <td>
           &lt;nosymbol&gt;
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           &quot;controllers.AsyncController.message&quot;
         </td>
       </tr><tr>
@@ -794,7 +794,7 @@ else
         <td>
           java.lang.String.+
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           this.prefix.+(if (this.prefix.endsWith(&quot;/&quot;))
   &quot;&quot;
 else
@@ -818,7 +818,7 @@ else
         <td>
           scala.Tuple3.apply
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           scala.Tuple3.apply[String, String, String](&quot;GET&quot;, this.prefix.+(if (this.prefix.endsWith(&quot;/&quot;))
   &quot;&quot;
 else
@@ -842,7 +842,7 @@ else
         <td>
           &lt;nosymbol&gt;
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           &quot;controllers.QueryController.query(query:String = \&quot;\&quot;)&quot;
         </td>
       </tr><tr>
@@ -863,7 +863,7 @@ else
         <td>
           java.lang.String.+
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           this.prefix.+(if (this.prefix.endsWith(&quot;/&quot;))
   &quot;&quot;
 else
@@ -887,7 +887,7 @@ else
         <td>
           &lt;nosymbol&gt;
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           &quot;GET&quot;
         </td>
       </tr><tr>
@@ -908,7 +908,7 @@ else
         <td>
           scala.Tuple3.apply
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           scala.Tuple3.apply[String, String, String](&quot;GET&quot;, this.prefix.+(if (this.prefix.endsWith(&quot;/&quot;))
   &quot;&quot;
 else
@@ -932,7 +932,7 @@ else
         <td>
           &lt;nosymbol&gt;
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           &quot;GET&quot;
         </td>
       </tr><tr>
@@ -953,7 +953,7 @@ else
         <td>
           scala.Tuple3.apply
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           scala.Tuple3.apply[String, String, String](&quot;GET&quot;, this.prefix.+(if (this.prefix.endsWith(&quot;/&quot;))
   &quot;&quot;
 else
@@ -977,7 +977,7 @@ else
         <td>
           &lt;nosymbol&gt;
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           &quot;controllers.QueryController.query(query:String)&quot;
         </td>
       </tr><tr>
@@ -998,7 +998,7 @@ else
         <td>
           java.lang.String.+
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           this.prefix.+(if (this.prefix.endsWith(&quot;/&quot;))
   &quot;&quot;
 else
@@ -1022,7 +1022,7 @@ else
         <td>
           scala.Tuple3.apply
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           scala.Tuple3.apply[String, String, String](&quot;GET&quot;, this.prefix.+(if (this.prefix.endsWith(&quot;/&quot;))
   &quot;&quot;
 else
@@ -1046,7 +1046,7 @@ else
         <td>
           &lt;nosymbol&gt;
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           &quot;controllers.Assets.versioned(path:String = \&quot;/public\&quot;, file:Asset)&quot;
         </td>
       </tr><tr>
@@ -1067,7 +1067,7 @@ else
         <td>
           java.lang.String.+
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           this.prefix.+(if (this.prefix.endsWith(&quot;/&quot;))
   &quot;&quot;
 else
@@ -1091,7 +1091,7 @@ else
         <td>
           &lt;nosymbol&gt;
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           &quot;GET&quot;
         </td>
       </tr><tr>
@@ -1112,7 +1112,7 @@ else
         <td>
           scala.collection.immutable.Nil
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           immutable.this.Nil
         </td>
       </tr><tr>
@@ -1133,7 +1133,7 @@ else
         <td>
           scala.collection.immutable.List.empty
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           immutable.this.List.empty[(String, String, String)]
         </td>
       </tr><tr>
@@ -1154,7 +1154,7 @@ else
         <td>
           scala.collection.LinearSeqOptimized.foldLeft
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           immutable.this.List.apply[Product with Serializable](scala.Tuple3.apply[String, String, String](&quot;GET&quot;, this.prefix, &quot;controllers.HomeController.index&quot;), scala.Tuple3.apply[String, String, String](&quot;GET&quot;, this.prefix.+(if (this.prefix.endsWith(&quot;/&quot;))
   &quot;&quot;
 else
@@ -1193,7 +1193,7 @@ else
         <td>
           scala.Any.asInstanceOf
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           e.asInstanceOf[Any]
         </td>
       </tr><tr>
@@ -1214,7 +1214,7 @@ else
         <td>
           scala.collection.immutable.List.canBuildFrom
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           immutable.this.List.canBuildFrom[(String, String, String)]
         </td>
       </tr><tr>
@@ -1235,7 +1235,7 @@ else
         <td>
           scala.Any.asInstanceOf
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           r.asInstanceOf[(String, String, String)]
         </td>
       </tr><tr>
@@ -1256,7 +1256,7 @@ else
         <td>
           scala.collection.SeqLike.:+
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           s.:+[(String, String, String), List[(String, String, String)]](r.asInstanceOf[(String, String, String)])(immutable.this.List.canBuildFrom[(String, String, String)])
         </td>
       </tr><tr>
@@ -1277,7 +1277,7 @@ else
         <td>
           scala.collection.immutable.List.++
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           s.++[(String, String, String), List[(String, String, String)]](l.asInstanceOf[List[(String, String, String)]])(immutable.this.List.canBuildFrom[(String, String, String)])
         </td>
       </tr><tr>
@@ -1298,7 +1298,7 @@ else
         <td>
           scala.collection.immutable.List.canBuildFrom
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           immutable.this.List.canBuildFrom[(String, String, String)]
         </td>
       </tr><tr>
@@ -1319,7 +1319,7 @@ else
         <td>
           scala.Any.asInstanceOf
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           l.asInstanceOf[List[(String, String, String)]]
         </td>
       </tr><tr>
@@ -1907,7 +1907,7 @@ else
         <td>
           play.core.routing.GeneratedRouter.createInvoker
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           Routes.this.createInvoker[play.api.mvc.Action[play.api.mvc.AnyContent]](Routes.this.CountController_0.count, play.core.routing.HandlerDef.apply(this.getClass().getClassLoader(), &quot;router&quot;, &quot;controllers.CountController&quot;, &quot;count&quot;, immutable.this.Nil, &quot;GET&quot;, &quot; An example controller showing how to use dependency injection&quot;, this.prefix.+(&quot;count&quot;)))(play.core.routing.HandlerInvokerFactory.passThrough[play.api.mvc.Handler])
         </td>
       </tr><tr>
@@ -1928,7 +1928,7 @@ else
         <td>
           play.core.routing.HandlerInvokerFactory.passThrough
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           play.core.routing.HandlerInvokerFactory.passThrough[play.api.mvc.Handler]
         </td>
       </tr><tr>
@@ -1970,7 +1970,7 @@ else
         <td>
           play.core.routing.HandlerDef.apply
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           play.core.routing.HandlerDef.apply(this.getClass().getClassLoader(), &quot;router&quot;, &quot;controllers.CountController&quot;, &quot;count&quot;, immutable.this.Nil, &quot;GET&quot;, &quot; An example controller showing how to use dependency injection&quot;, this.prefix.+(&quot;count&quot;))
         </td>
       </tr><tr>
@@ -1991,7 +1991,7 @@ else
         <td>
           java.lang.Class.getClassLoader
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           this.getClass().getClassLoader()
         </td>
       </tr><tr>
@@ -2012,7 +2012,7 @@ else
         <td>
           &lt;nosymbol&gt;
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           &quot;router&quot;
         </td>
       </tr><tr>
@@ -2033,7 +2033,7 @@ else
         <td>
           &lt;nosymbol&gt;
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           &quot;controllers.CountController&quot;
         </td>
       </tr><tr>
@@ -2054,7 +2054,7 @@ else
         <td>
           &lt;nosymbol&gt;
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           &quot;count&quot;
         </td>
       </tr><tr>
@@ -2075,7 +2075,7 @@ else
         <td>
           scala.collection.immutable.Nil
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           immutable.this.Nil
         </td>
       </tr><tr>
@@ -2096,7 +2096,7 @@ else
         <td>
           &lt;nosymbol&gt;
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           &quot;GET&quot;
         </td>
       </tr><tr>
@@ -2117,7 +2117,7 @@ else
         <td>
           &lt;nosymbol&gt;
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           &quot; An example controller showing how to use dependency injection&quot;
         </td>
       </tr><tr>
@@ -2138,7 +2138,7 @@ else
         <td>
           java.lang.String.+
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           this.prefix.+(&quot;count&quot;)
         </td>
       </tr><tr>
@@ -4133,7 +4133,7 @@ else
         <td>
           play.core.routing.GeneratedRouter.call
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           Routes.this.call(Routes.this.controllers_CountController_count1_invoker.call(Routes.this.CountController_0.count))
         </td>
       </tr><tr>
@@ -4154,7 +4154,7 @@ else
         <td>
           controllers.CountController.count
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           Routes.this.CountController_0.count
         </td>
       </tr><tr>
@@ -4175,7 +4175,7 @@ else
         <td>
           play.core.routing.HandlerInvoker.call
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           Routes.this.controllers_CountController_count1_invoker.call(Routes.this.CountController_0.count)
         </td>
       </tr><tr>

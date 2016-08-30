@@ -51,7 +51,7 @@
 </span>27 <span style=''>@Singleton
 </span>28 <span style=''>class AtomicCounter extends Counter {  
 </span>29 <span style=''>  private val atomicCounter = </span><span style='background: #AEF1AE'>new AtomicInteger()</span><span style=''>
-</span>30 <span style=''>  override def nextCount(): Int = </span><span style='background: #F0ADAD'>atomicCounter.getAndIncrement()</span><span style=''>
+</span>30 <span style=''>  override def nextCount(): Int = </span><span style='background: #AEF1AE'>atomicCounter.getAndIncrement()</span><span style=''>
 </span>31 <span style=''>}
 </span></pre>
           </div>
@@ -103,7 +103,7 @@
         <td>
           java.util.concurrent.atomic.AtomicInteger.getAndIncrement
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           AtomicCounter.this.atomicCounter.getAndIncrement()
         </td>
       </tr>

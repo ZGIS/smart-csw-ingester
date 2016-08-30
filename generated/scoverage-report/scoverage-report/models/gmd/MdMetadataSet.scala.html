@@ -192,7 +192,7 @@
 </span>168 <span style=''>    * @return Some(MdMetadataSet) or None if parsing error
 </span>169 <span style=''>    */
 </span>170 <span style=''>  def fromXml(nodeSeq: NodeSeq): Option[MdMetadataSet] = {
-</span>171 <span style=''>    </span><span style='background: #F0ADAD'>fromXml(nodeSeq, "")</span><span style=''>
+</span>171 <span style=''>    </span><span style='background: #AEF1AE'>fromXml(nodeSeq, "")</span><span style=''>
 </span>172 <span style=''>  }
 </span>173 <span style=''>
 </span>174 <span style=''>  /**
@@ -273,7 +273,7 @@
 </span>249 <span style=''></span><span style='background: #AEF1AE'>            val correctedDateString = dateString match {
 </span>250 <span style=''></span><span style='background: #AEF1AE'>              case yearMonthMatcher() => dateString.concat("-01")
 </span>251 <span style=''></span><span style='background: #AEF1AE'>              case yearMatcher() => dateString.concat("-01-01")
-</span>252 <span style=''></span><span style='background: #AEF1AE'>              case isoInstantMatcher() => </span><span style='background: #F0ADAD'>dateString.dropRight(1)</span><span style='background: #AEF1AE'>
+</span>252 <span style=''></span><span style='background: #AEF1AE'>              case isoInstantMatcher() => dateString.dropRight(1)
 </span>253 <span style=''></span><span style='background: #AEF1AE'>              case _ => dateString
 </span>254 <span style=''></span><span style='background: #AEF1AE'>            }
 </span>255 <span style=''></span><span style='background: #AEF1AE'>            Some(LocalDate.parse(correctedDateString, df))
@@ -3532,7 +3532,7 @@
         <td>
           models.gmd.MdMetadataSet.fromXml
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           MdMetadataSet.this.fromXml(nodeSeq, &quot;&quot;)
         </td>
       </tr><tr>
@@ -4959,7 +4959,7 @@
         <td>
           scala.collection.IndexedSeqOptimized.dropRight
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           scala.this.Predef.augmentString(dateString).dropRight(1)
         </td>
       </tr><tr>

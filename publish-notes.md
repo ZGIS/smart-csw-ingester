@@ -31,8 +31,10 @@ sbt copyCoverage
 
 ### sbt-site
 
-Don't use `publishSite` from sbt-site, but the `ghpagesPushSite` from sbt-ghpages
+- Don't use `publishSite` from sbt-site, but the `ghpagesPushSite` from sbt-ghpages.
+- sbt-site in version 0.8.1 seems to come pre-packaged with `activator` and gets evicted from the newer version declared in `plugins.sbt`
 
+- preps
 ```scala
 sbt makeSite
 sbt previewSite
@@ -40,14 +42,18 @@ sbt previewSite
 
 ### sbt-ghpages
 
+- pusblish to gh-pages branch of the project (from what was generated from `sbt site` in `src/site` but including ScalaDocs Api)
+
 ```scala
 sbt ghpagesPushSite
 ```
 
 ### sbt-dependency-check
 
+- OWASP Dependency-Check and Vulnerability is an open source tool performing a best effort analysis of 3rd party dependencies.
+
 ```scala
-sbt
+sbt check
 ```
 
 ### sbt-dependency-graph
