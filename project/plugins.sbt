@@ -23,7 +23,7 @@ addSbtPlugin("com.sksamuel.scapegoat" %% "sbt-scapegoat" % "1.0.4")
 
 addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.3.5")
 
-// site and docs publish
+// site and docs publish,  com.typesafe.sbt:sbt-site:0.8.1 -> 1.0.0 ?
 addSbtPlugin("com.typesafe.sbt" % "sbt-site" % "1.0.0")
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-ghpages" % "0.5.4")

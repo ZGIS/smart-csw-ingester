@@ -28,6 +28,7 @@ name := """smart-csw-ingester"""
 
 version := "1.0-SNAPSHOT"
 
+// new sbt-site 1.0.0 config SiteScaladocPlugin incompatible with activator sbt-site bundle 0.8.1
 lazy val root = (project in file(".")).enablePlugins(PlayScala, SiteScaladocPlugin, JavaAppPackaging, DockerPlugin)
 
 scalaVersion := "2.11.7"
@@ -58,11 +59,17 @@ scalacOptions in ThisBuild ++= Seq(
   "-deprecation", // warning and location for usages of deprecated APIs
   "-feature", // warning and location for usages of features that should be imported explicitly
   "-unchecked", // additional warnings where generated code depends on assumptions
-  "-Xlint", // recommended additional warnings
+  "-Xlint:_", // recommended additional warnings
   "-Ywarn-adapted-args", // Warn if an argument list is modified to match the receiver
   "-Ywarn-value-discard", // Warn when non-Unit expression results are unused
-  "-Ywarn-inaccessible",
-  "-Ywarn-dead-code",
+  "-Ywarn-unused-import", // Warn when imports are unused
+  "-Ywarn-unused", // Warn when local and private vals, vars, defs, and types are unused
+  "-Ywarn-numeric-widen", // Warn when numerics are widened, Int and Double, for instance
+  "-Ywarn-inaccessible", // Warn about inaccessible types in method signatures.
+  "-Ywarn-dead-code", // Warn when dead code is identified
+  "-Ywarn-infer-any", // Warn when a type argument is inferred to be `Any`
+  " -Ywarn-nullary-override", //  Warn when non-nullary `def f()' overrides nullary `def f'.
+  " -Ywarn-nullary-unit", // Warn when nullary methods return Unit
   "-language:reflectiveCalls"
 )
 
@@ -90,7 +97,8 @@ scapegoatOutputPath := genSiteDir + "/scapegoat"
 // scalacOptions only for the scapegoat task
 scalacOptions in Scapegoat ++= Seq("-P:scapegoat:overrideLevels:TraversableHead=Warning:OptionGet=Warning")
 
-coverageEnabled := true
+// disabling coverage for standard tasks, call explicit in test runs / publish site
+// coverageEnabled := true
 
 lazy val coverageCopyTask = TaskKey[Unit]("copy-coverage")
 
@@ -107,10 +115,9 @@ dependencyGraphMLFile := file(genSiteDir + "/dep-sec/dependencies.graphml")
 // Use e.g.graphviz to render
 dependencyDotFile := file(genSiteDir + "/dep-sec/dependencies.dot")
 
-
 // -----------------
 // publish docs on github
-
+// new sbt-site 1.0.0 config incompatible with activator sbt-site bundle 0.8.1
 includeFilter in makeSite := "*.txt" | "*.html" | "*.md" | "*.css" | "*.png" | "*.jpg" | "*.gif" | "*.js"
 
 // Puts ScalaDoc output in `target/site/latest/api`, will automatically be included with makeSite
