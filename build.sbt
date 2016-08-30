@@ -28,7 +28,7 @@ name := """smart-csw-ingester"""
 
 version := "1.0-SNAPSHOT"
 
-lazy val root = (project in file(".")).enablePlugins(PlayScala,SiteScaladocPlugin,PreprocessPlugin,JavaAppPackaging,DockerPlugin)
+lazy val root = (project in file(".")).enablePlugins(PlayScala, SiteScaladocPlugin, JavaAppPackaging, DockerPlugin)
 
 scalaVersion := "2.11.7"
 
@@ -109,7 +109,7 @@ dependencyDotFile := file("target/site/dep-sec/dependencies.dot")
 // -----------------
 // publish docs on github
 
-preprocessVars := Map("VERSION" -> version.value, "DATE" -> new Date().toString)
+includeFilter in makeSite := "*.txt" | "*.html" | "*.md" | "*.css" | "*.png" | "*.jpg" | "*.gif" | "*.js"
 
 // Puts ScalaDoc output in `target/site/latest/api`
 siteSubdirName in SiteScaladoc := "latest/api"
