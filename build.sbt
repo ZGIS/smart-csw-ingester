@@ -27,7 +27,7 @@ name := """smart-csw-ingester"""
 
 version := "1.0-SNAPSHOT"
 
-lazy val root = (project in file(".")).enablePlugins(PlayScala).enablePlugins(JavaAppPackaging, DockerPlugin)
+lazy val root = (project in file(".")).enablePlugins(PlayScala,SiteScaladocPlugin,JavaAppPackaging,DockerPlugin)
 
 scalaVersion := "2.11.7"
 
@@ -67,14 +67,13 @@ scalacOptions in ThisBuild ++= Seq(
 
 fork in run := true
 
+// -----------------
 // coverage, style and dependency checks
 
 // Scala style task for compile, config file is scalastyle-config.xml
 lazy val compileScalastyle = taskKey[Unit]("compileScalastyle")
 compileScalastyle := org.scalastyle.sbt.ScalastylePlugin.scalastyle.in(Compile).toTask("").value
 (compile in Compile) <<= (compile in Compile) dependsOn compileScalastyle
-
-target in Compile in doc := baseDirectory.value / "docs/api"
 
 // Scala style task to run with tests
 lazy val testScalastyle = taskKey[Unit]("testScalastyle")
@@ -83,7 +82,7 @@ testScalastyle := org.scalastyle.sbt.ScalastylePlugin.scalastyle.in(Test).toTask
 
 scapegoatVersion := "1.2.0"
 
-scapegoatOutputPath := "docs/scapegoat"
+scapegoatOutputPath := "target/site/scapegoat"
 
 // scalacOptions only for the scapegoat task
 scalacOptions in Scapegoat ++= Seq("-P:scapegoat:overrideLevels:TraversableHead=Warning:OptionGet=Warning")
@@ -93,29 +92,33 @@ coverageEnabled := true
 lazy val coverageCopyTask = TaskKey[Unit]("copy-coverage")
 
 coverageCopyTask := {
-  println(s"Copying: ./target/scala-2.11/scoverage-report/ to ./docs")
-  val result = Seq("cp", "-r", "./target/scala-2.11/scoverage-report", "./docs/scoverage-report") !!
+  println(s"Copying: ./target/scala-2.11/scoverage-report/ to ./target/site")
+  val result = Seq("cp", "-r", "./target/scala-2.11/scoverage-report", "./target/site/scoverage-report") !!
 }
 
-dependencyCheckOutputDirectory := Some(file("docs/dep-sec"))
+dependencyCheckOutputDirectory := Some(file("target/site/dep-sec"))
 
 // Use e.g. yEd to format the graph
-dependencyGraphMLFile := file("docs/dep-sec/dependencies.graphml")
+dependencyGraphMLFile := file("target/site/dep-sec/dependencies.graphml")
 
 // Use e.g.graphviz to render
-dependencyDotFile := file("docs/dep-sec/dependencies.dot")
+dependencyDotFile := file("target/site/dep-sec/dependencies.dot")
 
-lazy val renderDepsGraphsTask = TaskKey[Unit]("render-deps")
 
-renderDepsGraphsTask := {
-  println(s"dependencyGraphMl - Use e.g. yEd to format the graph")
-  // val resultGraphML = dependencyGraphMl.value
-  println(s"dependencyDot - Use e.g.graphviz to render")
-  // val resultDot = dependencyDot.value
-  println(s"dependencyLicenseInfo")
-  // val resultLic = dependencyLicenseInfo.value
-}
+// -----------------
+// publish docs on github
 
+// site.includeScaladoc()
+target in Compile in doc := baseDirectory.value / "target/site/api"
+
+// Puts ScalaDoc output in `target/site/latest/api`
+siteSubdirName in SiteScaladoc := "latest/api"
+
+ghpages.settings
+
+git.remoteRepo := "git@github.com:ZGIS/smart-csw-ingester.git"
+
+// -----------------
 // packaging options
 
 version in Docker := version.value
