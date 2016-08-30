@@ -6,7 +6,7 @@
 ## Build
 
 - [Travis CI Build](https://travis-ci.org/ZGIS/smart-csw-ingester)
-- [![Builds Feed](https://upload.wikimedia.org/wikipedia/en/4/43/Feed-icon.svg =32x)](https://api.travis-ci.org/repos/ZGIS/smart-csw-ingester/builds.atom)
+- <a href="https://api.travis-ci.org/repos/ZGIS/smart-csw-ingester/builds.atom"><img src="https://upload.wikimedia.org/wikipedia/en/4/43/Feed-icon.svg" align="left" height="32" width="32" alt="Builds Feed"></a>
 
 ## Licenses
 
