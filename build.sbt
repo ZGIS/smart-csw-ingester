@@ -22,12 +22,13 @@ import com.typesafe.sbt.packager.docker._
 import com.sksamuel.scapegoat.sbt._
 import com.sksamuel.scapegoat.sbt.ScapegoatSbtPlugin.autoImport._
 import scoverage.ScoverageKeys._
+import java.util.Date
 
 name := """smart-csw-ingester"""
 
 version := "1.0-SNAPSHOT"
 
-lazy val root = (project in file(".")).enablePlugins(PlayScala,SiteScaladocPlugin,JavaAppPackaging,DockerPlugin)
+lazy val root = (project in file(".")).enablePlugins(PlayScala,SiteScaladocPlugin,PreprocessPlugin,JavaAppPackaging,DockerPlugin)
 
 scalaVersion := "2.11.7"
 
@@ -108,11 +109,12 @@ dependencyDotFile := file("target/site/dep-sec/dependencies.dot")
 // -----------------
 // publish docs on github
 
-// site.includeScaladoc()
-target in Compile in doc := baseDirectory.value / "target/site/api"
+preprocessVars := Map("VERSION" -> version.value, "DATE" -> new Date().toString)
 
 // Puts ScalaDoc output in `target/site/latest/api`
 siteSubdirName in SiteScaladoc := "latest/api"
+
+previewLaunchBrowser := false
 
 ghpages.settings
 
