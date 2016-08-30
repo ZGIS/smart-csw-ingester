@@ -24,3 +24,6 @@ dist
 .sbtserver/
 project/.sbtserver*
 /project/sbt-ui.sbt
+
+## generated files for sbt-site
+src/site/generated/*

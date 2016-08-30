@@ -71,6 +71,8 @@ fork in run := true
 // -----------------
 // coverage, style and dependency checks
 
+val genSiteDir = "src/site/generated"
+
 // Scala style task for compile, config file is scalastyle-config.xml
 lazy val compileScalastyle = taskKey[Unit]("compileScalastyle")
 compileScalastyle := org.scalastyle.sbt.ScalastylePlugin.scalastyle.in(Compile).toTask("").value
@@ -83,7 +85,7 @@ testScalastyle := org.scalastyle.sbt.ScalastylePlugin.scalastyle.in(Test).toTask
 
 scapegoatVersion := "1.2.0"
 
-scapegoatOutputPath := "target/site/scapegoat"
+scapegoatOutputPath := genSiteDir + "/scapegoat"
 
 // scalacOptions only for the scapegoat task
 scalacOptions in Scapegoat ++= Seq("-P:scapegoat:overrideLevels:TraversableHead=Warning:OptionGet=Warning")
@@ -93,17 +95,17 @@ coverageEnabled := true
 lazy val coverageCopyTask = TaskKey[Unit]("copy-coverage")
 
 coverageCopyTask := {
-  println(s"Copying: ./target/scala-2.11/scoverage-report/ to ./target/site")
-  val result = Seq("cp", "-r", "./target/scala-2.11/scoverage-report", "./target/site/scoverage-report") !!
+  println(s"Copying: ./target/scala-2.11/scoverage-report/ to $genSiteDir")
+  val result = Seq("cp", "-r", "./target/scala-2.11/scoverage-report", genSiteDir + "/scoverage-report") !!
 }
 
-dependencyCheckOutputDirectory := Some(file("target/site/dep-sec"))
+dependencyCheckOutputDirectory := Some(file(genSiteDir + "/dep-sec"))
 
 // Use e.g. yEd to format the graph
-dependencyGraphMLFile := file("target/site/dep-sec/dependencies.graphml")
+dependencyGraphMLFile := file(genSiteDir + "/dep-sec/dependencies.graphml")
 
 // Use e.g.graphviz to render
-dependencyDotFile := file("target/site/dep-sec/dependencies.dot")
+dependencyDotFile := file(genSiteDir + "/dep-sec/dependencies.dot")
 
 
 // -----------------
@@ -111,7 +113,7 @@ dependencyDotFile := file("target/site/dep-sec/dependencies.dot")
 
 includeFilter in makeSite := "*.txt" | "*.html" | "*.md" | "*.css" | "*.png" | "*.jpg" | "*.gif" | "*.js"
 
-// Puts ScalaDoc output in `target/site/latest/api`
+// Puts ScalaDoc output in `target/site/latest/api`, will automatically be included with makeSite
 siteSubdirName in SiteScaladoc := "latest/api"
 
 previewLaunchBrowser := false
