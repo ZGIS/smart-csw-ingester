@@ -33,7 +33,7 @@ import services.LuceneService
  */
 class Module extends AbstractModule {
 
-  override def configure() = {
+  override def configure() : Unit = {
 
     //Start our LuceneService with the Application
     bind(classOf[LuceneService]).asEagerSingleton()

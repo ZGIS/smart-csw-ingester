@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2011-2017 Interfaculty Department of Geoinformatics, University of Salzburg (Z_GIS)
- * & Institute of Geological and Nuclear Sciences Limited (GNS Science)
+ * Copyright (c) 2011-2017 Interfaculty Department of Geoinformatics, University of
+ * Salzburg (Z_GIS) & Institute of Geological and Nuclear Sciences Limited (GNS Science)
  * in the SMART Aquifer Characterisation (SAC) programme funded by the New Zealand
  * Ministry of Business, Innovation and Employment (MBIE)
  *
@@ -15,15 +15,12 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- *
  */
 
 package models.gmd
 
 import java.time._
 import java.time.format._
-
 import org.apache.lucene.document.{Document, Field, LongPoint, TextField}
 import org.apache.lucene.spatial.bbox.BBoxStrategy
 import org.locationtech.spatial4j.context.SpatialContext
@@ -64,7 +61,7 @@ case class MdMetadataSet(fileIdentifier: String,
                          origin: String) extends ClassnameLogger {
   require(!fileIdentifier.trim.isEmpty, "FileIdentifier was empty")
 
-  override def toString = {
+  override def toString : String = {
     f"""MdMetadataSet(
         |$fileIdentifier,
         |${dateStampAsIsoString},
@@ -160,6 +157,10 @@ case class MdMetadataSet(fileIdentifier: String,
 object MdMetadataSet extends ClassnameLogger {
   private lazy val ctx = SpatialContext.GEO
   private lazy val shpReader = ctx.getFormats().getReader(ShapeIO.WKT)
+  val minLon = -180.0
+  val maxLon = 180.0
+  val minLat = -90.0
+  val maxLat = 90.0
 
   /**
     * Creates [[MdMetadataSet]] from MD_Medatada XML
@@ -245,7 +246,7 @@ object MdMetadataSet extends ClassnameLogger {
       DateTimeFormatter.BASIC_ISO_DATE, //20111203
       DateTimeFormatter.ISO_OFFSET_DATE, //2011-12-03+01:00
       DateTimeFormatter.ISO_OFFSET_DATE_TIME //2011-12-03T10:15:30+01:00
-      //      DateTimeFormatter.ISO_INSTANT //2011-12-03T10:15:30Z - this cannot be parsed into LocalDate but only LocalDateTime?
+      // DateTimeFormatter.ISO_INSTANT //2011-12-03T10:15:30Z - this cannot be parsed into LocalDate but only LocalDateTime?
     )
 
     val datesList = dateStrings.filter(!_.trim.isEmpty).flatMap(//iterate over parameter list
@@ -271,8 +272,9 @@ object MdMetadataSet extends ClassnameLogger {
       LocalDate.ofEpochDay(0) //1970-01-01
     }
     else {
-      if (datesList.size > 1)
+      if (datesList.size > 1) {
         logger.warn(f"Could parse ${datesList.size} of (${dateStrings.mkString(", ")}) only returning first success")
+      }
       datesList.head
     }
   }
@@ -310,34 +312,111 @@ object MdMetadataSet extends ClassnameLogger {
   }
 
   def licenseFromXml(nodeSeq: NodeSeq): String = {
-    val resConstraints = (nodeSeq \\ "identificationInfo" \ "MD_DataIdentification" \ "resourceConstraints" \ "MD_LegalConstraints" \ "useLimitation" \ "CharacterString").map(
-      elem => elem.text.trim).mkString(", ")
+    val resConstraints =
+      (nodeSeq \\ "identificationInfo" \ "MD_DataIdentification" \ "resourceConstraints" \ "MD_LegalConstraints" \ "useLimitation" \ "CharacterString").map(
+        elem => elem.text.trim).mkString(", ")
     val metaConstraints = (nodeSeq \\ "metadataConstraints" \ "MD_LegalConstraints" \ "useLimitation" \ "CharacterString").map(
       elem => elem.text.trim).mkString(", ")
     List(resConstraints, metaConstraints).mkString(", ")
   }
 
+  // TODO DATE Line Wraps :-( ?
+  def pruneLongitudeValues(east: Double, west: Double) : (Double, Double) = {
+    val x1 = east match {
+      case n: Double if (n < minLon) => {
+        logger.warn(f"cutting east value: $east to $minLon")
+        minLon
+      }
+      case n: Double if (n > maxLon) => {
+        logger.warn(f"cutting east value: $east to $maxLon")
+        maxLon
+      }
+      case _ => {
+        // if all good then return value
+        east
+      }
+    }
+    val x2 = west match {
+      case n: Double if (n < minLon) => {
+        logger.warn(f"cutting west value: $west to $minLon")
+        minLon
+      }
+      case n: Double if (n > maxLon) => {
+        logger.warn(f"cutting west value: $west to $maxLon")
+        maxLon
+      }
+      case _ => {
+        // if all good then return value
+        west
+      }
+    }
+    (x1, x2)
+  }
+
+  def pruneLatitudeValues(south: Double, north: Double) : (Double, Double) = {
+
+
+    val x1 = south match {
+      case n: Double if (n < minLat) => {
+        logger.warn(f"cutting south value: $south to $minLat")
+        minLat
+      }
+      case n: Double if (n > maxLat) => {
+        logger.warn(f"cutting south value: $south to $maxLat")
+        maxLat
+      }
+      case n: Double if (n > north) => {
+        logger.warn(f"switching south value: $south to $north")
+        north
+      }
+      case _ => {
+        // if all good then return value
+        south
+      }
+    }
+    val x2 = north match {
+      case n: Double if (n < minLat) => {
+        logger.warn(f"cutting north value: $north to $minLat")
+        minLat
+      }
+      case n: Double if (n > maxLat) => {
+        logger.warn(f"cutting north value: $north to $maxLat")
+        maxLat
+      }
+      case n: Double if (n < south) => {
+        logger.warn(f"switching north value: $north to $south")
+        south
+      }
+      case _ => {
+        // if all good then return value
+        north
+      }
+    }
+    (x1, x2)
+  }
+
   def bboxFromCoords(east: Double, west: Double, south: Double, north: Double): Rectangle = {
-    // TODO DATE Line Wraps :-(
-    if (east < -180) logger.warn(f"e $east < -180")
-    if (west > 180) logger.warn(f"w $west > 180")
-    if (west < east) logger.warn(f"w $west < e $east")
-
-    if (south < -90) logger.warn(f"s $south > -90")
-    if (north > 90) logger.warn(f"n $north > 90")
-    if (north < south) logger.warn(f"n $north < s $south")
-
-    ctx.getShapeFactory().rect(east, west, south, north)
+    val (prunedEast, prunedWest) = pruneLongitudeValues(east, west)
+    val (prunedSouth, prunedNorth) = pruneLatitudeValues(south, north)
+    ctx.getShapeFactory().rect(prunedEast, prunedWest, prunedSouth, prunedNorth)
   }
 
   def bboxFromWkt(envelope: String): Rectangle = {
     // https://github.com/locationtech/spatial4j/blob/master/FORMATS.md beware, typo?
-    // Rectangle	ENVELOPE(1, 2, 4, 3) (minX, maxX, maxY, minY)
+    // Rectangle ENVELOPE(1, 2, 4, 3) minX, maxX, maxY, minY)
     // https://github.com/locationtech/spatial4j/blob/master/src/main/java/org/locationtech/spatial4j/io/WKTReader.java#L245
     shpReader.read(envelope).asInstanceOf[Rectangle]
   }
 
-  //FIXME SR this is basically a "Double.from(String, default)". We should think about creating a project wide helper for this. Somewhere I had a "String.toInt()" already, that needs the same treatment.
+  /**
+    * FIXME SR this is basically a "Double.from(String, default)".
+    * We should think about creating a project wide helper for this.
+    * Somewhere I had a "String.toInt()" already, that needs the same treatment.
+    *
+    * @param textIn
+    * @param default
+    * @return
+    */
   def extractLatLonNumber(textIn: String, default: Double): Double = {
     //    if (textIn.isEmpty) { //SR this should end in a NFE and thus is handled below
     //      default
@@ -369,16 +448,16 @@ object MdMetadataSet extends ClassnameLogger {
       val westText = (bboxXml \\ "geographicElement" \ "EX_GeographicBoundingBox" \ "westBoundLongitude" \ "Decimal").text
       val southText = (bboxXml \\ "geographicElement" \ "EX_GeographicBoundingBox" \ "southBoundLatitude" \ "Decimal").text
       val northText = (bboxXml \\ "geographicElement" \ "EX_GeographicBoundingBox" \ "northBoundLatitude" \ "Decimal").text
-      val east = extractLatLonNumber(eastText, -180)
-      val west = extractLatLonNumber(westText, 180)
-      val south = extractLatLonNumber(southText, -90)
-      val north = extractLatLonNumber(northText, 90)
+      val east = extractLatLonNumber(eastText, minLon)
+      val west = extractLatLonNumber(westText, maxLon)
+      val south = extractLatLonNumber(southText, minLat)
+      val north = extractLatLonNumber(northText, maxLat)
       // Rectangle rect(double minX, double maxX, double minY, double maxY);
       bboxFromCoords(east, west, south, north)
     }
     else {
       logger.warn(f"${(nodeSeq \\ "fileIdentifier" \ "CharacterString").text} has no BBOX")
-      bboxFromCoords(-180, 180, -90, 90)
+      bboxFromCoords(minLon, maxLon, minLat, maxLat)
     }
   }
 }
@@ -392,7 +471,7 @@ object MdMetadataSetWriter extends Writes[MdMetadataSet] {
   /**
     * Converts [[MdMetadataSet]] object into [[JsValue]]
     */
-  def writes(gmd: MdMetadataSet) = Json.obj(
+  def writes(gmd: MdMetadataSet) : JsObject = Json.obj(
     "fileIdentifier" -> gmd.fileIdentifier,
     "dateStamp" -> gmd.dateStampAsIsoString,
     "title" -> gmd.title,

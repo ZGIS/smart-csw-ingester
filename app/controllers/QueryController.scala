@@ -20,10 +20,13 @@
 package controllers
 
 import javax.inject._
+
 import models.gmd.MdMetadataSetWriter
 import play.api.libs.json.Json
 import play.api.mvc._
 import services.{LuceneService, SearchResult, SearchResultHeader}
+
+import scala.concurrent.Future
 
 /**
   * Controller that serves results from Lucene Index
@@ -36,6 +39,16 @@ class QueryController @Inject()(luceneService: LuceneService) extends Controller
   implicit val gmdElementSetWrite = MdMetadataSetWriter
   // implicit val searchResultRead = Json.reads[SearchResult]
   implicit val searchResultWrite = Json.writes[SearchResult]
+
+  /**
+    * Create an Action to render an HTML page with a welcome message.
+    * The configuration in the `routes` file means that this method
+    * will be called when the application receives a `GET` request with
+    * a path of `/`.
+    */
+  def index = Action {
+    Ok(views.html.index("Your new application is ready."))
+  }
 
   /**
     * Action that passes the query from URL to the [[services.LuceneService]].

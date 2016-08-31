@@ -18,13 +18,10 @@
  */
 
 import java.time.LocalDate
-import javassist.expr.Instanceof
 
 import models.gmd.{MdMetadataSet, MdMetadataSetWriter}
 import org.locationtech.spatial4j.context.SpatialContext
-import org.locationtech.spatial4j.io._
 import org.locationtech.spatial4j.shape._
-import org.locationtech.spatial4j.shape.impl.BBoxCalculator
 import org.scalatestplus.play.PlaySpec
 import play.api.libs.json._
 
@@ -116,6 +113,7 @@ class MdMetadataSetSpec extends PlaySpec {
     lazy val xmlResource = this.getClass().getResource("MD_Metadata_NO_BBOX.xml")
     lazy val xml = scala.xml.XML.load(xmlResource)
     lazy val parsedElement = MdMetadataSet.fromXml(xml)
+    lazy val world = ctx.getShapeFactory().rect(-180, 180, -90, 90)
 
     "MD_Metadata_NO_BBOX.xml parse without errors" in {
       parsedElement mustBe defined
@@ -123,7 +121,21 @@ class MdMetadataSetSpec extends PlaySpec {
 
     //TODO SR check all other values too?
     "MD_Metadata_NO_BBOX.xml must have WORLD bounding box" in {
-      parsedElement.get.bbox mustEqual (ctx.getShapeFactory().rect(-180, 180, -90, 90))
+      parsedElement.get.bbox mustEqual world
+    }
+
+    // east: Double, west: Double, south: Double, north: Double
+    "cut too large coordinates into WORLD bounding box" in {
+
+      val (prunedEast, prunedWest) = MdMetadataSet.pruneLongitudeValues(-176.176448433, 166.6899599)
+      prunedEast mustEqual -176.176448433
+      prunedWest mustEqual 166.6899599
+
+      MdMetadataSet.bboxFromCoords(-190, 180, -90, 90) mustEqual world
+      MdMetadataSet.bboxFromCoords(-180, 190, -90, 90) mustEqual world
+      MdMetadataSet.bboxFromCoords(-180, 180, -95, 90) mustEqual world
+      MdMetadataSet.bboxFromCoords(-180, 180, -90, 95) mustEqual world
+      MdMetadataSet.bboxFromCoords(-180, 180, 90, -90) mustEqual world
     }
   }
 
@@ -159,12 +171,10 @@ class MdMetadataSetSpec extends PlaySpec {
     val xml: scala.xml.NodeSeq = scala.xml.XML.load(xmlResource)
     val nsGmd = "http://www.isotc211.org/2005/gmd"
     val nsGco = "http://www.isotc211.org/2005/gco"
-    val nsBindingGmd = new NamespaceBinding("gmd", nsGmd, null)
-    val nsBindingGco = new NamespaceBinding("gco", nsGco, nsBindingGmd)
 
     //This basically tests the Scala XML Library and not our parser, but I need to keep these notes
 
-    "how to work with namespaces " in {
+    "work with namespaces " in {
       val n1: NodeSeq = (xml \ "fileIdentifier" \ "CharacterString")
       n1.filter(x => x.namespace == nsGmd).isEmpty mustBe (true)
 
@@ -172,7 +182,7 @@ class MdMetadataSetSpec extends PlaySpec {
       n2.filter(x => x.namespace == nsGco).size mustEqual 1
     }
 
-    "how to work with codelists as attributes" in {
+    "work with codelists as attributes" in {
       val at1 = (xml \\ "identificationInfo" \ "MD_DataIdentification" \ "status" \ "MD_ProgressCode").filter(
         node => node.attribute("codeList")
           .exists(
@@ -186,23 +196,35 @@ class MdMetadataSetSpec extends PlaySpec {
       thrown.getMessage mustBe ("Invalid UUID string: urn:uuid:2c5f1309-d721-4299-88bf-e462c577b99a-horowhenua_ws:ewt_nzprj_new")
     }
 
-    "bounding boxes computations with points are fragile" in {
+    "coordinates order of Retangle vs WKT" in {
       //This basically tests the ShapeFactory and not our parser, but I need to keep these notes
 
       // https://github.com/locationtech/spatial4j/blob/master/FORMATS.md beware, typo?
       // Rectangle	ENVELOPE(1, 2, 4, 3) (minX, maxX, maxY, minY)
       // https://github.com/locationtech/spatial4j/blob/master/src/main/java/org/locationtech/spatial4j/io/WKTReader.java#L245
 
-      lazy val parsedElement = MdMetadataSet.fromXml(xml)
-      parsedElement mustBe defined
-
-      val bbox = parsedElement.get.bbox
-      bbox mustBe a [Rectangle]
-
       // rect builder method is logical
       // Rectangle rect(double minX, double maxX, double minY, double maxY);
-      val refBboxs = ctx.getShapeFactory().rect(-176.176448433, 166.6899599, -47.1549297167, -34.4322590833)
-      bbox mustEqual refBboxs
+      val bbox1 = ctx.getShapeFactory().rect(-176.176448433, 166.6899599, -47.1549297167, -34.4322590833)
+
+      val (prunedEast, prunedWest) = MdMetadataSet.pruneLongitudeValues(-176.176448433, 166.6899599)
+      val (prunedSouth, prunedNorth) = MdMetadataSet.pruneLatitudeValues(-47.1549297167, -34.4322590833)
+
+      prunedEast mustEqual -176.176448433
+      prunedWest mustEqual 166.6899599
+      prunedSouth mustEqual -47.1549297167
+      prunedNorth mustEqual -34.4322590833
+
+      val bbox2 = MdMetadataSet.bboxFromCoords(-176.176448433, 166.6899599, -47.1549297167, -34.4322590833)
+      bbox2 mustEqual bbox1
+
+      // funny that this works without crashing -> DateLineWrap
+      val bbox3 = ctx.getShapeFactory().rect(166.6899599, -176.176448433, -47.1549297167, -34.4322590833)
+
+      // good to know that this doesn't work
+      val thrown = the[org.locationtech.spatial4j.exception.InvalidShapeException] thrownBy
+        ctx.getShapeFactory().rect(-176.176448433, 166.6899599, -34.4322590833, -47.1549297167)
+      thrown.getMessage mustBe ("maxY must be >= minY: -34.4322590833 to -47.1549297167")
     }
   }
 }

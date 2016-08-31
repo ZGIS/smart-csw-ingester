@@ -2,8 +2,8 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-# An example controller showing a sample home page
-GET        /                    controllers.HomeController.index
+# home page
+GET        /                    controllers.QueryController.index
 
 # Lucene query
 # TODO better to use "Option"?

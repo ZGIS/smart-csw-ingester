@@ -21,6 +21,7 @@ package services
 
 import java.util.concurrent.TimeoutException
 import javax.inject.{Inject, Singleton}
+
 import models.gmd.MdMetadataSet
 import org.apache.lucene.analysis.standard.StandardAnalyzer
 import org.apache.lucene.index.{IndexWriter, IndexWriterConfig}
@@ -35,6 +36,7 @@ import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.ws.WSClient
 import utils.ClassnameLogger
 import models.csw.{CswGetRecordsRequest, CswGetRecordsResponse}
+import play.api.http.Status
 
 import scala.collection.JavaConverters._
 import scala.concurrent.duration._
@@ -52,6 +54,7 @@ trait IndexService {
 
   def query(query: String): SearchResult
 }
+
 
 /**
   * This service wraps around Lucene and controls all the CSW reading.
@@ -72,7 +75,8 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
   val catalogues = cataloguesConfig.map { item => item.getString("name").get -> item.getString("url").get }.toMap
 
   logger.debug("Reading configuration: csw.maxDocs ")
-  val maxDocsPerFetch = configuration.getInt("csw.maxDocs").getOrElse(500)
+  val CSW_MAX_RECORDS = 500
+  val maxDocsPerFetch = configuration.getInt("csw.maxDocs").getOrElse(CSW_MAX_RECORDS)
 
   //stores the search index in RAM
   val directory = new RAMDirectory()
@@ -145,7 +149,7 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
     val cswGetRecordsResponseListFuture = wsClientResponseFuture.flatMap { wsClientResponse =>
       logger.info(f"Response status: ${wsClientResponse.status} - ${wsClientResponse.statusText} ($url)")
       wsClientResponse.status match {
-        case 200 => {
+        case Status.OK => {
           logger.debug(f"Response Content Type: ${wsClientResponse.allHeaders.getOrElse("Content-Type", "Unknown")}")
           logger.debug(f"Response-Length: ${wsClientResponse.body.length}")
           logger.trace(f"Response-Body: ${wsClientResponse.body.toString}")
@@ -159,15 +163,17 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
               val cswGetRecResp = CswGetRecordsResponse(wsClientResponse.xml)
               logger.info(f"nextRecord: ${cswGetRecResp.nextRecord}, numberOfRec ${cswGetRecResp.numberOfRecordsMatched}")
               if ((cswGetRecResp.nextRecord > cswGetRecResp.numberOfRecordsMatched) ||
-                (cswGetRecResp.nextRecord == 0))
+                (cswGetRecResp.nextRecord == 0)) {
                 f.flatMap(l => {
                   Future.successful(cswGetRecResp :: l)
                 })
-              else
+              }
+              else {
                 f.flatMap(l => {
                   postGetRecordsRequest(url, cswGetRecResp.nextRecord, maxDocuments,
                     Future.successful(cswGetRecResp :: l))
                 })
+              }
             }
             case _ => {
               logger.warn(f"Unknown response content. Body: ${wsClientResponse.xml.toString}")
@@ -218,9 +224,8 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
     */
   def query(query: String): SearchResult = {
 
-    val ctx = SpatialContext.GEO
-
-    val bboxStrategy: BBoxStrategy = BBoxStrategy.newInstance(ctx, "bboxStrategy")
+    // val ctx = SpatialContext.GEO
+    // val bboxStrategy: BBoxStrategy = BBoxStrategy.newInstance(ctx, "bboxStrategy")
     // Query = LongPoint.newRangeQuery("dateStampCompare", localDate1.toEpochDay, localDate2.toEpochDay)
 
     val luceneQuery = query.trim() match {
