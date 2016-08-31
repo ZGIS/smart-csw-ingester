@@ -18,10 +18,17 @@
  */
 
 import java.time.LocalDate
+import javassist.expr.Instanceof
 
-import models.gmd.MdMetadataSet
+import models.gmd.{MdMetadataSet, MdMetadataSetWriter}
 import org.locationtech.spatial4j.context.SpatialContext
+import org.locationtech.spatial4j.io._
+import org.locationtech.spatial4j.shape._
+import org.locationtech.spatial4j.shape.impl.BBoxCalculator
 import org.scalatestplus.play.PlaySpec
+import play.api.libs.json._
+
+import scala.xml._
 
 /**
   * Test Spec for [[MdMetadataSet]]
@@ -30,6 +37,10 @@ class MdMetadataSetSpec extends PlaySpec {
   private lazy val ctx = SpatialContext.GEO
 
   "MdMetadataSet " can {
+    lazy val xmlResource = this.getClass().getResource("sac_rs_ewt_metadata.xml")
+    lazy val xml = scala.xml.XML.load(xmlResource)
+    lazy val parsedElement = MdMetadataSet.fromXml(xml)
+
     val defaultDate = LocalDate.of(2012, 1, 1)
 
     "parse ISO_LOCAL_DATE: 2012-01-01 correctly " in {
@@ -67,6 +78,12 @@ class MdMetadataSetSpec extends PlaySpec {
     "parse EMPTY date to 1970-01-01" in {
       MdMetadataSet.dateFromStrings(List("")) mustEqual LocalDate.ofEpochDay(0)
     }
+
+    "should parse No dateStamp/Date and find date/CI_Date/date/Date MdMetadataSet" in {
+
+      parsedElement mustBe defined
+      parsedElement.get.dateStampAsIsoString mustEqual ("2016-05-17")
+    }
   }
 
   "MD_Metadata_COMPLETE.xml" must {
@@ -95,91 +112,97 @@ class MdMetadataSetSpec extends PlaySpec {
     }
   }
 
-  "MD_Metadata_NO_BBOX.xml" must {
+  "Wrong BBoxes" must {
     lazy val xmlResource = this.getClass().getResource("MD_Metadata_NO_BBOX.xml")
     lazy val xml = scala.xml.XML.load(xmlResource)
     lazy val parsedElement = MdMetadataSet.fromXml(xml)
 
-    "parse without errors" in {
+    "MD_Metadata_NO_BBOX.xml parse without errors" in {
       parsedElement mustBe defined
     }
 
     //TODO SR check all other values too?
-
-    "have WORLD bounding box" in {
+    "MD_Metadata_NO_BBOX.xml must have WORLD bounding box" in {
       parsedElement.get.bbox mustEqual (ctx.getShapeFactory().rect(-180, 180, -90, 90))
     }
   }
 
-  "should parse No dateStamp/Date and find date/CI_Date/date/Date GmdElementSet" in {
-    lazy val xmlResource = this.getClass().getResource("sac_rs_ewt_metadata.xml")
-    lazy val xml = scala.xml.XML.load(xmlResource)
-    lazy val parsedElement = MdMetadataSet.fromXml(xml)
-    parsedElement mustBe defined
-    parsedElement.get.dateStampAsIsoString mustEqual ("2016-05-17")
+  "JSON writer" should {
+    implicit val gmdElementSetWrite = MdMetadataSetWriter
+
+    lazy val xmlResource1 = this.getClass().getResource("csw_getrecordbyid-md_metadata.xml")
+    lazy val xmlResource2 = this.getClass().getResource("sac_rs_ewt_metadata.xml")
+    lazy val xml1 = scala.xml.XML.load(xmlResource1)
+    lazy val xml2 = scala.xml.XML.load(xmlResource2)
+    lazy val parsedElement1 = MdMetadataSet.fromXml(xml1)
+    lazy val parsedElement2 = MdMetadataSet.fromXml(xml2)
+
+    "parse without errors" in {
+      parsedElement1 mustBe defined
+      parsedElement2 mustBe defined
+
+      val textJson = """{"fileIdentifier":"23bdd7a3-fd21-daf1-7825-0d3bdc256f9d","dateStamp":"2012-12-20","title":"NZ Primary Road Parcels","abstrakt":"This layer provides the **current** road parcel polygons with ...","keywords":["New Zealand"],"topicCategory":["boundaries","planningCadastre"],"contactName":"omit, Omit","contactOrg":"LINZ - Land Information New Zealand, LINZ - Land Information New Zealand, ANZLIC the Spatial Information Council","contactEmail":"info@linz.govt.nz, info@linz.govt.nz","license":"Crown copyright reserved, Released under Creative Commons By with: Following Disclaimers..., Crown copyright reserved, Released under Creative Commons By","bbox":[-176.176448433,166.6899599,-34.4322590833,-47.1549297167],"origin":""}"""
+      Json.toJson(parsedElement1.get).toString() mustEqual (textJson)
+    }
+
+    "build JsList" in {
+      val gmdList = List(parsedElement1.get, parsedElement2.get)
+      val jsList = Json.toJson(gmdList)
+      (jsList \\ "fileIdentifier").size mustBe 2
+    }
+
   }
 
-  /*  SR does this test the same as above? Creates the same element once from XML and once by hand an then checks if equal?
-      "should build format case classes" in {
-      val ctx = SpatialContext.GEO
-      val shpReader = ctx.getFormats().getReader(ShapeIO.WKT)
-      val shpWriter = ctx.getFormats().getWriter(ShapeIO.GeoJSON)
+  "Parsing Notes for Alex describe " should {
 
-      val asResource1 = this.getClass().getResource("csw_getrecordbyid-md_metadata.xml")
-      val xml1: scala.xml.NodeSeq = scala.xml.XML.load(asResource1)
+    val xmlResource = this.getClass().getResource("csw_getrecordbyid-md_metadata.xml")
+    val xml: scala.xml.NodeSeq = scala.xml.XML.load(xmlResource)
+    val nsGmd = "http://www.isotc211.org/2005/gmd"
+    val nsGco = "http://www.isotc211.org/2005/gco"
+    val nsBindingGmd = new NamespaceBinding("gmd", nsGmd, null)
+    val nsBindingGco = new NamespaceBinding("gco", nsGco, nsBindingGmd)
 
-      val localDate = java.time.LocalDate.of(2012, Month.DECEMBER, 20)
+    //This basically tests the Scala XML Library and not our parser, but I need to keep these notes
 
-      val gmdElem1 = MdMetadataSet.fromXml(xml1)
+    "how to work with namespaces " in {
+      val n1: NodeSeq = (xml \ "fileIdentifier" \ "CharacterString")
+      n1.filter(x => x.namespace == nsGmd).isEmpty mustBe (true)
 
-      val bbox = MdMetadataSet.bboxFromXml(xml1)
-      val bboxs = ctx.getShapeFactory().rect(-176.176448433, 166.6899599, -47.1549297167, -34.4322590833)
-      bbox mustEqual bboxs
+      val n2: NodeSeq = (xml \ "fileIdentifier" \ "CharacterString")
+      n2.filter(x => x.namespace == nsGco).size mustEqual 1
+    }
 
-      val gmdElem2 = MdMetadataSet("23bdd7a3-fd21-daf1-7825-0d3bdc256f9d",
-        localDate,
-        "NZ Primary Road Parcels",
-        "This layer provides the **current** road parcel polygons with ...",
-        List("New Zealand"),
-        List("boundaries", "planningCadastre"),
-        "omit, Omit",
-        "LINZ - Land Information New Zealand, LINZ - Land Information New Zealand, ANZLIC the Spatial Information Council",
-        "info@linz.govt.nz, info@linz.govt.nz",
-        "Crown copyright reserved, Released under Creative Commons By with: Following Disclaimers..., Crown copyright reserved, Released under Creative Commons By",
-        bbox,
-        "")
+    "how to work with codelists as attributes" in {
+      val at1 = (xml \\ "identificationInfo" \ "MD_DataIdentification" \ "status" \ "MD_ProgressCode").filter(
+        node => node.attribute("codeList")
+          .exists(
+            codeList => codeList.text == "http://asdd.ga.gov.au/asdd/profileinfo/gmxCodelists.xml#MD_ProgressCode"))
+      at1.size mustEqual 1
+    }
 
-      gmdElem1 mustBe defined
-      gmdElem1.get.fileIdentifier mustEqual gmdElem2.fileIdentifier
-      gmdElem1.get.dateStamp mustEqual gmdElem2.dateStamp
-      gmdElem1.get.title mustEqual gmdElem2.title
-      gmdElem1.get.abstrakt mustEqual gmdElem2.abstrakt
-      gmdElem1.get.keywords mustEqual gmdElem2.keywords
-      gmdElem1.get.topicCategory mustEqual gmdElem2.topicCategory
-      gmdElem1.get.contactName mustEqual gmdElem2.contactName
-      gmdElem1.get.contactOrg mustEqual gmdElem2.contactOrg
-      gmdElem1.get.contactEmail mustEqual gmdElem2.contactEmail
-      gmdElem1.get.license mustEqual gmdElem2.license
-      gmdElem1.get.bbox mustEqual gmdElem2.bbox
-
-      gmdElem1.get mustEqual gmdElem2
-
-      gmdElem1.get.dateStampAsIsoString mustEqual ("2012-12-20")
-
+    "java.util.UUID not useful for reverse from fileidentifiers" in {
       val thrown = the[java.lang.IllegalArgumentException] thrownBy java.util.UUID.fromString(
         "urn:uuid:2c5f1309-d721-4299-88bf-e462c577b99a-horowhenua_ws:ewt_nzprj_new")
       thrown.getMessage mustBe ("Invalid UUID string: urn:uuid:2c5f1309-d721-4299-88bf-e462c577b99a-horowhenua_ws:ewt_nzprj_new")
+    }
 
-      implicit val gmdElementSetWrite = MdMetadataSetWriter
+    "bounding boxes computations with points are fragile" in {
+      //This basically tests the ShapeFactory and not our parser, but I need to keep these notes
 
-      val gmdList = List(gmdElem1.get, gmdElem2)
-      // println(gmdElem1.toString())
-      // println(Json.toJson(gmdElem2))
-      // println(Json.toJson(gmdList))
-      val jsList = Json.toJson(gmdList)
-      (jsList \\ "fileIdentifier").size mustBe 2
+      // https://github.com/locationtech/spatial4j/blob/master/FORMATS.md beware, typo?
+      // Rectangle	ENVELOPE(1, 2, 4, 3) (minX, maxX, maxY, minY)
+      // https://github.com/locationtech/spatial4j/blob/master/src/main/java/org/locationtech/spatial4j/io/WKTReader.java#L245
 
-      val textJson = """{"fileIdentifier":"23bdd7a3-fd21-daf1-7825-0d3bdc256f9d","dateStamp":"2012-12-20","title":"NZ Primary Road Parcels","abstrakt":"This layer provides the **current** road parcel polygons with ...","keywords":["New Zealand"],"topicCategory":["boundaries","planningCadastre"],"contactName":"omit, Omit","contactOrg":"LINZ - Land Information New Zealand, LINZ - Land Information New Zealand, ANZLIC the Spatial Information Council","contactEmail":"info@linz.govt.nz, info@linz.govt.nz","license":"Crown copyright reserved, Released under Creative Commons By with: Following Disclaimers..., Crown copyright reserved, Released under Creative Commons By","bbox":[-176.176448433,166.6899599,-34.4322590833,-47.1549297167],"origin":""}"""
-      Json.toJson(gmdElem2).toString() mustEqual (textJson)
-    }*/
+      lazy val parsedElement = MdMetadataSet.fromXml(xml)
+      parsedElement mustBe defined
+
+      val bbox = parsedElement.get.bbox
+      bbox mustBe a [Rectangle]
+
+      // rect builder method is logical
+      // Rectangle rect(double minX, double maxX, double minY, double maxY);
+      val refBboxs = ctx.getShapeFactory().rect(-176.176448433, 166.6899599, -47.1549297167, -34.4322590833)
+      bbox mustEqual refBboxs
+    }
+  }
 }

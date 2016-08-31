@@ -13,7 +13,7 @@ services:
   - docker
 
 script:
-  - sbt test scalastyle
+  - sbt scalastyle coverage test
 
 notifications:
   email:

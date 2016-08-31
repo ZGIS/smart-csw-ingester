@@ -224,10 +224,16 @@ object MdMetadataSet extends ClassnameLogger {
     )
   }
 
-  // TODO check if ZoneInfo for parsedDate needed, alternatively either UTC or NZ TimeZone
-  // check if Time info in date/datestamp
-  // check decide dateStamp and/or/plus CI_Date date
-  // worst case create default date, suggestions?
+  /**
+    * check if Time info in date/datestamp
+    * check decide dateStamp and/or/plus CI_Date date
+    * worst case create default date
+    *
+    * TODO AK ponder if precise ZoneInfo for parsedDate needed, alternatively either UTC or NZ TimeZone
+    *
+    * @param dateStrings
+    * @return
+    */
   def dateFromStrings(dateStrings: List[String]): LocalDate = {
     val yearMonthMatcher = """^\d\d\d\d-\d\d$""".r
     val yearMatcher = """^\d\d\d\d$""".r
@@ -269,61 +275,6 @@ object MdMetadataSet extends ClassnameLogger {
         logger.warn(f"Could parse ${datesList.size} of (${dateStrings.mkString(", ")}) only returning first success")
       datesList.head
     }
-
-    /*
-        val datesList = dateStrings.filter(dateString => !dateString.isEmpty).map {
-          dateString =>
-            val offsetMatcher = new scala.util.matching.Regex("""\+\d\d:\d\d""", "offset")
-            val noOffsetDateString = offsetMatcher.replaceFirstIn(dateString, "")
-
-            val parsedDate: Option[LocalDate] = try {
-
-              noOffsetDateString match {
-                case str if str.contains("T") => {
-                  if (str.contains("Z")) {
-                    Some(LocalDate.parse(str.replace("Z", ""), DateTimeFormatter.ISO_LOCAL_DATE_TIME))
-                  }
-                  else {
-                    Some(LocalDate.parse(str, DateTimeFormatter.ISO_LOCAL_DATE_TIME))
-                  }
-                }
-
-                case _ =>
-                  Some(LocalDate.parse(noOffsetDateString, DateTimeFormatter.ISO_LOCAL_DATE))
-              }
-            } catch {
-              case ex: DateTimeParseException => {
-                val yearMonthDayMatcher = new Regex("""(\d\d\d\d)-(\d\d)-(\d\d)""", "year", "month", "day")
-                val yearMonthDayMatcherTight = new Regex("""(\d\d\d\d)(\d\d)(\d\d)""", "year", "month", "day")
-                val yearMonthMatcher = new Regex("""(\d\d\d\d)-(\d\d)""", "year", "month")
-                val yearMatcher = new Regex("""(\d\d\d\d)""", "year")
-
-                noOffsetDateString match {
-                  case yearMonthDayMatcher(year, month, day) =>
-                    Some(LocalDate.of(year.toInt, Month.of(month.toInt), day.toInt))
-                  case yearMonthDayMatcherTight(year, month, day) =>
-                    Some(LocalDate.of(year.toInt, Month.of(month.toInt), day.toInt))
-                  case yearMonthMatcher(year, month) =>
-                    Some(LocalDate.of(year.toInt, Month.of(month.toInt), 1))
-                  case yearMatcher(year) =>
-                    Some(LocalDate.of(year.toInt, Month.JANUARY, 1))
-                  case _ => {
-                    logger.warn(f"Bad date $dateString $noOffsetDateString")
-                    None
-                  }
-                }
-              }
-              case e: Throwable => None
-            }
-            parsedDate
-        }.filter(dateOpt => dateOpt.isDefined)
-
-        // finally, either there is something or epoch 0 worst case
-        if (datesList.isEmpty)
-          LocalDate.of(1970, Month.JANUARY, 1)
-        else
-          datesList.head.getOrElse(LocalDate.of(1970, Month.JANUARY, 1))
-    */
   }
 
   def dateFromXml(nodeSeq: NodeSeq): LocalDate = {
