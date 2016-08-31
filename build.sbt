@@ -39,6 +39,7 @@ libraryDependencies ++= Seq(
   jdbc,
   cache,
   ws,
+  filters,
 
 //  "com.gilt" % "lib-lucene-sugar_2.11" % "0.2.3",
 
