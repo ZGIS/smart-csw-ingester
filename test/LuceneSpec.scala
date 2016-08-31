@@ -65,13 +65,101 @@ class LuceneSpec extends PlaySpec with WithLuceneService {
         result.header.query mustBe "*:*"
       }
     }
-    "have Index with 2 documents" in {
+    "have Index with 4 documents" in {
       withLuceneService { service =>
         val result = service.query("*:*")
+        result.header.noDocuments mustBe 4
+      }
+    }
+    /* SR hier jetzt schön queries testen :-)
+      [info]   org.apache.lucene.queryparser.classic.ParseException:
+      Cannot parse 'dateStampText:*': '*' or '?' not allowed as first character in WildcardQuery
+     */
+
+    "find fileIdentifier" in {
+      withLuceneService { service =>
+        val result = service.query("fileIdentifier:\"23bdd7a3-fd21-daf1-7825-0d3bdc256f9d\"")
+        result.header.noDocuments mustBe 1
+      }
+    }
+    "find title" in {
+      withLuceneService { service =>
+        val result = service.query("title:\"NZ Primary Road Parcels\"")
+        result.header.noDocuments mustBe 1
+      }
+    }
+    "find abstrakt" in {
+      withLuceneService { service =>
+        val result = service.query("abstrakt:road parcel polygons")
+        result.header.noDocuments mustBe 1
+      }
+    }
+    /* Date range queries not yet possible (dates as long, blower and upper limit)
+        the "field" for a date range query is "dateStampCompare"
+        LongPoint.newRangeQuery("dateStampCompare", localDate1.toEpochDay, localDate2.toEpochDay)
+     */
+    "find dateStampText" in {
+      withLuceneService { service =>
+        val result = service.query("dateStampText:\"2015-04-08\"")
+        result.header.noDocuments mustBe 1
+      }
+    }
+    "find keywords" in {
+      withLuceneService { service =>
+        val result = service.query("keywords:\"unwanted organisms\"")
         result.header.noDocuments mustBe 2
       }
     }
-    //SR hier jetzt schön queries testen :-)
+    "find topicCategory" in {
+      withLuceneService { service =>
+        val result = service.query("topicCategory:biota")
+        result.header.noDocuments mustBe 2
+      }
+    }
+    "find contactName" in {
+      withLuceneService { service =>
+        val result = service.query("contactName:Omit")
+        // case insensitive
+        result.header.noDocuments mustBe 2
+      }
+    }
+    "find contactOrg" in {
+      withLuceneService { service =>
+        val result = service.query("contactOrg:\"LINZ\"")
+        result.header.noDocuments mustBe 2
+      }
+    }
+    "find contactEmail" in {
+      withLuceneService { service =>
+        val result = service.query("contactEmail:info@linz.govt.nz")
+        result.header.noDocuments mustBe 2
+      }
+    }
+    "find license" in {
+      withLuceneService { service =>
+        val result = service.query("license:Creative Commons")
+        result.header.noDocuments mustBe 4
+      }
+    }
+    /* spatial bbox queries not yet possible (bbox and spatial loperations like Intersects, IsDisjointTo, IsEqualTo)
+    the "field" for a geo query ia "bboxStrategy"
+      val bboxT = ctx.getShapeFactory().rect(-180.0, 180.0, -90.0, 90.0)
+      val bboxStrategy: BBoxStrategy = BBoxStrategy.newInstance(ctx, "bboxStrategy")
+      val luceneQuery6 = bboxStrategy.makeQuery(new SpatialArgs(SpatialOperation.IsEqualTo, bboxT))
+   */
+    "find bboxText" in {
+      withLuceneService { service =>
+        val result = service.query("bboxText:ENVELOPE")
+        result.header.noDocuments mustBe 4
+      }
+    }
+    "find origin" in {
+      withLuceneService { service =>
+        val result = service.query("origin:test1")
+        result.header.noDocuments mustBe 4
+      }
+    }
+
   }
 
   /*  "LuceneSpecs with OneAppPerSuite trait " must {

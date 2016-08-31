@@ -34,18 +34,18 @@ import scala.xml.NodeSeq
 /**
   * Holds a subset of MDMetadata
   *
-  * @param fileIdentifier
-  * @param dateStamp
-  * @param title
-  * @param abstrakt
-  * @param keywords
-  * @param topicCategory
-  * @param contactName
-  * @param contactOrg
-  * @param contactEmail
-  * @param license
-  * @param bbox
-  * @param origin
+  * @param fileIdentifier the unique file identifier of the record
+  * @param dateStamp a datestamp of the record
+  * @param title title of the record
+  * @param abstrakt abstract of the record
+  * @param keywords list of keywords for the record
+  * @param topicCategory list of ISO/ANZLIC topic categories of the record
+  * @param contactName contact name for the record or dataset
+  * @param contactOrg cantact organisation for the record or dataset
+  * @param contactEmail contact email for the record or dataset
+  * @param license licenses for the record or dataset
+  * @param bbox bbox of the record
+  * @param origin origin i.e. source catalogue where the record was loaded from
   */
 case class MdMetadataSet(fileIdentifier: String,
                          dateStamp: LocalDate,
@@ -81,7 +81,7 @@ case class MdMetadataSet(fileIdentifier: String,
   /**
     * returns bounding box as well known text (WKT)
     *
-    * @return
+    * @return Envelope (WKT) representation of BBOX
     */
   private def bboxAsWkt: String = {
     val ctx = SpatialContext.GEO
@@ -92,7 +92,7 @@ case class MdMetadataSet(fileIdentifier: String,
   /**
     * returns dateStamp as String in ISO_LOCAL_DATE format.
     *
-    * @return
+    * @return ISO_LOCAL_DATE formatted date string
     */
   def dateStampAsIsoString: String = {
     dateStamp.format(DateTimeFormatter.ISO_LOCAL_DATE)
@@ -101,7 +101,7 @@ case class MdMetadataSet(fileIdentifier: String,
   /**
     * returns the object as LuceneDocument
     *
-    * @return
+    * @return LuceneDocument for index
     */
   def asLuceneDocument(): Document = {
     val ctx = SpatialContext.GEO
@@ -208,6 +208,12 @@ object MdMetadataSet extends ClassnameLogger {
     }
   }
 
+  /**
+    * converts LuceneDocument into MdMetadataSet from index
+    *
+    * @param doc
+    * @return MdMetadataSet extracted from retrieved LuceneDocument
+    */
   def fromLuceneDoc(doc: Document): MdMetadataSet = {
     MdMetadataSet(
       fileIdentifier = doc.get("fileIdentifier"),
@@ -279,6 +285,12 @@ object MdMetadataSet extends ClassnameLogger {
     }
   }
 
+  /**
+    * extracts a LocalDate from the provided XML
+    *
+    * @param nodeSeq the provided xml
+    * @return a LoclDate from the list of extracted fields
+    */
   def dateFromXml(nodeSeq: NodeSeq): LocalDate = {
     val dateNodes = (nodeSeq \\ "dateStamp" \ "Date") ++
       (nodeSeq \\ "dateStamp" \ "DateTime") ++
@@ -287,30 +299,66 @@ object MdMetadataSet extends ClassnameLogger {
     dateFromStrings(dateNodes.map(node => node.text).toList)
   }
 
+  /**
+    * extracts keywords fields from the provided XML
+    *
+    * @param nodeSeq the provided xml
+    * @return a List(String) of extracted fields
+    */
   def keywordsFromXml(nodeSeq: NodeSeq): List[String] = {
     (nodeSeq \\ "identificationInfo" \ "MD_DataIdentification" \ "descriptiveKeywords" \ "MD_Keywords" \ "keyword" \ "CharacterString").map(
       elem => elem.text.trim).toList
   }
 
+  /**
+    * extracts topicCategory fields from the provided XML
+    *
+    * @param nodeSeq the provided xml
+    * @return a List(String) of extracted fields
+    */
   def topicCategoriesFromXml(nodeSeq: NodeSeq): List[String] = {
     (nodeSeq \\ "identificationInfo" \ "MD_DataIdentification" \ "topicCategory" \ "MD_TopicCategoryCode").map(
       elem => elem.text).toList
   }
 
+  /**
+    * extracts contactName fields from the provided XML
+    *
+    * @param nodeSeq the provided xml
+    * @return a string concatenation of extracted fields
+    */
   def contactNameFromXml(nodeSeq: NodeSeq): String = {
     (nodeSeq \\ "CI_ResponsibleParty" \ "individualName" \ "CharacterString").map(elem => elem.text).mkString(", ").trim
   }
 
+  /**
+    * extracts contact Organisation fields from the provided XML
+    *
+    * @param nodeSeq the provided xml
+    * @return a string concatenation of extracted fields
+    */
   def contactOrgFromXml(nodeSeq: NodeSeq): String = {
     (nodeSeq \\ "CI_ResponsibleParty" \ "organisationName" \ "CharacterString").map(elem => elem.text).mkString(
       ", ").trim
   }
 
+  /**
+    * extracts contact email fields from the provided XML
+    *
+    * @param nodeSeq the provided xml
+    * @return a string concatenation of extracted fields
+    */
   def contactEmailFromXml(nodeSeq: NodeSeq): String = {
     (nodeSeq \\ "CI_ResponsibleParty" \ "contactInfo" \ "CI_Contact" \ "address" \ "CI_Address" \ "electronicMailAddress" \ "CharacterString").map(
       elem => elem.text.trim).mkString(", ")
   }
 
+  /**
+    * extracts some license fields from the provided XML
+    *
+    * @param nodeSeq the provided xml
+    * @return a string concatenation of extracted fields
+    */
   def licenseFromXml(nodeSeq: NodeSeq): String = {
     val resConstraints =
       (nodeSeq \\ "identificationInfo" \ "MD_DataIdentification" \ "resourceConstraints" \ "MD_LegalConstraints" \ "useLimitation" \ "CharacterString").map(
@@ -320,7 +368,14 @@ object MdMetadataSet extends ClassnameLogger {
     List(resConstraints, metaConstraints).mkString(", ")
   }
 
-  // TODO DATE Line Wraps :-( ?
+  /**
+    * tries to naively prune the provided coordinates into good shape for WSG84
+    * TODO DATE Line Wraps :-( ?
+    *
+    * @param east most eastern value / minY
+    * @param west most western value / maxY
+    * @return tuple of viable coordinates in WSG84
+    */
   def pruneLongitudeValues(east: Double, west: Double) : (Double, Double) = {
     val x1 = east match {
       case n: Double if (n < minLon) => {
@@ -353,6 +408,13 @@ object MdMetadataSet extends ClassnameLogger {
     (x1, x2)
   }
 
+  /**
+    * tries to naively prune the provided coordinates into good shape for WSG84
+    *
+    * @param south most southern value / minY
+    * @param north most northern value / maxY
+    * @return tuple of viable coordinates in WSG84
+    */
   def pruneLatitudeValues(south: Double, north: Double) : (Double, Double) = {
 
 
@@ -395,12 +457,27 @@ object MdMetadataSet extends ClassnameLogger {
     (x1, x2)
   }
 
+  /**
+    * tries to build a bounding box rectangle as safely as possible from provided coordinates
+    *
+    * @param east most eastern value / minX
+    * @param west most western value / maxX
+    * @param south most southern value / minY
+    * @param north most northern value / maxY
+    * @return the resulting bounding box
+    */
   def bboxFromCoords(east: Double, west: Double, south: Double, north: Double): Rectangle = {
     val (prunedEast, prunedWest) = pruneLongitudeValues(east, west)
     val (prunedSouth, prunedNorth) = pruneLatitudeValues(south, north)
     ctx.getShapeFactory().rect(prunedEast, prunedWest, prunedSouth, prunedNorth)
   }
 
+  /**
+    * naively feeds a WKT string to the Spatial4J Shapereader to transform into a Rectangle
+    *
+    * @param envelope the WKT envelope as String
+    * @return [[Rectangle]] the bounding box as object
+    */
   def bboxFromWkt(envelope: String): Rectangle = {
     // https://github.com/locationtech/spatial4j/blob/master/FORMATS.md beware, typo?
     // Rectangle ENVELOPE(1, 2, 4, 3) minX, maxX, maxY, minY)
@@ -413,9 +490,9 @@ object MdMetadataSet extends ClassnameLogger {
     * We should think about creating a project wide helper for this.
     * Somewhere I had a "String.toInt()" already, that needs the same treatment.
     *
-    * @param textIn
-    * @param default
-    * @return
+    * @param textIn an input string that should be converted to a double value
+    * @param default a default value if the string can't be parsed properly
+    * @return the resulting double value
     */
   def extractLatLonNumber(textIn: String, default: Double): Double = {
     //    if (textIn.isEmpty) { //SR this should end in a NFE and thus is handled below
@@ -440,6 +517,12 @@ object MdMetadataSet extends ClassnameLogger {
     //    }
   }
 
+  /**
+    * tries to extract a valid and usable bounding box rectangle from xml
+    *
+    * @param nodeSeq xml nodeseq containing an extent element
+    * @return [[Rectangle]] the bounding box
+    */
   def bboxFromXml(nodeSeq: NodeSeq): Rectangle = {
     val bboxXml = (nodeSeq \\ "extent" \ "EX_Extent")
     logger.trace(f"bboxFromXml: ${bboxXml}")
