@@ -22,6 +22,7 @@ sbt scapegoat
 - instrumentation is activated, but the HTML report needs to be manually generated
 - the output parameter doesn't seem to be adjustable, so I added a copy task
 - I think `coverage` needs to be run before/together with tests
+- if you activated `coverage` in your activator/sbt console you should deactivate it with `coverageOff`  before `run`
 
 ```scala
 sbt coverage test
