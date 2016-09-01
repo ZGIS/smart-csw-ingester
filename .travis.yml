@@ -8,13 +8,18 @@ services:
 - docker
 script:
 - sbt compile coverage test scapegoat check coverageReport copyCoverage makeSite
-
 before_install:
 - openssl aes-256-cbc -K $encrypted_a0e0047aef74_key -iv $encrypted_a0e0047aef74_iv
-  -in ghpages_ecdsa.enc -out ~\/.ssh/ -d
-
+  -in ghpages_ecdsa.enc -out ghpages_ecdsa -d
 after_success:
+- chmod 600 ghpages_ecdsa && eval `ssh-agent -s` && ssh-add ghpages_ecdsa
 - test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "master" && sbt ghpagesPushSite
 notifications:
   email:
   - allixender@googlemail.com
+  webhooks:
+    urls:
+    - http://test.smart-project.info/smart/contact
+    on_success: always
+    on_failure: never
+    on_start: never
