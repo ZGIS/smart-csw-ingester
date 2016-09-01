@@ -69,8 +69,8 @@ scalacOptions in ThisBuild ++= Seq(
   "-Ywarn-inaccessible", // Warn about inaccessible types in method signatures.
   "-Ywarn-dead-code", // Warn when dead code is identified
   "-Ywarn-infer-any", // Warn when a type argument is inferred to be `Any`
-  " -Ywarn-nullary-override", //  Warn when non-nullary `def f()' overrides nullary `def f'.
-  " -Ywarn-nullary-unit", // Warn when nullary methods return Unit
+  "-Ywarn-nullary-override", //  Warn when non-nullary `def f()' overrides nullary `def f'.
+  "-Ywarn-nullary-unit", // Warn when nullary methods return Unit
   "-language:reflectiveCalls"
 )
 
@@ -135,8 +135,8 @@ git.remoteRepo := "git@github.com:ZGIS/smart-csw-ingester.git"
 
 version in Docker := version.value
 maintainer in Docker := "allixender@googlemail.com"
-dockerBaseImage in Docker := "java:8-jre"
-dockerBaseImage := "java:8-jre"
+dockerBaseImage in Docker := "openjdk:8-jre-alpine"
+dockerBaseImage := "openjdk:8-jre-alpine"
 
 javaOptions in Universal ++= Seq(
   // others will be added as app parameters

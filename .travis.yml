@@ -4,7 +4,6 @@ sudo: required
 
 jdk:
   - openjdk8
-  - oraclejdk8
 
 scala:
   - 2.11.7
@@ -13,7 +12,7 @@ services:
   - docker
 
 script:
-  - sbt scalastyle coverage test
+  - sbt compile coverage test scapegoat check coverageReport copyCoverage makeSite
 
 notifications:
   email:
