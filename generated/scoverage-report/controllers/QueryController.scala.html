@@ -44,37 +44,50 @@
 </span>20 <span style=''>package controllers
 </span>21 <span style=''>
 </span>22 <span style=''>import javax.inject._
-</span>23 <span style=''>import models.gmd.MdMetadataSetWriter
-</span>24 <span style=''>import play.api.libs.json.Json
-</span>25 <span style=''>import play.api.mvc._
-</span>26 <span style=''>import services.{LuceneService, SearchResult, SearchResultHeader}
-</span>27 <span style=''>
-</span>28 <span style=''>/**
-</span>29 <span style=''>  * Controller that serves results from Lucene Index
-</span>30 <span style=''>  */
-</span>31 <span style=''>class QueryController @Inject()(luceneService: LuceneService) extends Controller {
-</span>32 <span style=''>
-</span>33 <span style=''>  // FIXME AK: do we need Json Reads for search result encoding? - SR not necessarily, this was for completeness :-)
-</span>34 <span style=''>  // implicit val searchResultHeaderRead = Json.reads[SearchResultHeader]
-</span>35 <span style=''>  implicit val searchResultHeaderWrite = Json.writes[SearchResultHeader]
-</span>36 <span style=''>  implicit val gmdElementSetWrite = </span><span style='background: #F0ADAD'>MdMetadataSetWriter</span><span style=''>
-</span>37 <span style=''>  // implicit val searchResultRead = Json.reads[SearchResult]
-</span>38 <span style=''>  implicit val searchResultWrite = Json.writes[SearchResult]
-</span>39 <span style=''>
-</span>40 <span style=''>  /**
-</span>41 <span style=''>    * Action that passes the query from URL to the [[services.LuceneService]].
-</span>42 <span style=''>    *
-</span>43 <span style=''>    * @param query
-</span>44 <span style=''>    * @return
-</span>45 <span style=''>    * @see services.LuceneService
-</span>46 <span style=''>    */
-</span>47 <span style=''>  def query(query: String) = </span><span style='background: #F0ADAD'>Action {
-</span>48 <span style=''></span><span style='background: #F0ADAD'>    //FIXME SR error handling
-</span>49 <span style=''></span><span style='background: #F0ADAD'>    val searchResult = luceneService.query(query)
-</span>50 <span style=''></span><span style='background: #F0ADAD'>
-</span>51 <span style=''></span><span style='background: #F0ADAD'>    Ok(Json.toJson(searchResult)).as(JSON)
-</span>52 <span style=''></span><span style='background: #F0ADAD'>  }</span><span style=''>
-</span>53 <span style=''>}
+</span>23 <span style=''>
+</span>24 <span style=''>import models.gmd.MdMetadataSetWriter
+</span>25 <span style=''>import play.api.libs.json.Json
+</span>26 <span style=''>import play.api.mvc._
+</span>27 <span style=''>import services.{LuceneService, SearchResult, SearchResultHeader}
+</span>28 <span style=''>
+</span>29 <span style=''>import scala.concurrent.Future
+</span>30 <span style=''>
+</span>31 <span style=''>/**
+</span>32 <span style=''>  * Controller that serves results from Lucene Index
+</span>33 <span style=''>  */
+</span>34 <span style=''>class QueryController @Inject()(luceneService: LuceneService) extends Controller {
+</span>35 <span style=''>
+</span>36 <span style=''>  // FIXME AK: do we need Json Reads for search result encoding? - SR not necessarily, this was for completeness :-)
+</span>37 <span style=''>  // implicit val searchResultHeaderRead = Json.reads[SearchResultHeader]
+</span>38 <span style=''>  implicit val searchResultHeaderWrite = Json.writes[SearchResultHeader]
+</span>39 <span style=''>  implicit val gmdElementSetWrite = </span><span style='background: #F0ADAD'>MdMetadataSetWriter</span><span style=''>
+</span>40 <span style=''>  // implicit val searchResultRead = Json.reads[SearchResult]
+</span>41 <span style=''>  implicit val searchResultWrite = Json.writes[SearchResult]
+</span>42 <span style=''>
+</span>43 <span style=''>  /**
+</span>44 <span style=''>    * Create an Action to render an HTML page with a welcome message.
+</span>45 <span style=''>    * The configuration in the `routes` file means that this method
+</span>46 <span style=''>    * will be called when the application receives a `GET` request with
+</span>47 <span style=''>    * a path of `/`.
+</span>48 <span style=''>    */
+</span>49 <span style=''>  def index = </span><span style='background: #F0ADAD'>Action {
+</span>50 <span style=''></span><span style='background: #F0ADAD'>    Ok(views.html.index("Your new application is ready."))
+</span>51 <span style=''></span><span style='background: #F0ADAD'>  }</span><span style=''>
+</span>52 <span style=''>
+</span>53 <span style=''>  /**
+</span>54 <span style=''>    * Action that passes the query from URL to the [[services.LuceneService]].
+</span>55 <span style=''>    *
+</span>56 <span style=''>    * @param query
+</span>57 <span style=''>    * @return
+</span>58 <span style=''>    * @see services.LuceneService
+</span>59 <span style=''>    */
+</span>60 <span style=''>  def query(query: String) = </span><span style='background: #F0ADAD'>Action {
+</span>61 <span style=''></span><span style='background: #F0ADAD'>    //FIXME SR error handling
+</span>62 <span style=''></span><span style='background: #F0ADAD'>    val searchResult = luceneService.query(query)
+</span>63 <span style=''></span><span style='background: #F0ADAD'>
+</span>64 <span style=''></span><span style='background: #F0ADAD'>    Ok(Json.toJson(searchResult)).as(JSON)
+</span>65 <span style=''></span><span style='background: #F0ADAD'>  }</span><span style=''>
+</span>66 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -88,15 +101,15 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          36
+          39
         </td>
         <td>
-          40
+          2
         </td>
         <td>
-          1526
+          1559
           -
-          1545
+          1578
         </td>
         <td>
           Select
@@ -109,15 +122,162 @@
         </td>
       </tr><tr>
         <td>
-          47
+          49
         </td>
         <td>
-          48
+          9
         </td>
         <td>
-          1864
+          1961
           -
-          2000
+          2032
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.mvc.ActionBuilder.apply
+        </td>
+        <td style="background: #F0ADAD">
+          play.api.mvc.Action.apply(QueryController.this.Ok.apply[play.twirl.api.HtmlFormat.Appendable](views.html.index.apply(&quot;Your new application is ready.&quot;))(http.this.Writeable.writeableOf_Content[play.twirl.api.HtmlFormat.Appendable](mvc.this.Codec.utf_8, http.this.ContentTypeOf.contentTypeOf_Html(mvc.this.Codec.utf_8))))
+        </td>
+      </tr><tr>
+        <td>
+          50
+        </td>
+        <td>
+          8
+        </td>
+        <td>
+          1974
+          -
+          2028
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.api.mvc.Results.Status.apply
+        </td>
+        <td style="background: #F0ADAD">
+          QueryController.this.Ok.apply[play.twirl.api.HtmlFormat.Appendable](views.html.index.apply(&quot;Your new application is ready.&quot;))(http.this.Writeable.writeableOf_Content[play.twirl.api.HtmlFormat.Appendable](mvc.this.Codec.utf_8, http.this.ContentTypeOf.contentTypeOf_Html(mvc.this.Codec.utf_8)))
+        </td>
+      </tr><tr>
+        <td>
+          50
+        </td>
+        <td>
+          5
+        </td>
+        <td>
+          1976
+          -
+          1976
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          play.api.mvc.Codec.utf_8
+        </td>
+        <td style="background: #F0ADAD">
+          mvc.this.Codec.utf_8
+        </td>
+      </tr><tr>
+        <td>
+          50
+        </td>
+        <td>
+          4
+        </td>
+        <td>
+          1976
+          -
+          1976
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          play.api.mvc.Codec.utf_8
+        </td>
+        <td style="background: #F0ADAD">
+          mvc.this.Codec.utf_8
+        </td>
+      </tr><tr>
+        <td>
+          50
+        </td>
+        <td>
+          7
+        </td>
+        <td>
+          1976
+          -
+          1976
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.api.http.LowPriorityWriteables.writeableOf_Content
+        </td>
+        <td style="background: #F0ADAD">
+          http.this.Writeable.writeableOf_Content[play.twirl.api.HtmlFormat.Appendable](mvc.this.Codec.utf_8, http.this.ContentTypeOf.contentTypeOf_Html(mvc.this.Codec.utf_8))
+        </td>
+      </tr><tr>
+        <td>
+          50
+        </td>
+        <td>
+          3
+        </td>
+        <td>
+          1977
+          -
+          2027
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          views.html.index_Scope0.index.apply
+        </td>
+        <td style="background: #F0ADAD">
+          views.html.index.apply(&quot;Your new application is ready.&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          50
+        </td>
+        <td>
+          6
+        </td>
+        <td>
+          1976
+          -
+          1976
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.api.http.DefaultContentTypeOfs.contentTypeOf_Html
+        </td>
+        <td style="background: #F0ADAD">
+          http.this.ContentTypeOf.contentTypeOf_Html(mvc.this.Codec.utf_8)
+        </td>
+      </tr><tr>
+        <td>
+          60
+        </td>
+        <td>
+          17
+        </td>
+        <td>
+          2228
+          -
+          2364
         </td>
         <td>
           Apply
@@ -133,15 +293,15 @@
         </td>
       </tr><tr>
         <td>
-          49
+          62
         </td>
         <td>
-          41
+          10
         </td>
         <td>
-          1926
+          2290
           -
-          1952
+          2316
         </td>
         <td>
           Apply
@@ -154,99 +314,36 @@
         </td>
       </tr><tr>
         <td>
-          51
+          64
         </td>
         <td>
-          44
+          11
         </td>
         <td>
-          1960
+          2336
           -
-          1960
+          2336
         </td>
         <td>
           Select
         </td>
         <td>
-          play.api.mvc.Codec.utf_8
+          controllers.QueryController.searchResultWrite
         </td>
         <td style="background: #F0ADAD">
-          mvc.this.Codec.utf_8
+          QueryController.this.searchResultWrite
         </td>
       </tr><tr>
         <td>
-          51
+          64
         </td>
         <td>
-          47
+          14
         </td>
         <td>
-          1958
+          2324
           -
-          1996
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          play.api.mvc.Result.as
-        </td>
-        <td style="background: #F0ADAD">
-          QueryController.this.Ok.apply[play.api.libs.json.JsValue](play.api.libs.json.Json.toJson[services.SearchResult](searchResult)(QueryController.this.searchResultWrite))(http.this.Writeable.writeableOf_JsValue(mvc.this.Codec.utf_8)).as(QueryController.this.JSON)
-        </td>
-      </tr><tr>
-        <td>
-          51
-        </td>
-        <td>
-          46
-        </td>
-        <td>
-          1991
-          -
-          1995
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          play.api.http.ContentTypes.JSON
-        </td>
-        <td style="background: #F0ADAD">
-          QueryController.this.JSON
-        </td>
-      </tr><tr>
-        <td>
-          51
-        </td>
-        <td>
-          43
-        </td>
-        <td>
-          1961
-          -
-          1986
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          play.api.libs.json.Json.toJson
-        </td>
-        <td style="background: #F0ADAD">
-          play.api.libs.json.Json.toJson[services.SearchResult](searchResult)(QueryController.this.searchResultWrite)
-        </td>
-      </tr><tr>
-        <td>
-          51
-        </td>
-        <td>
-          45
-        </td>
-        <td>
-          1960
-          -
-          1960
+          2324
         </td>
         <td>
           ApplyToImplicitArgs
@@ -259,24 +356,87 @@
         </td>
       </tr><tr>
         <td>
-          51
+          64
         </td>
         <td>
-          42
+          13
         </td>
         <td>
-          1972
+          2324
           -
-          1972
+          2324
         </td>
         <td>
           Select
         </td>
         <td>
-          controllers.QueryController.searchResultWrite
+          play.api.mvc.Codec.utf_8
         </td>
         <td style="background: #F0ADAD">
-          QueryController.this.searchResultWrite
+          mvc.this.Codec.utf_8
+        </td>
+      </tr><tr>
+        <td>
+          64
+        </td>
+        <td>
+          16
+        </td>
+        <td>
+          2322
+          -
+          2360
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.mvc.Result.as
+        </td>
+        <td style="background: #F0ADAD">
+          QueryController.this.Ok.apply[play.api.libs.json.JsValue](play.api.libs.json.Json.toJson[services.SearchResult](searchResult)(QueryController.this.searchResultWrite))(http.this.Writeable.writeableOf_JsValue(mvc.this.Codec.utf_8)).as(QueryController.this.JSON)
+        </td>
+      </tr><tr>
+        <td>
+          64
+        </td>
+        <td>
+          12
+        </td>
+        <td>
+          2325
+          -
+          2350
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.api.libs.json.Json.toJson
+        </td>
+        <td style="background: #F0ADAD">
+          play.api.libs.json.Json.toJson[services.SearchResult](searchResult)(QueryController.this.searchResultWrite)
+        </td>
+      </tr><tr>
+        <td>
+          64
+        </td>
+        <td>
+          15
+        </td>
+        <td>
+          2355
+          -
+          2359
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          play.api.http.ContentTypes.JSON
+        </td>
+        <td style="background: #F0ADAD">
+          QueryController.this.JSON
         </td>
       </tr>
     </table>

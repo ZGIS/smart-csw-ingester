@@ -45,7 +45,7 @@
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <span class="name deprecated" title="Deprecated: (Since version 0.0.0) DEMO FILE - DELETE FOR PRODUCTION">Filters</span><span class="result"> extends <span class="extype" name="play.api.http.HttpFilters">HttpFilters</span></span>
+        <span class="name">Filters</span><span class="result"> extends <span class="extype" name="play.api.http.DefaultHttpFilters">DefaultHttpFilters</span></span>
       </span>
       </h4>
       
@@ -54,14 +54,9 @@ class is queried by Play to get a list of filters.</p><p>Play will automatically
 <code>Filters</code> that is placed the root package. You can load filters
 from a different class by adding a <code>play.http.filters</code> setting to
 the <code>application.conf</code> configuration file.
-</p></div><dl class="attributes block"> <dt>Annotations</dt><dd>
-                <span class="name">@deprecated</span>
-              
-                <span class="name">@Singleton</span><span class="args">()</span>
-              
-        </dd><dt>Deprecated</dt><dd class="cmt"><p><i>(Since version 0.0.0)</i> DEMO FILE - DELETE FOR PRODUCTION</p></dd></dl><div class="toggleContainer block">
+</p></div><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><span class="extype" name="play.api.http.HttpFilters">HttpFilters</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="play.api.http.DefaultHttpFilters">DefaultHttpFilters</span>, <span class="extype" name="play.api.http.HttpFilters">HttpFilters</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -79,7 +74,7 @@ the <code>application.conf</code> configuration file.
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="Filters"><span>Filters</span></li><li class="in" name="play.api.http.HttpFilters"><span>HttpFilters</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="Filters"><span>Filters</span></li><li class="in" name="play.api.http.DefaultHttpFilters"><span>DefaultHttpFilters</span></li><li class="in" name="play.api.http.HttpFilters"><span>HttpFilters</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -99,7 +94,7 @@ the <code>application.conf</code> configuration file.
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="Filters#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(env:play.api.Environment,exampleFilter:filters.ExampleFilter):Filters"></a>
+      <a id="&lt;init&gt;(corsFilter:play.filters.cors.CORSFilter):Filters"></a>
       <a id="&lt;init&gt;:Filters"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -107,14 +102,14 @@ the <code>application.conf</code> configuration file.
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">Filters</span><span class="params">(<span name="env">env: <span class="extype" name="play.api.Environment">Environment</span></span>, <span name="exampleFilter">exampleFilter: <a href="filters/ExampleFilter.html" class="extype" name="filters.ExampleFilter">ExampleFilter</a></span>)</span>
+        <span class="name">Filters</span><span class="params">(<span name="corsFilter">corsFilter: <span class="extype" name="play.filters.cors.CORSFilter">CORSFilter</span></span>)</span>
       </span>
       </h4><span class="permalink">
-      <a href="index.html#Filters@&lt;init&gt;(env:play.api.Environment,exampleFilter:filters.ExampleFilter):Filters" title="Permalink" target="_top">
+      <a href="index.html#Filters@&lt;init&gt;(corsFilter:play.filters.cors.CORSFilter):Filters" title="Permalink" target="_top">
         <img src="lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">env</dt><dd class="cmt"><p>Basic environment settings for the current application.</p></dd><dt class="param">exampleFilter</dt><dd class="cmt"><p>A demonstration filter that adds a header to
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">corsFilter</dt><dd class="cmt"><p>A demonstration filter that adds a header to
 each response.</p></dd></dl><dl class="attributes block"> <dt>Annotations</dt><dd>
                 <span class="name">@Inject</span><span class="args">()</span>
               
@@ -270,23 +265,23 @@ each response.</p></dd></dl><dl class="attributes block"> <dt>Annotations</dt><d
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="Filters#filters" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="filters:Seq[filters.ExampleFilter]"></a>
-      <a id="filters:Seq[ExampleFilter]"></a>
+    </li><li name="play.api.http.DefaultHttpFilters#filters" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="filters:play.api.mvc.EssentialFilter*"></a>
+      <a id="filters:EssentialFilter*"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">filters</span><span class="result">: <span class="extype" name="scala.collection.Seq">Seq</span>[<a href="filters/ExampleFilter.html" class="extype" name="filters.ExampleFilter">ExampleFilter</a>]</span>
+        <span class="name">filters</span><span class="result">: <span class="extype" name="play.api.mvc.EssentialFilter">EssentialFilter</span>*</span>
       </span>
       </h4><span class="permalink">
-      <a href="index.html#Filters@filters:Seq[filters.ExampleFilter]" title="Permalink" target="_top">
+      <a href="index.html#Filters@filters:play.api.mvc.EssentialFilter*" title="Permalink" target="_top">
         <img src="lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="Filters">Filters</a> → HttpFilters</dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>DefaultHttpFilters → HttpFilters</dd></dl></div>
     </li><li name="scala.AnyRef#finalize" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
       <a id="finalize():Unit"></a>
@@ -524,7 +519,9 @@ each response.</p></dd></dl><dl class="attributes block"> <dt>Annotations</dt><d
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="play.api.http.HttpFilters">
+        <div class="parent" name="play.api.http.DefaultHttpFilters">
+              <h3>Inherited from <span class="extype" name="play.api.http.DefaultHttpFilters">DefaultHttpFilters</span></h3>
+            </div><div class="parent" name="play.api.http.HttpFilters">
               <h3>Inherited from <span class="extype" name="play.api.http.HttpFilters">HttpFilters</span></h3>
             </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>

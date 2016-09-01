@@ -40,55 +40,51 @@
 </span>16 <span style=''>
 </span>17 <span style=''>class index extends BaseScalaTemplate[play.twirl.api.HtmlFormat.Appendable,Format[play.twirl.api.HtmlFormat.Appendable]](play.twirl.api.HtmlFormat) with play.twirl.api.Template1[String,play.twirl.api.HtmlFormat.Appendable] {
 </span>18 <span style=''>
-</span>19 <span style=''>  /*
-</span>20 <span style=''> * This template takes a single argument, a String containing a
-</span>21 <span style=''> * message to display.
-</span>22 <span style=''> */
-</span>23 <span style=''>  def apply/*5.2*/(message: String):play.twirl.api.HtmlFormat.Appendable = {
-</span>24 <span style=''>    </span><span style='background: #F0ADAD'>_display_ {
-</span>25 <span style=''></span><span style='background: #F0ADAD'>      {
+</span>19 <span style=''>  /**/
+</span>20 <span style=''>  def apply/*1.2*/(message: String):play.twirl.api.HtmlFormat.Appendable = {
+</span>21 <span style=''>    </span><span style='background: #F0ADAD'>_display_ {
+</span>22 <span style=''></span><span style='background: #F0ADAD'>      {
+</span>23 <span style=''></span><span style='background: #F0ADAD'>
+</span>24 <span style=''></span><span style='background: #F0ADAD'>
+</span>25 <span style=''></span><span style='background: #F0ADAD'>Seq[Any](format.raw/*1.19*/("""
 </span>26 <span style=''></span><span style='background: #F0ADAD'>
-</span>27 <span style=''></span><span style='background: #F0ADAD'>
-</span>28 <span style=''></span><span style='background: #F0ADAD'>Seq[Any](format.raw/*5.19*/("""
-</span>29 <span style=''></span><span style='background: #F0ADAD'>
-</span>30 <span style=''></span><span style='background: #F0ADAD'>"""),format.raw/*11.4*/("""
-</span>31 <span style=''></span><span style='background: #F0ADAD'>"""),_display_(/*12.2*/main("Welcome to Play")/*12.25*/ {_display_(Seq[Any](format.raw/*12.27*/("""
-</span>32 <span style=''></span><span style='background: #F0ADAD'>
-</span>33 <span style=''></span><span style='background: #F0ADAD'>    """),format.raw/*17.8*/("""
-</span>34 <span style=''></span><span style='background: #F0ADAD'>    """),_display_(/*18.6*/play20/*18.12*/.welcome(message, style = "Scala")),format.raw/*18.46*/("""
-</span>35 <span style=''></span><span style='background: #F0ADAD'>
-</span>36 <span style=''></span><span style='background: #F0ADAD'>""")))}),format.raw/*20.2*/("""
-</span>37 <span style=''></span><span style='background: #F0ADAD'>"""))
-</span>38 <span style=''></span><span style='background: #F0ADAD'>      }
-</span>39 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''>
-</span>40 <span style=''>  }
-</span>41 <span style=''>
-</span>42 <span style=''>  def render(message:String): play.twirl.api.HtmlFormat.Appendable = </span><span style='background: #F0ADAD'>apply(message)</span><span style=''>
-</span>43 <span style=''>
-</span>44 <span style=''>  def f:((String) => play.twirl.api.HtmlFormat.Appendable) = (message) => </span><span style='background: #F0ADAD'>apply(message)</span><span style=''>
-</span>45 <span style=''>
-</span>46 <span style=''>  def ref: this.type = this
-</span>47 <span style=''>
-</span>48 <span style=''>}
+</span>27 <span style=''></span><span style='background: #F0ADAD'>"""),format.raw/*6.3*/("""
+</span>28 <span style=''></span><span style='background: #F0ADAD'>
+</span>29 <span style=''></span><span style='background: #F0ADAD'>"""),format.raw/*12.4*/("""
+</span>30 <span style=''></span><span style='background: #F0ADAD'>"""),_display_(/*13.2*/main("Welcome to Play")/*13.25*/ {_display_(Seq[Any](format.raw/*13.27*/("""
+</span>31 <span style=''></span><span style='background: #F0ADAD'>
+</span>32 <span style=''></span><span style='background: #F0ADAD'>    """),format.raw/*18.8*/("""
+</span>33 <span style=''></span><span style='background: #F0ADAD'>    """),_display_(/*19.6*/play20/*19.12*/.welcome(message, style = "Scala")),format.raw/*19.46*/("""
+</span>34 <span style=''></span><span style='background: #F0ADAD'>
+</span>35 <span style=''></span><span style='background: #F0ADAD'>""")))}),format.raw/*21.2*/("""
+</span>36 <span style=''></span><span style='background: #F0ADAD'>"""))
+</span>37 <span style=''></span><span style='background: #F0ADAD'>      }
+</span>38 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''>
+</span>39 <span style=''>  }
+</span>40 <span style=''>
+</span>41 <span style=''>  def render(message:String): play.twirl.api.HtmlFormat.Appendable = </span><span style='background: #F0ADAD'>apply(message)</span><span style=''>
+</span>42 <span style=''>
+</span>43 <span style=''>  def f:((String) => play.twirl.api.HtmlFormat.Appendable) = (message) => </span><span style='background: #F0ADAD'>apply(message)</span><span style=''>
+</span>44 <span style=''>
+</span>45 <span style=''>  def ref: this.type = this
+</span>46 <span style=''>
+</span>47 <span style=''>}
+</span>48 <span style=''>
 </span>49 <span style=''>
-</span>50 <span style=''>
-</span>51 <span style=''>}
-</span>52 <span style=''>
-</span>53 <span style=''>/*
-</span>54 <span style=''> * This template takes a single argument, a String containing a
-</span>55 <span style=''> * message to display.
-</span>56 <span style=''> */
-</span>57 <span style=''>object index extends index_Scope0.index
-</span>58 <span style=''>              /*
-</span>59 <span style=''>                  -- GENERATED --
-</span>60 <span style=''>                  DATE: Tue Aug 30 18:13:00 NZST 2016
-</span>61 <span style=''>                  SOURCE: /home/akmoch/dev/build/smart-csw-ingester/app/views/index.scala.html
-</span>62 <span style=''>                  HASH: a81f108240070e68924090e3fa0e4a45e1b4ba99
-</span>63 <span style=''>                  MATRIX: 616->95|728->112|757->308|785->310|817->333|857->335|890->464|922->470|937->476|992->510|1025->513
-</span>64 <span style=''>                  LINES: 23->5|28->5|30->11|31->12|31->12|31->12|33->17|34->18|34->18|34->18|36->20
-</span>65 <span style=''>                  -- GENERATED --
-</span>66 <span style=''>              */
-</span>67 <span style=''>          
+</span>50 <span style=''>}
+</span>51 <span style=''>
+</span>52 <span style=''>/**/
+</span>53 <span style=''>object index extends index_Scope0.index
+</span>54 <span style=''>              /*
+</span>55 <span style=''>                  -- GENERATED --
+</span>56 <span style=''>                  DATE: Thu Sep 01 09:53:52 NZST 2016
+</span>57 <span style=''>                  SOURCE: /home/akmoch/dev/smart-csw-ingester/app/views/index.scala.html
+</span>58 <span style=''>                  HASH: 15bf83ab547a2bcdc16f468ed784c140a60fa3b3
+</span>59 <span style=''>                  MATRIX: 527->1|639->18|667->110|696->306|724->308|756->331|796->333|829->462|861->468|876->474|931->508|964->511
+</span>60 <span style=''>                  LINES: 20->1|25->1|27->6|29->12|30->13|30->13|30->13|32->18|33->19|33->19|33->19|35->21
+</span>61 <span style=''>                  -- GENERATED --
+</span>62 <span style=''>              */
+</span>63 <span style=''>          
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -102,36 +98,15 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          24
+          21
         </td>
         <td>
-          1040
+          908
         </td>
         <td>
-          679
+          600
           -
-          1049
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          play.twirl.api.BaseScalaTemplate._display_
-        </td>
-        <td style="background: #F0ADAD">
-          index.this._display_(collection.this.Seq.apply[Any](index.this.format.raw(&quot;\n\n&quot;), index.this.format.raw(&quot;\n&quot;), index.this._display_(views.html.main.apply(&quot;Welcome to Play&quot;)(index.this._display_(collection.this.Seq.apply[Any](index.this.format.raw(&quot;\n\n    &quot;), index.this.format.raw(&quot;\n    &quot;), index.this._display_(views.html.play20.welcome.apply(message, &quot;Scala&quot;)), index.this.format.raw(&quot;\n\n&quot;)))(reflect.this.ManifestFactory.classType[play.twirl.api.HtmlFormat.Appendable](classOf[play.twirl.api.Html])))), index.this.format.raw(&quot;\n&quot;)))(reflect.this.ManifestFactory.classType[play.twirl.api.HtmlFormat.Appendable](classOf[play.twirl.api.Html]))
-        </td>
-      </tr><tr>
-        <td>
-          24
-        </td>
-        <td>
-          1039
-        </td>
-        <td>
-          689
-          -
-          689
+          600
         </td>
         <td>
           Apply
@@ -144,15 +119,57 @@
         </td>
       </tr><tr>
         <td>
-          28
+          21
         </td>
         <td>
-          1024
+          909
         </td>
         <td>
-          710
+          590
           -
-          738
+          988
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.twirl.api.BaseScalaTemplate._display_
+        </td>
+        <td style="background: #F0ADAD">
+          index.this._display_(collection.this.Seq.apply[Any](index.this.format.raw(&quot;\n\n&quot;), index.this.format.raw(&quot;\n\n&quot;), index.this.format.raw(&quot;\n&quot;), index.this._display_(views.html.main.apply(&quot;Welcome to Play&quot;)(index.this._display_(collection.this.Seq.apply[Any](index.this.format.raw(&quot;\n\n    &quot;), index.this.format.raw(&quot;\n    &quot;), index.this._display_(views.html.play20.welcome.apply(message, &quot;Scala&quot;)), index.this.format.raw(&quot;\n\n&quot;)))(reflect.this.ManifestFactory.classType[play.twirl.api.HtmlFormat.Appendable](classOf[play.twirl.api.Html])))), index.this.format.raw(&quot;\n&quot;)))(reflect.this.ManifestFactory.classType[play.twirl.api.HtmlFormat.Appendable](classOf[play.twirl.api.Html]))
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          907
+        </td>
+        <td>
+          612
+          -
+          974
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.generic.GenericCompanion.apply
+        </td>
+        <td style="background: #F0ADAD">
+          collection.this.Seq.apply[Any](index.this.format.raw(&quot;\n\n&quot;), index.this.format.raw(&quot;\n\n&quot;), index.this.format.raw(&quot;\n&quot;), index.this._display_(views.html.main.apply(&quot;Welcome to Play&quot;)(index.this._display_(collection.this.Seq.apply[Any](index.this.format.raw(&quot;\n\n    &quot;), index.this.format.raw(&quot;\n    &quot;), index.this._display_(views.html.play20.welcome.apply(message, &quot;Scala&quot;)), index.this.format.raw(&quot;\n\n&quot;)))(reflect.this.ManifestFactory.classType[play.twirl.api.HtmlFormat.Appendable](classOf[play.twirl.api.Html])))), index.this.format.raw(&quot;\n&quot;))
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          892
+        </td>
+        <td>
+          621
+          -
+          649
         </td>
         <td>
           Apply
@@ -165,36 +182,36 @@
         </td>
       </tr><tr>
         <td>
-          28
+          27
         </td>
         <td>
-          1038
+          893
         </td>
         <td>
-          701
+          650
           -
-          1035
+          677
         </td>
         <td>
           Apply
         </td>
         <td>
-          scala.collection.generic.GenericCompanion.apply
+          play.twirl.api.Format.raw
         </td>
         <td style="background: #F0ADAD">
-          collection.this.Seq.apply[Any](index.this.format.raw(&quot;\n\n&quot;), index.this.format.raw(&quot;\n&quot;), index.this._display_(views.html.main.apply(&quot;Welcome to Play&quot;)(index.this._display_(collection.this.Seq.apply[Any](index.this.format.raw(&quot;\n\n    &quot;), index.this.format.raw(&quot;\n    &quot;), index.this._display_(views.html.play20.welcome.apply(message, &quot;Scala&quot;)), index.this.format.raw(&quot;\n\n&quot;)))(reflect.this.ManifestFactory.classType[play.twirl.api.HtmlFormat.Appendable](classOf[play.twirl.api.Html])))), index.this.format.raw(&quot;\n&quot;))
+          index.this.format.raw(&quot;\n\n&quot;)
         </td>
       </tr><tr>
         <td>
-          30
+          29
         </td>
         <td>
-          1025
+          894
         </td>
         <td>
-          739
+          678
           -
-          766
+          705
         </td>
         <td>
           Apply
@@ -207,36 +224,15 @@
         </td>
       </tr><tr>
         <td>
-          31
+          30
         </td>
         <td>
-          1034
+          902
         </td>
         <td>
-          819
+          767
           -
-          1004
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          play.twirl.api.BaseScalaTemplate._display_
-        </td>
-        <td style="background: #F0ADAD">
-          index.this._display_(collection.this.Seq.apply[Any](index.this.format.raw(&quot;\n\n    &quot;), index.this.format.raw(&quot;\n    &quot;), index.this._display_(views.html.play20.welcome.apply(message, &quot;Scala&quot;)), index.this.format.raw(&quot;\n\n&quot;)))(reflect.this.ManifestFactory.classType[play.twirl.api.HtmlFormat.Appendable](classOf[play.twirl.api.Html]))
-        </td>
-      </tr><tr>
-        <td>
-          31
-        </td>
-        <td>
-          1033
-        </td>
-        <td>
-          828
-          -
-          828
+          767
         </td>
         <td>
           Apply
@@ -249,15 +245,15 @@
         </td>
       </tr><tr>
         <td>
-          31
+          30
         </td>
         <td>
-          1027
+          896
         </td>
         <td>
-          838
+          777
           -
-          871
+          810
         </td>
         <td>
           Apply
@@ -270,15 +266,15 @@
         </td>
       </tr><tr>
         <td>
-          31
+          30
         </td>
         <td>
-          1036
+          905
         </td>
         <td>
-          767
+          706
           -
-          1006
+          945
         </td>
         <td>
           Apply
@@ -291,57 +287,15 @@
         </td>
       </tr><tr>
         <td>
-          31
+          30
         </td>
         <td>
-          1032
+          904
         </td>
         <td>
-          829
+          724
           -
-          1003
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.collection.generic.GenericCompanion.apply
-        </td>
-        <td style="background: #F0ADAD">
-          collection.this.Seq.apply[Any](index.this.format.raw(&quot;\n\n    &quot;), index.this.format.raw(&quot;\n    &quot;), index.this._display_(views.html.play20.welcome.apply(message, &quot;Scala&quot;)), index.this.format.raw(&quot;\n\n&quot;))
-        </td>
-      </tr><tr>
-        <td>
-          31
-        </td>
-        <td>
-          1026
-        </td>
-        <td>
-          790
-          -
-          807
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;Welcome to Play&quot;
-        </td>
-      </tr><tr>
-        <td>
-          31
-        </td>
-        <td>
-          1035
-        </td>
-        <td>
-          785
-          -
-          1005
+          944
         </td>
         <td>
           Apply
@@ -354,15 +308,78 @@
         </td>
       </tr><tr>
         <td>
-          33
+          30
         </td>
         <td>
-          1028
+          895
         </td>
         <td>
-          872
+          729
           -
+          746
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;Welcome to Play&quot;
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          901
+        </td>
+        <td>
+          768
+          -
+          942
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.generic.GenericCompanion.apply
+        </td>
+        <td style="background: #F0ADAD">
+          collection.this.Seq.apply[Any](index.this.format.raw(&quot;\n\n    &quot;), index.this.format.raw(&quot;\n    &quot;), index.this._display_(views.html.play20.welcome.apply(message, &quot;Scala&quot;)), index.this.format.raw(&quot;\n\n&quot;))
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
           903
+        </td>
+        <td>
+          758
+          -
+          943
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.twirl.api.BaseScalaTemplate._display_
+        </td>
+        <td style="background: #F0ADAD">
+          index.this._display_(collection.this.Seq.apply[Any](index.this.format.raw(&quot;\n\n    &quot;), index.this.format.raw(&quot;\n    &quot;), index.this._display_(views.html.play20.welcome.apply(message, &quot;Scala&quot;)), index.this.format.raw(&quot;\n\n&quot;)))(reflect.this.ManifestFactory.classType[play.twirl.api.HtmlFormat.Appendable](classOf[play.twirl.api.Html]))
+        </td>
+      </tr><tr>
+        <td>
+          32
+        </td>
+        <td>
+          897
+        </td>
+        <td>
+          811
+          -
+          842
         </td>
         <td>
           Apply
@@ -375,36 +392,15 @@
         </td>
       </tr><tr>
         <td>
-          34
+          33
         </td>
         <td>
-          1031
+          899
         </td>
         <td>
-          973
+          843
           -
-          1002
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          play.twirl.api.Format.raw
-        </td>
-        <td style="background: #F0ADAD">
-          index.this.format.raw(&quot;\n\n&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          34
-        </td>
-        <td>
-          1030
-        </td>
-        <td>
-          904
-          -
-          972
+          911
         </td>
         <td>
           Apply
@@ -417,15 +413,15 @@
         </td>
       </tr><tr>
         <td>
-          34
+          33
         </td>
         <td>
-          1029
+          898
         </td>
         <td>
-          922
+          861
           -
-          971
+          910
         </td>
         <td>
           Apply
@@ -438,15 +434,36 @@
         </td>
       </tr><tr>
         <td>
-          36
+          33
         </td>
         <td>
-          1037
+          900
         </td>
         <td>
-          1007
+          912
           -
-          1034
+          941
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.twirl.api.Format.raw
+        </td>
+        <td style="background: #F0ADAD">
+          index.this.format.raw(&quot;\n\n&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          35
+        </td>
+        <td>
+          906
+        </td>
+        <td>
+          946
+          -
+          973
         </td>
         <td>
           Apply
@@ -459,15 +476,15 @@
         </td>
       </tr><tr>
         <td>
-          42
+          41
         </td>
         <td>
-          1041
+          910
         </td>
         <td>
-          1124
+          1063
           -
-          1138
+          1077
         </td>
         <td>
           Apply
@@ -480,15 +497,15 @@
         </td>
       </tr><tr>
         <td>
-          44
+          43
         </td>
         <td>
-          1042
+          911
         </td>
         <td>
-          1214
+          1153
           -
-          1228
+          1167
         </td>
         <td>
           Apply

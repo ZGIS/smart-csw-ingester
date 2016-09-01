@@ -61,10 +61,10 @@
         Warnings
         15
         Infos
-        22
+        15
       </h3><div class="warning">
           <div class="source">
-            .home.akmoch.dev.build.smart-csw-ingester.app.controllers.QueryController.scala:38
+            .home.akmoch.dev.smart-csw-ingester.app.controllers.QueryController.scala:41
           </div>
           <div class="title">
             <span class="label label-info">Info</span>
@@ -75,18 +75,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.akmoch.dev.build.smart-csw-ingester.app.models.OwcDocument.scala:25
-          </div>
-          <div class="title">
-            <span class="label label-info">Info</span>
-            &nbsp;Empty case class
-            &nbsp;<span class="inspection">com.sksamuel.scapegoat.inspections.EmptyCaseClass</span>
-          </div><div class="snippet">
-                  Empty case class can be rewritten as a case object
-                </div>
-        </div><div class="warning">
-          <div class="source">
-            .home.akmoch.dev.build.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:386
+            .home.akmoch.dev.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:485
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -97,7 +86,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.akmoch.dev.build.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:182
+            .home.akmoch.dev.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:183
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -110,7 +99,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.akmoch.dev.build.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:395
+            .home.akmoch.dev.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:502
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -122,12 +111,12 @@
 } catch {
   case (e @ (_: NumberFormatException)) =&gt; {
     MdMetadataSet.this.logger.warn(({
-      val arg$macro$30: Any = textIn;
+      val arg$macro$42: Any = textIn;
       new scala.collection.immutable.StringOps(&quot;Bad lat/lon value: %s&quot;).format(arg$mac
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.akmoch.dev.build.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:268
+            .home.akmoch.dev.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:281
           </div>
           <div class="title">
             <span class="label label-info">Info</span>
@@ -138,7 +127,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.akmoch.dev.build.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:269
+            .home.akmoch.dev.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:282
           </div>
           <div class="title">
             <span class="label label-info">Info</span>
@@ -149,7 +138,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.akmoch.dev.build.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:261
+            .home.akmoch.dev.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:274
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -160,7 +149,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.akmoch.dev.build.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:183
+            .home.akmoch.dev.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:184
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -171,7 +160,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.akmoch.dev.build.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:200
+            .home.akmoch.dev.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:201
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -182,7 +171,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.akmoch.dev.build.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:270
+            .home.akmoch.dev.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:284
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -193,7 +182,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.akmoch.dev.build.smart-csw-ingester.app.services.LuceneService.scala:105
+            .home.akmoch.dev.smart-csw-ingester.app.services.LuceneService.scala:109
           </div>
           <div class="title">
             <span class="label label-info">Info</span>
@@ -204,7 +193,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.akmoch.dev.build.smart-csw-ingester.app.services.LuceneService.scala:208
+            .home.akmoch.dev.smart-csw-ingester.app.services.LuceneService.scala:214
           </div>
           <div class="title">
             <span class="label label-info">Info</span>
@@ -213,12 +202,12 @@
           </div><div class="snippet">
                   .filter(_.isDefined).map(_.get) can be replaced with flatten: cswGetRecordsResponses.flatMap[Option[models.gmd.MdMetadataSet], List[Option[models.gmd.MdMetadataSet]]](((cswGetRecordsResponse: models.csw.CswGetRecordsResponse) =&gt; cswGetRecordsResponse.xml.\\(&quot;MD_Metadata&quot;).map[Option[models.gmd.MdMetadataSet], scala.collection.immutable.Seq[Option[models.gmd.MdMetadataSet]]](((mdMetadataNode: scala.xml.Node) =&gt; {
   LuceneService.this.logger.debug(({
-    val arg$macro$47: Any = catalogueName;
-    val arg$macro$48: Any = mdMetadataNode.\(&quot;fileIdentifier&quot;).\(&quot;
+    val arg$macro$59: Any = catalogueName;
+    val arg$macro$60: Any = mdMetadataNode.\(&quot;fileIdentifier&quot;).\(&quot;
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.akmoch.dev.build.smart-csw-ingester.app.services.LuceneService.scala:106
+            .home.akmoch.dev.smart-csw-ingester.app.services.LuceneService.scala:110
           </div>
           <div class="title">
             <span class="label label-info">Info</span>
@@ -229,7 +218,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.akmoch.dev.build.smart-csw-ingester.app.services.LuceneService.scala:236
+            .home.akmoch.dev.smart-csw-ingester.app.services.LuceneService.scala:241
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -240,7 +229,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.akmoch.dev.build.smart-csw-ingester.app.services.LuceneService.scala:71
+            .home.akmoch.dev.smart-csw-ingester.app.services.LuceneService.scala:74
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -251,7 +240,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.akmoch.dev.build.smart-csw-ingester.app.services.LuceneService.scala:72
+            .home.akmoch.dev.smart-csw-ingester.app.services.LuceneService.scala:75
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -262,7 +251,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.akmoch.dev.build.smart-csw-ingester.app.services.LuceneService.scala:72
+            .home.akmoch.dev.smart-csw-ingester.app.services.LuceneService.scala:75
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -273,7 +262,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.akmoch.dev.build.smart-csw-ingester.app.services.LuceneService.scala:208
+            .home.akmoch.dev.smart-csw-ingester.app.services.LuceneService.scala:214
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -284,7 +273,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.akmoch.dev.build.smart-csw-ingester.app.services.LuceneService.scala:151
+            .home.akmoch.dev.smart-csw-ingester.app.services.LuceneService.scala:155
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -295,7 +284,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.akmoch.dev.build.smart-csw-ingester.target.scala-2.11.routes.main.controllers.ReverseRoutes.scala:17
+            .home.akmoch.dev.smart-csw-ingester.target.scala-2.11.routes.main.controllers.ReverseRoutes.scala:17
           </div>
           <div class="title">
             <span class="label label-info">Info</span>
@@ -306,7 +295,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.akmoch.dev.build.smart-csw-ingester.target.scala-2.11.routes.main.controllers.ReverseRoutes.scala:32
+            .home.akmoch.dev.smart-csw-ingester.target.scala-2.11.routes.main.controllers.ReverseRoutes.scala:51
           </div>
           <div class="title">
             <span class="label label-info">Info</span>
@@ -317,7 +306,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.akmoch.dev.build.smart-csw-ingester.target.scala-2.11.routes.main.controllers.ReverseRoutes.scala:47
+            .home.akmoch.dev.smart-csw-ingester.target.scala-2.11.routes.main.controllers.javascript.JavaScriptReverseRoutes.scala:20
           </div>
           <div class="title">
             <span class="label label-info">Info</span>
@@ -328,7 +317,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.akmoch.dev.build.smart-csw-ingester.target.scala-2.11.routes.main.controllers.ReverseRoutes.scala:62
+            .home.akmoch.dev.smart-csw-ingester.target.scala-2.11.routes.main.controllers.javascript.JavaScriptReverseRoutes.scala:58
           </div>
           <div class="title">
             <span class="label label-info">Info</span>
@@ -339,73 +328,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.akmoch.dev.build.smart-csw-ingester.target.scala-2.11.routes.main.controllers.ReverseRoutes.scala:77
-          </div>
-          <div class="title">
-            <span class="label label-info">Info</span>
-            &nbsp;Method name not recommended
-            &nbsp;<span class="inspection">com.sksamuel.scapegoat.inspections.naming.MethodNames</span>
-          </div><div class="snippet">
-                  Methods should be in camelCase style with the first letter lower-case. See http://docs.scala-lang.org/style/naming-conventions.html#methods
-                </div>
-        </div><div class="warning">
-          <div class="source">
-            .home.akmoch.dev.build.smart-csw-ingester.target.scala-2.11.routes.main.controllers.javascript.JavaScriptReverseRoutes.scala:20
-          </div>
-          <div class="title">
-            <span class="label label-info">Info</span>
-            &nbsp;Method name not recommended
-            &nbsp;<span class="inspection">com.sksamuel.scapegoat.inspections.naming.MethodNames</span>
-          </div><div class="snippet">
-                  Methods should be in camelCase style with the first letter lower-case. See http://docs.scala-lang.org/style/naming-conventions.html#methods
-                </div>
-        </div><div class="warning">
-          <div class="source">
-            .home.akmoch.dev.build.smart-csw-ingester.target.scala-2.11.routes.main.controllers.javascript.JavaScriptReverseRoutes.scala:40
-          </div>
-          <div class="title">
-            <span class="label label-info">Info</span>
-            &nbsp;Method name not recommended
-            &nbsp;<span class="inspection">com.sksamuel.scapegoat.inspections.naming.MethodNames</span>
-          </div><div class="snippet">
-                  Methods should be in camelCase style with the first letter lower-case. See http://docs.scala-lang.org/style/naming-conventions.html#methods
-                </div>
-        </div><div class="warning">
-          <div class="source">
-            .home.akmoch.dev.build.smart-csw-ingester.target.scala-2.11.routes.main.controllers.javascript.JavaScriptReverseRoutes.scala:60
-          </div>
-          <div class="title">
-            <span class="label label-info">Info</span>
-            &nbsp;Method name not recommended
-            &nbsp;<span class="inspection">com.sksamuel.scapegoat.inspections.naming.MethodNames</span>
-          </div><div class="snippet">
-                  Methods should be in camelCase style with the first letter lower-case. See http://docs.scala-lang.org/style/naming-conventions.html#methods
-                </div>
-        </div><div class="warning">
-          <div class="source">
-            .home.akmoch.dev.build.smart-csw-ingester.target.scala-2.11.routes.main.controllers.javascript.JavaScriptReverseRoutes.scala:80
-          </div>
-          <div class="title">
-            <span class="label label-info">Info</span>
-            &nbsp;Method name not recommended
-            &nbsp;<span class="inspection">com.sksamuel.scapegoat.inspections.naming.MethodNames</span>
-          </div><div class="snippet">
-                  Methods should be in camelCase style with the first letter lower-case. See http://docs.scala-lang.org/style/naming-conventions.html#methods
-                </div>
-        </div><div class="warning">
-          <div class="source">
-            .home.akmoch.dev.build.smart-csw-ingester.target.scala-2.11.routes.main.controllers.javascript.JavaScriptReverseRoutes.scala:100
-          </div>
-          <div class="title">
-            <span class="label label-info">Info</span>
-            &nbsp;Method name not recommended
-            &nbsp;<span class="inspection">com.sksamuel.scapegoat.inspections.naming.MethodNames</span>
-          </div><div class="snippet">
-                  Methods should be in camelCase style with the first letter lower-case. See http://docs.scala-lang.org/style/naming-conventions.html#methods
-                </div>
-        </div><div class="warning">
-          <div class="source">
-            .home.akmoch.dev.build.smart-csw-ingester.target.scala-2.11.routes.main.router.Routes.scala:65
+            .home.akmoch.dev.smart-csw-ingester.target.scala-2.11.routes.main.router.Routes.scala:51
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -416,7 +339,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.akmoch.dev.build.smart-csw-ingester.target.scala-2.11.routes.main.router.Routes.scala:66
+            .home.akmoch.dev.smart-csw-ingester.target.scala-2.11.routes.main.router.Routes.scala:52
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -427,7 +350,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.akmoch.dev.build.smart-csw-ingester.target.scala-2.11.routes.main.router.Routes.scala:65
+            .home.akmoch.dev.smart-csw-ingester.target.scala-2.11.routes.main.router.Routes.scala:51
           </div>
           <div class="title">
             <span class="label label-info">Info</span>
@@ -438,7 +361,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.akmoch.dev.build.smart-csw-ingester.target.scala-2.11.twirl.main.views.html.index.template.scala:17
+            .home.akmoch.dev.smart-csw-ingester.target.scala-2.11.twirl.main.views.html.index.template.scala:17
           </div>
           <div class="title">
             <span class="label label-info">Info</span>
@@ -449,7 +372,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.akmoch.dev.build.smart-csw-ingester.target.scala-2.11.twirl.main.views.html.index.template.scala:8
+            .home.akmoch.dev.smart-csw-ingester.target.scala-2.11.twirl.main.views.html.index.template.scala:8
           </div>
           <div class="title">
             <span class="label label-info">Info</span>
@@ -460,7 +383,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.akmoch.dev.build.smart-csw-ingester.target.scala-2.11.twirl.main.views.html.main.template.scala:17
+            .home.akmoch.dev.smart-csw-ingester.target.scala-2.11.twirl.main.views.html.main.template.scala:17
           </div>
           <div class="title">
             <span class="label label-info">Info</span>
@@ -471,7 +394,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.akmoch.dev.build.smart-csw-ingester.target.scala-2.11.twirl.main.views.html.main.template.scala:8
+            .home.akmoch.dev.smart-csw-ingester.target.scala-2.11.twirl.main.views.html.main.template.scala:8
           </div>
           <div class="title">
             <span class="label label-info">Info</span>

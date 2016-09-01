@@ -23,10 +23,10 @@
         <div class="tab-content">
           <div class="tab-pane active" id="codegrid">
             <pre style='font-size: 12pt; font-family: courier;'>1 <span style=''>/*
-</span>2 <span style=''> * Copyright (c) 2011-2017 Interfaculty Department of Geoinformatics, University of Salzburg (Z_GIS)
-</span>3 <span style=''> *                       & Institute of Geological and Nuclear Sciences Limited (GNS Science)
-</span>4 <span style=''> *                       in the SMART Aquifer Characterisation (SAC) programme funded by the New Zealand
-</span>5 <span style=''> *                       Ministry of Business, Innovation and Employment (MBIE)
+</span>2 <span style=''> * Copyright (c) 2011-2017 Interfaculty Department of Geoinformatics, University of
+</span>3 <span style=''> * Salzburg (Z_GIS) & Institute of Geological and Nuclear Sciences Limited (GNS Science)
+</span>4 <span style=''> * in the SMART Aquifer Characterisation (SAC) programme funded by the New Zealand
+</span>5 <span style=''> * Ministry of Business, Innovation and Employment (MBIE)
 </span>6 <span style=''> *
 </span>7 <span style=''> * Licensed under the Apache License, Version 2.0 (the "License");
 </span>8 <span style=''> * you may not use this file except in compliance with the License.
@@ -39,20 +39,18 @@
 </span>15 <span style=''> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 </span>16 <span style=''> * See the License for the specific language governing permissions and
 </span>17 <span style=''> * limitations under the License.
-</span>18 <span style=''> *
-</span>19 <span style=''> *
-</span>20 <span style=''> */
+</span>18 <span style=''> */
+</span>19 <span style=''>
+</span>20 <span style=''>package utils
 </span>21 <span style=''>
-</span>22 <span style=''>package utils
+</span>22 <span style=''>import play.api.Logger
 </span>23 <span style=''>
-</span>24 <span style=''>import play.api.Logger
-</span>25 <span style=''>
-</span>26 <span style=''>/**
-</span>27 <span style=''>  * Provides a Logger with the Classname
-</span>28 <span style=''>  */
-</span>29 <span style=''>trait ClassnameLogger {
-</span>30 <span style=''>  val logger = </span><span style='background: #AEF1AE'>Logger(this.getClass())</span><span style=''>
-</span>31 <span style=''>}
+</span>24 <span style=''>/**
+</span>25 <span style=''>  * Provides a Logger with the Classname
+</span>26 <span style=''>  */
+</span>27 <span style=''>trait ClassnameLogger {
+</span>28 <span style=''>  val logger = </span><span style='background: #AEF1AE'>Logger(this.getClass())</span><span style=''>
+</span>29 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -66,36 +64,15 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          30
+          28
         </td>
         <td>
-          702
+          672
         </td>
         <td>
-          1079
+          1014
           -
-          1102
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          play.api.Logger.apply
-        </td>
-        <td style="background: #AEF1AE">
-          play.api.Logger.apply[?0](this.getClass())
-        </td>
-      </tr><tr>
-        <td>
-          30
-        </td>
-        <td>
-          701
-        </td>
-        <td>
-          1086
-          -
-          1101
+          1029
         </td>
         <td>
           Apply
@@ -105,6 +82,27 @@
         </td>
         <td style="background: #AEF1AE">
           this.getClass()
+        </td>
+      </tr><tr>
+        <td>
+          28
+        </td>
+        <td>
+          673
+        </td>
+        <td>
+          1007
+          -
+          1030
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.Logger.apply
+        </td>
+        <td style="background: #AEF1AE">
+          play.api.Logger.apply[?0](this.getClass())
         </td>
       </tr>
     </table>

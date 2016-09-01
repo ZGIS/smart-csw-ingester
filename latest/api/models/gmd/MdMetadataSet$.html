@@ -165,7 +165,7 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
-    </li><li name="models.gmd.MdMetadataSet#bboxFromCoords" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+    </li><li name="models.gmd.MdMetadataSet#bboxFromCoords" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="bboxFromCoords(east:Double,west:Double,south:Double,north:Double):org.locationtech.spatial4j.shape.Rectangle"></a>
       <a id="bboxFromCoords(Double,Double,Double,Double):Rectangle"></a>
       <h4 class="signature">
@@ -181,8 +181,10 @@
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
-    </li><li name="models.gmd.MdMetadataSet#bboxFromWkt" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt">tries to build a bounding box rectangle as safely as possible from provided coordinates
+</p><div class="fullcomment"><div class="comment cmt"><p>tries to build a bounding box rectangle as safely as possible from provided coordinates
+</p></div><dl class="paramcmts block"><dt class="param">east</dt><dd class="cmt"><p>most eastern value / minX</p></dd><dt class="param">west</dt><dd class="cmt"><p>most western value / maxX</p></dd><dt class="param">south</dt><dd class="cmt"><p>most southern value / minY</p></dd><dt class="param">north</dt><dd class="cmt"><p>most northern value / maxY</p></dd><dt>returns</dt><dd class="cmt"><p>the resulting bounding box</p></dd></dl></div>
+    </li><li name="models.gmd.MdMetadataSet#bboxFromWkt" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="bboxFromWkt(envelope:String):org.locationtech.spatial4j.shape.Rectangle"></a>
       <a id="bboxFromWkt(String):Rectangle"></a>
       <h4 class="signature">
@@ -198,8 +200,10 @@
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
-    </li><li name="models.gmd.MdMetadataSet#bboxFromXml" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt">naively feeds a WKT string to the Spatial4J Shapereader to transform into a Rectangle
+</p><div class="fullcomment"><div class="comment cmt"><p>naively feeds a WKT string to the Spatial4J Shapereader to transform into a Rectangle
+</p></div><dl class="paramcmts block"><dt class="param">envelope</dt><dd class="cmt"><p>the WKT envelope as String</p></dd><dt>returns</dt><dd class="cmt"><p><span class="extype" name="Rectangle">Rectangle</span> the bounding box as object</p></dd></dl></div>
+    </li><li name="models.gmd.MdMetadataSet#bboxFromXml" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="bboxFromXml(nodeSeq:scala.xml.NodeSeq):org.locationtech.spatial4j.shape.Rectangle"></a>
       <a id="bboxFromXml(NodeSeq):Rectangle"></a>
       <h4 class="signature">
@@ -215,7 +219,9 @@
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
+      <p class="shortcomment cmt">tries to extract a valid and usable bounding box rectangle from xml
+</p><div class="fullcomment"><div class="comment cmt"><p>tries to extract a valid and usable bounding box rectangle from xml
+</p></div><dl class="paramcmts block"><dt class="param">nodeSeq</dt><dd class="cmt"><p>xml nodeseq containing an extent element</p></dd><dt>returns</dt><dd class="cmt"><p><span class="extype" name="Rectangle">Rectangle</span> the bounding box</p></dd></dl></div>
     </li><li name="scala.AnyRef#clone" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="clone():Object"></a>
       <a id="clone():AnyRef"></a>
@@ -239,7 +245,7 @@
     </span>)</span>
               
         </dd></dl></div>
-    </li><li name="models.gmd.MdMetadataSet#contactEmailFromXml" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+    </li><li name="models.gmd.MdMetadataSet#contactEmailFromXml" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="contactEmailFromXml(nodeSeq:scala.xml.NodeSeq):String"></a>
       <a id="contactEmailFromXml(NodeSeq):String"></a>
       <h4 class="signature">
@@ -255,8 +261,10 @@
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
-    </li><li name="models.gmd.MdMetadataSet#contactNameFromXml" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt">extracts contact email fields from the provided XML
+</p><div class="fullcomment"><div class="comment cmt"><p>extracts contact email fields from the provided XML
+</p></div><dl class="paramcmts block"><dt class="param">nodeSeq</dt><dd class="cmt"><p>the provided xml</p></dd><dt>returns</dt><dd class="cmt"><p>a string concatenation of extracted fields</p></dd></dl></div>
+    </li><li name="models.gmd.MdMetadataSet#contactNameFromXml" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="contactNameFromXml(nodeSeq:scala.xml.NodeSeq):String"></a>
       <a id="contactNameFromXml(NodeSeq):String"></a>
       <h4 class="signature">
@@ -272,8 +280,10 @@
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
-    </li><li name="models.gmd.MdMetadataSet#contactOrgFromXml" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt">extracts contactName fields from the provided XML
+</p><div class="fullcomment"><div class="comment cmt"><p>extracts contactName fields from the provided XML
+</p></div><dl class="paramcmts block"><dt class="param">nodeSeq</dt><dd class="cmt"><p>the provided xml</p></dd><dt>returns</dt><dd class="cmt"><p>a string concatenation of extracted fields</p></dd></dl></div>
+    </li><li name="models.gmd.MdMetadataSet#contactOrgFromXml" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="contactOrgFromXml(nodeSeq:scala.xml.NodeSeq):String"></a>
       <a id="contactOrgFromXml(NodeSeq):String"></a>
       <h4 class="signature">
@@ -289,8 +299,10 @@
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
-    </li><li name="models.gmd.MdMetadataSet#dateFromStrings" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt">extracts contact Organisation fields from the provided XML
+</p><div class="fullcomment"><div class="comment cmt"><p>extracts contact Organisation fields from the provided XML
+</p></div><dl class="paramcmts block"><dt class="param">nodeSeq</dt><dd class="cmt"><p>the provided xml</p></dd><dt>returns</dt><dd class="cmt"><p>a string concatenation of extracted fields</p></dd></dl></div>
+    </li><li name="models.gmd.MdMetadataSet#dateFromStrings" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="dateFromStrings(dateStrings:List[String]):java.time.LocalDate"></a>
       <a id="dateFromStrings(List[String]):LocalDate"></a>
       <h4 class="signature">
@@ -306,8 +318,13 @@
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
-    </li><li name="models.gmd.MdMetadataSet#dateFromXml" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt">check if Time info in date/datestamp
+check decide dateStamp and/or/plus CI_Date date
+worst case create default date</p><div class="fullcomment"><div class="comment cmt"><p>check if Time info in date/datestamp
+check decide dateStamp and/or/plus CI_Date date
+worst case create default date</p><p>TODO AK ponder if precise ZoneInfo for parsedDate needed, alternatively either UTC or NZ TimeZone
+</p></div></div>
+    </li><li name="models.gmd.MdMetadataSet#dateFromXml" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="dateFromXml(nodeSeq:scala.xml.NodeSeq):java.time.LocalDate"></a>
       <a id="dateFromXml(NodeSeq):LocalDate"></a>
       <h4 class="signature">
@@ -323,7 +340,9 @@
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
+      <p class="shortcomment cmt">extracts a LocalDate from the provided XML
+</p><div class="fullcomment"><div class="comment cmt"><p>extracts a LocalDate from the provided XML
+</p></div><dl class="paramcmts block"><dt class="param">nodeSeq</dt><dd class="cmt"><p>the provided xml</p></dd><dt>returns</dt><dd class="cmt"><p>a LoclDate from the list of extracted fields</p></dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a>
       <a id="eq(AnyRef):Boolean"></a>
@@ -358,7 +377,7 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="models.gmd.MdMetadataSet#extractLatLonNumber" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+    </li><li name="models.gmd.MdMetadataSet#extractLatLonNumber" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="extractLatLonNumber(textIn:String,default:Double):Double"></a>
       <a id="extractLatLonNumber(String,Double):Double"></a>
       <h4 class="signature">
@@ -374,7 +393,10 @@
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
+      <p class="shortcomment cmt">FIXME SR this is basically a &quot;Double.from(String, default)&quot;.</p><div class="fullcomment"><div class="comment cmt"><p>FIXME SR this is basically a &quot;Double.from(String, default)&quot;.
+We should think about creating a project wide helper for this.
+Somewhere I had a &quot;String.toInt()&quot; already, that needs the same treatment.
+</p></div><dl class="paramcmts block"><dt class="param">textIn</dt><dd class="cmt"><p>an input string that should be converted to a double value</p></dd><dt class="param">default</dt><dd class="cmt"><p>a default value if the string can't be parsed properly</p></dd><dt>returns</dt><dd class="cmt"><p>the resulting double value</p></dd></dl></div>
     </li><li name="scala.AnyRef#finalize" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
       <a id="finalize():Unit"></a>
@@ -398,7 +420,7 @@
     </span>)</span>
               
         </dd></dl></div>
-    </li><li name="models.gmd.MdMetadataSet#fromLuceneDoc" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+    </li><li name="models.gmd.MdMetadataSet#fromLuceneDoc" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="fromLuceneDoc(doc:org.apache.lucene.document.Document):models.gmd.MdMetadataSet"></a>
       <a id="fromLuceneDoc(Document):MdMetadataSet"></a>
       <h4 class="signature">
@@ -414,7 +436,9 @@
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
+      <p class="shortcomment cmt">converts LuceneDocument into MdMetadataSet from index
+</p><div class="fullcomment"><div class="comment cmt"><p>converts LuceneDocument into MdMetadataSet from index
+</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>MdMetadataSet extracted from retrieved LuceneDocument</p></dd></dl></div>
     </li><li name="models.gmd.MdMetadataSet#fromXml" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="fromXml(nodeSeq:scala.xml.NodeSeq,origin:String):Option[models.gmd.MdMetadataSet]"></a>
       <a id="fromXml(NodeSeq,String):Option[MdMetadataSet]"></a>
@@ -504,7 +528,7 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
-    </li><li name="models.gmd.MdMetadataSet#keywordsFromXml" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+    </li><li name="models.gmd.MdMetadataSet#keywordsFromXml" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="keywordsFromXml(nodeSeq:scala.xml.NodeSeq):List[String]"></a>
       <a id="keywordsFromXml(NodeSeq):List[String]"></a>
       <h4 class="signature">
@@ -520,8 +544,10 @@
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
-    </li><li name="models.gmd.MdMetadataSet#licenseFromXml" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt">extracts keywords fields from the provided XML
+</p><div class="fullcomment"><div class="comment cmt"><p>extracts keywords fields from the provided XML
+</p></div><dl class="paramcmts block"><dt class="param">nodeSeq</dt><dd class="cmt"><p>the provided xml</p></dd><dt>returns</dt><dd class="cmt"><p>a List(String) of extracted fields</p></dd></dl></div>
+    </li><li name="models.gmd.MdMetadataSet#licenseFromXml" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="licenseFromXml(nodeSeq:scala.xml.NodeSeq):String"></a>
       <a id="licenseFromXml(NodeSeq):String"></a>
       <h4 class="signature">
@@ -537,7 +563,9 @@
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
+      <p class="shortcomment cmt">extracts some license fields from the provided XML
+</p><div class="fullcomment"><div class="comment cmt"><p>extracts some license fields from the provided XML
+</p></div><dl class="paramcmts block"><dt class="param">nodeSeq</dt><dd class="cmt"><p>the provided xml</p></dd><dt>returns</dt><dd class="cmt"><p>a string concatenation of extracted fields</p></dd></dl></div>
     </li><li name="utils.ClassnameLogger#logger" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="logger:play.api.Logger"></a>
       <a id="logger:Logger"></a>
@@ -555,6 +583,74 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../utils/ClassnameLogger.html" class="extype" name="utils.ClassnameLogger">ClassnameLogger</a></dd></dl></div>
+    </li><li name="models.gmd.MdMetadataSet#maxLat" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="maxLat:Double"></a>
+      <a id="maxLat:Double"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">maxLat</span><span class="result">: <span class="extype" name="scala.Double">Double</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../index.html#models.gmd.MdMetadataSet$@maxLat:Double" title="Permalink" target="_top">
+        <img src="../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="models.gmd.MdMetadataSet#maxLon" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="maxLon:Double"></a>
+      <a id="maxLon:Double"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">maxLon</span><span class="result">: <span class="extype" name="scala.Double">Double</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../index.html#models.gmd.MdMetadataSet$@maxLon:Double" title="Permalink" target="_top">
+        <img src="../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="models.gmd.MdMetadataSet#minLat" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="minLat:Double"></a>
+      <a id="minLat:Double"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">minLat</span><span class="result">: <span class="extype" name="scala.Double">Double</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../index.html#models.gmd.MdMetadataSet$@minLat:Double" title="Permalink" target="_top">
+        <img src="../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="models.gmd.MdMetadataSet#minLon" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="minLon:Double"></a>
+      <a id="minLon:Double"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">minLon</span><span class="result">: <span class="extype" name="scala.Double">Double</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../index.html#models.gmd.MdMetadataSet$@minLon:Double" title="Permalink" target="_top">
+        <img src="../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
     </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a>
       <a id="ne(AnyRef):Boolean"></a>
@@ -606,6 +702,46 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="models.gmd.MdMetadataSet#pruneLatitudeValues" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="pruneLatitudeValues(south:Double,north:Double):(Double,Double)"></a>
+      <a id="pruneLatitudeValues(Double,Double):(Double,Double)"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">pruneLatitudeValues</span><span class="params">(<span name="south">south: <span class="extype" name="scala.Double">Double</span></span>, <span name="north">north: <span class="extype" name="scala.Double">Double</span></span>)</span><span class="result">: (<span class="extype" name="scala.Double">Double</span>, <span class="extype" name="scala.Double">Double</span>)</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../index.html#models.gmd.MdMetadataSet$@pruneLatitudeValues(south:Double,north:Double):(Double,Double)" title="Permalink" target="_top">
+        <img src="../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">tries to naively prune the provided coordinates into good shape for WSG84
+</p><div class="fullcomment"><div class="comment cmt"><p>tries to naively prune the provided coordinates into good shape for WSG84
+</p></div><dl class="paramcmts block"><dt class="param">south</dt><dd class="cmt"><p>most southern value / minY</p></dd><dt class="param">north</dt><dd class="cmt"><p>most northern value / maxY</p></dd><dt>returns</dt><dd class="cmt"><p>tuple of viable coordinates in WSG84</p></dd></dl></div>
+    </li><li name="models.gmd.MdMetadataSet#pruneLongitudeValues" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="pruneLongitudeValues(east:Double,west:Double):(Double,Double)"></a>
+      <a id="pruneLongitudeValues(Double,Double):(Double,Double)"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">pruneLongitudeValues</span><span class="params">(<span name="east">east: <span class="extype" name="scala.Double">Double</span></span>, <span name="west">west: <span class="extype" name="scala.Double">Double</span></span>)</span><span class="result">: (<span class="extype" name="scala.Double">Double</span>, <span class="extype" name="scala.Double">Double</span>)</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../index.html#models.gmd.MdMetadataSet$@pruneLongitudeValues(east:Double,west:Double):(Double,Double)" title="Permalink" target="_top">
+        <img src="../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">tries to naively prune the provided coordinates into good shape for WSG84
+TODO DATE Line Wraps :-( ?
+</p><div class="fullcomment"><div class="comment cmt"><p>tries to naively prune the provided coordinates into good shape for WSG84
+TODO DATE Line Wraps :-( ?
+</p></div><dl class="paramcmts block"><dt class="param">east</dt><dd class="cmt"><p>most eastern value / minY</p></dd><dt class="param">west</dt><dd class="cmt"><p>most western value / maxY</p></dd><dt>returns</dt><dd class="cmt"><p>tuple of viable coordinates in WSG84</p></dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
       <a id="synchronized[T0](⇒T0):T0"></a>
@@ -640,7 +776,7 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="models.gmd.MdMetadataSet#topicCategoriesFromXml" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+    </li><li name="models.gmd.MdMetadataSet#topicCategoriesFromXml" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="topicCategoriesFromXml(nodeSeq:scala.xml.NodeSeq):List[String]"></a>
       <a id="topicCategoriesFromXml(NodeSeq):List[String]"></a>
       <h4 class="signature">
@@ -656,7 +792,9 @@
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
+      <p class="shortcomment cmt">extracts topicCategory fields from the provided XML
+</p><div class="fullcomment"><div class="comment cmt"><p>extracts topicCategory fields from the provided XML
+</p></div><dl class="paramcmts block"><dt class="param">nodeSeq</dt><dd class="cmt"><p>the provided xml</p></dd><dt>returns</dt><dd class="cmt"><p>a List(String) of extracted fields</p></dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <a id="wait():Unit"></a>

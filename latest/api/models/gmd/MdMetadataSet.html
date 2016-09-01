@@ -52,7 +52,7 @@
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Holds a subset of MDMetadata
-</p></div><div class="toggleContainer block">
+</p></div><dl class="paramcmts block"><dt class="param">fileIdentifier</dt><dd class="cmt"><p>the unique file identifier of the record</p></dd><dt class="param">dateStamp</dt><dd class="cmt"><p>a datestamp of the record</p></dd><dt class="param">title</dt><dd class="cmt"><p>title of the record</p></dd><dt class="param">abstrakt</dt><dd class="cmt"><p>abstract of the record</p></dd><dt class="param">keywords</dt><dd class="cmt"><p>list of keywords for the record</p></dd><dt class="param">topicCategory</dt><dd class="cmt"><p>list of ISO/ANZLIC topic categories of the record</p></dd><dt class="param">contactName</dt><dd class="cmt"><p>contact name for the record or dataset</p></dd><dt class="param">contactOrg</dt><dd class="cmt"><p>cantact organisation for the record or dataset</p></dd><dt class="param">contactEmail</dt><dd class="cmt"><p>contact email for the record or dataset</p></dd><dt class="param">license</dt><dd class="cmt"><p>licenses for the record or dataset</p></dd><dt class="param">bbox</dt><dd class="cmt"><p>bbox of the record</p></dd><dt class="param">origin</dt><dd class="cmt"><p>origin i.e. source catalogue where the record was loaded from</p></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="../../utils/ClassnameLogger.html" class="extype" name="utils.ClassnameLogger">ClassnameLogger</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -91,7 +91,7 @@
         <div id="allMembers">
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
-              <ol><li name="models.gmd.MdMetadataSet#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+              <ol><li name="models.gmd.MdMetadataSet#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="&lt;init&gt;(fileIdentifier:String,dateStamp:java.time.LocalDate,title:String,abstrakt:String,keywords:List[String],topicCategory:List[String],contactName:String,contactOrg:String,contactEmail:String,license:String,bbox:org.locationtech.spatial4j.shape.Rectangle,origin:String):models.gmd.MdMetadataSet"></a>
       <a id="&lt;init&gt;:MdMetadataSet"></a>
       <h4 class="signature">
@@ -107,7 +107,7 @@
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">fileIdentifier</dt><dd class="cmt"><p>the unique file identifier of the record</p></dd><dt class="param">dateStamp</dt><dd class="cmt"><p>a datestamp of the record</p></dd><dt class="param">title</dt><dd class="cmt"><p>title of the record</p></dd><dt class="param">abstrakt</dt><dd class="cmt"><p>abstract of the record</p></dd><dt class="param">keywords</dt><dd class="cmt"><p>list of keywords for the record</p></dd><dt class="param">topicCategory</dt><dd class="cmt"><p>list of ISO/ANZLIC topic categories of the record</p></dd><dt class="param">contactName</dt><dd class="cmt"><p>contact name for the record or dataset</p></dd><dt class="param">contactOrg</dt><dd class="cmt"><p>cantact organisation for the record or dataset</p></dd><dt class="param">contactEmail</dt><dd class="cmt"><p>contact email for the record or dataset</p></dd><dt class="param">license</dt><dd class="cmt"><p>licenses for the record or dataset</p></dd><dt class="param">bbox</dt><dd class="cmt"><p>bbox of the record</p></dd><dt class="param">origin</dt><dd class="cmt"><p>origin i.e. source catalogue where the record was loaded from</p></dd></dl></div>
     </li></ol>
             </div>
 
@@ -184,7 +184,7 @@
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
+      <p class="shortcomment cmt">abstract of the record</p>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <a id="asInstanceOf[T0]:T0"></a>
@@ -202,7 +202,7 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
-    </li><li name="models.gmd.MdMetadataSet#asLuceneDocument" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+    </li><li name="models.gmd.MdMetadataSet#asLuceneDocument" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asLuceneDocument():org.apache.lucene.document.Document"></a>
       <a id="asLuceneDocument():Document"></a>
       <h4 class="signature">
@@ -219,7 +219,8 @@
       </a>
     </span>
       <p class="shortcomment cmt">returns the object as LuceneDocument
-</p>
+</p><div class="fullcomment"><div class="comment cmt"><p>returns the object as LuceneDocument
+</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>LuceneDocument for index</p></dd></dl></div>
     </li><li name="models.gmd.MdMetadataSet#bbox" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="bbox:org.locationtech.spatial4j.shape.Rectangle"></a>
       <a id="bbox:Rectangle"></a>
@@ -236,7 +237,7 @@
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
+      <p class="shortcomment cmt">bbox of the record</p>
     </li><li name="scala.AnyRef#clone" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="clone():Object"></a>
       <a id="clone():AnyRef"></a>
@@ -276,7 +277,7 @@
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
+      <p class="shortcomment cmt">contact email for the record or dataset</p>
     </li><li name="models.gmd.MdMetadataSet#contactName" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="contactName:String"></a>
       <a id="contactName:String"></a>
@@ -293,7 +294,7 @@
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
+      <p class="shortcomment cmt">contact name for the record or dataset</p>
     </li><li name="models.gmd.MdMetadataSet#contactOrg" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="contactOrg:String"></a>
       <a id="contactOrg:String"></a>
@@ -310,7 +311,7 @@
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
+      <p class="shortcomment cmt">cantact organisation for the record or dataset</p>
     </li><li name="models.gmd.MdMetadataSet#dateStamp" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="dateStamp:java.time.LocalDate"></a>
       <a id="dateStamp:LocalDate"></a>
@@ -327,8 +328,8 @@
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
-    </li><li name="models.gmd.MdMetadataSet#dateStampAsIsoString" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt">a datestamp of the record</p>
+    </li><li name="models.gmd.MdMetadataSet#dateStampAsIsoString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="dateStampAsIsoString:String"></a>
       <a id="dateStampAsIsoString:String"></a>
       <h4 class="signature">
@@ -344,7 +345,8 @@
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">returns dateStamp as String in ISO_LOCAL_DATE format.</p>
+      <p class="shortcomment cmt">returns dateStamp as String in ISO_LOCAL_DATE format.</p><div class="fullcomment"><div class="comment cmt"><p>returns dateStamp as String in ISO_LOCAL_DATE format.
+</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>ISO_LOCAL_DATE formatted date string</p></dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a>
       <a id="eq(AnyRef):Boolean"></a>
@@ -378,7 +380,7 @@
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
+      <p class="shortcomment cmt">the unique file identifier of the record</p>
     </li><li name="scala.AnyRef#finalize" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
       <a id="finalize():Unit"></a>
@@ -452,7 +454,7 @@
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
+      <p class="shortcomment cmt">list of keywords for the record</p>
     </li><li name="models.gmd.MdMetadataSet#license" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="license:String"></a>
       <a id="license:String"></a>
@@ -469,7 +471,7 @@
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
+      <p class="shortcomment cmt">licenses for the record or dataset</p>
     </li><li name="utils.ClassnameLogger#logger" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="logger:play.api.Logger"></a>
       <a id="logger:Logger"></a>
@@ -538,7 +540,7 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="models.gmd.MdMetadataSet#origin" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+    </li><li name="models.gmd.MdMetadataSet#origin" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="origin:String"></a>
       <a id="origin:String"></a>
       <h4 class="signature">
@@ -554,7 +556,7 @@
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
+      <p class="shortcomment cmt">origin i.e.</p><div class="fullcomment"><div class="comment cmt"><p>origin i.e. source catalogue where the record was loaded from</p></div></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
       <a id="synchronized[T0](⇒T0):T0"></a>
@@ -588,7 +590,7 @@
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
+      <p class="shortcomment cmt">title of the record</p>
     </li><li name="models.gmd.MdMetadataSet#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="toString():String"></a>
       <a id="toString():String"></a>
@@ -598,7 +600,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">toString</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
+        <span class="name">toString</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4><span class="permalink">
       <a href="../../index.html#models.gmd.MdMetadataSet@toString():String" title="Permalink" target="_top">
@@ -622,7 +624,7 @@
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
+      <p class="shortcomment cmt">list of ISO/ANZLIC topic categories of the record</p>
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <a id="wait():Unit"></a>
