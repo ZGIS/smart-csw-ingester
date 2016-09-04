@@ -45,14 +45,14 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <span class="name">MdMetadataSetWriter</span><span class="result"> extends <span class="extype" name="play.api.libs.json.Writes">Writes</span>[<a href="MdMetadataSet.html" class="extype" name="models.gmd.MdMetadataSet">MdMetadataSet</a>]</span>
+        <span class="name">MdMetadataSetWriter</span><span class="result"> extends <span class="extype" name="play.api.libs.json.Writes">Writes</span>[<a href="MdMetadataSet.html" class="extype" name="models.gmd.MdMetadataSet">MdMetadataSet</a>] with <a href="../../utils/ClassnameLogger.html" class="extype" name="utils.ClassnameLogger">ClassnameLogger</a></span>
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Json writer for <a href="MdMetadataSet.html" class="extype" name="models.gmd.MdMetadataSet">MdMetadataSet</a>
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>GeoJSON writer for <a href="MdMetadataSet.html" class="extype" name="models.gmd.MdMetadataSet">MdMetadataSet</a>
 </p></div><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><span class="extype" name="Writes">Writes</span></p></span></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><span class="extype" name="play.api.libs.json.Writes">Writes</span>[<a href="MdMetadataSet.html" class="extype" name="models.gmd.MdMetadataSet">MdMetadataSet</a>], <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><a href="../../utils/ClassnameLogger.html" class="extype" name="utils.ClassnameLogger">ClassnameLogger</a>, <span class="extype" name="play.api.libs.json.Writes">Writes</span>[<a href="MdMetadataSet.html" class="extype" name="models.gmd.MdMetadataSet">MdMetadataSet</a>], <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -70,7 +70,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="models.gmd.MdMetadataSetWriter"><span>MdMetadataSetWriter</span></li><li class="in" name="play.api.libs.json.Writes"><span>Writes</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="models.gmd.MdMetadataSetWriter"><span>MdMetadataSetWriter</span></li><li class="in" name="utils.ClassnameLogger"><span>ClassnameLogger</span></li><li class="in" name="play.api.libs.json.Writes"><span>Writes</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -260,6 +260,23 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="models.gmd.MdMetadataSetWriter#getJsGeom" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="getJsGeom(gmd:models.gmd.MdMetadataSet):play.api.libs.json.JsValue"></a>
+      <a id="getJsGeom(MdMetadataSet):JsValue"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">getJsGeom</span><span class="params">(<span name="gmd">gmd: <a href="MdMetadataSet.html" class="extype" name="models.gmd.MdMetadataSet">MdMetadataSet</a></span>)</span><span class="result">: <span class="extype" name="play.api.libs.json.JsValue">JsValue</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../index.html#models.gmd.MdMetadataSetWriter$@getJsGeom(gmd:models.gmd.MdMetadataSet):play.api.libs.json.JsValue" title="Permalink" target="_top">
+        <img src="../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">provides the GeoJSON Polygon geometry from the feature's Rectangle bbox</p><div class="fullcomment"><div class="comment cmt"><p>provides the GeoJSON Polygon geometry from the feature's Rectangle bbox</p></div><dl class="paramcmts block"><dt class="param">gmd</dt><dd class="cmt"><p>MdMetadataSet</p></dd><dt>returns</dt><dd class="cmt"><p>JsValue with GeoJSON Polygon geometry</p></dd></dl></div>
     </li><li name="scala.AnyRef#hashCode" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="hashCode():Int"></a>
       <a id="hashCode():Int"></a>
@@ -294,6 +311,23 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="utils.ClassnameLogger#logger" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="logger:play.api.Logger"></a>
+      <a id="logger:Logger"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">logger</span><span class="result">: <span class="extype" name="play.api.Logger">Logger</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../index.html#models.gmd.MdMetadataSetWriter$@logger:play.api.Logger" title="Permalink" target="_top">
+        <img src="../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../utils/ClassnameLogger.html" class="extype" name="utils.ClassnameLogger">ClassnameLogger</a></dd></dl></div>
     </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a>
       <a id="ne(AnyRef):Boolean"></a>
@@ -380,7 +414,7 @@
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="play.api.libs.json.Writes#transform" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="transform(transformer:&lt;?&gt;):play.api.libs.json.Writes[A]"></a>
+      <a id="transform(transformer:play.api.libs.json.Writes[play.api.libs.json.JsValue]):play.api.libs.json.Writes[A]"></a>
       <a id="transform(Writes[JsValue]):Writes[MdMetadataSet]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -397,7 +431,7 @@
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Writes</dd></dl></div>
     </li><li name="play.api.libs.json.Writes#transform" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="transform(transformer:&lt;?&gt;):play.api.libs.json.Writes[A]"></a>
+      <a id="transform(transformer:play.api.libs.json.JsValue=&gt;play.api.libs.json.JsValue):play.api.libs.json.Writes[A]"></a>
       <a id="transform((JsValue)⇒JsValue):Writes[MdMetadataSet]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -498,8 +532,8 @@
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Converts <a href="MdMetadataSet.html" class="extype" name="models.gmd.MdMetadataSet">MdMetadataSet</a> object into <span class="extype" name="JsValue">JsValue</span>
-</p><div class="fullcomment"><div class="comment cmt"><p>Converts <a href="MdMetadataSet.html" class="extype" name="models.gmd.MdMetadataSet">MdMetadataSet</a> object into <span class="extype" name="JsValue">JsValue</span>
+      <p class="shortcomment cmt">Converts <a href="MdMetadataSet.html" class="extype" name="models.gmd.MdMetadataSet">MdMetadataSet</a> object into <span class="extype" name="JsObject">JsObject</span> as GeoJSON
+</p><div class="fullcomment"><div class="comment cmt"><p>Converts <a href="MdMetadataSet.html" class="extype" name="models.gmd.MdMetadataSet">MdMetadataSet</a> object into <span class="extype" name="JsObject">JsObject</span> as GeoJSON
 </p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="models.gmd.MdMetadataSetWriter">MdMetadataSetWriter</a> → Writes</dd></dl></div>
     </li></ol>
             </div>
@@ -510,7 +544,9 @@
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="play.api.libs.json.Writes">
+        <div class="parent" name="utils.ClassnameLogger">
+              <h3>Inherited from <a href="../../utils/ClassnameLogger.html" class="extype" name="utils.ClassnameLogger">ClassnameLogger</a></h3>
+            </div><div class="parent" name="play.api.libs.json.Writes">
               <h3>Inherited from <span class="extype" name="play.api.libs.json.Writes">Writes</span>[<a href="MdMetadataSet.html" class="extype" name="models.gmd.MdMetadataSet">MdMetadataSet</a>]</h3>
             </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>

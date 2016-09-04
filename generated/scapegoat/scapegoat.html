@@ -61,7 +61,7 @@
         Warnings
         15
         Infos
-        15
+        17
       </h3><div class="warning">
           <div class="source">
             .home.travis.build.ZGIS.smart-csw-ingester.app.controllers.QueryController.scala:41
@@ -75,7 +75,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:485
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:487
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -86,7 +86,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:183
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:185
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -99,7 +99,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:502
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:504
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -116,7 +116,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:281
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:283
           </div>
           <div class="title">
             <span class="label label-info">Info</span>
@@ -127,7 +127,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:282
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:284
           </div>
           <div class="title">
             <span class="label label-info">Info</span>
@@ -138,7 +138,29 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:274
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:637
+          </div>
+          <div class="title">
+            <span class="label label-info">Info</span>
+            &nbsp;List.size is O(n)
+            &nbsp;<span class="inspection">com.sksamuel.scapegoat.inspections.collections.ListSize</span>
+          </div><div class="snippet">
+                  List.size is O(n). Consider using a different data type with O(1) size lookup such as Vector or Array.
+                </div>
+        </div><div class="warning">
+          <div class="source">
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:679
+          </div>
+          <div class="title">
+            <span class="label label-info">Info</span>
+            &nbsp;List.size is O(n)
+            &nbsp;<span class="inspection">com.sksamuel.scapegoat.inspections.collections.ListSize</span>
+          </div><div class="snippet">
+                  List.size is O(n). Consider using a different data type with O(1) size lookup such as Vector or Array.
+                </div>
+        </div><div class="warning">
+          <div class="source">
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:276
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -149,7 +171,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:184
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:186
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -160,7 +182,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:201
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:203
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -171,7 +193,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:284
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:286
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -202,8 +224,8 @@
           </div><div class="snippet">
                   .filter(_.isDefined).map(_.get) can be replaced with flatten: cswGetRecordsResponses.flatMap[Option[models.gmd.MdMetadataSet], List[Option[models.gmd.MdMetadataSet]]](((cswGetRecordsResponse: models.csw.CswGetRecordsResponse) =&gt; cswGetRecordsResponse.xml.\\(&quot;MD_Metadata&quot;).map[Option[models.gmd.MdMetadataSet], scala.collection.immutable.Seq[Option[models.gmd.MdMetadataSet]]](((mdMetadataNode: scala.xml.Node) =&gt; {
   LuceneService.this.logger.debug(({
-    val arg$macro$59: Any = catalogueName;
-    val arg$macro$60: Any = mdMetadataNode.\(&quot;fileIdentifier&quot;).\(&quot;
+    val arg$macro$63: Any = catalogueName;
+    val arg$macro$64: Any = mdMetadataNode.\(&quot;fileIdentifier&quot;).\(&quot;
                 </div>
         </div><div class="warning">
           <div class="source">
