@@ -182,6 +182,15 @@ class MdMetadataSetSpec extends PlaySpec {
 
     }
 
+    "survive empty result list with FeatureCollection and feature count 0" in {
+      val gmdList = List[MdMetadataSet]()
+      val listOfGeoJsonFeatures = Json.toJson(gmdList)
+      (listOfGeoJsonFeatures \\ "type").map(_.as[String]).filter(str => str.equalsIgnoreCase("FeatureCollection")).size mustBe 1
+
+      val count = listOfGeoJsonFeatures \\ "count"
+      count.size mustBe 1
+      count.headOption.getOrElse(JsNumber(666)) mustEqual JsNumber(0)
+    }
 
   }
 

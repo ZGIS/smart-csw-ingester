@@ -668,16 +668,30 @@ object GeoJSONFeatureCollectionWriter extends Writes[List[MdMetadataSet]] with C
     * Converts List of [[MdMetadataSet]] object into [[JsObject]] as GeoJSON
     */
   def writes(gmdList: List[MdMetadataSet]): JsObject = {
-    Json.obj("type" -> "FeatureCollection",
-    "crs" -> Json.obj(
-      "type" -> "name",
-        "properties" -> Json.obj(
+    if (gmdList.size > 0) {
+      Json.obj("type" -> "FeatureCollection",
+        "crs" -> Json.obj(
+          "type" -> "name",
+          "properties" -> Json.obj(
             "name" -> "urn:ogc:def:crs:OGC:1.3:CRS84"
-        )
-    ),
-    "bbox" -> getBoundingBox(gmdList),
-      "count" -> gmdList.size,
-    "features" -> getArrayOfFeatures(gmdList)
-    )
+          )
+        ),
+        "bbox" -> getBoundingBox(gmdList),
+        "count" -> gmdList.size,
+        "features" -> getArrayOfFeatures(gmdList)
+      )
+    } else  {
+      Json.obj("type" -> "FeatureCollection",
+        "crs" -> Json.obj(
+          "type" -> "name",
+          "properties" -> Json.obj(
+            "name" -> "urn:ogc:def:crs:OGC:1.3:CRS84"
+          )
+        ),
+        "count" -> 0,
+        "features" -> Json.arr()
+      )
+    }
   }
 }
+
