@@ -18,13 +18,15 @@
  */
 
 import com.typesafe.config.ConfigFactory
+import models.gmd.GeoJSONFeatureCollectionWriter
 import org.scalatestplus.play._
-import play.api.{Mode, Configuration, Logger}
+import play.api.{Configuration, Logger, Mode}
 import play.api.inject.DefaultApplicationLifecycle
+import play.api.libs.json.Json
 import play.api.mvc._
 import play.api.routing.sird._
 import play.api.test._
-import play.core.server.{ServerConfig, Server}
+import play.core.server.{Server, ServerConfig}
 import services.LuceneService
 
 import scala.concurrent.Await
@@ -59,16 +61,20 @@ trait WithLuceneService {
 class LuceneSpec extends PlaySpec with WithLuceneService {
 
   "LuceneService " should {
-    "mirror query string" in {
+
+    implicit val geoJSONFeatureCollectionWrite = GeoJSONFeatureCollectionWriter
+
+    "cannot mirror query string" in {
       withLuceneService { service =>
         val result = service.query("*:*")
-        result.header.query mustBe "*:*"
+        val resultJson = Json.toJson(result)
+        // result.header.query mustBe "*:*"
       }
     }
     "have Index with 4 documents" in {
       withLuceneService { service =>
         val result = service.query("*:*")
-        result.header.noDocuments mustBe 4
+        result.size mustBe 4
       }
     }
     /* SR hier jetzt schön queries testen :-)
@@ -79,19 +85,19 @@ class LuceneSpec extends PlaySpec with WithLuceneService {
     "find fileIdentifier" in {
       withLuceneService { service =>
         val result = service.query("fileIdentifier:\"23bdd7a3-fd21-daf1-7825-0d3bdc256f9d\"")
-        result.header.noDocuments mustBe 1
+        result.size mustBe 1
       }
     }
     "find title" in {
       withLuceneService { service =>
         val result = service.query("title:\"NZ Primary Road Parcels\"")
-        result.header.noDocuments mustBe 1
+        result.size mustBe 1
       }
     }
     "find abstrakt" in {
       withLuceneService { service =>
         val result = service.query("abstrakt:road parcel polygons")
-        result.header.noDocuments mustBe 1
+        result.size mustBe 1
       }
     }
     /* Date range queries not yet possible (dates as long, blower and upper limit)
@@ -101,44 +107,44 @@ class LuceneSpec extends PlaySpec with WithLuceneService {
     "find dateStampText" in {
       withLuceneService { service =>
         val result = service.query("dateStampText:\"2015-04-08\"")
-        result.header.noDocuments mustBe 1
+        result.size mustBe 1
       }
     }
     "find keywords" in {
       withLuceneService { service =>
         val result = service.query("keywords:\"unwanted organisms\"")
-        result.header.noDocuments mustBe 2
+        result.size mustBe 2
       }
     }
     "find topicCategory" in {
       withLuceneService { service =>
         val result = service.query("topicCategory:biota")
-        result.header.noDocuments mustBe 2
+        result.size mustBe 2
       }
     }
     "find contactName" in {
       withLuceneService { service =>
         val result = service.query("contactName:Omit")
         // case insensitive
-        result.header.noDocuments mustBe 2
+        result.size mustBe 2
       }
     }
     "find contactOrg" in {
       withLuceneService { service =>
         val result = service.query("contactOrg:\"LINZ\"")
-        result.header.noDocuments mustBe 2
+        result.size mustBe 2
       }
     }
     "find contactEmail" in {
       withLuceneService { service =>
         val result = service.query("contactEmail:info@linz.govt.nz")
-        result.header.noDocuments mustBe 2
+        result.size mustBe 2
       }
     }
     "find license" in {
       withLuceneService { service =>
         val result = service.query("license:Creative Commons")
-        result.header.noDocuments mustBe 4
+        result.size mustBe 4
       }
     }
     /* spatial bbox queries not yet possible (bbox and spatial loperations like Intersects, IsDisjointTo, IsEqualTo)
@@ -150,13 +156,13 @@ class LuceneSpec extends PlaySpec with WithLuceneService {
     "find bboxText" in {
       withLuceneService { service =>
         val result = service.query("bboxText:ENVELOPE")
-        result.header.noDocuments mustBe 4
+        result.size mustBe 4
       }
     }
     "find origin" in {
       withLuceneService { service =>
         val result = service.query("origin:test1")
-        result.header.noDocuments mustBe 4
+        result.size mustBe 4
       }
     }
 

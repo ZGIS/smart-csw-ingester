@@ -45,14 +45,16 @@ import scala.concurrent.{Await, Future}
 // explanation see https://www.playframework.com/documentation/2.5.x/ScalaJsonAutomated and
 // https://www.playframework.com/documentation/2.5.x/ScalaJsonCombinators
 
+@Deprecated
 case class SearchResultHeader(noDocuments: Int, query: String)
 
+@Deprecated
 case class SearchResult(header: SearchResultHeader, results: List[MdMetadataSet])
 
 trait IndexService {
   def buildIndex(): Unit
 
-  def query(query: String): SearchResult
+  def query(query: String): List[MdMetadataSet]
 }
 
 
@@ -222,7 +224,7 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
     * @param query
     * @return
     */
-  def query(query: String): SearchResult = {
+  def query(query: String): List[MdMetadataSet] = {
 
     // val ctx = SpatialContext.GEO
     // val bboxStrategy: BBoxStrategy = BBoxStrategy.newInstance(ctx, "bboxStrategy")
@@ -245,13 +247,15 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
     val search = isearcher.search(luceneQuery, isearcher.getIndexReader.numDocs())
     val scoreDocs = search.scoreDocs
 
-    val header = SearchResultHeader(search.totalHits, luceneQuery.toString())
     val results = scoreDocs.map(scoreDoc => {
       val doc = isearcher.doc(scoreDoc.doc)
       MdMetadataSet.fromLuceneDoc(doc)
-    })
+    }).toList
+
     //FIXME SR use ARM --> possible mem leak
     searcherManager.release(isearcher)
-    SearchResult(header, results.toList)
+
+    results
+
   }
 }

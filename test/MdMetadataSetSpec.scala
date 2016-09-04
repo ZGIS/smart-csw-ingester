@@ -192,6 +192,20 @@ class MdMetadataSetSpec extends PlaySpec {
       count.headOption.getOrElse(JsNumber(666)) mustEqual JsNumber(0)
     }
 
+    "cannot yet insert an additional key/value pair in the featurecollection header" in {
+
+      import play.api.libs.json._ // JSON library
+      import play.api.libs.json.Reads._ // Custom validation helpers
+      import play.api.libs.functional.syntax._ // Combinator syntax
+
+      val jsResource = this.getClass().getResource("featureCollectionTest.json")
+      val jsonTestFeatureCollection = scala.io.Source.fromURL(jsResource).getLines.mkString
+      val geoJsonFeatureCollection = Json.parse(jsonTestFeatureCollection)
+
+      // should use a JsonTransformer
+
+    }
+
   }
 
   "Parsing Notes for Alex describe " should {

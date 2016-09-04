@@ -21,10 +21,10 @@ package controllers
 
 import javax.inject._
 
-import models.gmd.MdMetadataSetWriter
+import models.gmd.GeoJSONFeatureCollectionWriter
 import play.api.libs.json.Json
 import play.api.mvc._
-import services.{LuceneService, SearchResult, SearchResultHeader}
+import services.LuceneService
 
 import scala.concurrent.Future
 
@@ -33,13 +33,7 @@ import scala.concurrent.Future
   */
 class QueryController @Inject()(luceneService: LuceneService) extends Controller {
 
-  // FIXME AK: do we need Json Reads for search result encoding? - SR not necessarily, this was for completeness :-)
-  // implicit val searchResultHeaderRead = Json.reads[SearchResultHeader]
-  implicit val searchResultHeaderWrite = Json.writes[SearchResultHeader]
-  implicit val gmdElementSetWrite = MdMetadataSetWriter
-  // implicit val searchResultRead = Json.reads[SearchResult]
-  implicit val searchResultWrite = Json.writes[SearchResult]
-
+  implicit val geoJSONFeatureCollectionWrite = GeoJSONFeatureCollectionWriter
   /**
     * Create an Action to render an HTML page with a welcome message.
     * The configuration in the `routes` file means that this method
@@ -59,8 +53,11 @@ class QueryController @Inject()(luceneService: LuceneService) extends Controller
     */
   def query(query: String) = Action {
     //FIXME SR error handling
-    val searchResult = luceneService.query(query)
+    val featureCollection = luceneService.query(query)
 
-    Ok(Json.toJson(searchResult)).as(JSON)
+    // TODO AK here we could insert the quesry string again if needed
+    val resultJson = Json.toJson(featureCollection)
+
+    Ok(resultJson).as(JSON)
   }
 }
