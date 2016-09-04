@@ -1228,7 +1228,7 @@
           {
   iwriter.deleteAll();
   iwriter.commit();
-  gmdElemSets.foreach[Unit](((searchDocument: models.gmd.MdMetadataSet) =&gt; iwriter.addDocument(searchDocument.asLuceneDocument())));
+  gmdElemSets.foreach[Long](((searchDocument: models.gmd.MdMetadataSet) =&gt; iwriter.addDocument(searchDocument.asLuceneDocument())));
   iwriter.commit();
   LuceneService.this.logger.info(&quot;Index ready&quot;)
 }
@@ -1336,7 +1336,7 @@
           scala.collection.immutable.List.foreach
         </td>
         <td style="background: #AEF1AE">
-          gmdElemSets.foreach[Unit](((searchDocument: models.gmd.MdMetadataSet) =&gt; iwriter.addDocument(searchDocument.asLuceneDocument())))
+          gmdElemSets.foreach[Long](((searchDocument: models.gmd.MdMetadataSet) =&gt; iwriter.addDocument(searchDocument.asLuceneDocument())))
         </td>
       </tr><tr>
         <td>
