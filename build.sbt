@@ -33,7 +33,7 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala, SiteScaladocPlug
 
 scalaVersion := "2.11.7"
 
-val luceneVersion = "6.1.0"
+val luceneVersion = "6.2.0"
 
 libraryDependencies ++= Seq(
   jdbc,
@@ -91,7 +91,7 @@ lazy val testScalastyle = taskKey[Unit]("testScalastyle")
 testScalastyle := org.scalastyle.sbt.ScalastylePlugin.scalastyle.in(Test).toTask("").value
 (test in Test) <<= (test in Test) dependsOn testScalastyle
 
-scapegoatVersion := "1.2.0"
+scapegoatVersion := "1.2.1"
 
 scapegoatOutputPath := genSiteDir + "/scapegoat"
 

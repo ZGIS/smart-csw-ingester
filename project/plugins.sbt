@@ -11,7 +11,7 @@ resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
 resolvers += "jgit-repo" at "http://download.eclipse.org/jgit/maven"
 
 // The Play plugin
-addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.5.4")
+addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.5.6")
 
 // for autoplugins
 addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.1.1")
@@ -32,6 +32,8 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-ghpages" % "0.5.4")
 addSbtPlugin("net.virtual-void" % "sbt-dependency-graph" % "0.8.2")
 
 addSbtPlugin("net.vonbuchholtz" % "sbt-dependency-check" % "0.1.1")
+
+addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.2.0")
 
 // FIXME web plugins (not needed for this project?)
 // addSbtPlugin("com.typesafe.sbt" % "sbt-digest" % "1.1.0")
