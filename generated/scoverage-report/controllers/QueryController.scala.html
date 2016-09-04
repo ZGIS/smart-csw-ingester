@@ -45,10 +45,10 @@
 </span>21 <span style=''>
 </span>22 <span style=''>import javax.inject._
 </span>23 <span style=''>
-</span>24 <span style=''>import models.gmd.MdMetadataSetWriter
+</span>24 <span style=''>import models.gmd.GeoJSONFeatureCollectionWriter
 </span>25 <span style=''>import play.api.libs.json.Json
 </span>26 <span style=''>import play.api.mvc._
-</span>27 <span style=''>import services.{LuceneService, SearchResult, SearchResultHeader}
+</span>27 <span style=''>import services.LuceneService
 </span>28 <span style=''>
 </span>29 <span style=''>import scala.concurrent.Future
 </span>30 <span style=''>
@@ -57,37 +57,34 @@
 </span>33 <span style=''>  */
 </span>34 <span style=''>class QueryController @Inject()(luceneService: LuceneService) extends Controller {
 </span>35 <span style=''>
-</span>36 <span style=''>  // FIXME AK: do we need Json Reads for search result encoding? - SR not necessarily, this was for completeness :-)
-</span>37 <span style=''>  // implicit val searchResultHeaderRead = Json.reads[SearchResultHeader]
-</span>38 <span style=''>  implicit val searchResultHeaderWrite = Json.writes[SearchResultHeader]
-</span>39 <span style=''>  implicit val gmdElementSetWrite = </span><span style='background: #F0ADAD'>MdMetadataSetWriter</span><span style=''>
-</span>40 <span style=''>  // implicit val searchResultRead = Json.reads[SearchResult]
-</span>41 <span style=''>  implicit val searchResultWrite = Json.writes[SearchResult]
-</span>42 <span style=''>
-</span>43 <span style=''>  /**
-</span>44 <span style=''>    * Create an Action to render an HTML page with a welcome message.
-</span>45 <span style=''>    * The configuration in the `routes` file means that this method
-</span>46 <span style=''>    * will be called when the application receives a `GET` request with
-</span>47 <span style=''>    * a path of `/`.
-</span>48 <span style=''>    */
-</span>49 <span style=''>  def index = </span><span style='background: #F0ADAD'>Action {
-</span>50 <span style=''></span><span style='background: #F0ADAD'>    Ok(views.html.index("Your new application is ready."))
-</span>51 <span style=''></span><span style='background: #F0ADAD'>  }</span><span style=''>
-</span>52 <span style=''>
-</span>53 <span style=''>  /**
-</span>54 <span style=''>    * Action that passes the query from URL to the [[services.LuceneService]].
-</span>55 <span style=''>    *
-</span>56 <span style=''>    * @param query
-</span>57 <span style=''>    * @return
-</span>58 <span style=''>    * @see services.LuceneService
-</span>59 <span style=''>    */
-</span>60 <span style=''>  def query(query: String) = </span><span style='background: #F0ADAD'>Action {
-</span>61 <span style=''></span><span style='background: #F0ADAD'>    //FIXME SR error handling
-</span>62 <span style=''></span><span style='background: #F0ADAD'>    val searchResult = luceneService.query(query)
-</span>63 <span style=''></span><span style='background: #F0ADAD'>
-</span>64 <span style=''></span><span style='background: #F0ADAD'>    Ok(Json.toJson(searchResult)).as(JSON)
-</span>65 <span style=''></span><span style='background: #F0ADAD'>  }</span><span style=''>
-</span>66 <span style=''>}
+</span>36 <span style=''>  implicit val geoJSONFeatureCollectionWrite = </span><span style='background: #F0ADAD'>GeoJSONFeatureCollectionWriter</span><span style=''>
+</span>37 <span style=''>  /**
+</span>38 <span style=''>    * Create an Action to render an HTML page with a welcome message.
+</span>39 <span style=''>    * The configuration in the `routes` file means that this method
+</span>40 <span style=''>    * will be called when the application receives a `GET` request with
+</span>41 <span style=''>    * a path of `/`.
+</span>42 <span style=''>    */
+</span>43 <span style=''>  def index = </span><span style='background: #F0ADAD'>Action {
+</span>44 <span style=''></span><span style='background: #F0ADAD'>    Ok(views.html.index("Your new application is ready."))
+</span>45 <span style=''></span><span style='background: #F0ADAD'>  }</span><span style=''>
+</span>46 <span style=''>
+</span>47 <span style=''>  /**
+</span>48 <span style=''>    * Action that passes the query from URL to the [[services.LuceneService]].
+</span>49 <span style=''>    *
+</span>50 <span style=''>    * @param query
+</span>51 <span style=''>    * @return
+</span>52 <span style=''>    * @see services.LuceneService
+</span>53 <span style=''>    */
+</span>54 <span style=''>  def query(query: String) = </span><span style='background: #F0ADAD'>Action {
+</span>55 <span style=''></span><span style='background: #F0ADAD'>    //FIXME SR error handling
+</span>56 <span style=''></span><span style='background: #F0ADAD'>    val featureCollection = luceneService.query(query)
+</span>57 <span style=''></span><span style='background: #F0ADAD'>
+</span>58 <span style=''></span><span style='background: #F0ADAD'>    // TODO AK here we could insert the quesry string again if needed
+</span>59 <span style=''></span><span style='background: #F0ADAD'>    val resultJson = Json.toJson(featureCollection)
+</span>60 <span style=''></span><span style='background: #F0ADAD'>
+</span>61 <span style=''></span><span style='background: #F0ADAD'>    Ok(resultJson).as(JSON)
+</span>62 <span style=''></span><span style='background: #F0ADAD'>  }</span><span style=''>
+</span>63 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -101,36 +98,36 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          39
+          36
         </td>
         <td>
           2
         </td>
         <td>
-          1559
+          1281
           -
-          1578
+          1311
         </td>
         <td>
           Select
         </td>
         <td>
-          models.gmd.MdMetadataSetWriter
+          models.gmd.GeoJSONFeatureCollectionWriter
         </td>
         <td style="background: #F0ADAD">
-          models.gmd.MdMetadataSetWriter
+          models.gmd.GeoJSONFeatureCollectionWriter
         </td>
       </tr><tr>
         <td>
-          49
+          43
         </td>
         <td>
           9
         </td>
         <td>
-          1961
+          1570
           -
-          2032
+          1641
         </td>
         <td>
           Apply
@@ -143,15 +140,15 @@
         </td>
       </tr><tr>
         <td>
-          50
+          44
         </td>
         <td>
           8
         </td>
         <td>
-          1974
+          1583
           -
-          2028
+          1637
         </td>
         <td>
           ApplyToImplicitArgs
@@ -164,15 +161,15 @@
         </td>
       </tr><tr>
         <td>
-          50
+          44
         </td>
         <td>
           5
         </td>
         <td>
-          1976
+          1585
           -
-          1976
+          1585
         </td>
         <td>
           Select
@@ -185,15 +182,15 @@
         </td>
       </tr><tr>
         <td>
-          50
+          44
         </td>
         <td>
           4
         </td>
         <td>
-          1976
+          1585
           -
-          1976
+          1585
         </td>
         <td>
           Select
@@ -206,15 +203,15 @@
         </td>
       </tr><tr>
         <td>
-          50
+          44
         </td>
         <td>
           7
         </td>
         <td>
-          1976
+          1585
           -
-          1976
+          1585
         </td>
         <td>
           ApplyToImplicitArgs
@@ -227,15 +224,15 @@
         </td>
       </tr><tr>
         <td>
-          50
+          44
         </td>
         <td>
           3
         </td>
         <td>
-          1977
+          1586
           -
-          2027
+          1636
         </td>
         <td>
           Apply
@@ -248,15 +245,15 @@
         </td>
       </tr><tr>
         <td>
-          50
+          44
         </td>
         <td>
           6
         </td>
         <td>
-          1976
+          1585
           -
-          1976
+          1585
         </td>
         <td>
           ApplyToImplicitArgs
@@ -269,15 +266,15 @@
         </td>
       </tr><tr>
         <td>
-          60
+          54
         </td>
         <td>
           17
         </td>
         <td>
-          2228
+          1837
           -
-          2364
+          2086
         </td>
         <td>
           Apply
@@ -287,21 +284,22 @@
         </td>
         <td style="background: #F0ADAD">
           play.api.mvc.Action.apply({
-  val searchResult: services.SearchResult = QueryController.this.luceneService.query(query);
-  QueryController.this.Ok.apply[play.api.libs.json.JsValue](play.api.libs.json.Json.toJson[services.SearchResult](searchResult)(QueryController.this.searchResultWrite))(http.this.Writeable.writeableOf_JsValue(mvc.this.Codec.utf_8)).as(QueryController.this.JSON)
+  val featureCollection: List[models.gmd.MdMetadataSet] = QueryController.this.luceneService.query(query);
+  val resultJson: play.api.libs.json.JsValue = play.api.libs.json.Json.toJson[List[models.gmd.MdMetadataSet]](featureCollection)(QueryController.this.geoJSONFeatureCollectionWrite);
+  QueryController.this.Ok.apply[play.api.libs.json.JsValue](resultJson)(http.this.Writeable.writeableOf_JsValue(mvc.this.Codec.utf_8)).as(QueryController.this.JSON)
 })
         </td>
       </tr><tr>
         <td>
-          62
+          56
         </td>
         <td>
           10
         </td>
         <td>
-          2290
+          1904
           -
-          2316
+          1930
         </td>
         <td>
           Apply
@@ -314,36 +312,57 @@
         </td>
       </tr><tr>
         <td>
-          64
+          59
         </td>
         <td>
           11
         </td>
         <td>
-          2336
+          2034
           -
-          2336
+          2034
         </td>
         <td>
           Select
         </td>
         <td>
-          controllers.QueryController.searchResultWrite
+          controllers.QueryController.geoJSONFeatureCollectionWrite
         </td>
         <td style="background: #F0ADAD">
-          QueryController.this.searchResultWrite
+          QueryController.this.geoJSONFeatureCollectionWrite
         </td>
       </tr><tr>
         <td>
-          64
+          59
+        </td>
+        <td>
+          12
+        </td>
+        <td>
+          2023
+          -
+          2053
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.api.libs.json.Json.toJson
+        </td>
+        <td style="background: #F0ADAD">
+          play.api.libs.json.Json.toJson[List[models.gmd.MdMetadataSet]](featureCollection)(QueryController.this.geoJSONFeatureCollectionWrite)
+        </td>
+      </tr><tr>
+        <td>
+          61
         </td>
         <td>
           14
         </td>
         <td>
-          2324
+          2061
           -
-          2324
+          2061
         </td>
         <td>
           ApplyToImplicitArgs
@@ -356,15 +375,15 @@
         </td>
       </tr><tr>
         <td>
-          64
+          61
         </td>
         <td>
           13
         </td>
         <td>
-          2324
+          2061
           -
-          2324
+          2061
         </td>
         <td>
           Select
@@ -377,15 +396,15 @@
         </td>
       </tr><tr>
         <td>
-          64
+          61
         </td>
         <td>
           16
         </td>
         <td>
-          2322
+          2059
           -
-          2360
+          2082
         </td>
         <td>
           Apply
@@ -394,40 +413,19 @@
           play.api.mvc.Result.as
         </td>
         <td style="background: #F0ADAD">
-          QueryController.this.Ok.apply[play.api.libs.json.JsValue](play.api.libs.json.Json.toJson[services.SearchResult](searchResult)(QueryController.this.searchResultWrite))(http.this.Writeable.writeableOf_JsValue(mvc.this.Codec.utf_8)).as(QueryController.this.JSON)
+          QueryController.this.Ok.apply[play.api.libs.json.JsValue](resultJson)(http.this.Writeable.writeableOf_JsValue(mvc.this.Codec.utf_8)).as(QueryController.this.JSON)
         </td>
       </tr><tr>
         <td>
-          64
-        </td>
-        <td>
-          12
-        </td>
-        <td>
-          2325
-          -
-          2350
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          play.api.libs.json.Json.toJson
-        </td>
-        <td style="background: #F0ADAD">
-          play.api.libs.json.Json.toJson[services.SearchResult](searchResult)(QueryController.this.searchResultWrite)
-        </td>
-      </tr><tr>
-        <td>
-          64
+          61
         </td>
         <td>
           15
         </td>
         <td>
-          2355
+          2077
           -
-          2359
+          2081
         </td>
         <td>
           Select
