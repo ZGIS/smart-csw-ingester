@@ -692,19 +692,32 @@
 </span>668 <span style=''>    * Converts List of [[MdMetadataSet]] object into [[JsObject]] as GeoJSON
 </span>669 <span style=''>    */
 </span>670 <span style=''>  def writes(gmdList: List[MdMetadataSet]): JsObject = {
-</span>671 <span style=''>    </span><span style='background: #AEF1AE'>Json.obj("type" -> "FeatureCollection",
-</span>672 <span style=''></span><span style='background: #AEF1AE'>    "crs" -> Json.obj(
-</span>673 <span style=''></span><span style='background: #AEF1AE'>      "type" -> "name",
-</span>674 <span style=''></span><span style='background: #AEF1AE'>        "properties" -> Json.obj(
-</span>675 <span style=''></span><span style='background: #AEF1AE'>            "name" -> "urn:ogc:def:crs:OGC:1.3:CRS84"
-</span>676 <span style=''></span><span style='background: #AEF1AE'>        )
-</span>677 <span style=''></span><span style='background: #AEF1AE'>    ),
-</span>678 <span style=''></span><span style='background: #AEF1AE'>    "bbox" -> getBoundingBox(gmdList),
-</span>679 <span style=''></span><span style='background: #AEF1AE'>      "count" -> gmdList.size,
-</span>680 <span style=''></span><span style='background: #AEF1AE'>    "features" -> getArrayOfFeatures(gmdList)
-</span>681 <span style=''></span><span style='background: #AEF1AE'>    )</span><span style=''>
-</span>682 <span style=''>  }
-</span>683 <span style=''>}
+</span>671 <span style=''>    if (</span><span style='background: #AEF1AE'>gmdList.size > 0</span><span style=''>) {
+</span>672 <span style=''>      </span><span style='background: #AEF1AE'>Json.obj("type" -> "FeatureCollection",
+</span>673 <span style=''></span><span style='background: #AEF1AE'>        "crs" -> Json.obj(
+</span>674 <span style=''></span><span style='background: #AEF1AE'>          "type" -> "name",
+</span>675 <span style=''></span><span style='background: #AEF1AE'>          "properties" -> Json.obj(
+</span>676 <span style=''></span><span style='background: #AEF1AE'>            "name" -> "urn:ogc:def:crs:OGC:1.3:CRS84"
+</span>677 <span style=''></span><span style='background: #AEF1AE'>          )
+</span>678 <span style=''></span><span style='background: #AEF1AE'>        ),
+</span>679 <span style=''></span><span style='background: #AEF1AE'>        "bbox" -> getBoundingBox(gmdList),
+</span>680 <span style=''></span><span style='background: #AEF1AE'>        "count" -> gmdList.size,
+</span>681 <span style=''></span><span style='background: #AEF1AE'>        "features" -> getArrayOfFeatures(gmdList)
+</span>682 <span style=''></span><span style='background: #AEF1AE'>      )</span><span style=''>
+</span>683 <span style=''>    } else  {
+</span>684 <span style=''>      </span><span style='background: #AEF1AE'>Json.obj("type" -> "FeatureCollection",
+</span>685 <span style=''></span><span style='background: #AEF1AE'>        "crs" -> Json.obj(
+</span>686 <span style=''></span><span style='background: #AEF1AE'>          "type" -> "name",
+</span>687 <span style=''></span><span style='background: #AEF1AE'>          "properties" -> Json.obj(
+</span>688 <span style=''></span><span style='background: #AEF1AE'>            "name" -> "urn:ogc:def:crs:OGC:1.3:CRS84"
+</span>689 <span style=''></span><span style='background: #AEF1AE'>          )
+</span>690 <span style=''></span><span style='background: #AEF1AE'>        ),
+</span>691 <span style=''></span><span style='background: #AEF1AE'>        "count" -> 0,
+</span>692 <span style=''></span><span style='background: #AEF1AE'>        "features" -> Json.arr()
+</span>693 <span style=''></span><span style='background: #AEF1AE'>      )</span><span style=''>
+</span>694 <span style=''>    }
+</span>695 <span style=''>  }
+</span>696 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -11655,51 +11668,51 @@
           594
         </td>
         <td>
-          24422
+          24417
           -
-          24428
+          24433
         </td>
         <td>
-          Literal
+          Apply
         </td>
         <td>
-          &lt;nosymbol&gt;
+          scala.Int.&gt;
         </td>
         <td style="background: #AEF1AE">
-          &quot;type&quot;
+          gmdList.size.&gt;(0)
         </td>
       </tr><tr>
         <td>
-          671
+          672
+        </td>
+        <td>
+          636
+        </td>
+        <td>
+          24443
+          -
+          24784
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          play.api.libs.json.Json.obj
+        </td>
+        <td style="background: #AEF1AE">
+          play.api.libs.json.Json.obj(scala.this.Predef.ArrowAssoc[String](&quot;type&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](&quot;FeatureCollection&quot;)(json.this.Writes.StringWrites)), scala.this.Predef.ArrowAssoc[String](&quot;crs&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[play.api.libs.json.JsObject](play.api.libs.json.Json.obj(scala.this.Predef.ArrowAssoc[String](&quot;type&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](&quot;name&quot;)(json.this.Writes.StringWrites)), scala.this.Predef.ArrowAssoc[String](&quot;properties&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[play.api.libs.json.JsObject](play.api.libs.json.Json.obj(scala.this.Predef.ArrowAssoc[String](&quot;name&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](&quot;urn:ogc:def:crs:OGC:1.3:CRS84&quot;)(json.this.Writes.StringWrites))))(json.this.Writes.JsValueWrites))))(json.this.Writes.JsValueWrites)), scala.this.Predef.ArrowAssoc[String](&quot;bbox&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[play.api.libs.json.JsValue](GeoJSONFeatureCollectionWriter.this.getBoundingBox(gmdList))(json.this.Writes.JsValueWrites)), scala.this.Predef.ArrowAssoc[String](&quot;count&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[Int](gmdList.size)(json.this.Writes.IntWrites)), scala.this.Predef.ArrowAssoc[String](&quot;features&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[play.api.libs.json.JsValue](GeoJSONFeatureCollectionWriter.this.getArrayOfFeatures(gmdList))(json.this.Writes.JsValueWrites)))
+        </td>
+      </tr><tr>
+        <td>
+          672
         </td>
         <td>
           597
         </td>
         <td>
-          24432
+          24462
           -
-          24451
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          play.api.libs.json.Json.toJsFieldJsValueWrapper
-        </td>
-        <td style="background: #AEF1AE">
-          json.this.Json.toJsFieldJsValueWrapper[String](&quot;FeatureCollection&quot;)(json.this.Writes.StringWrites)
-        </td>
-      </tr><tr>
-        <td>
-          671
-        </td>
-        <td>
-          596
-        </td>
-        <td>
-          24432
-          -
-          24432
+          24462
         </td>
         <td>
           Select
@@ -11712,57 +11725,15 @@
         </td>
       </tr><tr>
         <td>
-          671
+          672
         </td>
         <td>
-          595
+          635
         </td>
         <td>
-          24432
+          24443
           -
-          24451
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #AEF1AE">
-          &quot;FeatureCollection&quot;
-        </td>
-      </tr><tr>
-        <td>
-          671
-        </td>
-        <td>
-          598
-        </td>
-        <td>
-          24422
-          -
-          24451
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.Predef.ArrowAssoc.-&gt;
-        </td>
-        <td style="background: #AEF1AE">
-          scala.this.Predef.ArrowAssoc[String](&quot;type&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](&quot;FeatureCollection&quot;)(json.this.Writes.StringWrites))
-        </td>
-      </tr><tr>
-        <td>
-          671
-        </td>
-        <td>
-          634
-        </td>
-        <td>
-          24413
-          -
-          24726
+          24784
         </td>
         <td>
           Apply
@@ -11778,12 +11749,12 @@
           672
         </td>
         <td>
-          618
+          599
         </td>
         <td>
-          24457
+          24452
           -
-          24603
+          24481
         </td>
         <td>
           Apply
@@ -11792,40 +11763,82 @@
           scala.Predef.ArrowAssoc.-&gt;
         </td>
         <td style="background: #AEF1AE">
-          scala.this.Predef.ArrowAssoc[String](&quot;crs&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[play.api.libs.json.JsObject](play.api.libs.json.Json.obj(scala.this.Predef.ArrowAssoc[String](&quot;type&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](&quot;name&quot;)(json.this.Writes.StringWrites)), scala.this.Predef.ArrowAssoc[String](&quot;properties&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[play.api.libs.json.JsObject](play.api.libs.json.Json.obj(scala.this.Predef.ArrowAssoc[String](&quot;name&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](&quot;urn:ogc:def:crs:OGC:1.3:CRS84&quot;)(json.this.Writes.StringWrites))))(json.this.Writes.JsValueWrites))))(json.this.Writes.JsValueWrites))
+          scala.this.Predef.ArrowAssoc[String](&quot;type&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](&quot;FeatureCollection&quot;)(json.this.Writes.StringWrites))
         </td>
       </tr><tr>
         <td>
           672
         </td>
         <td>
-          615
+          596
         </td>
         <td>
-          24466
+          24462
           -
-          24603
+          24481
         </td>
         <td>
-          Apply
+          Literal
         </td>
         <td>
-          play.api.libs.json.Json.obj
+          &lt;nosymbol&gt;
         </td>
         <td style="background: #AEF1AE">
-          play.api.libs.json.Json.obj(scala.this.Predef.ArrowAssoc[String](&quot;type&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](&quot;name&quot;)(json.this.Writes.StringWrites)), scala.this.Predef.ArrowAssoc[String](&quot;properties&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[play.api.libs.json.JsObject](play.api.libs.json.Json.obj(scala.this.Predef.ArrowAssoc[String](&quot;name&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](&quot;urn:ogc:def:crs:OGC:1.3:CRS84&quot;)(json.this.Writes.StringWrites))))(json.this.Writes.JsValueWrites)))
+          &quot;FeatureCollection&quot;
         </td>
       </tr><tr>
         <td>
           672
         </td>
         <td>
-          599
+          595
         </td>
         <td>
-          24457
+          24452
           -
+          24458
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;type&quot;
+        </td>
+      </tr><tr>
+        <td>
+          672
+        </td>
+        <td>
+          598
+        </td>
+        <td>
           24462
+          -
+          24481
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.api.libs.json.Json.toJsFieldJsValueWrapper
+        </td>
+        <td style="background: #AEF1AE">
+          json.this.Json.toJsFieldJsValueWrapper[String](&quot;FeatureCollection&quot;)(json.this.Writes.StringWrites)
+        </td>
+      </tr><tr>
+        <td>
+          673
+        </td>
+        <td>
+          600
+        </td>
+        <td>
+          24491
+          -
+          24496
         </td>
         <td>
           Literal
@@ -11838,15 +11851,15 @@
         </td>
       </tr><tr>
         <td>
-          672
+          673
         </td>
         <td>
-          617
+          618
         </td>
         <td>
-          24466
+          24500
           -
-          24603
+          24649
         </td>
         <td>
           ApplyToImplicitArgs
@@ -11859,15 +11872,15 @@
         </td>
       </tr><tr>
         <td>
-          672
+          673
         </td>
         <td>
-          616
+          617
         </td>
         <td>
-          24474
+          24508
           -
-          24474
+          24508
         </td>
         <td>
           Select
@@ -11883,54 +11896,54 @@
           673
         </td>
         <td>
-          600
+          616
         </td>
         <td>
-          24482
+          24500
           -
-          24488
+          24649
         </td>
         <td>
-          Literal
+          Apply
         </td>
         <td>
-          &lt;nosymbol&gt;
+          play.api.libs.json.Json.obj
         </td>
         <td style="background: #AEF1AE">
-          &quot;type&quot;
+          play.api.libs.json.Json.obj(scala.this.Predef.ArrowAssoc[String](&quot;type&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](&quot;name&quot;)(json.this.Writes.StringWrites)), scala.this.Predef.ArrowAssoc[String](&quot;properties&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[play.api.libs.json.JsObject](play.api.libs.json.Json.obj(scala.this.Predef.ArrowAssoc[String](&quot;name&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](&quot;urn:ogc:def:crs:OGC:1.3:CRS84&quot;)(json.this.Writes.StringWrites))))(json.this.Writes.JsValueWrites)))
         </td>
       </tr><tr>
         <td>
           673
+        </td>
+        <td>
+          619
+        </td>
+        <td>
+          24491
+          -
+          24649
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Predef.ArrowAssoc.-&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          scala.this.Predef.ArrowAssoc[String](&quot;crs&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[play.api.libs.json.JsObject](play.api.libs.json.Json.obj(scala.this.Predef.ArrowAssoc[String](&quot;type&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](&quot;name&quot;)(json.this.Writes.StringWrites)), scala.this.Predef.ArrowAssoc[String](&quot;properties&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[play.api.libs.json.JsObject](play.api.libs.json.Json.obj(scala.this.Predef.ArrowAssoc[String](&quot;name&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](&quot;urn:ogc:def:crs:OGC:1.3:CRS84&quot;)(json.this.Writes.StringWrites))))(json.this.Writes.JsValueWrites))))(json.this.Writes.JsValueWrites))
+        </td>
+      </tr><tr>
+        <td>
+          674
         </td>
         <td>
           603
         </td>
         <td>
-          24492
+          24530
           -
-          24498
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          play.api.libs.json.Json.toJsFieldJsValueWrapper
-        </td>
-        <td style="background: #AEF1AE">
-          json.this.Json.toJsFieldJsValueWrapper[String](&quot;name&quot;)(json.this.Writes.StringWrites)
-        </td>
-      </tr><tr>
-        <td>
-          673
-        </td>
-        <td>
-          602
-        </td>
-        <td>
-          24492
-          -
-          24492
+          24530
         </td>
         <td>
           Select
@@ -11943,36 +11956,15 @@
         </td>
       </tr><tr>
         <td>
-          673
+          674
         </td>
         <td>
-          604
+          602
         </td>
         <td>
-          24482
+          24530
           -
-          24498
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.Predef.ArrowAssoc.-&gt;
-        </td>
-        <td style="background: #AEF1AE">
-          scala.this.Predef.ArrowAssoc[String](&quot;type&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](&quot;name&quot;)(json.this.Writes.StringWrites))
-        </td>
-      </tr><tr>
-        <td>
-          673
-        </td>
-        <td>
-          601
-        </td>
-        <td>
-          24492
-          -
-          24498
+          24536
         </td>
         <td>
           Literal
@@ -11988,33 +11980,75 @@
           674
         </td>
         <td>
-          612
+          605
         </td>
         <td>
-          24532
+          24520
           -
-          24532
+          24536
         </td>
         <td>
-          Select
+          Apply
         </td>
         <td>
-          play.api.libs.json.DefaultWrites.JsValueWrites
+          scala.Predef.ArrowAssoc.-&gt;
         </td>
         <td style="background: #AEF1AE">
-          json.this.Writes.JsValueWrites
+          scala.this.Predef.ArrowAssoc[String](&quot;type&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](&quot;name&quot;)(json.this.Writes.StringWrites))
         </td>
       </tr><tr>
         <td>
           674
         </td>
         <td>
-          611
+          604
         </td>
         <td>
-          24524
+          24530
           -
-          24597
+          24536
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.api.libs.json.Json.toJsFieldJsValueWrapper
+        </td>
+        <td style="background: #AEF1AE">
+          json.this.Json.toJsFieldJsValueWrapper[String](&quot;name&quot;)(json.this.Writes.StringWrites)
+        </td>
+      </tr><tr>
+        <td>
+          674
+        </td>
+        <td>
+          601
+        </td>
+        <td>
+          24520
+          -
+          24526
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;type&quot;
+        </td>
+      </tr><tr>
+        <td>
+          675
+        </td>
+        <td>
+          612
+        </td>
+        <td>
+          24564
+          -
+          24639
         </td>
         <td>
           Apply
@@ -12027,15 +12061,15 @@
         </td>
       </tr><tr>
         <td>
-          674
+          675
         </td>
         <td>
-          605
+          606
         </td>
         <td>
-          24508
+          24548
           -
-          24520
+          24560
         </td>
         <td>
           Literal
@@ -12048,15 +12082,15 @@
         </td>
       </tr><tr>
         <td>
-          674
+          675
         </td>
         <td>
-          614
+          615
         </td>
         <td>
-          24508
+          24548
           -
-          24597
+          24639
         </td>
         <td>
           Apply
@@ -12069,15 +12103,15 @@
         </td>
       </tr><tr>
         <td>
-          674
+          675
         </td>
         <td>
-          613
+          614
         </td>
         <td>
-          24524
+          24564
           -
-          24597
+          24639
         </td>
         <td>
           ApplyToImplicitArgs
@@ -12093,117 +12127,12 @@
           675
         </td>
         <td>
-          609
+          613
         </td>
         <td>
-          24556
+          24572
           -
-          24587
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          play.api.libs.json.Json.toJsFieldJsValueWrapper
-        </td>
-        <td style="background: #AEF1AE">
-          json.this.Json.toJsFieldJsValueWrapper[String](&quot;urn:ogc:def:crs:OGC:1.3:CRS84&quot;)(json.this.Writes.StringWrites)
-        </td>
-      </tr><tr>
-        <td>
-          675
-        </td>
-        <td>
-          606
-        </td>
-        <td>
-          24546
-          -
-          24552
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #AEF1AE">
-          &quot;name&quot;
-        </td>
-      </tr><tr>
-        <td>
-          675
-        </td>
-        <td>
-          608
-        </td>
-        <td>
-          24556
-          -
-          24556
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          play.api.libs.json.DefaultWrites.StringWrites
-        </td>
-        <td style="background: #AEF1AE">
-          json.this.Writes.StringWrites
-        </td>
-      </tr><tr>
-        <td>
-          675
-        </td>
-        <td>
-          607
-        </td>
-        <td>
-          24556
-          -
-          24587
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #AEF1AE">
-          &quot;urn:ogc:def:crs:OGC:1.3:CRS84&quot;
-        </td>
-      </tr><tr>
-        <td>
-          675
-        </td>
-        <td>
-          610
-        </td>
-        <td>
-          24546
-          -
-          24587
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.Predef.ArrowAssoc.-&gt;
-        </td>
-        <td style="background: #AEF1AE">
-          scala.this.Predef.ArrowAssoc[String](&quot;name&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](&quot;urn:ogc:def:crs:OGC:1.3:CRS84&quot;)(json.this.Writes.StringWrites))
-        </td>
-      </tr><tr>
-        <td>
-          678
-        </td>
-        <td>
-          621
-        </td>
-        <td>
-          24633
-          -
-          24633
+          24572
         </td>
         <td>
           Select
@@ -12216,15 +12145,57 @@
         </td>
       </tr><tr>
         <td>
-          678
+          676
         </td>
         <td>
-          623
+          609
         </td>
         <td>
-          24609
+          24596
           -
-          24642
+          24596
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          play.api.libs.json.DefaultWrites.StringWrites
+        </td>
+        <td style="background: #AEF1AE">
+          json.this.Writes.StringWrites
+        </td>
+      </tr><tr>
+        <td>
+          676
+        </td>
+        <td>
+          608
+        </td>
+        <td>
+          24596
+          -
+          24627
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;urn:ogc:def:crs:OGC:1.3:CRS84&quot;
+        </td>
+      </tr><tr>
+        <td>
+          676
+        </td>
+        <td>
+          611
+        </td>
+        <td>
+          24586
+          -
+          24627
         </td>
         <td>
           Apply
@@ -12233,19 +12204,61 @@
           scala.Predef.ArrowAssoc.-&gt;
         </td>
         <td style="background: #AEF1AE">
-          scala.this.Predef.ArrowAssoc[String](&quot;bbox&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[play.api.libs.json.JsValue](GeoJSONFeatureCollectionWriter.this.getBoundingBox(gmdList))(json.this.Writes.JsValueWrites))
+          scala.this.Predef.ArrowAssoc[String](&quot;name&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](&quot;urn:ogc:def:crs:OGC:1.3:CRS84&quot;)(json.this.Writes.StringWrites))
         </td>
       </tr><tr>
         <td>
-          678
+          676
         </td>
         <td>
-          620
+          607
         </td>
         <td>
-          24619
+          24586
           -
-          24642
+          24592
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;name&quot;
+        </td>
+      </tr><tr>
+        <td>
+          676
+        </td>
+        <td>
+          610
+        </td>
+        <td>
+          24596
+          -
+          24627
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.api.libs.json.Json.toJsFieldJsValueWrapper
+        </td>
+        <td style="background: #AEF1AE">
+          json.this.Json.toJsFieldJsValueWrapper[String](&quot;urn:ogc:def:crs:OGC:1.3:CRS84&quot;)(json.this.Writes.StringWrites)
+        </td>
+      </tr><tr>
+        <td>
+          679
+        </td>
+        <td>
+          621
+        </td>
+        <td>
+          24669
+          -
+          24692
         </td>
         <td>
           Apply
@@ -12258,15 +12271,36 @@
         </td>
       </tr><tr>
         <td>
-          678
+          679
         </td>
         <td>
-          622
+          624
         </td>
         <td>
-          24619
+          24659
           -
-          24642
+          24692
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Predef.ArrowAssoc.-&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          scala.this.Predef.ArrowAssoc[String](&quot;bbox&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[play.api.libs.json.JsValue](GeoJSONFeatureCollectionWriter.this.getBoundingBox(gmdList))(json.this.Writes.JsValueWrites))
+        </td>
+      </tr><tr>
+        <td>
+          679
+        </td>
+        <td>
+          623
+        </td>
+        <td>
+          24669
+          -
+          24692
         </td>
         <td>
           ApplyToImplicitArgs
@@ -12279,15 +12313,15 @@
         </td>
       </tr><tr>
         <td>
-          678
+          679
         </td>
         <td>
-          619
+          620
         </td>
         <td>
-          24609
+          24659
           -
-          24615
+          24665
         </td>
         <td>
           Literal
@@ -12303,54 +12337,33 @@
           679
         </td>
         <td>
+          622
+        </td>
+        <td>
+          24683
+          -
+          24683
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          play.api.libs.json.DefaultWrites.JsValueWrites
+        </td>
+        <td style="background: #AEF1AE">
+          json.this.Writes.JsValueWrites
+        </td>
+      </tr><tr>
+        <td>
+          680
+        </td>
+        <td>
           627
         </td>
         <td>
-          24661
+          24721
           -
-          24673
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          play.api.libs.json.Json.toJsFieldJsValueWrapper
-        </td>
-        <td style="background: #AEF1AE">
-          json.this.Json.toJsFieldJsValueWrapper[Int](gmdList.size)(json.this.Writes.IntWrites)
-        </td>
-      </tr><tr>
-        <td>
-          679
-        </td>
-        <td>
-          624
-        </td>
-        <td>
-          24650
-          -
-          24657
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #AEF1AE">
-          &quot;count&quot;
-        </td>
-      </tr><tr>
-        <td>
-          679
-        </td>
-        <td>
-          626
-        </td>
-        <td>
-          24669
-          -
-          24669
+          24721
         </td>
         <td>
           Select
@@ -12363,15 +12376,15 @@
         </td>
       </tr><tr>
         <td>
-          679
+          680
         </td>
         <td>
-          625
+          626
         </td>
         <td>
-          24661
+          24713
           -
-          24673
+          24725
         </td>
         <td>
           Select
@@ -12384,15 +12397,15 @@
         </td>
       </tr><tr>
         <td>
-          679
+          680
         </td>
         <td>
-          628
+          629
         </td>
         <td>
-          24650
+          24702
           -
-          24673
+          24725
         </td>
         <td>
           Apply
@@ -12408,54 +12421,33 @@
           680
         </td>
         <td>
-          630
+          625
         </td>
         <td>
-          24693
+          24702
           -
-          24720
+          24709
         </td>
         <td>
-          Apply
+          Literal
         </td>
         <td>
-          models.gmd.GeoJSONFeatureCollectionWriter.getArrayOfFeatures
+          &lt;nosymbol&gt;
         </td>
         <td style="background: #AEF1AE">
-          GeoJSONFeatureCollectionWriter.this.getArrayOfFeatures(gmdList)
+          &quot;count&quot;
         </td>
       </tr><tr>
         <td>
           680
         </td>
         <td>
-          633
+          628
         </td>
         <td>
-          24679
+          24713
           -
-          24720
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.Predef.ArrowAssoc.-&gt;
-        </td>
-        <td style="background: #AEF1AE">
-          scala.this.Predef.ArrowAssoc[String](&quot;features&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[play.api.libs.json.JsValue](GeoJSONFeatureCollectionWriter.this.getArrayOfFeatures(gmdList))(json.this.Writes.JsValueWrites))
-        </td>
-      </tr><tr>
-        <td>
-          680
-        </td>
-        <td>
-          632
-        </td>
-        <td>
-          24693
-          -
-          24720
+          24725
         </td>
         <td>
           ApplyToImplicitArgs
@@ -12464,19 +12456,19 @@
           play.api.libs.json.Json.toJsFieldJsValueWrapper
         </td>
         <td style="background: #AEF1AE">
-          json.this.Json.toJsFieldJsValueWrapper[play.api.libs.json.JsValue](GeoJSONFeatureCollectionWriter.this.getArrayOfFeatures(gmdList))(json.this.Writes.JsValueWrites)
+          json.this.Json.toJsFieldJsValueWrapper[Int](gmdList.size)(json.this.Writes.IntWrites)
         </td>
       </tr><tr>
         <td>
-          680
+          681
         </td>
         <td>
-          629
+          630
         </td>
         <td>
-          24679
+          24735
           -
-          24689
+          24745
         </td>
         <td>
           Literal
@@ -12489,15 +12481,36 @@
         </td>
       </tr><tr>
         <td>
-          680
+          681
         </td>
         <td>
-          631
+          633
         </td>
         <td>
-          24711
+          24749
           -
-          24711
+          24776
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.api.libs.json.Json.toJsFieldJsValueWrapper
+        </td>
+        <td style="background: #AEF1AE">
+          json.this.Json.toJsFieldJsValueWrapper[play.api.libs.json.JsValue](GeoJSONFeatureCollectionWriter.this.getArrayOfFeatures(gmdList))(json.this.Writes.JsValueWrites)
+        </td>
+      </tr><tr>
+        <td>
+          681
+        </td>
+        <td>
+          632
+        </td>
+        <td>
+          24767
+          -
+          24767
         </td>
         <td>
           Select
@@ -12507,6 +12520,825 @@
         </td>
         <td style="background: #AEF1AE">
           json.this.Writes.JsValueWrites
+        </td>
+      </tr><tr>
+        <td>
+          681
+        </td>
+        <td>
+          631
+        </td>
+        <td>
+          24749
+          -
+          24776
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          models.gmd.GeoJSONFeatureCollectionWriter.getArrayOfFeatures
+        </td>
+        <td style="background: #AEF1AE">
+          GeoJSONFeatureCollectionWriter.this.getArrayOfFeatures(gmdList)
+        </td>
+      </tr><tr>
+        <td>
+          681
+        </td>
+        <td>
+          634
+        </td>
+        <td>
+          24735
+          -
+          24776
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Predef.ArrowAssoc.-&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          scala.this.Predef.ArrowAssoc[String](&quot;features&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[play.api.libs.json.JsValue](GeoJSONFeatureCollectionWriter.this.getArrayOfFeatures(gmdList))(json.this.Writes.JsValueWrites))
+        </td>
+      </tr><tr>
+        <td>
+          684
+        </td>
+        <td>
+          672
+        </td>
+        <td>
+          24805
+          -
+          25075
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.libs.json.Json.obj
+        </td>
+        <td style="background: #AEF1AE">
+          play.api.libs.json.Json.obj(scala.this.Predef.ArrowAssoc[String](&quot;type&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](&quot;FeatureCollection&quot;)(json.this.Writes.StringWrites)), scala.this.Predef.ArrowAssoc[String](&quot;crs&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[play.api.libs.json.JsObject](play.api.libs.json.Json.obj(scala.this.Predef.ArrowAssoc[String](&quot;type&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](&quot;name&quot;)(json.this.Writes.StringWrites)), scala.this.Predef.ArrowAssoc[String](&quot;properties&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[play.api.libs.json.JsObject](play.api.libs.json.Json.obj(scala.this.Predef.ArrowAssoc[String](&quot;name&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](&quot;urn:ogc:def:crs:OGC:1.3:CRS84&quot;)(json.this.Writes.StringWrites))))(json.this.Writes.JsValueWrites))))(json.this.Writes.JsValueWrites)), scala.this.Predef.ArrowAssoc[String](&quot;count&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[Int](0)(json.this.Writes.IntWrites)), scala.this.Predef.ArrowAssoc[String](&quot;features&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[play.api.libs.json.JsArray](play.api.libs.json.Json.arr())(json.this.Writes.JsValueWrites)))
+        </td>
+      </tr><tr>
+        <td>
+          684
+        </td>
+        <td>
+          639
+        </td>
+        <td>
+          24824
+          -
+          24824
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          play.api.libs.json.DefaultWrites.StringWrites
+        </td>
+        <td style="background: #AEF1AE">
+          json.this.Writes.StringWrites
+        </td>
+      </tr><tr>
+        <td>
+          684
+        </td>
+        <td>
+          641
+        </td>
+        <td>
+          24814
+          -
+          24843
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Predef.ArrowAssoc.-&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          scala.this.Predef.ArrowAssoc[String](&quot;type&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](&quot;FeatureCollection&quot;)(json.this.Writes.StringWrites))
+        </td>
+      </tr><tr>
+        <td>
+          684
+        </td>
+        <td>
+          638
+        </td>
+        <td>
+          24824
+          -
+          24843
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;FeatureCollection&quot;
+        </td>
+      </tr><tr>
+        <td>
+          684
+        </td>
+        <td>
+          673
+        </td>
+        <td>
+          24805
+          -
+          25075
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          play.api.libs.json.Json.obj
+        </td>
+        <td style="background: #AEF1AE">
+          play.api.libs.json.Json.obj(scala.this.Predef.ArrowAssoc[String](&quot;type&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](&quot;FeatureCollection&quot;)(json.this.Writes.StringWrites)), scala.this.Predef.ArrowAssoc[String](&quot;crs&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[play.api.libs.json.JsObject](play.api.libs.json.Json.obj(scala.this.Predef.ArrowAssoc[String](&quot;type&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](&quot;name&quot;)(json.this.Writes.StringWrites)), scala.this.Predef.ArrowAssoc[String](&quot;properties&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[play.api.libs.json.JsObject](play.api.libs.json.Json.obj(scala.this.Predef.ArrowAssoc[String](&quot;name&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](&quot;urn:ogc:def:crs:OGC:1.3:CRS84&quot;)(json.this.Writes.StringWrites))))(json.this.Writes.JsValueWrites))))(json.this.Writes.JsValueWrites)), scala.this.Predef.ArrowAssoc[String](&quot;count&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[Int](0)(json.this.Writes.IntWrites)), scala.this.Predef.ArrowAssoc[String](&quot;features&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[play.api.libs.json.JsArray](play.api.libs.json.Json.arr())(json.this.Writes.JsValueWrites)))
+        </td>
+      </tr><tr>
+        <td>
+          684
+        </td>
+        <td>
+          640
+        </td>
+        <td>
+          24824
+          -
+          24843
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.api.libs.json.Json.toJsFieldJsValueWrapper
+        </td>
+        <td style="background: #AEF1AE">
+          json.this.Json.toJsFieldJsValueWrapper[String](&quot;FeatureCollection&quot;)(json.this.Writes.StringWrites)
+        </td>
+      </tr><tr>
+        <td>
+          684
+        </td>
+        <td>
+          637
+        </td>
+        <td>
+          24814
+          -
+          24820
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;type&quot;
+        </td>
+      </tr><tr>
+        <td>
+          685
+        </td>
+        <td>
+          660
+        </td>
+        <td>
+          24862
+          -
+          25011
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.api.libs.json.Json.toJsFieldJsValueWrapper
+        </td>
+        <td style="background: #AEF1AE">
+          json.this.Json.toJsFieldJsValueWrapper[play.api.libs.json.JsObject](play.api.libs.json.Json.obj(scala.this.Predef.ArrowAssoc[String](&quot;type&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](&quot;name&quot;)(json.this.Writes.StringWrites)), scala.this.Predef.ArrowAssoc[String](&quot;properties&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[play.api.libs.json.JsObject](play.api.libs.json.Json.obj(scala.this.Predef.ArrowAssoc[String](&quot;name&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](&quot;urn:ogc:def:crs:OGC:1.3:CRS84&quot;)(json.this.Writes.StringWrites))))(json.this.Writes.JsValueWrites))))(json.this.Writes.JsValueWrites)
+        </td>
+      </tr><tr>
+        <td>
+          685
+        </td>
+        <td>
+          642
+        </td>
+        <td>
+          24853
+          -
+          24858
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;crs&quot;
+        </td>
+      </tr><tr>
+        <td>
+          685
+        </td>
+        <td>
+          659
+        </td>
+        <td>
+          24870
+          -
+          24870
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          play.api.libs.json.DefaultWrites.JsValueWrites
+        </td>
+        <td style="background: #AEF1AE">
+          json.this.Writes.JsValueWrites
+        </td>
+      </tr><tr>
+        <td>
+          685
+        </td>
+        <td>
+          658
+        </td>
+        <td>
+          24862
+          -
+          25011
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.libs.json.Json.obj
+        </td>
+        <td style="background: #AEF1AE">
+          play.api.libs.json.Json.obj(scala.this.Predef.ArrowAssoc[String](&quot;type&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](&quot;name&quot;)(json.this.Writes.StringWrites)), scala.this.Predef.ArrowAssoc[String](&quot;properties&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[play.api.libs.json.JsObject](play.api.libs.json.Json.obj(scala.this.Predef.ArrowAssoc[String](&quot;name&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](&quot;urn:ogc:def:crs:OGC:1.3:CRS84&quot;)(json.this.Writes.StringWrites))))(json.this.Writes.JsValueWrites)))
+        </td>
+      </tr><tr>
+        <td>
+          685
+        </td>
+        <td>
+          661
+        </td>
+        <td>
+          24853
+          -
+          25011
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Predef.ArrowAssoc.-&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          scala.this.Predef.ArrowAssoc[String](&quot;crs&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[play.api.libs.json.JsObject](play.api.libs.json.Json.obj(scala.this.Predef.ArrowAssoc[String](&quot;type&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](&quot;name&quot;)(json.this.Writes.StringWrites)), scala.this.Predef.ArrowAssoc[String](&quot;properties&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[play.api.libs.json.JsObject](play.api.libs.json.Json.obj(scala.this.Predef.ArrowAssoc[String](&quot;name&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](&quot;urn:ogc:def:crs:OGC:1.3:CRS84&quot;)(json.this.Writes.StringWrites))))(json.this.Writes.JsValueWrites))))(json.this.Writes.JsValueWrites))
+        </td>
+      </tr><tr>
+        <td>
+          686
+        </td>
+        <td>
+          645
+        </td>
+        <td>
+          24892
+          -
+          24892
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          play.api.libs.json.DefaultWrites.StringWrites
+        </td>
+        <td style="background: #AEF1AE">
+          json.this.Writes.StringWrites
+        </td>
+      </tr><tr>
+        <td>
+          686
+        </td>
+        <td>
+          644
+        </td>
+        <td>
+          24892
+          -
+          24898
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;name&quot;
+        </td>
+      </tr><tr>
+        <td>
+          686
+        </td>
+        <td>
+          647
+        </td>
+        <td>
+          24882
+          -
+          24898
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Predef.ArrowAssoc.-&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          scala.this.Predef.ArrowAssoc[String](&quot;type&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](&quot;name&quot;)(json.this.Writes.StringWrites))
+        </td>
+      </tr><tr>
+        <td>
+          686
+        </td>
+        <td>
+          646
+        </td>
+        <td>
+          24892
+          -
+          24898
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.api.libs.json.Json.toJsFieldJsValueWrapper
+        </td>
+        <td style="background: #AEF1AE">
+          json.this.Json.toJsFieldJsValueWrapper[String](&quot;name&quot;)(json.this.Writes.StringWrites)
+        </td>
+      </tr><tr>
+        <td>
+          686
+        </td>
+        <td>
+          643
+        </td>
+        <td>
+          24882
+          -
+          24888
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;type&quot;
+        </td>
+      </tr><tr>
+        <td>
+          687
+        </td>
+        <td>
+          654
+        </td>
+        <td>
+          24926
+          -
+          25001
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.libs.json.Json.obj
+        </td>
+        <td style="background: #AEF1AE">
+          play.api.libs.json.Json.obj(scala.this.Predef.ArrowAssoc[String](&quot;name&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](&quot;urn:ogc:def:crs:OGC:1.3:CRS84&quot;)(json.this.Writes.StringWrites)))
+        </td>
+      </tr><tr>
+        <td>
+          687
+        </td>
+        <td>
+          648
+        </td>
+        <td>
+          24910
+          -
+          24922
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;properties&quot;
+        </td>
+      </tr><tr>
+        <td>
+          687
+        </td>
+        <td>
+          657
+        </td>
+        <td>
+          24910
+          -
+          25001
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Predef.ArrowAssoc.-&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          scala.this.Predef.ArrowAssoc[String](&quot;properties&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[play.api.libs.json.JsObject](play.api.libs.json.Json.obj(scala.this.Predef.ArrowAssoc[String](&quot;name&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](&quot;urn:ogc:def:crs:OGC:1.3:CRS84&quot;)(json.this.Writes.StringWrites))))(json.this.Writes.JsValueWrites))
+        </td>
+      </tr><tr>
+        <td>
+          687
+        </td>
+        <td>
+          656
+        </td>
+        <td>
+          24926
+          -
+          25001
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.api.libs.json.Json.toJsFieldJsValueWrapper
+        </td>
+        <td style="background: #AEF1AE">
+          json.this.Json.toJsFieldJsValueWrapper[play.api.libs.json.JsObject](play.api.libs.json.Json.obj(scala.this.Predef.ArrowAssoc[String](&quot;name&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](&quot;urn:ogc:def:crs:OGC:1.3:CRS84&quot;)(json.this.Writes.StringWrites))))(json.this.Writes.JsValueWrites)
+        </td>
+      </tr><tr>
+        <td>
+          687
+        </td>
+        <td>
+          655
+        </td>
+        <td>
+          24934
+          -
+          24934
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          play.api.libs.json.DefaultWrites.JsValueWrites
+        </td>
+        <td style="background: #AEF1AE">
+          json.this.Writes.JsValueWrites
+        </td>
+      </tr><tr>
+        <td>
+          688
+        </td>
+        <td>
+          651
+        </td>
+        <td>
+          24958
+          -
+          24958
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          play.api.libs.json.DefaultWrites.StringWrites
+        </td>
+        <td style="background: #AEF1AE">
+          json.this.Writes.StringWrites
+        </td>
+      </tr><tr>
+        <td>
+          688
+        </td>
+        <td>
+          650
+        </td>
+        <td>
+          24958
+          -
+          24989
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;urn:ogc:def:crs:OGC:1.3:CRS84&quot;
+        </td>
+      </tr><tr>
+        <td>
+          688
+        </td>
+        <td>
+          653
+        </td>
+        <td>
+          24948
+          -
+          24989
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Predef.ArrowAssoc.-&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          scala.this.Predef.ArrowAssoc[String](&quot;name&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](&quot;urn:ogc:def:crs:OGC:1.3:CRS84&quot;)(json.this.Writes.StringWrites))
+        </td>
+      </tr><tr>
+        <td>
+          688
+        </td>
+        <td>
+          649
+        </td>
+        <td>
+          24948
+          -
+          24954
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;name&quot;
+        </td>
+      </tr><tr>
+        <td>
+          688
+        </td>
+        <td>
+          652
+        </td>
+        <td>
+          24958
+          -
+          24989
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.api.libs.json.Json.toJsFieldJsValueWrapper
+        </td>
+        <td style="background: #AEF1AE">
+          json.this.Json.toJsFieldJsValueWrapper[String](&quot;urn:ogc:def:crs:OGC:1.3:CRS84&quot;)(json.this.Writes.StringWrites)
+        </td>
+      </tr><tr>
+        <td>
+          691
+        </td>
+        <td>
+          663
+        </td>
+        <td>
+          25032
+          -
+          25033
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          0
+        </td>
+      </tr><tr>
+        <td>
+          691
+        </td>
+        <td>
+          666
+        </td>
+        <td>
+          25021
+          -
+          25033
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Predef.ArrowAssoc.-&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          scala.this.Predef.ArrowAssoc[String](&quot;count&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[Int](0)(json.this.Writes.IntWrites))
+        </td>
+      </tr><tr>
+        <td>
+          691
+        </td>
+        <td>
+          662
+        </td>
+        <td>
+          25021
+          -
+          25028
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;count&quot;
+        </td>
+      </tr><tr>
+        <td>
+          691
+        </td>
+        <td>
+          665
+        </td>
+        <td>
+          25032
+          -
+          25033
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.api.libs.json.Json.toJsFieldJsValueWrapper
+        </td>
+        <td style="background: #AEF1AE">
+          json.this.Json.toJsFieldJsValueWrapper[Int](0)(json.this.Writes.IntWrites)
+        </td>
+      </tr><tr>
+        <td>
+          691
+        </td>
+        <td>
+          664
+        </td>
+        <td>
+          25032
+          -
+          25032
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          play.api.libs.json.DefaultWrites.IntWrites
+        </td>
+        <td style="background: #AEF1AE">
+          json.this.Writes.IntWrites
+        </td>
+      </tr><tr>
+        <td>
+          692
+        </td>
+        <td>
+          669
+        </td>
+        <td>
+          25065
+          -
+          25065
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          play.api.libs.json.DefaultWrites.JsValueWrites
+        </td>
+        <td style="background: #AEF1AE">
+          json.this.Writes.JsValueWrites
+        </td>
+      </tr><tr>
+        <td>
+          692
+        </td>
+        <td>
+          668
+        </td>
+        <td>
+          25057
+          -
+          25067
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.libs.json.Json.arr
+        </td>
+        <td style="background: #AEF1AE">
+          play.api.libs.json.Json.arr()
+        </td>
+      </tr><tr>
+        <td>
+          692
+        </td>
+        <td>
+          671
+        </td>
+        <td>
+          25043
+          -
+          25067
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Predef.ArrowAssoc.-&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          scala.this.Predef.ArrowAssoc[String](&quot;features&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[play.api.libs.json.JsArray](play.api.libs.json.Json.arr())(json.this.Writes.JsValueWrites))
+        </td>
+      </tr><tr>
+        <td>
+          692
+        </td>
+        <td>
+          667
+        </td>
+        <td>
+          25043
+          -
+          25053
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;features&quot;
+        </td>
+      </tr><tr>
+        <td>
+          692
+        </td>
+        <td>
+          670
+        </td>
+        <td>
+          25057
+          -
+          25067
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.api.libs.json.Json.toJsFieldJsValueWrapper
+        </td>
+        <td style="background: #AEF1AE">
+          json.this.Json.toJsFieldJsValueWrapper[play.api.libs.json.JsArray](play.api.libs.json.Json.arr())(json.this.Writes.JsValueWrites)
         </td>
       </tr>
     </table>

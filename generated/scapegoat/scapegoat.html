@@ -61,7 +61,7 @@
         Warnings
         15
         Infos
-        17
+        18
       </h3><div class="warning">
           <div class="source">
             .home.travis.build.ZGIS.smart-csw-ingester.app.controllers.QueryController.scala:41
@@ -149,7 +149,18 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:679
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:671
+          </div>
+          <div class="title">
+            <span class="label label-info">Info</span>
+            &nbsp;List.size is O(n)
+            &nbsp;<span class="inspection">com.sksamuel.scapegoat.inspections.collections.ListSize</span>
+          </div><div class="snippet">
+                  List.size is O(n). Consider using a different data type with O(1) size lookup such as Vector or Array.
+                </div>
+        </div><div class="warning">
+          <div class="source">
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:680
           </div>
           <div class="title">
             <span class="label label-info">Info</span>
