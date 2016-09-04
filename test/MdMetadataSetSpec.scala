@@ -19,7 +19,7 @@
 
 import java.time.LocalDate
 
-import models.gmd.{MdMetadataSet, MdMetadataSetWriter}
+import models.gmd.{GeoJSONFeatureCollectionWriter, MdMetadataSet, MdMetadataSetWriter}
 import org.locationtech.spatial4j.context.SpatialContext
 import org.locationtech.spatial4j.shape._
 import org.scalatestplus.play.PlaySpec
@@ -86,7 +86,7 @@ class MdMetadataSetSpec extends PlaySpec {
   "MD_Metadata_COMPLETE.xml" must {
     lazy val xmlResource = this.getClass().getResource("MD_Metadata_COMPLETE.xml")
     lazy val xml = scala.xml.XML.load(xmlResource)
-    lazy val parsedElementOption = MdMetadataSet.fromXml(xml)
+    lazy val parsedElementOption = MdMetadataSet.fromXml(xml, "linz")
 
     "parse without errors" in {
       parsedElementOption mustBe defined
@@ -106,13 +106,14 @@ class MdMetadataSetSpec extends PlaySpec {
       parsedElement.license must endWith("Released under Creative Commons By")
       parsedElement.bbox mustEqual (ctx.getShapeFactory.rect(178.548442791, 168.360399911, -46.6603664299,
         -34.1537940929))
+      parsedElement.origin mustEqual "linz"
     }
   }
 
   "Wrong BBoxes" must {
     lazy val xmlResource = this.getClass().getResource("MD_Metadata_NO_BBOX.xml")
     lazy val xml = scala.xml.XML.load(xmlResource)
-    lazy val parsedElement = MdMetadataSet.fromXml(xml)
+    lazy val parsedElement = MdMetadataSet.fromXml(xml, "linz")
     lazy val world = ctx.getShapeFactory().rect(-180, 180, -90, 90)
 
     "MD_Metadata_NO_BBOX.xml parse without errors" in {
@@ -140,28 +141,47 @@ class MdMetadataSetSpec extends PlaySpec {
   }
 
   "JSON writer" should {
-    implicit val gmdElementSetWrite = MdMetadataSetWriter
+    implicit val mdMetadataSetWrite = MdMetadataSetWriter
+    implicit val geoJSONFeatureCollectionWrite = GeoJSONFeatureCollectionWriter
 
     lazy val xmlResource1 = this.getClass().getResource("csw_getrecordbyid-md_metadata.xml")
     lazy val xmlResource2 = this.getClass().getResource("sac_rs_ewt_metadata.xml")
     lazy val xml1 = scala.xml.XML.load(xmlResource1)
     lazy val xml2 = scala.xml.XML.load(xmlResource2)
-    lazy val parsedElement1 = MdMetadataSet.fromXml(xml1)
-    lazy val parsedElement2 = MdMetadataSet.fromXml(xml2)
+    lazy val parsedElement1 = MdMetadataSet.fromXml(xml1, "linz")
+    lazy val parsedElement2 = MdMetadataSet.fromXml(xml2, "smart")
 
     "parse without errors" in {
       parsedElement1 mustBe defined
       parsedElement2 mustBe defined
 
-      val textJson = """{"fileIdentifier":"23bdd7a3-fd21-daf1-7825-0d3bdc256f9d","dateStamp":"2012-12-20","title":"NZ Primary Road Parcels","abstrakt":"This layer provides the **current** road parcel polygons with ...","keywords":["New Zealand"],"topicCategory":["boundaries","planningCadastre"],"contactName":"omit, Omit","contactOrg":"LINZ - Land Information New Zealand, LINZ - Land Information New Zealand, ANZLIC the Spatial Information Council","contactEmail":"info@linz.govt.nz, info@linz.govt.nz","license":"Crown copyright reserved, Released under Creative Commons By with: Following Disclaimers..., Crown copyright reserved, Released under Creative Commons By","bbox":[-176.176448433,166.6899599,-34.4322590833,-47.1549297167],"origin":""}"""
-      Json.toJson(parsedElement1.get).toString() mustEqual (textJson)
+      Json.toJson(parsedElement1.get).toString() must include ("linz")
+      Json.toJson(parsedElement2.get).toString() must include ("smart")
     }
 
-    "build JsList" in {
+    "build JsArrList of GeoJSON Features from List of MdMetadataSet" in {
       val gmdList = List(parsedElement1.get, parsedElement2.get)
-      val jsList = Json.toJson(gmdList)
-      (jsList \\ "fileIdentifier").size mustBe 2
+      val listOfGeoJsonFeatures = Json.toJson(gmdList)
+      (listOfGeoJsonFeatures \\ "fileIdentifier").size mustBe 2
     }
+
+    "provide GeoJSON Feature for one MdMetadaset" in {
+      val jsResource = this.getClass().getResource("linzFeatureTest.json")
+      val jsonTestFeature = scala.io.Source.fromURL(jsResource).getLines.mkString
+      Json.toJson(parsedElement1.get) mustEqual Json.parse(jsonTestFeature)
+    }
+
+    "provide List of GeoJSON as FeatureCollection for list of MdMetadaset" in {
+      val gmdList = List(parsedElement1.get, parsedElement2.get)
+
+      val geoJsonFeatureCollection = Json.toJson(gmdList)
+
+      val jsResource = this.getClass().getResource("featureCollectionTest.json")
+      val jsonTestFeatureCollection = scala.io.Source.fromURL(jsResource).getLines.mkString
+      geoJsonFeatureCollection mustEqual Json.parse(jsonTestFeatureCollection)
+
+    }
+
 
   }
 

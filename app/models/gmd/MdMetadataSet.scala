@@ -21,12 +21,14 @@ package models.gmd
 
 import java.time._
 import java.time.format._
+import java.util
+
 import org.apache.lucene.document.{Document, Field, LongPoint, TextField}
 import org.apache.lucene.spatial.bbox.BBoxStrategy
 import org.locationtech.spatial4j.context.SpatialContext
 import org.locationtech.spatial4j.io.ShapeIO
-import org.locationtech.spatial4j.shape.Rectangle
-import play.api.libs.json._
+import org.locationtech.spatial4j.shape.{Rectangle, ShapeCollection}
+import play.api.libs.json.{JsObject, _}
 import utils.ClassnameLogger
 
 import scala.xml.NodeSeq
@@ -545,33 +547,137 @@ object MdMetadataSet extends ClassnameLogger {
   }
 }
 
+
 /**
-  * Json writer for [[MdMetadataSet]]
+  * GeoJSON writer for [[MdMetadataSet]]
   *
   * @see [[Writes]]
   */
-object MdMetadataSetWriter extends Writes[MdMetadataSet] {
+object MdMetadataSetWriter extends Writes[MdMetadataSet] with ClassnameLogger {
+
+  private lazy val ctx = SpatialContext.GEO
+  private lazy val jsWriter = ctx.getFormats().getWriter(ShapeIO.GeoJSON)
+
   /**
-    * Converts [[MdMetadataSet]] object into [[JsValue]]
+    * provides the GeoJSON Polygon geometry from the feature's Rectangle bbox
+    * @param gmd MdMetadataSet
+    * @return JsValue with GeoJSON Polygon geometry
     */
-  def writes(gmd: MdMetadataSet) : JsObject = Json.obj(
-    "fileIdentifier" -> gmd.fileIdentifier,
-    "dateStamp" -> gmd.dateStampAsIsoString,
-    "title" -> gmd.title,
-    "abstrakt" -> gmd.abstrakt,
-    "keywords" -> gmd.keywords,
-    "topicCategory" -> gmd.topicCategory,
-    "contactName" -> gmd.contactName,
-    "contactOrg" -> gmd.contactOrg,
-    "contactEmail" -> gmd.contactEmail,
-    "license" -> gmd.license,
-    // extent is an array [10, 10, 40, 40] minX, maxX, maxY, minY
-    "bbox" -> Json.arr(
-      JsNumber(gmd.bbox.getMinX()),
-      JsNumber(gmd.bbox.getMaxX()),
-      JsNumber(gmd.bbox.getMaxY()),
-      JsNumber(gmd.bbox.getMinY())
+  def getJsGeom(gmd: MdMetadataSet) : JsValue = {
+    val geometry = jsWriter.toString(gmd.bbox)
+    Json.parse(geometry)
+  }
+
+  /**
+    * Converts [[MdMetadataSet]] object into [[JsObject]] as GeoJSON
+    */
+  def writes(gmd: MdMetadataSet) : JsObject = {
+
+    val properties = Json.obj(
+      "fileIdentifier" -> gmd.fileIdentifier,
+      "dateStamp" -> gmd.dateStampAsIsoString,
+      "title" -> gmd.title,
+      "abstrakt" -> gmd.abstrakt,
+      "keywords" -> gmd.keywords,
+      "topicCategory" -> gmd.topicCategory,
+      "contactName" -> gmd.contactName,
+      "contactOrg" -> gmd.contactOrg,
+      "contactEmail" -> gmd.contactEmail,
+      "license" -> gmd.license,
+      // extent is an array [10, 10, 40, 40] minX, maxX, maxY, minY
+      "bbox" -> Json.arr(
+        JsNumber(gmd.bbox.getMinX()),
+        JsNumber(gmd.bbox.getMaxX()),
+        JsNumber(gmd.bbox.getMaxY()),
+        JsNumber(gmd.bbox.getMinY())
+      ),
+      "origin" -> gmd.origin
+    )
+
+    Json.obj(
+      "type" -> "Feature",
+      "geometry" -> getJsGeom(gmd),
+      "properties" -> properties
+    )
+  }
+}
+
+/**
+  * GeoJSON FeatureCollection writer for List of [[MdMetadataSet]]
+  *
+  * @see [[Writes]]
+  */
+object GeoJSONFeatureCollectionWriter extends Writes[List[MdMetadataSet]] with ClassnameLogger {
+
+  private lazy val ctx = SpatialContext.GEO
+  private lazy val jsWriter = ctx.getFormats().getWriter(ShapeIO.GeoJSON)
+  implicit val gmdElementSetWrite = MdMetadataSetWriter
+  lazy val WORLD = ctx.getShapeFactory().rect(-180, 180, -90, 90)
+
+  /**
+    * builds a JsArray from single MdMetadataSet GeoJSON features
+    *
+    * @param gmdList List [[MdMetadataSet]]
+    * @return JsArray MdMetadataSet
+    */
+  def getArrayOfFeatures(gmdList: List[MdMetadataSet]) : JsValue = {
+    val jsList = gmdList.map( gmd => Json.toJson(gmd))
+    Json.toJson(jsList)
+  }
+
+  /**
+    * computes the overall bounding box for the featurecollection
+    * @param gmdList List [[MdMetadataSet]]
+    * @return JsArray with 4 bbox double values (e, w, s, n)
+    */
+  def getBoundingBox(gmdList: List[MdMetadataSet]) : JsValue = {
+    import collection.JavaConverters._
+    import collection.mutable._
+
+    logger.debug(f"gmdList.size() ${gmdList.size}")
+
+    val shapeBuffer : scala.collection.mutable.Buffer[Rectangle] = Buffer[Rectangle]()
+    gmdList.foreach(gmd =>
+      shapeBuffer.append(gmd.bbox)
+    )
+    logger.debug(f"shapeBuffer.size() ${shapeBuffer.size}")
+
+    val shapeList: java.util.List[Rectangle] = new util.ArrayList[Rectangle]
+    shapeList.addAll(shapeBuffer.asJava)
+    logger.debug(f"shapeList.size() ${shapeList.size}")
+    // shapes - Copied by reference! (make a defensive copy if caller modifies), also needs RandomAccess
+    // https://locationtech.github.io/spatial4j/apidocs/org/locationtech/spatial4j/shape/ShapeCollection.html
+    val shapeCollection = new ShapeCollection[Rectangle](shapeList, ctx)
+    logger.debug(f"shapeCollection.size() ${shapeCollection.size}")
+
+    val envelope = if (shapeCollection.size > 0) {
+      shapeCollection.getBoundingBox
+    } else {
+      WORLD
+    }
+
+    Json.arr(
+      JsNumber(envelope.getMinX),
+      JsNumber(envelope.getMaxX),
+      JsNumber(envelope.getMaxY),
+      JsNumber(envelope.getMinY)
+    )
+  }
+
+  /**
+    * Converts List of [[MdMetadataSet]] object into [[JsObject]] as GeoJSON
+    */
+  def writes(gmdList: List[MdMetadataSet]): JsObject = {
+    Json.obj("type" -> "FeatureCollection",
+    "crs" -> Json.obj(
+      "type" -> "name",
+        "properties" -> Json.obj(
+            "name" -> "urn:ogc:def:crs:OGC:1.3:CRS84"
+        )
     ),
-    "origin" -> gmd.origin
-  )
+    "bbox" -> getBoundingBox(gmdList),
+      "count" -> gmdList.size,
+    "features" -> getArrayOfFeatures(gmdList)
+    )
+  }
 }
