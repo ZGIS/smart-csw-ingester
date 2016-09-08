@@ -134,9 +134,13 @@ git.remoteRepo := "git@github.com:ZGIS/smart-csw-ingester.git"
 // packaging options
 
 version in Docker := version.value
+
 maintainer in Docker := "allixender@googlemail.com"
-dockerBaseImage in Docker := "openjdk:8-jre-alpine"
-dockerBaseImage := "openjdk:8-jre-alpine"
+
+dockerBaseImage in Docker := "java:8-jre"
+
+dockerBaseImage := "java:8-jre"
+
 
 javaOptions in Universal ++= Seq(
   // others will be added as app parameters
