@@ -3,12 +3,15 @@
 # ~~~~
 
 # home page
-GET        /                    controllers.QueryController.index
+GET        /                               controllers.MainController.index
+GET        /*path/                         controllers.MainController.untrail(path: String)
 
-# Lucene query
-# TODO better to use "Option"?
-GET        /query               controllers.QueryController.query(query = "")
-GET        /query/:query        controllers.QueryController.query(query: String)
+# Routes for querying Lucene Index
+# FIXME SR is there a way to get Option[String] for the URL path binder?
+GET        /query                          controllers.QueryController.query(query: Option[String],bbox: Option[String], fromDate: Option[String], toDate: Option[String])
+#GET        /bbox/:bbox                     controllers.QueryController.query(query = "", bbox: String, fromDate = "", toDate = "")
+#GET        /query/:query                   controllers.QueryController.query(query: String, bbox = "", fromDate = "", toDate = "")
+#GET        /query/:query/bbox/:bbox        controllers.QueryController.query(query: String, bbox: String, fromDate = "", toDate = "")
 
 # Map static resources from the /public folder to the /assets URL path
-GET        /assets/*file        controllers.Assets.versioned(path="/public", file: Asset)
+GET        /assets/*file                   controllers.Assets.versioned(path="/public", file: Asset)

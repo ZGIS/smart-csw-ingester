@@ -20,6 +20,7 @@
 package models.csw
 
 import java.time.format.DateTimeFormatter
+import utils.StringUtils._
 
 import scala.xml.Elem
 
@@ -33,27 +34,12 @@ class CswGetRecordsResponse(val xml: Elem) {
   val (numberOfRecordsReturned: Int, numberOfRecordsMatched: Int, nextRecord: Int) =
     xml.label match {
       case "GetRecordsResponse" => {
-        (asInt(xml \ "SearchResults" \@ "numberOfRecordsReturned"),
-          asInt(xml \ "SearchResults" \@ "numberOfRecordsMatched"),
-          asInt(xml \ "SearchResults" \@ "nextRecord"))
+        ((xml \ "SearchResults" \@ "numberOfRecordsReturned").toIntWithDefault(),
+         (xml \ "SearchResults" \@ "numberOfRecordsMatched").toIntWithDefault(),
+         (xml \ "SearchResults" \@ "nextRecord").toIntWithDefault())
       }
       case _ => throw new IllegalArgumentException(f"Expected Root Element <csw:GetRecordsResponse> but found ${xml.label}")
     }
-
-  /**
-    * converts string to int and assigns default value if exception.
-    * @param s
-    * @return
-    */
-  //FIXME SR this should be something like an "extension" to string. https://www.safaribooksonline.com/library/view/scala-cookbook/9781449340292/ch01s11.html
-  private def asInt(s: String): Int = {
-    try {
-      s.toInt
-    } catch {
-      case e: NumberFormatException => 0
-    }
-  }
-
 }
 
 /**

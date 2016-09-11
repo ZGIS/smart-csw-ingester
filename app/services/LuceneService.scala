@@ -19,42 +19,43 @@
 
 package services
 
-import java.util.concurrent.TimeoutException
+import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 
+import models.csw.{CswGetRecordsRequest, CswGetRecordsResponse}
 import models.gmd.MdMetadataSet
 import org.apache.lucene.analysis.standard.StandardAnalyzer
+import org.apache.lucene.document.LongPoint
 import org.apache.lucene.index.{IndexWriter, IndexWriterConfig}
 import org.apache.lucene.queryparser.classic.QueryParser
-import org.apache.lucene.search.{MatchAllDocsQuery, SearcherManager}
+import org.apache.lucene.search._
 import org.apache.lucene.spatial.bbox.BBoxStrategy
+import org.apache.lucene.spatial.query.{SpatialArgs, SpatialOperation}
 import org.apache.lucene.store.RAMDirectory
 import org.locationtech.spatial4j.context.SpatialContext
+import org.locationtech.spatial4j.io.ShapeIO
 import play.api.Configuration
+import play.api.http.Status
 import play.api.inject.ApplicationLifecycle
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.ws.WSClient
 import utils.ClassnameLogger
-import models.csw.{CswGetRecordsRequest, CswGetRecordsResponse}
-import play.api.http.Status
 
 import scala.collection.JavaConverters._
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 
-// explanation see https://www.playframework.com/documentation/2.5.x/ScalaJsonAutomated and
-// https://www.playframework.com/documentation/2.5.x/ScalaJsonCombinators
-
-@Deprecated
-case class SearchResultHeader(noDocuments: Int, query: String)
-
-@Deprecated
-case class SearchResult(header: SearchResultHeader, results: List[MdMetadataSet])
-
 trait IndexService {
+  //FIXME SR find a good place for this
+  //THE ARGUMENT ORDER IS ENVELOPE(minX, maxX, maxY(!!!WTF?), minY)
+  lazy val WORLD_WKT = "ENVELOPE(-180, 180, 90, -90)"
+
   def buildIndex(): Unit
 
-  def query(query: String): List[MdMetadataSet]
+  def query(query: String,
+            bboxWkt: Option[String],
+            fromDate: Option[LocalDate],
+            toDate: Option[LocalDate]): List[MdMetadataSet]
 }
 
 
@@ -70,6 +71,7 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
                               wsClient: WSClient,
                               configuration: Configuration)
   extends IndexService with ClassnameLogger {
+
   logger.info("Starting Lucene Service")
 
   logger.debug("Reading configuration: csw.catalogues ")
@@ -144,7 +146,7 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
 
     val wsClientResponseFuture =
       wsClient.url(url)
-        .withRequestTimeout(20.seconds)
+        //        .withRequestTimeout(20.seconds)
         .withHeaders("Content-Type" -> "application/xml")
         .post(CswGetRecordsRequest(startPosition, maxDocuments))
 
@@ -163,7 +165,8 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
             }
             case "GetRecordsResponse" => {
               val cswGetRecResp = CswGetRecordsResponse(wsClientResponse.xml)
-              logger.info(f"nextRecord: ${cswGetRecResp.nextRecord}, numberOfRec ${cswGetRecResp.numberOfRecordsMatched}")
+              logger.info(
+                f"nextRecord: ${cswGetRecResp.nextRecord}, numberOfRec ${cswGetRecResp.numberOfRecordsMatched}")
               if ((cswGetRecResp.nextRecord > cswGetRecResp.numberOfRecordsMatched) ||
                 (cswGetRecResp.nextRecord == 0)) {
                 f.flatMap(l => {
@@ -190,10 +193,10 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
         }
       }
     } recover {
-        case e => {
-          logger.warn(f"Exception on $url", e)
-          List()
-        }
+      case e => {
+        logger.warn(f"Exception on $url", e)
+        List()
+      }
     }
     cswGetRecordsResponseListFuture
   }
@@ -219,30 +222,66 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
   }
 
   /**
+    * parses the query text
+    *
+    * @param queryString
+    * @return
+    */
+  private def parseQueryString(queryString: String) = {
+    queryString.trim() match {
+      case "" => new MatchAllDocsQuery()
+      case _ => {
+        val parser = new QueryParser("catch_all", new StandardAnalyzer())
+        //FIXME errorhandling
+        parser.parse(queryString)
+      }
+    }
+  }
+
+  /**
+    * creates a query, that should find anything inside a BBOX
+    *
+    * @param bboxWkt
+    * @return
+    */
+  private def parseBboxQuery(bboxWkt: String) = {
+    val ctx = SpatialContext.GEO
+    val shpReader = ctx.getFormats().getReader(ShapeIO.WKT)
+    val shape = shpReader.read(bboxWkt)
+
+    val bboxStrategy: BBoxStrategy = BBoxStrategy.newInstance(ctx, "bbox")
+    bboxStrategy.makeQuery(new SpatialArgs(SpatialOperation.IsWithin, shape))
+  }
+
+  /**
     * Queries the Search Index
     *
     * @param query
     * @return
     */
-  def query(query: String): List[MdMetadataSet] = {
+  def query(query: String,
+            bboxWtk: Option[String] = None,
+            fromDate: Option[LocalDate] = None,
+            toDate: Option[LocalDate] = None): List[MdMetadataSet] = {
 
-    // val ctx = SpatialContext.GEO
-    // val bboxStrategy: BBoxStrategy = BBoxStrategy.newInstance(ctx, "bboxStrategy")
-    // Query = LongPoint.newRangeQuery("dateStampCompare", localDate1.toEpochDay, localDate2.toEpochDay)
+    val textQuery = parseQueryString(query)
 
-    val luceneQuery = query.trim() match {
-      case "" => new MatchAllDocsQuery()
-      case _ => {
-        val parser = new QueryParser("catch_all", new StandardAnalyzer())
-        //FIXME errorhandling
-        parser.parse(query)
-      }
-    }
+    val dateQuery = LongPoint.newRangeQuery("dateStamp",
+      fromDate.getOrElse(LocalDate.ofEpochDay(0)).toEpochDay(),
+      toDate.getOrElse(LocalDate.now()).toEpochDay())
+
+    val bboxQuery = parseBboxQuery(bboxWtk.filterNot(_.isEmpty).getOrElse(WORLD_WKT))
 
     //FIXME SR when index empty, the next call will fail
     val searcherManager = new SearcherManager(directory, null)
     searcherManager.maybeRefreshBlocking()
     val isearcher = searcherManager.acquire()
+
+    val booleanQueryBuilder = new BooleanQuery.Builder()
+    booleanQueryBuilder.add(textQuery, BooleanClause.Occur.MUST)
+    booleanQueryBuilder.add(dateQuery, BooleanClause.Occur.MUST)
+    booleanQueryBuilder.add(bboxQuery, BooleanClause.Occur.MUST)
+    val luceneQuery = booleanQueryBuilder.build()
 
     val search = isearcher.search(luceneQuery, isearcher.getIndexReader.numDocs())
     val scoreDocs = search.scoreDocs

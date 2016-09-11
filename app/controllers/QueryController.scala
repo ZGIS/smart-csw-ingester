@@ -19,14 +19,13 @@
 
 package controllers
 
+import java.time.LocalDate
 import javax.inject._
 
-import models.gmd.GeoJSONFeatureCollectionWriter
+import models.gmd.{MdMetadataSet, GeoJSONFeatureCollectionWriter}
 import play.api.libs.json.Json
 import play.api.mvc._
 import services.LuceneService
-
-import scala.concurrent.Future
 
 /**
   * Controller that serves results from Lucene Index
@@ -34,15 +33,7 @@ import scala.concurrent.Future
 class QueryController @Inject()(luceneService: LuceneService) extends Controller {
 
   implicit val geoJSONFeatureCollectionWrite = GeoJSONFeatureCollectionWriter
-  /**
-    * Create an Action to render an HTML page with a welcome message.
-    * The configuration in the `routes` file means that this method
-    * will be called when the application receives a `GET` request with
-    * a path of `/`.
-    */
-  def index = Action {
-    Ok(views.html.index("Your new application is ready."))
-  }
+  private lazy val DEFAULT_QUERY = "*:*"
 
   /**
     * Action that passes the query from URL to the [[services.LuceneService]].
@@ -51,11 +42,26 @@ class QueryController @Inject()(luceneService: LuceneService) extends Controller
     * @return
     * @see services.LuceneService
     */
-  def query(query: String) = Action {
-    //FIXME SR error handling
-    val featureCollection = luceneService.query(query)
+  def query(query: Option[String],
+            bboxWkt: Option[String],
+            fromDateStr: Option[String],
+            toDateStr: Option[String]): Action[AnyContent] = Action {
 
-    // TODO AK here we could insert the quesry string again if needed
+    //TODO SR make tuple expression out of this
+    val fromDate = fromDateStr match {
+      case None => Some(LocalDate.ofEpochDay(0))
+      case _ => Some(MdMetadataSet.dateFromStrings(List(fromDateStr.get)))
+    }
+
+    val toDate = toDateStr match {
+      case None => Some(LocalDate.now())
+      case _ => Some(MdMetadataSet.dateFromStrings(List(toDateStr.get)))
+    }
+
+    //FIXME SR error handling
+    val featureCollection = luceneService.query(query.getOrElse(DEFAULT_QUERY), bboxWkt, fromDate, toDate)
+
+    // TODO AK here we could insert the query string again if needed
     val resultJson = Json.toJson(featureCollection)
 
     Ok(resultJson).as(JSON)

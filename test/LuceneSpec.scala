@@ -17,6 +17,8 @@
  * limitations under the License.
  */
 
+import java.time.LocalDate
+
 import com.typesafe.config.ConfigFactory
 import models.gmd.GeoJSONFeatureCollectionWriter
 import org.scalatestplus.play._
@@ -28,6 +30,7 @@ import play.api.routing.sird._
 import play.api.test._
 import play.core.server.{Server, ServerConfig}
 import services.LuceneService
+import services.IndexService
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
@@ -64,14 +67,14 @@ class LuceneSpec extends PlaySpec with WithLuceneService {
 
     implicit val geoJSONFeatureCollectionWrite = GeoJSONFeatureCollectionWriter
 
-    "cannot mirror query string" in {
+    "mirror query string" in {
       withLuceneService { service =>
         val result = service.query("*:*")
         val resultJson = Json.toJson(result)
         // result.header.query mustBe "*:*"
       }
     }
-    "have Index with 4 documents" in {
+    "find 4 documents for *:* query" in {
       withLuceneService { service =>
         val result = service.query("*:*")
         result.size mustBe 4
@@ -82,217 +85,160 @@ class LuceneSpec extends PlaySpec with WithLuceneService {
       Cannot parse 'dateStampText:*': '*' or '?' not allowed as first character in WildcardQuery
      */
 
-    "find fileIdentifier" in {
+    "find 1 document for fileIdentifier:23bdd7a3-fd21-daf1-7825-0d3bdc256f9d" in {
       withLuceneService { service =>
         val result = service.query("fileIdentifier:\"23bdd7a3-fd21-daf1-7825-0d3bdc256f9d\"")
         result.size mustBe 1
+        result.head.fileIdentifier mustBe "23bdd7a3-fd21-daf1-7825-0d3bdc256f9d"
       }
     }
-    "find title" in {
+    "find 1 document for title:NZ Primary Road Parcels" in {
       withLuceneService { service =>
         val result = service.query("title:\"NZ Primary Road Parcels\"")
         result.size mustBe 1
+        result.head.fileIdentifier mustBe "23bdd7a3-fd21-daf1-7825-0d3bdc256f9d"
       }
     }
-    "find abstrakt" in {
+    "find 1 document for abstrakt:road parcel polygons" in {
       withLuceneService { service =>
         val result = service.query("abstrakt:road parcel polygons")
         result.size mustBe 1
+        result.head.fileIdentifier mustBe "23bdd7a3-fd21-daf1-7825-0d3bdc256f9d"
       }
     }
     /* Date range queries not yet possible (dates as long, blower and upper limit)
         the "field" for a date range query is "dateStampCompare"
         LongPoint.newRangeQuery("dateStampCompare", localDate1.toEpochDay, localDate2.toEpochDay)
      */
-    "find dateStampText" in {
+    "find 1 document for dateStampText:2015-04-08" in {
       withLuceneService { service =>
         val result = service.query("dateStampText:\"2015-04-08\"")
         result.size mustBe 1
+        result.head.fileIdentifier mustBe "294f127b-addb-24d8-0df1-f014032dcd02"
       }
     }
-    "find keywords" in {
+    "find 2 documents for keywords:unwanted organisms" in {
       withLuceneService { service =>
         val result = service.query("keywords:\"unwanted organisms\"")
         result.size mustBe 2
+        result.map(_.fileIdentifier).contains("0326a6b1-c163-405b-a3c7-9136ab4f4807") mustBe true
+        result.map(_.fileIdentifier).contains("4A467BBC-E7BA-4A98-AD9E-58A781041913") mustBe true
       }
     }
-    "find topicCategory" in {
+    "find 2 documents for topicCategory:biota" in {
       withLuceneService { service =>
         val result = service.query("topicCategory:biota")
         result.size mustBe 2
+        result.map(_.fileIdentifier).contains("0326a6b1-c163-405b-a3c7-9136ab4f4807") mustBe true
+        result.map(_.fileIdentifier).contains("4A467BBC-E7BA-4A98-AD9E-58A781041913") mustBe true
       }
     }
-    "find contactName" in {
+    "find 2 documents contactName:Omit" in {
       withLuceneService { service =>
         val result = service.query("contactName:Omit")
         // case insensitive
         result.size mustBe 2
+        result.map(_.fileIdentifier).contains("23bdd7a3-fd21-daf1-7825-0d3bdc256f9d") mustBe true
+        result.map(_.fileIdentifier).contains("294f127b-addb-24d8-0df1-f014032dcd02") mustBe true
       }
     }
-    "find contactOrg" in {
+    "find 2 documents for contactOrg:\"LINZ\"" in {
       withLuceneService { service =>
         val result = service.query("contactOrg:\"LINZ\"")
         result.size mustBe 2
+        result.map(_.fileIdentifier).contains("23bdd7a3-fd21-daf1-7825-0d3bdc256f9d") mustBe true
+        result.map(_.fileIdentifier).contains("294f127b-addb-24d8-0df1-f014032dcd02") mustBe true
       }
     }
-    "find contactEmail" in {
+    "find 2 documents contactEmail:info@linz.govt.nz" in {
       withLuceneService { service =>
         val result = service.query("contactEmail:info@linz.govt.nz")
         result.size mustBe 2
+        result.map(_.fileIdentifier).contains("23bdd7a3-fd21-daf1-7825-0d3bdc256f9d") mustBe true
+        result.map(_.fileIdentifier).contains("294f127b-addb-24d8-0df1-f014032dcd02") mustBe true
       }
     }
-    "find license" in {
+    "find 4 documents for license:Creative Commons" in {
       withLuceneService { service =>
         val result = service.query("license:Creative Commons")
         result.size mustBe 4
       }
     }
-    /* spatial bbox queries not yet possible (bbox and spatial loperations like Intersects, IsDisjointTo, IsEqualTo)
-    the "field" for a geo query ia "bboxStrategy"
-      val bboxT = ctx.getShapeFactory().rect(-180.0, 180.0, -90.0, 90.0)
-      val bboxStrategy: BBoxStrategy = BBoxStrategy.newInstance(ctx, "bboxStrategy")
-      val luceneQuery6 = bboxStrategy.makeQuery(new SpatialArgs(SpatialOperation.IsEqualTo, bboxT))
-   */
-    "find bboxText" in {
-      withLuceneService { service =>
-        val result = service.query("bboxText:ENVELOPE")
-        result.size mustBe 4
-      }
-    }
-    "find origin" in {
+    "find 4 documents in origin:test1" in {
       withLuceneService { service =>
         val result = service.query("origin:test1")
         result.size mustBe 4
       }
     }
 
-  }
-
-  /*  "LuceneSpecs with OneAppPerSuite trait " must {
-
-      "provide a Lucene Index for GmdElementSet" in {
-
-        val ctx = SpatialContext.GEO
-
-        val catalogues = Map("linz" -> "http://data.linz.govt.nz/feeds/csw/csw",
-          "mfe" -> "http://data.mfe.govt.nz/feeds/csw/csw",
-          "geogovt" -> "http://geodata.govt.nz/geonetwork/srv/en/csw",
-          "niwa" -> "http://dc.niwa.co.nz/niwa_dc/srv/eng/csw",
-          "landcare" -> "http://lris.scinfo.org.nz/feeds/csw/csw",
-          "doc" -> "http://geoportal.doc.govt.nz/geoportal/csw",
-          "gns" -> "http://data.gns.cri.nz/metadata/srv/eng/csw")
-
-        val asResource1 = this.getClass().getResource("csw_getrecordbyid-md_metadata.xml")
-        val xml1: scala.xml.NodeSeq = scala.xml.XML.load(asResource1)
-
-        val asResource2 = this.getClass().getResource("sac_rs_ewt_metadata.xml")
-        val xml2: scala.xml.NodeSeq = scala.xml.XML.load(asResource2)
-
-        val directory = new RAMDirectory()
-        val analyzer = new StandardAnalyzer()
-        val config = new IndexWriterConfig(analyzer)
-
-        def queryCsw(key: String, value: String): Future[String] = {
-          Future {
-            f"$key + $value"
-          }
+    "find correct entries for BBOX" should {
+      "find 4 documents for [-180,180,90,-90]" in {
+        withLuceneService { service =>
+          val result = service.query("*:*", Some("ENVELOPE(-180, 180, 90,-90)"))
+          result.size mustBe 4
         }
-
-        val result = catalogues.map {
-          case (csw, url) => {
-            println(f"$csw + $url")
-            val res: String = Await.result(queryCsw(url, csw), 120.seconds)
-            res
-          }
-        }
-
-        result.foreach(
-          str => println(str)
-        )
-
-        val testList = List(
-          MdMetadataSet.fromXml(xml1).get,
-          MdMetadataSet.fromXml(xml2).get
-        )
-
-        val iwriter = new IndexWriter(directory, config)
-
-        try {
-          iwriter.deleteAll()
-          iwriter.commit()
-          testList.foreach(searchDocument => iwriter.addDocument(searchDocument.asLuceneDocument()))
-          iwriter.commit()
-        }
-        finally {
-          iwriter.close()
-        }
-
-        val searcherManager = new SearcherManager(directory, null)
-        val isearcher = searcherManager.acquire()
-        val parser = new QueryParser("catch_all", new StandardAnalyzer())
-
-        val query1 = ""
-        val luceneQuery1 = new MatchAllDocsQuery()
-        val search1 = isearcher.search(luceneQuery1, isearcher.getIndexReader().numDocs())
-        val scoreDocs1 = search1.scoreDocs
-
-        val query2 = "title:\"NZ Primary Road Parcels\""
-        val luceneQuery2 = parser.parse(query2)
-        val search2 = isearcher.search(luceneQuery2, isearcher.getIndexReader().numDocs())
-        val scoreDocs2 = search2.scoreDocs
-
-        val query3 = "contactOrg:\"LINZ\""
-        val luceneQuery3 = parser.parse(query3)
-        val search3 = isearcher.search(luceneQuery3, isearcher.getIndexReader().numDocs())
-        val scoreDocs3 = search3.scoreDocs
-
-        search1.totalHits mustBe 2
-        search2.totalHits mustBe 1
-        search3.totalHits mustBe 1
-
-        val localDate1 = java.time.LocalDate.of(2012, Month.DECEMBER, 19)
-        val localDate2 = java.time.LocalDate.of(2012, Month.DECEMBER, 21)
-
-        val luceneQuery4 = LongPoint.newRangeQuery("dateStampCompare", localDate1.toEpochDay, localDate2.toEpochDay)
-        val search4 = isearcher.search(luceneQuery4, isearcher.getIndexReader().numDocs())
-        val scoreDocs4 = search4.scoreDocs
-
-        search4.totalHits mustBe 1
-
-        val results = scoreDocs4.map(scoreDoc => {
-          val doc = isearcher.doc(scoreDoc.doc)
-          MdMetadataSet.fromLuceneDoc(doc)
-        })
-
-        results(0).fileIdentifier mustBe "23bdd7a3-fd21-daf1-7825-0d3bdc256f9d"
-        println(f"search4 result: ${results(0).toString()}")
-
-        val luceneQuery5 = LongPoint.newRangeQuery("dateStampCompare", localDate1.toEpochDay, localDate1.toEpochDay)
-        val search5 = isearcher.search(luceneQuery5, isearcher.getIndexReader().numDocs())
-        val scoreDocs5 = search5.scoreDocs
-
-        search5.totalHits mustBe 0
-
-        val bboxS = ctx.getShapeFactory().rect(-176.176448433, 166.6899599, -47.1549297167, -34.4322590833)
-        val bboxT = ctx.getShapeFactory().rect(-180.0, 180.0, -90.0, 90.0)
-        val bboxStrategy: BBoxStrategy = BBoxStrategy.newInstance(ctx, "bboxStrategy")
-
-        val luceneQuery6 = bboxStrategy.makeQuery(new SpatialArgs(SpatialOperation.IsEqualTo, bboxS))
-        val search6 = isearcher.search(luceneQuery6, isearcher.getIndexReader().numDocs())
-
-        search6.totalHits mustBe 1
-
-        val luceneQuery7 = bboxStrategy.makeQuery(new SpatialArgs(SpatialOperation.IsDisjointTo, bboxT))
-        val search7 = isearcher.search(luceneQuery7, isearcher.getIndexReader().numDocs())
-
-        search7.totalHits mustBe 0
-
-        val luceneQuery8 = bboxStrategy.makeQuery(new SpatialArgs(SpatialOperation.Intersects, bboxT))
-        val search8 = isearcher.search(luceneQuery8, isearcher.getIndexReader().numDocs())
-
-        search8.totalHits mustBe 2
-
-        directory.close()
       }
-    }*/
+
+      "find 1 document for [168,179,-34,-47]" in {
+        withLuceneService { service =>
+          val result = service.query("*:*", Some("ENVELOPE(168, 179,-34,-47)"))
+          println(result.map(_.fileIdentifier))
+          result.size mustBe 1
+          result.head.fileIdentifier mustBe "294f127b-addb-24d8-0df1-f014032dcd02"
+        }
+      }
+
+      "find 2 documents for [166,-176,-34,-48]" in {
+        withLuceneService { service =>
+          val result = service.query("*:*", Some("ENVELOPE(166,-176,-34,-48)"))
+          println(result.map(_.fileIdentifier))
+          result.size mustBe 2
+          result.head.fileIdentifier mustBe "23bdd7a3-fd21-daf1-7825-0d3bdc256f9d"
+        }
+      }
+    }
+
+    "find correct entries for date ranges" should {
+      "find 2 documents for 2015-01-15" in {
+        withLuceneService { service =>
+          val fromDate = LocalDate.of(2015, 1, 15)
+          val toDate = LocalDate.of(2015, 1, 15)
+          val result = service.query("*:*", None, Some(fromDate), Some(toDate))
+          result.size mustBe 2
+          result.map(_.fileIdentifier).contains("0326a6b1-c163-405b-a3c7-9136ab4f4807") mustBe true
+          result.map(_.fileIdentifier).contains("4A467BBC-E7BA-4A98-AD9E-58A781041913") mustBe true
+        }
+      }
+
+      "find 3 documents for 2015-01-15 to 2015-04-08" in {
+        withLuceneService { service =>
+          val fromDate = LocalDate.of(2015, 1, 15)
+          val toDate = LocalDate.of(2015, 4, 8)
+          val result = service.query("*:*", None, Some(fromDate), Some(toDate))
+          result.size mustBe 3
+          result.map(_.fileIdentifier).contains("0326a6b1-c163-405b-a3c7-9136ab4f4807") mustBe true
+          result.map(_.fileIdentifier).contains("4A467BBC-E7BA-4A98-AD9E-58A781041913") mustBe true
+          result.map(_.fileIdentifier).contains("294f127b-addb-24d8-0df1-f014032dcd02") mustBe true
+        }
+      }
+
+      "find 1 document for None to 2012-12-20" in {
+        withLuceneService { service =>
+          val toDate = LocalDate.of(2012, 12, 20)
+          val result = service.query("*:*", None, None, Some(toDate))
+          result.size mustBe 1
+          result.head.fileIdentifier mustBe "23bdd7a3-fd21-daf1-7825-0d3bdc256f9d"
+        }
+      }
+
+      "find 1 document for 2015-04-08 to None" in {
+        withLuceneService { service =>
+          val fromDate = LocalDate.of(2015, 4, 8)
+          val result = service.query("*:*", None, Some(fromDate), None)
+          result.size mustBe 1
+          result.head.fileIdentifier mustBe "294f127b-addb-24d8-0df1-f014032dcd02"
+        }
+      }
+    }
+  }
 }

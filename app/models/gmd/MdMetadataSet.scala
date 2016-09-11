@@ -23,13 +23,17 @@ import java.time._
 import java.time.format._
 import java.util
 
-import org.apache.lucene.document.{Document, Field, LongPoint, TextField}
+import org.apache.lucene.document._
 import org.apache.lucene.spatial.bbox.BBoxStrategy
+import org.apache.lucene.spatial.geopoint.document.GeoPointField
+import org.apache.lucene.spatial.prefix.RecursivePrefixTreeStrategy
+import org.apache.lucene.spatial.prefix.tree.{GeohashPrefixTree, SpatialPrefixTreeFactory}
 import org.locationtech.spatial4j.context.SpatialContext
 import org.locationtech.spatial4j.io.ShapeIO
 import org.locationtech.spatial4j.shape.{Rectangle, ShapeCollection}
 import play.api.libs.json.{JsObject, _}
 import utils.ClassnameLogger
+import utils.StringUtils._
 
 import scala.xml.NodeSeq
 
@@ -37,17 +41,17 @@ import scala.xml.NodeSeq
   * Holds a subset of MDMetadata
   *
   * @param fileIdentifier the unique file identifier of the record
-  * @param dateStamp a datestamp of the record
-  * @param title title of the record
-  * @param abstrakt abstract of the record
-  * @param keywords list of keywords for the record
-  * @param topicCategory list of ISO/ANZLIC topic categories of the record
-  * @param contactName contact name for the record or dataset
-  * @param contactOrg cantact organisation for the record or dataset
-  * @param contactEmail contact email for the record or dataset
-  * @param license licenses for the record or dataset
-  * @param bbox bbox of the record
-  * @param origin origin i.e. source catalogue where the record was loaded from
+  * @param dateStamp      a datestamp of the record
+  * @param title          title of the record
+  * @param abstrakt       abstract of the record
+  * @param keywords       list of keywords for the record
+  * @param topicCategory  list of ISO/ANZLIC topic categories of the record
+  * @param contactName    contact name for the record or dataset
+  * @param contactOrg     cantact organisation for the record or dataset
+  * @param contactEmail   contact email for the record or dataset
+  * @param license        licenses for the record or dataset
+  * @param bbox           bbox of the record
+  * @param origin         origin i.e. source catalogue where the record was loaded from
   */
 case class MdMetadataSet(fileIdentifier: String,
                          dateStamp: LocalDate,
@@ -63,7 +67,7 @@ case class MdMetadataSet(fileIdentifier: String,
                          origin: String) extends ClassnameLogger {
   require(!fileIdentifier.trim.isEmpty, "FileIdentifier was empty")
 
-  override def toString : String = {
+  override def toString: String = {
     f"""MdMetadataSet(
         |$fileIdentifier,
         |${dateStampAsIsoString},
@@ -106,48 +110,45 @@ case class MdMetadataSet(fileIdentifier: String,
     * @return LuceneDocument for index
     */
   def asLuceneDocument(): Document = {
-    val ctx = SpatialContext.GEO
     val doc = new Document()
 
-    val longDate = dateStamp.toEpochDay
-    val dateField = new LongPoint("dateStampCompare", 1)
-    dateField.setLongValue(longDate)
-    doc.add(dateField)
+    doc.add(new TextField("fileIdentifier", fileIdentifier, Field.Store.YES))
+    doc.add(new TextField("title", title, Field.Store.YES))
+    doc.add(new TextField("abstrakt", abstrakt, Field.Store.YES))
+    doc.add(new TextField("dateStampText", dateStampAsIsoString, Field.Store.YES))
 
-    val bboxStrategy: BBoxStrategy = BBoxStrategy.newInstance(ctx, "bboxStrategy")
+    val longDate = dateStamp.toEpochDay
+    doc.add(new LongPoint("dateStamp", longDate))
+
+    //TODO SR normally one would store this as multiple values on the same fieldname
+    doc.add(new TextField("keywords", keywords.mkString(" "), Field.Store.YES))
+    doc.add(new TextField("topicCategory", topicCategory.mkString(" "), Field.Store.YES))
+
+    doc.add(new TextField("contactName", contactName, Field.Store.YES))
+    doc.add(new TextField("contactOrg", contactOrg, Field.Store.YES))
+    doc.add(new TextField("contactEmail", contactEmail, Field.Store.YES))
+    doc.add(new TextField("license", license, Field.Store.YES))
+
+    doc.add(new TextField("bboxText", bboxAsWkt, Field.Store.YES))
+
+    val ctx = SpatialContext.GEO
+    val bboxStrategy: BBoxStrategy = BBoxStrategy.newInstance(ctx, "bbox")
     val bboxFields = bboxStrategy.createIndexableFields(bbox)
     bboxFields.foreach(field => doc.add(field))
 
-    doc.add(new Field("fileIdentifier", fileIdentifier, TextField.TYPE_STORED))
-    doc.add(new Field("title", title, TextField.TYPE_STORED))
-    doc.add(new Field("abstrakt", abstrakt, TextField.TYPE_STORED))
-    // Range Query for Date as Long value, this field is to recreate the date object
-    doc.add(new Field("dateStampText", dateStampAsIsoString, TextField.TYPE_STORED))
-    doc.add(new Field("keywords", keywords.mkString(" "), TextField.TYPE_STORED))
-    doc.add(new Field("topicCategory", topicCategory.mkString(" "), TextField.TYPE_STORED))
-    doc.add(new Field("contactName", contactName, TextField.TYPE_STORED))
-    doc.add(new Field("contactOrg", contactOrg, TextField.TYPE_STORED))
-    doc.add(new Field("contactEmail", contactEmail, TextField.TYPE_STORED))
-    doc.add(new Field("license", license, TextField.TYPE_STORED))
-    // Bbox Query on spatial index, this textfield is to recreate the geometry
-    doc.add(new Field("bboxText", bboxAsWkt, TextField.TYPE_STORED))
-    doc.add(new Field("origin", origin, TextField.TYPE_STORED))
+    doc.add(new StringField("origin", origin, Field.Store.YES))
 
     //FIXME decide if use catch_all field or how to build a query that queries all fields
-    doc.add(new Field("catch_all", fileIdentifier, TextField.TYPE_STORED))
-    doc.add(new Field("catch_all", title, TextField.TYPE_STORED))
-    doc.add(new Field("catch_all", abstrakt, TextField.TYPE_STORED))
-    // Range Query for Date as Long value, this field is to recreate the date object
-    doc.add(new Field("catch_all", dateStampAsIsoString, TextField.TYPE_STORED))
-    doc.add(new Field("catch_all", keywords.mkString(" "), TextField.TYPE_STORED))
-    doc.add(new Field("catch_all", topicCategory.mkString(" "), TextField.TYPE_STORED))
-    doc.add(new Field("catch_all", contactName, TextField.TYPE_STORED))
-    doc.add(new Field("catch_all", contactOrg, TextField.TYPE_STORED))
-    doc.add(new Field("catch_all", contactEmail, TextField.TYPE_STORED))
-    doc.add(new Field("catch_all", license, TextField.TYPE_STORED))
-    // Bbox Query on spatial index, this textfield is to recreate the geometry
-    doc.add(new Field("catch_all", bboxAsWkt, TextField.TYPE_STORED))
-    doc.add(new Field("catch_all", origin, TextField.TYPE_STORED))
+    doc.add(new TextField("catch_all", fileIdentifier, Field.Store.YES))
+    doc.add(new TextField("catch_all", title, Field.Store.YES))
+    doc.add(new TextField("catch_all", abstrakt, Field.Store.YES))
+    doc.add(new TextField("catch_all", keywords.mkString(" "), Field.Store.YES))
+    doc.add(new TextField("catch_all", topicCategory.mkString(" "), Field.Store.YES))
+    doc.add(new TextField("catch_all", contactName, Field.Store.YES))
+    doc.add(new TextField("catch_all", contactOrg, Field.Store.YES))
+    doc.add(new TextField("catch_all", contactEmail, Field.Store.YES))
+    doc.add(new TextField("catch_all", license, Field.Store.YES))
+    doc.add(new TextField("catch_all", origin, Field.Store.YES))
 
     doc
   }
@@ -378,7 +379,7 @@ object MdMetadataSet extends ClassnameLogger {
     * @param west most western value / maxY
     * @return tuple of viable coordinates in WSG84
     */
-  def pruneLongitudeValues(east: Double, west: Double) : (Double, Double) = {
+  def pruneLongitudeValues(east: Double, west: Double): (Double, Double) = {
     val x1 = east match {
       case n: Double if (n < minLon) => {
         logger.warn(f"cutting east value: $east to $minLon")
@@ -417,9 +418,7 @@ object MdMetadataSet extends ClassnameLogger {
     * @param north most northern value / maxY
     * @return tuple of viable coordinates in WSG84
     */
-  def pruneLatitudeValues(south: Double, north: Double) : (Double, Double) = {
-
-
+  def pruneLatitudeValues(south: Double, north: Double): (Double, Double) = {
     val x1 = south match {
       case n: Double if (n < minLat) => {
         logger.warn(f"cutting south value: $south to $minLat")
@@ -462,8 +461,8 @@ object MdMetadataSet extends ClassnameLogger {
   /**
     * tries to build a bounding box rectangle as safely as possible from provided coordinates
     *
-    * @param east most eastern value / minX
-    * @param west most western value / maxX
+    * @param east  most eastern value / minX
+    * @param west  most western value / maxX
     * @param south most southern value / minY
     * @param north most northern value / maxY
     * @return the resulting bounding box
@@ -471,7 +470,10 @@ object MdMetadataSet extends ClassnameLogger {
   def bboxFromCoords(east: Double, west: Double, south: Double, north: Double): Rectangle = {
     val (prunedEast, prunedWest) = pruneLongitudeValues(east, west)
     val (prunedSouth, prunedNorth) = pruneLatitudeValues(south, north)
-    ctx.getShapeFactory().rect(prunedEast, prunedWest, prunedSouth, prunedNorth)
+
+    val rect = ctx.getShapeFactory().rect(prunedEast, prunedWest, prunedSouth, prunedNorth)
+    logger.error("PARSED RECT: " + rect.toString)
+    rect
   }
 
   /**
@@ -480,43 +482,12 @@ object MdMetadataSet extends ClassnameLogger {
     * @param envelope the WKT envelope as String
     * @return [[Rectangle]] the bounding box as object
     */
+  //TODO SR move to StringUtils?
   def bboxFromWkt(envelope: String): Rectangle = {
     // https://github.com/locationtech/spatial4j/blob/master/FORMATS.md beware, typo?
     // Rectangle ENVELOPE(1, 2, 4, 3) minX, maxX, maxY, minY)
     // https://github.com/locationtech/spatial4j/blob/master/src/main/java/org/locationtech/spatial4j/io/WKTReader.java#L245
     shpReader.read(envelope).asInstanceOf[Rectangle]
-  }
-
-  /**
-    * FIXME SR this is basically a "Double.from(String, default)".
-    * We should think about creating a project wide helper for this.
-    * Somewhere I had a "String.toInt()" already, that needs the same treatment.
-    *
-    * @param textIn an input string that should be converted to a double value
-    * @param default a default value if the string can't be parsed properly
-    * @return the resulting double value
-    */
-  def extractLatLonNumber(textIn: String, default: Double): Double = {
-    //    if (textIn.isEmpty) { //SR this should end in a NFE and thus is handled below
-    //      default
-    //    }
-    //    else {
-    val parsedDouble = try {
-      Some(textIn.toDouble)
-    }
-    catch {
-      case e: java.lang.NumberFormatException => {
-        logger.warn(f"Bad lat/lon value: $textIn", e)
-        Some(default)
-      }
-      case e: Exception => {
-        //SR we should only catch specific exceptions
-        logger.error(e.getLocalizedMessage, e.getCause)
-        None
-      }
-    }
-    parsedDouble.getOrElse(default)
-    //    }
   }
 
   /**
@@ -533,10 +504,10 @@ object MdMetadataSet extends ClassnameLogger {
       val westText = (bboxXml \\ "geographicElement" \ "EX_GeographicBoundingBox" \ "westBoundLongitude" \ "Decimal").text
       val southText = (bboxXml \\ "geographicElement" \ "EX_GeographicBoundingBox" \ "southBoundLatitude" \ "Decimal").text
       val northText = (bboxXml \\ "geographicElement" \ "EX_GeographicBoundingBox" \ "northBoundLatitude" \ "Decimal").text
-      val east = extractLatLonNumber(eastText, minLon)
-      val west = extractLatLonNumber(westText, maxLon)
-      val south = extractLatLonNumber(southText, minLat)
-      val north = extractLatLonNumber(northText, maxLat)
+      val east = eastText.toDoubleWithDefault(minLon)
+      val west = westText.toDoubleWithDefault(maxLon)
+      val south = southText.toDoubleWithDefault(minLat)
+      val north = northText.toDoubleWithDefault(maxLat)
       // Rectangle rect(double minX, double maxX, double minY, double maxY);
       bboxFromCoords(east, west, south, north)
     }
@@ -560,10 +531,11 @@ object MdMetadataSetWriter extends Writes[MdMetadataSet] with ClassnameLogger {
 
   /**
     * provides the GeoJSON Polygon geometry from the feature's Rectangle bbox
+    *
     * @param gmd MdMetadataSet
     * @return JsValue with GeoJSON Polygon geometry
     */
-  def getJsGeom(gmd: MdMetadataSet) : JsValue = {
+  def getJsGeom(gmd: MdMetadataSet): JsValue = {
     val geometry = jsWriter.toString(gmd.bbox)
     Json.parse(geometry)
   }
@@ -571,7 +543,7 @@ object MdMetadataSetWriter extends Writes[MdMetadataSet] with ClassnameLogger {
   /**
     * Converts [[MdMetadataSet]] object into [[JsObject]] as GeoJSON
     */
-  def writes(gmd: MdMetadataSet) : JsObject = {
+  def writes(gmd: MdMetadataSet): JsObject = {
 
     val properties = Json.obj(
       "fileIdentifier" -> gmd.fileIdentifier,
@@ -620,23 +592,24 @@ object GeoJSONFeatureCollectionWriter extends Writes[List[MdMetadataSet]] with C
     * @param gmdList List [[MdMetadataSet]]
     * @return JsArray MdMetadataSet
     */
-  def getArrayOfFeatures(gmdList: List[MdMetadataSet]) : JsValue = {
-    val jsList = gmdList.map( gmd => Json.toJson(gmd))
+  def getArrayOfFeatures(gmdList: List[MdMetadataSet]): JsValue = {
+    val jsList = gmdList.map(gmd => Json.toJson(gmd))
     Json.toJson(jsList)
   }
 
   /**
     * computes the overall bounding box for the featurecollection
+    *
     * @param gmdList List [[MdMetadataSet]]
     * @return JsArray with 4 bbox double values (e, w, s, n)
     */
-  def getBoundingBox(gmdList: List[MdMetadataSet]) : JsValue = {
+  def getBoundingBox(gmdList: List[MdMetadataSet]): JsValue = {
     import collection.JavaConverters._
     import collection.mutable._
 
     logger.debug(f"gmdList.size() ${gmdList.size}")
 
-    val shapeBuffer : scala.collection.mutable.Buffer[Rectangle] = Buffer[Rectangle]()
+    val shapeBuffer: scala.collection.mutable.Buffer[Rectangle] = Buffer[Rectangle]()
     gmdList.foreach(gmd =>
       shapeBuffer.append(gmd.bbox)
     )
@@ -651,10 +624,11 @@ object GeoJSONFeatureCollectionWriter extends Writes[List[MdMetadataSet]] with C
     logger.debug(f"shapeCollection.size() ${shapeCollection.size}")
 
     val envelope = if (shapeCollection.size > 0) {
-      shapeCollection.getBoundingBox
-    } else {
-      WORLD
-    }
+                     shapeCollection.getBoundingBox
+                   }
+                   else {
+                     WORLD
+                   }
 
     Json.arr(
       JsNumber(envelope.getMinX),
@@ -680,7 +654,8 @@ object GeoJSONFeatureCollectionWriter extends Writes[List[MdMetadataSet]] with C
         "count" -> gmdList.size,
         "features" -> getArrayOfFeatures(gmdList)
       )
-    } else  {
+    }
+    else {
       Json.obj("type" -> "FeatureCollection",
         "crs" -> Json.obj(
           "type" -> "name",

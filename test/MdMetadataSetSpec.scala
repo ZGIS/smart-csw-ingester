@@ -104,7 +104,7 @@ class MdMetadataSetSpec extends PlaySpec {
       parsedElement.contactName mustEqual ("omit, Omit")
       parsedElement.contactOrg mustEqual ("LINZ - Land Information New Zealand, LINZ - Land Information New Zealand, ANZLIC the Spatial Information Council")
       parsedElement.contactEmail mustEqual ("info@linz.govt.nz, info@linz.govt.nz")
-      parsedElement.license must endWith("Released under Creative Commons By")
+      parsedElement.license must endWith ("Released under Creative Commons By")
       parsedElement.bbox mustEqual (ctx.getShapeFactory.rect(178.548442791, 168.360399911, -46.6603664299,
         -34.1537940929))
       parsedElement.origin mustEqual "linz"
