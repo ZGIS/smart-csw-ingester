@@ -143,7 +143,6 @@ class MdMetadataSetSpec extends PlaySpec {
       east mustBe -180
 
       val mirrorWorld = ctx.getShapeFactory().rect(180, -180, -90.0, 90.0)
-      println(f"spatial4j rect normalised: ${mirrorWorld.toString}")
 
       MdMetadataSet.bboxFromCoords(180, -180, -90.0, 90.0) mustEqual mirrorWorld
     }
@@ -155,7 +154,6 @@ class MdMetadataSetSpec extends PlaySpec {
       prunedEast mustEqual -176.176448433
 
       val dateWrapped = ctx.getShapeFactory().rect(166.6899599, -176.176448433, -90.0, 90.0)
-      println(f"spatial4j rect normalised: ${dateWrapped.toString}")
 
       MdMetadataSet.bboxFromCoords(166.6899599, -176.176448433, -90.0, 90.0) mustEqual dateWrapped
     }

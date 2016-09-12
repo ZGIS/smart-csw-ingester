@@ -277,6 +277,8 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
     searcherManager.maybeRefreshBlocking()
     val isearcher = searcherManager.acquire()
 
+    // TODO TBD AK The way you built it, could omit dates or BBOX query constraint in this
+    // this builder if not provided through query params (but particularly date should NOT be limited to 1970 to now?)
     val booleanQueryBuilder = new BooleanQuery.Builder()
     booleanQueryBuilder.add(textQuery, BooleanClause.Occur.MUST)
     booleanQueryBuilder.add(dateQuery, BooleanClause.Occur.MUST)
