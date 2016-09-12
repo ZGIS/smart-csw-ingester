@@ -182,7 +182,6 @@ class LuceneSpec extends PlaySpec with WithLuceneService {
       "find 1 document for [168,179,-34,-47]" in {
         withLuceneService { service =>
           val result = service.query("*:*", Some("ENVELOPE(168, 179,-34,-47)"))
-          println(result.map(_.fileIdentifier))
           result.size mustBe 1
           result.head.fileIdentifier mustBe "294f127b-addb-24d8-0df1-f014032dcd02"
         }
@@ -191,7 +190,6 @@ class LuceneSpec extends PlaySpec with WithLuceneService {
       "find 2 documents for [166,-176,-34,-48]" in {
         withLuceneService { service =>
           val result = service.query("*:*", Some("ENVELOPE(166,-176,-34,-48)"))
-          println(result.map(_.fileIdentifier))
           result.size mustBe 2
           result.head.fileIdentifier mustBe "23bdd7a3-fd21-daf1-7825-0d3bdc256f9d"
         }

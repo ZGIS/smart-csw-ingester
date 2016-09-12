@@ -128,13 +128,14 @@ class MdMetadataSetSpec extends PlaySpec {
 
     // east: Double, west: Double, south: Double, north: Double
     "cut too large coordinates into WORLD bounding box" in {
-
       MdMetadataSet.bboxFromCoords(-190.0, 180.0, -90.0, 90.0) mustEqual world
       MdMetadataSet.bboxFromCoords(-180.0, 190.0, -90.0, 90.0) mustEqual world
       MdMetadataSet.bboxFromCoords(-180.0, 180.0, -95.0, 90.0) mustEqual world
       MdMetadataSet.bboxFromCoords(-180.0, 180.0, -90.0, 95.0) mustEqual world
-      MdMetadataSet.bboxFromCoords(-180.0, 180.0, 90.0, -90.0) mustEqual world
+    }
 
+    "switch north / south to correct order " in {
+      MdMetadataSet.bboxFromCoords(-180.0, 180.0, 90.0, -90.0) mustEqual world
     }
 
     "handle zero width longitude edge cases" in {

@@ -25,9 +25,6 @@ import java.util
 
 import org.apache.lucene.document._
 import org.apache.lucene.spatial.bbox.BBoxStrategy
-import org.apache.lucene.spatial.geopoint.document.GeoPointField
-import org.apache.lucene.spatial.prefix.RecursivePrefixTreeStrategy
-import org.apache.lucene.spatial.prefix.tree.{GeohashPrefixTree, SpatialPrefixTreeFactory}
 import org.locationtech.spatial4j.context.SpatialContext
 import org.locationtech.spatial4j.io.ShapeIO
 import org.locationtech.spatial4j.shape.{Rectangle, ShapeCollection}
@@ -382,35 +379,18 @@ object MdMetadataSet extends ClassnameLogger {
     * @return tuple of viable coordinates in WSG84
     */
   def pruneLongitudeValues(west: Double, east: Double): (Double, Double) = {
-    val x1 = west match {
-      case n: Double if (n < minLon) => {
-        logger.warn(f"cutting west value: $west to $minLon")
-        minLon
+    val result = List(west, east).map({ (value: Double) =>
+      value match {
+        case n if (math.abs(n) - 180) > 0 => {
+          //if val > 180 (outside geo box)
+          val result = math.signum(n) * 180 //cut it down to +/-180
+          logger.warn(f"cutting value: $n to $result")
+          result
+        }
+        case _ => value
       }
-      case n: Double if (n > maxLon) => {
-        logger.warn(f"cutting west value: $west to $maxLon")
-        maxLon
-      }
-      case _ => {
-        // if all good then return value
-        west
-      }
-    }
-    val x2 = east match {
-      case n: Double if (n < minLon) => {
-        logger.warn(f"cutting east value: $east to $minLon")
-        minLon
-      }
-      case n: Double if (n > maxLon) => {
-        logger.warn(f"cutting east value: $east to $maxLon")
-        maxLon
-      }
-      case _ => {
-        // if all good then return value
-        east
-      }
-    }
-    (x1, x2)
+    })
+    (result(0), result(1))
   }
 
   /**
@@ -421,43 +401,24 @@ object MdMetadataSet extends ClassnameLogger {
     * @return tuple of viable coordinates in WSG84
     */
   def pruneLatitudeValues(south: Double, north: Double): (Double, Double) = {
-    val x1 = south match {
-      case n: Double if (n < minLat) => {
-        logger.warn(f"cutting south value: $south to $minLat")
-        minLat
+    val result = List(south, north).map({ (value: Double) =>
+      value match {
+        case n if (math.abs(n) - 90) > 0 => {
+          //if val > 90 (outside geo box)
+          val result = math.signum(n) * 90 //cut it down to +/-90
+          logger.warn(f"cutting value: $n to $result")
+          result
+        }
+        case _ => value
       }
-      case n: Double if (n > maxLat) => {
-        logger.warn(f"cutting south value: $south to $maxLat")
-        maxLat
-      }
-      case n: Double if (n > north) => {
-        logger.warn(f"switching south value: $south to $north")
-        north
-      }
-      case _ => {
-        // if all good then return value
-        south
-      }
+    })
+    if (result(0) > result(1)) {
+      logger.warn(s"South ${result(0)} was bigger than North(${result(1)}). Swapping.")
+      (result(1), result(0))
     }
-    val x2 = north match {
-      case n: Double if (n < minLat) => {
-        logger.warn(f"cutting north value: $north to $minLat")
-        minLat
-      }
-      case n: Double if (n > maxLat) => {
-        logger.warn(f"cutting north value: $north to $maxLat")
-        maxLat
-      }
-      case n: Double if (n < south) => {
-        logger.warn(f"switching north value: $north to $south")
-        south
-      }
-      case _ => {
-        // if all good then return value
-        north
-      }
+    else {
+      (result(0), result(1))
     }
-    (x1, x2)
   }
 
   /**
@@ -476,7 +437,7 @@ object MdMetadataSet extends ClassnameLogger {
     val (prunedSouth, prunedNorth) = pruneLatitudeValues(south, north)
 
     val rect = ctx.getShapeFactory().rect(prunedWest, prunedEast, prunedSouth, prunedNorth)
-    logger.error("PARSED RECT: " + rect.toString)
+    logger.debug("PARSED RECT: " + rect.toString)
     rect
   }
 
@@ -628,8 +589,8 @@ object GeoJSONFeatureCollectionWriter extends Writes[List[MdMetadataSet]] with C
     logger.debug(f"shapeCollection.size() ${shapeCollection.size}")
 
     val envelope = if (shapeCollection.size > 0) {
-                     shapeCollection.getBoundingBox
-                   }
+      shapeCollection.getBoundingBox
+    }
                    else {
                      WORLD
                    }
