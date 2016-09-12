@@ -105,7 +105,7 @@ class MdMetadataSetSpec extends PlaySpec {
       parsedElement.contactOrg mustEqual ("LINZ - Land Information New Zealand, LINZ - Land Information New Zealand, ANZLIC the Spatial Information Council")
       parsedElement.contactEmail mustEqual ("info@linz.govt.nz, info@linz.govt.nz")
       parsedElement.license must endWith ("Released under Creative Commons By")
-      parsedElement.bbox mustEqual (ctx.getShapeFactory.rect(178.548442791, 168.360399911, -46.6603664299,
+      parsedElement.bbox mustEqual (ctx.getShapeFactory.rect(168.360399911, 178.548442791, -46.6603664299,
         -34.1537940929))
       parsedElement.origin mustEqual "linz"
     }
@@ -129,10 +129,6 @@ class MdMetadataSetSpec extends PlaySpec {
     // east: Double, west: Double, south: Double, north: Double
     "cut too large coordinates into WORLD bounding box" in {
 
-      val (prunedEast, prunedWest) = MdMetadataSet.pruneLongitudeValues(-176.176448433, 166.6899599)
-      prunedEast mustEqual -176.176448433
-      prunedWest mustEqual 166.6899599
-
       MdMetadataSet.bboxFromCoords(-190.0, 180.0, -90.0, 90.0) mustEqual world
       MdMetadataSet.bboxFromCoords(-180.0, 190.0, -90.0, 90.0) mustEqual world
       MdMetadataSet.bboxFromCoords(-180.0, 180.0, -95.0, 90.0) mustEqual world
@@ -141,21 +137,27 @@ class MdMetadataSetSpec extends PlaySpec {
 
     }
 
-    @Ignore def `test: ignore or reshape zero width longitude edge cases`: Unit = {
-      val (east, west) = MdMetadataSet.pruneLongitudeValues(180, -180)
-      east mustBe 180
-      west mustBe -180
-
-      /*
-       east: Double, west: Double, south: Double, north: Double
-       this: (180,-180,-47,-34), and we do bboxFromCoords(east, west, south, north) ->
-         Rect(minX=-180.0,maxX=-180.0,minY=-90.0,maxY=90.0)
-      */
+    "handle zero width longitude edge cases" in {
+      val (west, east) = MdMetadataSet.pruneLongitudeValues(180, -180)
+      west mustBe 180
+      east mustBe -180
 
       val mirrorWorld = ctx.getShapeFactory().rect(180, -180, -90.0, 90.0)
       println(f"spatial4j rect normalised: ${mirrorWorld.toString}")
 
-      MdMetadataSet.bboxFromCoords(180, -180, -90.0, 90.0) mustEqual world
+      MdMetadataSet.bboxFromCoords(180, -180, -90.0, 90.0) mustEqual mirrorWorld
+    }
+
+    "handle reversed / date line wrap longitude cases" in {
+
+      val (prunedWest, prunedEast) = MdMetadataSet.pruneLongitudeValues(166.6899599, -176.176448433)
+      prunedWest mustEqual 166.6899599
+      prunedEast mustEqual -176.176448433
+
+      val dateWrapped = ctx.getShapeFactory().rect(166.6899599, -176.176448433, -90.0, 90.0)
+      println(f"spatial4j rect normalised: ${dateWrapped.toString}")
+
+      MdMetadataSet.bboxFromCoords(166.6899599, -176.176448433, -90.0, 90.0) mustEqual dateWrapped
     }
   }
 
@@ -267,25 +269,25 @@ class MdMetadataSetSpec extends PlaySpec {
 
       // rect builder method is logical
       // Rectangle rect(double minX, double maxX, double minY, double maxY);
-      val bbox1 = ctx.getShapeFactory().rect(-176.176448433, 166.6899599, -47.1549297167, -34.4322590833)
+      val bbox1 = ctx.getShapeFactory().rect(166.6899599, 176.176448433, -47.1549297167, -34.4322590833)
 
-      val (prunedEast, prunedWest) = MdMetadataSet.pruneLongitudeValues(-176.176448433, 166.6899599)
+      val (prunedWest, prunedEast) = MdMetadataSet.pruneLongitudeValues(166.6899599, 176.176448433)
       val (prunedSouth, prunedNorth) = MdMetadataSet.pruneLatitudeValues(-47.1549297167, -34.4322590833)
 
-      prunedEast mustEqual -176.176448433
       prunedWest mustEqual 166.6899599
+      prunedEast mustEqual 176.176448433
       prunedSouth mustEqual -47.1549297167
       prunedNorth mustEqual -34.4322590833
 
-      val bbox2 = MdMetadataSet.bboxFromCoords(-176.176448433, 166.6899599, -47.1549297167, -34.4322590833)
+      val bbox2 = MdMetadataSet.bboxFromCoords(166.6899599, 176.176448433, -47.1549297167, -34.4322590833)
       bbox2 mustEqual bbox1
 
-      // funny that this works without crashing -> DateLineWrap
+      // DateLineWrap
       val bbox3 = ctx.getShapeFactory().rect(166.6899599, -176.176448433, -47.1549297167, -34.4322590833)
 
-      // good to know that this doesn't work
+      // PoleWrap doesn't work, South always mist be smaller than North
       val thrown = the[org.locationtech.spatial4j.exception.InvalidShapeException] thrownBy
-        ctx.getShapeFactory().rect(-176.176448433, 166.6899599, -34.4322590833, -47.1549297167)
+        ctx.getShapeFactory().rect(166.6899599, 176.176448433, -34.4322590833, -47.1549297167)
       thrown.getMessage mustBe ("maxY must be >= minY: -34.4322590833 to -47.1549297167")
     }
   }

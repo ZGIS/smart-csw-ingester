@@ -374,27 +374,15 @@ object MdMetadataSet extends ClassnameLogger {
   /**
     * tries to naively prune the provided coordinates into good shape for WSG84
     * TODO DATE Line Wraps :-( ?
+    * Rectangle rect(double minX, double maxX, double minY, double maxY);
+    * bboxFromCoords(west, east, south, north)
     *
-    * @param east most eastern value / minY
-    * @param west most western value / maxY
+    * @param west most western value / minY
+    * @param east most eastern value / maxY
     * @return tuple of viable coordinates in WSG84
     */
-  def pruneLongitudeValues(east: Double, west: Double): (Double, Double) = {
-    val x1 = east match {
-      case n: Double if (n < minLon) => {
-        logger.warn(f"cutting east value: $east to $minLon")
-        minLon
-      }
-      case n: Double if (n > maxLon) => {
-        logger.warn(f"cutting east value: $east to $maxLon")
-        maxLon
-      }
-      case _ => {
-        // if all good then return value
-        east
-      }
-    }
-    val x2 = west match {
+  def pruneLongitudeValues(west: Double, east: Double): (Double, Double) = {
+    val x1 = west match {
       case n: Double if (n < minLon) => {
         logger.warn(f"cutting west value: $west to $minLon")
         minLon
@@ -406,6 +394,20 @@ object MdMetadataSet extends ClassnameLogger {
       case _ => {
         // if all good then return value
         west
+      }
+    }
+    val x2 = east match {
+      case n: Double if (n < minLon) => {
+        logger.warn(f"cutting east value: $east to $minLon")
+        minLon
+      }
+      case n: Double if (n > maxLon) => {
+        logger.warn(f"cutting east value: $east to $maxLon")
+        maxLon
+      }
+      case _ => {
+        // if all good then return value
+        east
       }
     }
     (x1, x2)
@@ -460,18 +462,20 @@ object MdMetadataSet extends ClassnameLogger {
 
   /**
     * tries to build a bounding box rectangle as safely as possible from provided coordinates
+    * Rectangle rect(double minX, double maxX, double minY, double maxY);
+    * bboxFromCoords(west, east, south, north)
     *
-    * @param east  most eastern value / minX
-    * @param west  most western value / maxX
+    * @param west  most western value / minX
+    * @param east  most eastern value / maxX
     * @param south most southern value / minY
     * @param north most northern value / maxY
     * @return the resulting bounding box
     */
-  def bboxFromCoords(east: Double, west: Double, south: Double, north: Double): Rectangle = {
-    val (prunedEast, prunedWest) = pruneLongitudeValues(east, west)
+  def bboxFromCoords(west: Double, east: Double, south: Double, north: Double): Rectangle = {
+    val (prunedWest, prunedEast) = pruneLongitudeValues(west, east)
     val (prunedSouth, prunedNorth) = pruneLatitudeValues(south, north)
 
-    val rect = ctx.getShapeFactory().rect(prunedEast, prunedWest, prunedSouth, prunedNorth)
+    val rect = ctx.getShapeFactory().rect(prunedWest, prunedEast, prunedSouth, prunedNorth)
     logger.error("PARSED RECT: " + rect.toString)
     rect
   }
@@ -500,16 +504,16 @@ object MdMetadataSet extends ClassnameLogger {
     val bboxXml = (nodeSeq \\ "extent" \ "EX_Extent")
     logger.trace(f"bboxFromXml: ${bboxXml}")
     if (bboxXml.size == 1) {
-      val eastText = (bboxXml \\ "geographicElement" \ "EX_GeographicBoundingBox" \ "eastBoundLongitude" \ "Decimal").text
       val westText = (bboxXml \\ "geographicElement" \ "EX_GeographicBoundingBox" \ "westBoundLongitude" \ "Decimal").text
+      val eastText = (bboxXml \\ "geographicElement" \ "EX_GeographicBoundingBox" \ "eastBoundLongitude" \ "Decimal").text
       val southText = (bboxXml \\ "geographicElement" \ "EX_GeographicBoundingBox" \ "southBoundLatitude" \ "Decimal").text
       val northText = (bboxXml \\ "geographicElement" \ "EX_GeographicBoundingBox" \ "northBoundLatitude" \ "Decimal").text
-      val east = eastText.toDoubleWithDefault(minLon)
-      val west = westText.toDoubleWithDefault(maxLon)
+      val west = westText.toDoubleWithDefault(minLon)
+      val east = eastText.toDoubleWithDefault(maxLon)
       val south = southText.toDoubleWithDefault(minLat)
       val north = northText.toDoubleWithDefault(maxLat)
       // Rectangle rect(double minX, double maxX, double minY, double maxY);
-      bboxFromCoords(east, west, south, north)
+      bboxFromCoords(west, east, south, north)
     }
     else {
       logger.warn(f"${(nodeSeq \\ "fileIdentifier" \ "CharacterString").text} has no BBOX")
