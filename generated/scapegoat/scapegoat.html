@@ -61,7 +61,7 @@
         Warnings
         16
         Infos
-        19
+        21
       </h3><div class="warning">
           <div class="source">
             .home.travis.build.ZGIS.smart-csw-ingester.app.controllers.QueryController.scala:53
@@ -86,7 +86,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:494
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:455
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -97,7 +97,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:186
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:183
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -110,7 +110,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:284
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:281
           </div>
           <div class="title">
             <span class="label label-info">Info</span>
@@ -121,7 +121,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:285
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:282
           </div>
           <div class="title">
             <span class="label label-info">Info</span>
@@ -132,7 +132,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:614
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:575
           </div>
           <div class="title">
             <span class="label label-info">Info</span>
@@ -143,7 +143,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:649
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:610
           </div>
           <div class="title">
             <span class="label label-info">Info</span>
@@ -154,7 +154,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:658
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:619
           </div>
           <div class="title">
             <span class="label label-info">Info</span>
@@ -165,7 +165,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:277
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:274
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -176,7 +176,49 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:187
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:382
+          </div>
+          <div class="title">
+            <span class="label label-info">Info</span>
+            &nbsp;Match instead of partial function
+            &nbsp;<span class="inspection">com.sksamuel.scapegoat.inspections.matching.PartialFunctionInsteadOfMatch</span>
+          </div><div class="snippet">
+                  A map match can be replaced with a partial function for greater readability: immutable.this.List.apply[Double](west, east).map[Double, List[Double]](((value: Double) =&gt; value match {
+  case (n @ _) if scala.math.`package`.abs(n).-(180).&gt;(0) =&gt; {
+    val result: Double = scala.math.`package`.signum(n).*(180);
+    MdMetadataSet.this.logger.warn(({
+      val arg$macro$22: Any = n;
+      val arg$macro$23: Any = result;
+      new scala.collection.immutable.StringOps(&quot;cutting value: %s to %s&quot;).format(arg$macro$22, arg$macro$23)
+    }: String));
+    result
+  }
+  case _ =&gt; value
+                </div>
+        </div><div class="warning">
+          <div class="source">
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:404
+          </div>
+          <div class="title">
+            <span class="label label-info">Info</span>
+            &nbsp;Match instead of partial function
+            &nbsp;<span class="inspection">com.sksamuel.scapegoat.inspections.matching.PartialFunctionInsteadOfMatch</span>
+          </div><div class="snippet">
+                  A map match can be replaced with a partial function for greater readability: immutable.this.List.apply[Double](south, north).map[Double, List[Double]](((value: Double) =&gt; value match {
+  case (n @ _) if scala.math.`package`.abs(n).-(90).&gt;(0) =&gt; {
+    val result: Double = scala.math.`package`.signum(n).*(90);
+    MdMetadataSet.this.logger.warn(({
+      val arg$macro$24: Any = n;
+      val arg$macro$25: Any = result;
+      new scala.collection.immutable.StringOps(&quot;cutting value: %s to %s&quot;).format(arg$macro$24, arg$macro$25)
+    }: String));
+    result
+  }
+  case _ =&gt; value
+                </div>
+        </div><div class="warning">
+          <div class="source">
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:184
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -187,7 +229,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:204
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:201
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -198,7 +240,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:287
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:284
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -229,8 +271,8 @@
           </div><div class="snippet">
                   .filter(_.isDefined).map(_.get) can be replaced with flatten: cswGetRecordsResponses.flatMap[Option[models.gmd.MdMetadataSet], List[Option[models.gmd.MdMetadataSet]]](((cswGetRecordsResponse: models.csw.CswGetRecordsResponse) =&gt; cswGetRecordsResponse.xml.\\(&quot;MD_Metadata&quot;).map[Option[models.gmd.MdMetadataSet], scala.collection.immutable.Seq[Option[models.gmd.MdMetadataSet]]](((mdMetadataNode: scala.xml.Node) =&gt; {
   LuceneService.this.logger.debug(({
-    val arg$macro$62: Any = catalogueName;
-    val arg$macro$63: Any = mdMetadataNode.\(&quot;fileIdentifier&quot;).\(&quot;
+    val arg$macro$46: Any = catalogueName;
+    val arg$macro$47: Any = mdMetadataNode.\(&quot;fileIdentifier&quot;).\(&quot;
                 </div>
         </div><div class="warning">
           <div class="source">
