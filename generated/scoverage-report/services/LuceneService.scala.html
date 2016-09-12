@@ -301,27 +301,29 @@
 </span>277 <span style=''>    </span><span style='background: #AEF1AE'>searcherManager.maybeRefreshBlocking()</span><span style=''>
 </span>278 <span style=''>    val isearcher = </span><span style='background: #AEF1AE'>searcherManager.acquire()</span><span style=''>
 </span>279 <span style=''>
-</span>280 <span style=''>    val booleanQueryBuilder = </span><span style='background: #AEF1AE'>new BooleanQuery.Builder()</span><span style=''>
-</span>281 <span style=''>    </span><span style='background: #AEF1AE'>booleanQueryBuilder.add(textQuery, BooleanClause.Occur.MUST)</span><span style=''>
-</span>282 <span style=''>    </span><span style='background: #AEF1AE'>booleanQueryBuilder.add(dateQuery, BooleanClause.Occur.MUST)</span><span style=''>
-</span>283 <span style=''>    </span><span style='background: #AEF1AE'>booleanQueryBuilder.add(bboxQuery, BooleanClause.Occur.MUST)</span><span style=''>
-</span>284 <span style=''>    val luceneQuery = </span><span style='background: #AEF1AE'>booleanQueryBuilder.build()</span><span style=''>
-</span>285 <span style=''>
-</span>286 <span style=''>    val search = </span><span style='background: #AEF1AE'>isearcher.search(luceneQuery, isearcher.getIndexReader.numDocs())</span><span style=''>
-</span>287 <span style=''>    val scoreDocs = </span><span style='background: #AEF1AE'>search.scoreDocs</span><span style=''>
-</span>288 <span style=''>
-</span>289 <span style=''>    val results = </span><span style='background: #AEF1AE'>scoreDocs.map(scoreDoc => {
-</span>290 <span style=''></span><span style='background: #AEF1AE'>      val doc = isearcher.doc(scoreDoc.doc)
-</span>291 <span style=''></span><span style='background: #AEF1AE'>      MdMetadataSet.fromLuceneDoc(doc)
-</span>292 <span style=''></span><span style='background: #AEF1AE'>    }).toList</span><span style=''>
-</span>293 <span style=''>
-</span>294 <span style=''>    //FIXME SR use ARM --> possible mem leak
-</span>295 <span style=''>    </span><span style='background: #AEF1AE'>searcherManager.release(isearcher)</span><span style=''>
-</span>296 <span style=''>
-</span>297 <span style=''>    results
+</span>280 <span style=''>    // TODO TBD AK The way you built it, could omit dates or BBOX query constraint in this
+</span>281 <span style=''>    // this builder if not provided through query params (but particularly date should NOT be limited to 1970 to now?)
+</span>282 <span style=''>    val booleanQueryBuilder = </span><span style='background: #AEF1AE'>new BooleanQuery.Builder()</span><span style=''>
+</span>283 <span style=''>    </span><span style='background: #AEF1AE'>booleanQueryBuilder.add(textQuery, BooleanClause.Occur.MUST)</span><span style=''>
+</span>284 <span style=''>    </span><span style='background: #AEF1AE'>booleanQueryBuilder.add(dateQuery, BooleanClause.Occur.MUST)</span><span style=''>
+</span>285 <span style=''>    </span><span style='background: #AEF1AE'>booleanQueryBuilder.add(bboxQuery, BooleanClause.Occur.MUST)</span><span style=''>
+</span>286 <span style=''>    val luceneQuery = </span><span style='background: #AEF1AE'>booleanQueryBuilder.build()</span><span style=''>
+</span>287 <span style=''>
+</span>288 <span style=''>    val search = </span><span style='background: #AEF1AE'>isearcher.search(luceneQuery, isearcher.getIndexReader.numDocs())</span><span style=''>
+</span>289 <span style=''>    val scoreDocs = </span><span style='background: #AEF1AE'>search.scoreDocs</span><span style=''>
+</span>290 <span style=''>
+</span>291 <span style=''>    val results = </span><span style='background: #AEF1AE'>scoreDocs.map(scoreDoc => {
+</span>292 <span style=''></span><span style='background: #AEF1AE'>      val doc = isearcher.doc(scoreDoc.doc)
+</span>293 <span style=''></span><span style='background: #AEF1AE'>      MdMetadataSet.fromLuceneDoc(doc)
+</span>294 <span style=''></span><span style='background: #AEF1AE'>    }).toList</span><span style=''>
+</span>295 <span style=''>
+</span>296 <span style=''>    //FIXME SR use ARM --> possible mem leak
+</span>297 <span style=''>    </span><span style='background: #AEF1AE'>searcherManager.release(isearcher)</span><span style=''>
 </span>298 <span style=''>
-</span>299 <span style=''>  }
-</span>300 <span style=''>}
+</span>299 <span style=''>    results
+</span>300 <span style=''>
+</span>301 <span style=''>  }
+</span>302 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -3568,15 +3570,15 @@
         </td>
       </tr><tr>
         <td>
-          280
+          282
         </td>
         <td>
           816
         </td>
         <td>
-          10451
+          10661
           -
-          10477
+          10687
         </td>
         <td>
           Apply
@@ -3589,15 +3591,15 @@
         </td>
       </tr><tr>
         <td>
-          281
+          283
         </td>
         <td>
           817
         </td>
         <td>
-          10482
+          10692
           -
-          10542
+          10752
         </td>
         <td>
           Apply
@@ -3610,15 +3612,15 @@
         </td>
       </tr><tr>
         <td>
-          282
+          284
         </td>
         <td>
           818
         </td>
         <td>
-          10547
+          10757
           -
-          10607
+          10817
         </td>
         <td>
           Apply
@@ -3631,15 +3633,15 @@
         </td>
       </tr><tr>
         <td>
-          283
+          285
         </td>
         <td>
           819
         </td>
         <td>
-          10612
+          10822
           -
-          10672
+          10882
         </td>
         <td>
           Apply
@@ -3652,15 +3654,15 @@
         </td>
       </tr><tr>
         <td>
-          284
+          286
         </td>
         <td>
           820
         </td>
         <td>
-          10695
+          10905
           -
-          10722
+          10932
         </td>
         <td>
           Apply
@@ -3673,15 +3675,15 @@
         </td>
       </tr><tr>
         <td>
-          286
+          288
         </td>
         <td>
           822
         </td>
         <td>
-          10741
+          10951
           -
-          10806
+          11016
         </td>
         <td>
           Apply
@@ -3694,15 +3696,15 @@
         </td>
       </tr><tr>
         <td>
-          286
+          288
         </td>
         <td>
           821
         </td>
         <td>
-          10771
+          10981
           -
-          10805
+          11015
         </td>
         <td>
           Apply
@@ -3715,15 +3717,15 @@
         </td>
       </tr><tr>
         <td>
-          287
+          289
         </td>
         <td>
           823
         </td>
         <td>
-          10827
+          11037
           -
-          10843
+          11053
         </td>
         <td>
           Select
@@ -3736,15 +3738,15 @@
         </td>
       </tr><tr>
         <td>
-          289
+          291
         </td>
         <td>
           828
         </td>
         <td>
-          10863
+          11073
           -
-          10980
+          11190
         </td>
         <td>
           ApplyToImplicitArgs
@@ -3760,15 +3762,15 @@
         </td>
       </tr><tr>
         <td>
-          289
+          291
         </td>
         <td>
           827
         </td>
         <td>
-          10876
+          11086
           -
-          10876
+          11086
         </td>
         <td>
           ApplyToImplicitArgs
@@ -3781,15 +3783,15 @@
         </td>
       </tr><tr>
         <td>
-          290
+          292
         </td>
         <td>
           824
         </td>
         <td>
-          10921
+          11131
           -
-          10933
+          11143
         </td>
         <td>
           Select
@@ -3802,15 +3804,15 @@
         </td>
       </tr><tr>
         <td>
-          290
+          292
         </td>
         <td>
           825
         </td>
         <td>
-          10907
+          11117
           -
-          10934
+          11144
         </td>
         <td>
           Apply
@@ -3823,15 +3825,15 @@
         </td>
       </tr><tr>
         <td>
-          291
+          293
         </td>
         <td>
           826
         </td>
         <td>
-          10941
+          11151
           -
-          10973
+          11183
         </td>
         <td>
           Apply
@@ -3844,15 +3846,15 @@
         </td>
       </tr><tr>
         <td>
-          292
+          294
         </td>
         <td>
           829
         </td>
         <td>
-          10863
+          11073
           -
-          10987
+          11197
         </td>
         <td>
           Select
@@ -3868,15 +3870,15 @@
         </td>
       </tr><tr>
         <td>
-          295
+          297
         </td>
         <td>
           830
         </td>
         <td>
-          11038
+          11248
           -
-          11072
+          11282
         </td>
         <td>
           Apply
