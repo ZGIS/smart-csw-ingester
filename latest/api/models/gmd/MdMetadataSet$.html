@@ -166,7 +166,7 @@
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
     </li><li name="models.gmd.MdMetadataSet#bboxFromCoords" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="bboxFromCoords(east:Double,west:Double,south:Double,north:Double):org.locationtech.spatial4j.shape.Rectangle"></a>
+      <a id="bboxFromCoords(west:Double,east:Double,south:Double,north:Double):org.locationtech.spatial4j.shape.Rectangle"></a>
       <a id="bboxFromCoords(Double,Double,Double,Double):Rectangle"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -174,16 +174,20 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">bboxFromCoords</span><span class="params">(<span name="east">east: <span class="extype" name="scala.Double">Double</span></span>, <span name="west">west: <span class="extype" name="scala.Double">Double</span></span>, <span name="south">south: <span class="extype" name="scala.Double">Double</span></span>, <span name="north">north: <span class="extype" name="scala.Double">Double</span></span>)</span><span class="result">: <span class="extype" name="org.locationtech.spatial4j.shape.Rectangle">Rectangle</span></span>
+        <span class="name">bboxFromCoords</span><span class="params">(<span name="west">west: <span class="extype" name="scala.Double">Double</span></span>, <span name="east">east: <span class="extype" name="scala.Double">Double</span></span>, <span name="south">south: <span class="extype" name="scala.Double">Double</span></span>, <span name="north">north: <span class="extype" name="scala.Double">Double</span></span>)</span><span class="result">: <span class="extype" name="org.locationtech.spatial4j.shape.Rectangle">Rectangle</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#models.gmd.MdMetadataSet$@bboxFromCoords(east:Double,west:Double,south:Double,north:Double):org.locationtech.spatial4j.shape.Rectangle" title="Permalink" target="_top">
+      <a href="../../index.html#models.gmd.MdMetadataSet$@bboxFromCoords(west:Double,east:Double,south:Double,north:Double):org.locationtech.spatial4j.shape.Rectangle" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <p class="shortcomment cmt">tries to build a bounding box rectangle as safely as possible from provided coordinates
+Rectangle rect(double minX, double maxX, double minY, double maxY);
+bboxFromCoords(west, east, south, north)
 </p><div class="fullcomment"><div class="comment cmt"><p>tries to build a bounding box rectangle as safely as possible from provided coordinates
-</p></div><dl class="paramcmts block"><dt class="param">east</dt><dd class="cmt"><p>most eastern value / minX</p></dd><dt class="param">west</dt><dd class="cmt"><p>most western value / maxX</p></dd><dt class="param">south</dt><dd class="cmt"><p>most southern value / minY</p></dd><dt class="param">north</dt><dd class="cmt"><p>most northern value / maxY</p></dd><dt>returns</dt><dd class="cmt"><p>the resulting bounding box</p></dd></dl></div>
+Rectangle rect(double minX, double maxX, double minY, double maxY);
+bboxFromCoords(west, east, south, north)
+</p></div><dl class="paramcmts block"><dt class="param">west</dt><dd class="cmt"><p>most western value / minX</p></dd><dt class="param">east</dt><dd class="cmt"><p>most eastern value / maxX</p></dd><dt class="param">south</dt><dd class="cmt"><p>most southern value / minY</p></dd><dt class="param">north</dt><dd class="cmt"><p>most northern value / maxY</p></dd><dt>returns</dt><dd class="cmt"><p>the resulting bounding box</p></dd></dl></div>
     </li><li name="models.gmd.MdMetadataSet#bboxFromWkt" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="bboxFromWkt(envelope:String):org.locationtech.spatial4j.shape.Rectangle"></a>
       <a id="bboxFromWkt(String):Rectangle"></a>
@@ -377,26 +381,6 @@ worst case create default date</p><p>TODO AK ponder if precise ZoneInfo for pars
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="models.gmd.MdMetadataSet#extractLatLonNumber" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="extractLatLonNumber(textIn:String,default:Double):Double"></a>
-      <a id="extractLatLonNumber(String,Double):Double"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">extractLatLonNumber</span><span class="params">(<span name="textIn">textIn: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="default">default: <span class="extype" name="scala.Double">Double</span></span>)</span><span class="result">: <span class="extype" name="scala.Double">Double</span></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../index.html#models.gmd.MdMetadataSet$@extractLatLonNumber(textIn:String,default:Double):Double" title="Permalink" target="_top">
-        <img src="../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">FIXME SR this is basically a &quot;Double.from(String, default)&quot;.</p><div class="fullcomment"><div class="comment cmt"><p>FIXME SR this is basically a &quot;Double.from(String, default)&quot;.
-We should think about creating a project wide helper for this.
-Somewhere I had a &quot;String.toInt()&quot; already, that needs the same treatment.
-</p></div><dl class="paramcmts block"><dt class="param">textIn</dt><dd class="cmt"><p>an input string that should be converted to a double value</p></dd><dt class="param">default</dt><dd class="cmt"><p>a default value if the string can't be parsed properly</p></dd><dt>returns</dt><dd class="cmt"><p>the resulting double value</p></dd></dl></div>
     </li><li name="scala.AnyRef#finalize" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
       <a id="finalize():Unit"></a>
@@ -722,7 +706,7 @@ Somewhere I had a &quot;String.toInt()&quot; already, that needs the same treatm
 </p><div class="fullcomment"><div class="comment cmt"><p>tries to naively prune the provided coordinates into good shape for WSG84
 </p></div><dl class="paramcmts block"><dt class="param">south</dt><dd class="cmt"><p>most southern value / minY</p></dd><dt class="param">north</dt><dd class="cmt"><p>most northern value / maxY</p></dd><dt>returns</dt><dd class="cmt"><p>tuple of viable coordinates in WSG84</p></dd></dl></div>
     </li><li name="models.gmd.MdMetadataSet#pruneLongitudeValues" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="pruneLongitudeValues(east:Double,west:Double):(Double,Double)"></a>
+      <a id="pruneLongitudeValues(west:Double,east:Double):(Double,Double)"></a>
       <a id="pruneLongitudeValues(Double,Double):(Double,Double)"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -730,18 +714,22 @@ Somewhere I had a &quot;String.toInt()&quot; already, that needs the same treatm
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">pruneLongitudeValues</span><span class="params">(<span name="east">east: <span class="extype" name="scala.Double">Double</span></span>, <span name="west">west: <span class="extype" name="scala.Double">Double</span></span>)</span><span class="result">: (<span class="extype" name="scala.Double">Double</span>, <span class="extype" name="scala.Double">Double</span>)</span>
+        <span class="name">pruneLongitudeValues</span><span class="params">(<span name="west">west: <span class="extype" name="scala.Double">Double</span></span>, <span name="east">east: <span class="extype" name="scala.Double">Double</span></span>)</span><span class="result">: (<span class="extype" name="scala.Double">Double</span>, <span class="extype" name="scala.Double">Double</span>)</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#models.gmd.MdMetadataSet$@pruneLongitudeValues(east:Double,west:Double):(Double,Double)" title="Permalink" target="_top">
+      <a href="../../index.html#models.gmd.MdMetadataSet$@pruneLongitudeValues(west:Double,east:Double):(Double,Double)" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <p class="shortcomment cmt">tries to naively prune the provided coordinates into good shape for WSG84
 TODO DATE Line Wraps :-( ?
+Rectangle rect(double minX, double maxX, double minY, double maxY);
+bboxFromCoords(west, east, south, north)
 </p><div class="fullcomment"><div class="comment cmt"><p>tries to naively prune the provided coordinates into good shape for WSG84
 TODO DATE Line Wraps :-( ?
-</p></div><dl class="paramcmts block"><dt class="param">east</dt><dd class="cmt"><p>most eastern value / minY</p></dd><dt class="param">west</dt><dd class="cmt"><p>most western value / maxY</p></dd><dt>returns</dt><dd class="cmt"><p>tuple of viable coordinates in WSG84</p></dd></dl></div>
+Rectangle rect(double minX, double maxX, double minY, double maxY);
+bboxFromCoords(west, east, south, north)
+</p></div><dl class="paramcmts block"><dt class="param">west</dt><dd class="cmt"><p>most western value / minY</p></dd><dt class="param">east</dt><dd class="cmt"><p>most eastern value / maxY</p></dd><dt>returns</dt><dd class="cmt"><p>tuple of viable coordinates in WSG84</p></dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
       <a id="synchronized[T0](⇒T0):T0"></a>

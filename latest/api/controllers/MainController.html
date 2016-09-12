@@ -1,9 +1,9 @@
 <!DOCTYPE html >
 <html>
         <head>
-          <title>QueryController - controllers.QueryController</title>
-          <meta name="description" content="QueryController - controllers.QueryController" />
-          <meta name="keywords" content="QueryController controllers.QueryController" />
+          <title>MainController - controllers.MainController</title>
+          <meta name="description" content="MainController - controllers.MainController" />
+          <meta name="keywords" content="MainController controllers.MainController" />
           <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
           
       <link href="../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
@@ -16,7 +16,7 @@
       <script type="text/javascript">
          if(top === self) {
             var url = '../index.html';
-            var hash = 'controllers.QueryController';
+            var hash = 'controllers.MainController';
             var anchor = window.location.hash;
             var anchor_opt = '';
             if (anchor.length >= 1)
@@ -30,10 +30,10 @@
       <div id="definition">
         <img alt="Class" src="../lib/class_big.png" />
         <p id="owner"><a href="package.html" class="extype" name="controllers">controllers</a></p>
-        <h1>QueryController</h1><h3><span class="morelinks"><div>Related Doc:
+        <h1>MainController</h1><h3><span class="morelinks"><div>Related Doc:
             <a href="package.html" class="extype" name="controllers">package controllers</a>
           </div></span></h3><span class="permalink">
-      <a href="../index.html#controllers.QueryController" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -45,11 +45,11 @@
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <span class="name">QueryController</span><span class="result"> extends <span class="extype" name="play.api.mvc.Controller">Controller</span></span>
+        <span class="name">MainController</span><span class="result"> extends <span class="extype" name="play.api.mvc.Controller">Controller</span></span>
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Controller that serves results from Lucene Index
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Controller that handles every &quot;unspecific&quot; request.
 </p></div><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="play.api.mvc.Controller">Controller</span>, <span class="extype" name="play.api.mvc.Rendering">Rendering</span>, <span class="extype" name="play.api.mvc.RequestExtractors">RequestExtractors</span>, <span class="extype" name="play.api.mvc.AcceptExtractors">AcceptExtractors</span>, <span class="extype" name="play.api.http.ContentTypes">ContentTypes</span>, <span class="extype" name="play.api.http.HeaderNames">HeaderNames</span>, <span class="extype" name="play.api.http.Status">play.api.http.Status</span>, <span class="extype" name="play.api.http.HttpProtocol">HttpProtocol</span>, <span class="extype" name="play.api.mvc.BodyParsers">BodyParsers</span>, <span class="extype" name="play.api.mvc.Results">Results</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
@@ -70,7 +70,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="controllers.QueryController"><span>QueryController</span></li><li class="in" name="play.api.mvc.Controller"><span>Controller</span></li><li class="in" name="play.api.mvc.Rendering"><span>Rendering</span></li><li class="in" name="play.api.mvc.RequestExtractors"><span>RequestExtractors</span></li><li class="in" name="play.api.mvc.AcceptExtractors"><span>AcceptExtractors</span></li><li class="in" name="play.api.http.ContentTypes"><span>ContentTypes</span></li><li class="in" name="play.api.http.HeaderNames"><span>HeaderNames</span></li><li class="in" name="play.api.http.Status"><span>Status</span></li><li class="in" name="play.api.http.HttpProtocol"><span>HttpProtocol</span></li><li class="in" name="play.api.mvc.BodyParsers"><span>BodyParsers</span></li><li class="in" name="play.api.mvc.Results"><span>Results</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="controllers.MainController"><span>MainController</span></li><li class="in" name="play.api.mvc.Controller"><span>Controller</span></li><li class="in" name="play.api.mvc.Rendering"><span>Rendering</span></li><li class="in" name="play.api.mvc.RequestExtractors"><span>RequestExtractors</span></li><li class="in" name="play.api.mvc.AcceptExtractors"><span>AcceptExtractors</span></li><li class="in" name="play.api.http.ContentTypes"><span>ContentTypes</span></li><li class="in" name="play.api.http.HeaderNames"><span>HeaderNames</span></li><li class="in" name="play.api.http.Status"><span>Status</span></li><li class="in" name="play.api.http.HttpProtocol"><span>HttpProtocol</span></li><li class="in" name="play.api.mvc.BodyParsers"><span>BodyParsers</span></li><li class="in" name="play.api.mvc.Results"><span>Results</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -89,26 +89,23 @@
         <div id="allMembers">
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
-              <ol><li name="controllers.QueryController#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(luceneService:services.LuceneService):controllers.QueryController"></a>
-      <a id="&lt;init&gt;:QueryController"></a>
+              <ol><li name="controllers.MainController#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="&lt;init&gt;():controllers.MainController"></a>
+      <a id="&lt;init&gt;:MainController"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">QueryController</span><span class="params">(<span name="luceneService">luceneService: <a href="../services/LuceneService.html" class="extype" name="services.LuceneService">LuceneService</a></span>)</span>
+        <span class="name">MainController</span><span class="params">()</span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@&lt;init&gt;(luceneService:services.LuceneService):controllers.QueryController" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@&lt;init&gt;():controllers.MainController" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Annotations</dt><dd>
-                <span class="name">@Inject</span><span class="args">()</span>
-              
-        </dd></dl></div>
+      
     </li></ol>
             </div>
 
@@ -126,7 +123,7 @@
         <span class="name">Status</span><span class="result"> extends <span class="extype" name="play.api.mvc.Result">Result</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@StatusextendsResult" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@StatusextendsResult" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -150,7 +147,7 @@
         <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@!=(x$1:Any):Boolean" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@!=(x$1:Any):Boolean" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -167,7 +164,7 @@
         <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@##():Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@##():Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -184,7 +181,7 @@
         <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@==(x$1:Any):Boolean" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@==(x$1:Any):Boolean" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -201,7 +198,7 @@
         <span class="name">ACCEPT</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@ACCEPT:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@ACCEPT:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -218,7 +215,7 @@
         <span class="name">ACCEPTED</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@ACCEPTED:Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@ACCEPTED:Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -235,7 +232,7 @@
         <span class="name">ACCEPT_CHARSET</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@ACCEPT_CHARSET:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@ACCEPT_CHARSET:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -252,7 +249,7 @@
         <span class="name">ACCEPT_ENCODING</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@ACCEPT_ENCODING:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@ACCEPT_ENCODING:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -269,7 +266,7 @@
         <span class="name">ACCEPT_LANGUAGE</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@ACCEPT_LANGUAGE:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@ACCEPT_LANGUAGE:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -286,7 +283,7 @@
         <span class="name">ACCEPT_RANGES</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@ACCEPT_RANGES:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@ACCEPT_RANGES:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -303,7 +300,7 @@
         <span class="name">ACCESS_CONTROL_ALLOW_CREDENTIALS</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@ACCESS_CONTROL_ALLOW_CREDENTIALS:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@ACCESS_CONTROL_ALLOW_CREDENTIALS:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -320,7 +317,7 @@
         <span class="name">ACCESS_CONTROL_ALLOW_HEADERS</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@ACCESS_CONTROL_ALLOW_HEADERS:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@ACCESS_CONTROL_ALLOW_HEADERS:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -337,7 +334,7 @@
         <span class="name">ACCESS_CONTROL_ALLOW_METHODS</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@ACCESS_CONTROL_ALLOW_METHODS:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@ACCESS_CONTROL_ALLOW_METHODS:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -354,7 +351,7 @@
         <span class="name">ACCESS_CONTROL_ALLOW_ORIGIN</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@ACCESS_CONTROL_ALLOW_ORIGIN:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@ACCESS_CONTROL_ALLOW_ORIGIN:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -371,7 +368,7 @@
         <span class="name">ACCESS_CONTROL_EXPOSE_HEADERS</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@ACCESS_CONTROL_EXPOSE_HEADERS:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@ACCESS_CONTROL_EXPOSE_HEADERS:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -388,7 +385,7 @@
         <span class="name">ACCESS_CONTROL_MAX_AGE</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@ACCESS_CONTROL_MAX_AGE:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@ACCESS_CONTROL_MAX_AGE:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -405,7 +402,7 @@
         <span class="name">ACCESS_CONTROL_REQUEST_HEADERS</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@ACCESS_CONTROL_REQUEST_HEADERS:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@ACCESS_CONTROL_REQUEST_HEADERS:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -422,7 +419,7 @@
         <span class="name">ACCESS_CONTROL_REQUEST_METHOD</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@ACCESS_CONTROL_REQUEST_METHOD:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@ACCESS_CONTROL_REQUEST_METHOD:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -439,7 +436,7 @@
         <span class="name">AGE</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@AGE:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@AGE:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -456,7 +453,7 @@
         <span class="name">ALLOW</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@ALLOW:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@ALLOW:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -473,7 +470,7 @@
         <span class="name">AUTHORIZATION</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@AUTHORIZATION:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@AUTHORIZATION:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -487,10 +484,10 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">Accepted</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.QueryController.Status">Status</a></span>
+        <span class="name">Accepted</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.MainController.Status">Status</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@Accepted:Results.this.Status" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@Accepted:Results.this.Status" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -507,7 +504,7 @@
         <span class="name">BAD_GATEWAY</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@BAD_GATEWAY:Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@BAD_GATEWAY:Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -524,7 +521,7 @@
         <span class="name">BAD_REQUEST</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@BAD_REQUEST:Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@BAD_REQUEST:Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -541,7 +538,7 @@
         <span class="name">BINARY</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@BINARY:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@BINARY:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -555,10 +552,10 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">BadGateway</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.QueryController.Status">Status</a></span>
+        <span class="name">BadGateway</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.MainController.Status">Status</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@BadGateway:Results.this.Status" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@BadGateway:Results.this.Status" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -572,10 +569,10 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">BadRequest</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.QueryController.Status">Status</a></span>
+        <span class="name">BadRequest</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.MainController.Status">Status</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@BadRequest:Results.this.Status" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@BadRequest:Results.this.Status" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -592,7 +589,7 @@
         <span class="name">CACHE_CONTROL</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@CACHE_CONTROL:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@CACHE_CONTROL:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -609,7 +606,7 @@
         <span class="name">CACHE_MANIFEST</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@CACHE_MANIFEST:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@CACHE_MANIFEST:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -626,7 +623,7 @@
         <span class="name">CHUNKED</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@CHUNKED:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@CHUNKED:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -643,7 +640,7 @@
         <span class="name">CONFLICT</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@CONFLICT:Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@CONFLICT:Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -660,7 +657,7 @@
         <span class="name">CONNECTION</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@CONNECTION:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@CONNECTION:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -677,7 +674,7 @@
         <span class="name">CONTENT_DISPOSITION</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@CONTENT_DISPOSITION:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@CONTENT_DISPOSITION:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -694,7 +691,7 @@
         <span class="name">CONTENT_ENCODING</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@CONTENT_ENCODING:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@CONTENT_ENCODING:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -711,7 +708,7 @@
         <span class="name">CONTENT_LANGUAGE</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@CONTENT_LANGUAGE:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@CONTENT_LANGUAGE:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -728,7 +725,7 @@
         <span class="name">CONTENT_LENGTH</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@CONTENT_LENGTH:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@CONTENT_LENGTH:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -745,7 +742,7 @@
         <span class="name">CONTENT_LOCATION</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@CONTENT_LOCATION:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@CONTENT_LOCATION:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -762,7 +759,7 @@
         <span class="name">CONTENT_MD5</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@CONTENT_MD5:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@CONTENT_MD5:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -779,7 +776,7 @@
         <span class="name">CONTENT_RANGE</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@CONTENT_RANGE:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@CONTENT_RANGE:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -796,7 +793,7 @@
         <span class="name">CONTENT_TRANSFER_ENCODING</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@CONTENT_TRANSFER_ENCODING:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@CONTENT_TRANSFER_ENCODING:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -813,7 +810,7 @@
         <span class="name">CONTENT_TYPE</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@CONTENT_TYPE:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@CONTENT_TYPE:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -830,7 +827,7 @@
         <span class="name">CONTINUE</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@CONTINUE:Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@CONTINUE:Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -847,7 +844,7 @@
         <span class="name">COOKIE</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@COOKIE:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@COOKIE:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -864,13 +861,13 @@
         <span class="name">CREATED</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@CREATED:Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@CREATED:Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Status</dd></dl></div>
     </li><li name="play.api.http.ContentTypes#CSS" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="CSS(implicitcodec:&lt;?&gt;):String"></a>
+      <a id="CSS(implicitcodec:play.api.mvc.Codec):String"></a>
       <a id="CSS(Codec):String"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -881,7 +878,7 @@
         <span class="name">CSS</span><span class="params">(<span class="implicit">implicit </span><span name="codec">codec: <span class="extype" name="play.api.mvc.Codec">Codec</span></span>)</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@CSS(implicitcodec:play.api.mvc.Codec):String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@CSS(implicitcodec:play.api.mvc.Codec):String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -895,10 +892,10 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">Conflict</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.QueryController.Status">Status</a></span>
+        <span class="name">Conflict</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.MainController.Status">Status</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@Conflict:Results.this.Status" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@Conflict:Results.this.Status" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -912,10 +909,10 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">Created</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.QueryController.Status">Status</a></span>
+        <span class="name">Created</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.MainController.Status">Status</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@Created:Results.this.Status" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@Created:Results.this.Status" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -932,7 +929,7 @@
         <span class="name">DATE</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@DATE:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@DATE:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -949,13 +946,13 @@
         <span class="name">ETAG</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@ETAG:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@ETAG:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>HeaderNames</dd></dl></div>
     </li><li name="play.api.http.ContentTypes#EVENT_STREAM" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="EVENT_STREAM(implicitcodec:&lt;?&gt;):String"></a>
+      <a id="EVENT_STREAM(implicitcodec:play.api.mvc.Codec):String"></a>
       <a id="EVENT_STREAM(Codec):String"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -966,7 +963,7 @@
         <span class="name">EVENT_STREAM</span><span class="params">(<span class="implicit">implicit </span><span name="codec">codec: <span class="extype" name="play.api.mvc.Codec">Codec</span></span>)</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@EVENT_STREAM(implicitcodec:play.api.mvc.Codec):String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@EVENT_STREAM(implicitcodec:play.api.mvc.Codec):String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -983,7 +980,7 @@
         <span class="name">EXPECT</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@EXPECT:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@EXPECT:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1000,7 +997,7 @@
         <span class="name">EXPECTATION_FAILED</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@EXPECTATION_FAILED:Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@EXPECTATION_FAILED:Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1017,7 +1014,7 @@
         <span class="name">EXPIRES</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@EXPIRES:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@EXPIRES:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1031,10 +1028,10 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">EntityTooLarge</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.QueryController.Status">Status</a></span>
+        <span class="name">EntityTooLarge</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.MainController.Status">Status</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@EntityTooLarge:Results.this.Status" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@EntityTooLarge:Results.this.Status" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1048,10 +1045,10 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">ExpectationFailed</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.QueryController.Status">Status</a></span>
+        <span class="name">ExpectationFailed</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.MainController.Status">Status</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@ExpectationFailed:Results.this.Status" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@ExpectationFailed:Results.this.Status" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1068,7 +1065,7 @@
         <span class="name">FAILED_DEPENDENCY</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@FAILED_DEPENDENCY:Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@FAILED_DEPENDENCY:Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1085,7 +1082,7 @@
         <span class="name">FORBIDDEN</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@FORBIDDEN:Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@FORBIDDEN:Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1102,7 +1099,7 @@
         <span class="name">FORM</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@FORM:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@FORM:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1119,7 +1116,7 @@
         <span class="name">FORWARDED</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@FORWARDED:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@FORWARDED:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1136,7 +1133,7 @@
         <span class="name">FOUND</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@FOUND:Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@FOUND:Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1153,7 +1150,7 @@
         <span class="name">FROM</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@FROM:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@FROM:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1167,10 +1164,10 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">FailedDependency</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.QueryController.Status">Status</a></span>
+        <span class="name">FailedDependency</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.MainController.Status">Status</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@FailedDependency:Results.this.Status" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@FailedDependency:Results.this.Status" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1184,16 +1181,16 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">Forbidden</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.QueryController.Status">Status</a></span>
+        <span class="name">Forbidden</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.MainController.Status">Status</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@Forbidden:Results.this.Status" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@Forbidden:Results.this.Status" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Results</dd></dl></div>
     </li><li name="play.api.mvc.Results#Found" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="Found(url:&lt;?&gt;):play.api.mvc.Result"></a>
+      <a id="Found(url:String):play.api.mvc.Result"></a>
       <a id="Found(String):Result"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -1204,7 +1201,7 @@
         <span class="name">Found</span><span class="params">(<span name="url">url: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="play.api.mvc.Result">Result</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@Found(url:String):play.api.mvc.Result" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@Found(url:String):play.api.mvc.Result" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1221,7 +1218,7 @@
         <span class="name">GATEWAY_TIMEOUT</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@GATEWAY_TIMEOUT:Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@GATEWAY_TIMEOUT:Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1238,7 +1235,7 @@
         <span class="name">GONE</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@GONE:Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@GONE:Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1252,10 +1249,10 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">GatewayTimeout</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.QueryController.Status">Status</a></span>
+        <span class="name">GatewayTimeout</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.MainController.Status">Status</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@GatewayTimeout:Results.this.Status" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@GatewayTimeout:Results.this.Status" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1269,10 +1266,10 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">Gone</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.QueryController.Status">Status</a></span>
+        <span class="name">Gone</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.MainController.Status">Status</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@Gone:Results.this.Status" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@Gone:Results.this.Status" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1289,13 +1286,13 @@
         <span class="name">HOST</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@HOST:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@HOST:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>HeaderNames</dd></dl></div>
     </li><li name="play.api.http.ContentTypes#HTML" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="HTML(implicitcodec:&lt;?&gt;):String"></a>
+      <a id="HTML(implicitcodec:play.api.mvc.Codec):String"></a>
       <a id="HTML(Codec):String"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -1306,7 +1303,7 @@
         <span class="name">HTML</span><span class="params">(<span class="implicit">implicit </span><span name="codec">codec: <span class="extype" name="play.api.mvc.Codec">Codec</span></span>)</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@HTML(implicitcodec:play.api.mvc.Codec):String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@HTML(implicitcodec:play.api.mvc.Codec):String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1323,7 +1320,7 @@
         <span class="name">HTTP_1_0</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@HTTP_1_0:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@HTTP_1_0:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1340,7 +1337,7 @@
         <span class="name">HTTP_1_1</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@HTTP_1_1:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@HTTP_1_1:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1357,7 +1354,7 @@
         <span class="name">HTTP_VERSION_NOT_SUPPORTED</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@HTTP_VERSION_NOT_SUPPORTED:Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@HTTP_VERSION_NOT_SUPPORTED:Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1371,10 +1368,10 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">HttpVersionNotSupported</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.QueryController.Status">Status</a></span>
+        <span class="name">HttpVersionNotSupported</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.MainController.Status">Status</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@HttpVersionNotSupported:Results.this.Status" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@HttpVersionNotSupported:Results.this.Status" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1391,7 +1388,7 @@
         <span class="name">IF_MATCH</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@IF_MATCH:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@IF_MATCH:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1408,7 +1405,7 @@
         <span class="name">IF_MODIFIED_SINCE</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@IF_MODIFIED_SINCE:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@IF_MODIFIED_SINCE:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1425,7 +1422,7 @@
         <span class="name">IF_NONE_MATCH</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@IF_NONE_MATCH:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@IF_NONE_MATCH:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1442,7 +1439,7 @@
         <span class="name">IF_RANGE</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@IF_RANGE:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@IF_RANGE:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1459,7 +1456,7 @@
         <span class="name">IF_UNMODIFIED_SINCE</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@IF_UNMODIFIED_SINCE:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@IF_UNMODIFIED_SINCE:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1476,7 +1473,7 @@
         <span class="name">INSUFFICIENT_STORAGE</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@INSUFFICIENT_STORAGE:Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@INSUFFICIENT_STORAGE:Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1493,7 +1490,7 @@
         <span class="name">INTERNAL_SERVER_ERROR</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@INTERNAL_SERVER_ERROR:Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@INTERNAL_SERVER_ERROR:Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1507,10 +1504,10 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">InsufficientStorage</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.QueryController.Status">Status</a></span>
+        <span class="name">InsufficientStorage</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.MainController.Status">Status</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@InsufficientStorage:Results.this.Status" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@InsufficientStorage:Results.this.Status" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1524,16 +1521,16 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">InternalServerError</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.QueryController.Status">Status</a></span>
+        <span class="name">InternalServerError</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.MainController.Status">Status</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@InternalServerError:Results.this.Status" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@InternalServerError:Results.this.Status" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Results</dd></dl></div>
     </li><li name="play.api.http.ContentTypes#JAVASCRIPT" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="JAVASCRIPT(implicitcodec:&lt;?&gt;):String"></a>
+      <a id="JAVASCRIPT(implicitcodec:play.api.mvc.Codec):String"></a>
       <a id="JAVASCRIPT(Codec):String"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -1544,7 +1541,7 @@
         <span class="name">JAVASCRIPT</span><span class="params">(<span class="implicit">implicit </span><span name="codec">codec: <span class="extype" name="play.api.mvc.Codec">Codec</span></span>)</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@JAVASCRIPT(implicitcodec:play.api.mvc.Codec):String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@JAVASCRIPT(implicitcodec:play.api.mvc.Codec):String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1561,7 +1558,7 @@
         <span class="name">JSON</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@JSON:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@JSON:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1578,7 +1575,7 @@
         <span class="name">LAST_MODIFIED</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@LAST_MODIFIED:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@LAST_MODIFIED:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1595,7 +1592,7 @@
         <span class="name">LENGTH_REQUIRED</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@LENGTH_REQUIRED:Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@LENGTH_REQUIRED:Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1612,7 +1609,7 @@
         <span class="name">LOCATION</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@LOCATION:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@LOCATION:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1629,7 +1626,7 @@
         <span class="name">LOCKED</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@LOCKED:Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@LOCKED:Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1643,10 +1640,10 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">Locked</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.QueryController.Status">Status</a></span>
+        <span class="name">Locked</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.MainController.Status">Status</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@Locked:Results.this.Status" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@Locked:Results.this.Status" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1663,7 +1660,7 @@
         <span class="name">MAX_FORWARDS</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@MAX_FORWARDS:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@MAX_FORWARDS:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1680,7 +1677,7 @@
         <span class="name">METHOD_NOT_ALLOWED</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@METHOD_NOT_ALLOWED:Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@METHOD_NOT_ALLOWED:Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1697,7 +1694,7 @@
         <span class="name">MOVED_PERMANENTLY</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@MOVED_PERMANENTLY:Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@MOVED_PERMANENTLY:Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1714,7 +1711,7 @@
         <span class="name">MULTIPLE_CHOICES</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@MULTIPLE_CHOICES:Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@MULTIPLE_CHOICES:Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1731,7 +1728,7 @@
         <span class="name">MULTI_STATUS</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@MULTI_STATUS:Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@MULTI_STATUS:Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1745,10 +1742,10 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">MethodNotAllowed</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.QueryController.Status">Status</a></span>
+        <span class="name">MethodNotAllowed</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.MainController.Status">Status</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@MethodNotAllowed:Results.this.Status" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@MethodNotAllowed:Results.this.Status" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1765,7 +1762,7 @@
         <span class="name">MovedPermanently</span><span class="params">(<span name="url">url: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="play.api.mvc.Result">Result</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@MovedPermanently(url:String):play.api.mvc.Result" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@MovedPermanently(url:String):play.api.mvc.Result" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1779,10 +1776,10 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">MultiStatus</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.QueryController.Status">Status</a></span>
+        <span class="name">MultiStatus</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.MainController.Status">Status</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@MultiStatus:Results.this.Status" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@MultiStatus:Results.this.Status" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1799,7 +1796,7 @@
         <span class="name">NON_AUTHORITATIVE_INFORMATION</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@NON_AUTHORITATIVE_INFORMATION:Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@NON_AUTHORITATIVE_INFORMATION:Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1816,7 +1813,7 @@
         <span class="name">NOT_ACCEPTABLE</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@NOT_ACCEPTABLE:Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@NOT_ACCEPTABLE:Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1833,7 +1830,7 @@
         <span class="name">NOT_FOUND</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@NOT_FOUND:Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@NOT_FOUND:Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1850,7 +1847,7 @@
         <span class="name">NOT_IMPLEMENTED</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@NOT_IMPLEMENTED:Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@NOT_IMPLEMENTED:Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1867,7 +1864,7 @@
         <span class="name">NOT_MODIFIED</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@NOT_MODIFIED:Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@NOT_MODIFIED:Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1884,7 +1881,7 @@
         <span class="name">NO_CONTENT</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@NO_CONTENT:Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@NO_CONTENT:Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1901,7 +1898,7 @@
         <span class="name">NoContent</span><span class="result">: <span class="extype" name="play.api.mvc.Result">Result</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@NoContent:play.api.mvc.Result" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@NoContent:play.api.mvc.Result" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1915,10 +1912,10 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">NonAuthoritativeInformation</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.QueryController.Status">Status</a></span>
+        <span class="name">NonAuthoritativeInformation</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.MainController.Status">Status</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@NonAuthoritativeInformation:Results.this.Status" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@NonAuthoritativeInformation:Results.this.Status" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1932,10 +1929,10 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">NotAcceptable</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.QueryController.Status">Status</a></span>
+        <span class="name">NotAcceptable</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.MainController.Status">Status</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@NotAcceptable:Results.this.Status" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@NotAcceptable:Results.this.Status" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1949,10 +1946,10 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">NotFound</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.QueryController.Status">Status</a></span>
+        <span class="name">NotFound</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.MainController.Status">Status</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@NotFound:Results.this.Status" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@NotFound:Results.this.Status" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1966,10 +1963,10 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">NotImplemented</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.QueryController.Status">Status</a></span>
+        <span class="name">NotImplemented</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.MainController.Status">Status</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@NotImplemented:Results.this.Status" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@NotImplemented:Results.this.Status" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1986,7 +1983,7 @@
         <span class="name">NotModified</span><span class="result">: <span class="extype" name="play.api.mvc.Result">Result</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@NotModified:play.api.mvc.Result" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@NotModified:play.api.mvc.Result" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2003,7 +2000,7 @@
         <span class="name">OK</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@OK:Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@OK:Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2020,7 +2017,7 @@
         <span class="name">ORIGIN</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@ORIGIN:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@ORIGIN:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2034,10 +2031,10 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">Ok</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.QueryController.Status">Status</a></span>
+        <span class="name">Ok</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.MainController.Status">Status</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@Ok:Results.this.Status" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@Ok:Results.this.Status" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2054,7 +2051,7 @@
         <span class="name">PARTIAL_CONTENT</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@PARTIAL_CONTENT:Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@PARTIAL_CONTENT:Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2071,7 +2068,7 @@
         <span class="name">PAYMENT_REQUIRED</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@PAYMENT_REQUIRED:Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@PAYMENT_REQUIRED:Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2088,7 +2085,7 @@
         <span class="name">PERMANENT_REDIRECT</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@PERMANENT_REDIRECT:Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@PERMANENT_REDIRECT:Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2105,7 +2102,7 @@
         <span class="name">PRAGMA</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@PRAGMA:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@PRAGMA:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2122,7 +2119,7 @@
         <span class="name">PRECONDITION_FAILED</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@PRECONDITION_FAILED:Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@PRECONDITION_FAILED:Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2139,7 +2136,7 @@
         <span class="name">PROXY_AUTHENTICATE</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@PROXY_AUTHENTICATE:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@PROXY_AUTHENTICATE:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2156,7 +2153,7 @@
         <span class="name">PROXY_AUTHENTICATION_REQUIRED</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@PROXY_AUTHENTICATION_REQUIRED:Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@PROXY_AUTHENTICATION_REQUIRED:Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2173,7 +2170,7 @@
         <span class="name">PROXY_AUTHORIZATION</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@PROXY_AUTHORIZATION:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@PROXY_AUTHORIZATION:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2187,10 +2184,10 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">PartialContent</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.QueryController.Status">Status</a></span>
+        <span class="name">PartialContent</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.MainController.Status">Status</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@PartialContent:Results.this.Status" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@PartialContent:Results.this.Status" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2204,16 +2201,16 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">PaymentRequired</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.QueryController.Status">Status</a></span>
+        <span class="name">PaymentRequired</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.MainController.Status">Status</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@PaymentRequired:Results.this.Status" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@PaymentRequired:Results.this.Status" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Results</dd></dl></div>
     </li><li name="play.api.mvc.Results#PermanentRedirect" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="PermanentRedirect(url:&lt;?&gt;):play.api.mvc.Result"></a>
+      <a id="PermanentRedirect(url:String):play.api.mvc.Result"></a>
       <a id="PermanentRedirect(String):Result"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -2224,7 +2221,7 @@
         <span class="name">PermanentRedirect</span><span class="params">(<span name="url">url: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="play.api.mvc.Result">Result</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@PermanentRedirect(url:String):play.api.mvc.Result" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@PermanentRedirect(url:String):play.api.mvc.Result" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2238,10 +2235,10 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">PreconditionFailed</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.QueryController.Status">Status</a></span>
+        <span class="name">PreconditionFailed</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.MainController.Status">Status</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@PreconditionFailed:Results.this.Status" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@PreconditionFailed:Results.this.Status" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2258,7 +2255,7 @@
         <span class="name">RANGE</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@RANGE:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@RANGE:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2275,7 +2272,7 @@
         <span class="name">REFERER</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@REFERER:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@REFERER:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2292,7 +2289,7 @@
         <span class="name">REQUESTED_RANGE_NOT_SATISFIABLE</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@REQUESTED_RANGE_NOT_SATISFIABLE:Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@REQUESTED_RANGE_NOT_SATISFIABLE:Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2309,7 +2306,7 @@
         <span class="name">REQUEST_ENTITY_TOO_LARGE</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@REQUEST_ENTITY_TOO_LARGE:Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@REQUEST_ENTITY_TOO_LARGE:Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2326,7 +2323,7 @@
         <span class="name">REQUEST_TIMEOUT</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@REQUEST_TIMEOUT:Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@REQUEST_TIMEOUT:Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2343,7 +2340,7 @@
         <span class="name">REQUEST_URI_TOO_LONG</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@REQUEST_URI_TOO_LONG:Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@REQUEST_URI_TOO_LONG:Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2360,7 +2357,7 @@
         <span class="name">RESET_CONTENT</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@RESET_CONTENT:Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@RESET_CONTENT:Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2377,13 +2374,13 @@
         <span class="name">RETRY_AFTER</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@RETRY_AFTER:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@RETRY_AFTER:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>HeaderNames</dd></dl></div>
     </li><li name="play.api.mvc.Results#Redirect" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="Redirect(call:&lt;?&gt;,status:&lt;?&gt;):play.api.mvc.Result"></a>
+      <a id="Redirect(call:play.api.mvc.Call,status:Int):play.api.mvc.Result"></a>
       <a id="Redirect(Call,Int):Result"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -2394,13 +2391,13 @@
         <span class="name">Redirect</span><span class="params">(<span name="call">call: <span class="extype" name="play.api.mvc.Call">Call</span></span>, <span name="status">status: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="play.api.mvc.Result">Result</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@Redirect(call:play.api.mvc.Call,status:Int):play.api.mvc.Result" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@Redirect(call:play.api.mvc.Call,status:Int):play.api.mvc.Result" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Results</dd></dl></div>
     </li><li name="play.api.mvc.Results#Redirect" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="Redirect(call:&lt;?&gt;):play.api.mvc.Result"></a>
+      <a id="Redirect(call:play.api.mvc.Call):play.api.mvc.Result"></a>
       <a id="Redirect(Call):Result"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -2411,13 +2408,13 @@
         <span class="name">Redirect</span><span class="params">(<span name="call">call: <span class="extype" name="play.api.mvc.Call">Call</span></span>)</span><span class="result">: <span class="extype" name="play.api.mvc.Result">Result</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@Redirect(call:play.api.mvc.Call):play.api.mvc.Result" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@Redirect(call:play.api.mvc.Call):play.api.mvc.Result" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Results</dd></dl></div>
     </li><li name="play.api.mvc.Results#Redirect" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="Redirect(url:&lt;?&gt;,queryString:&lt;?&gt;,status:&lt;?&gt;):play.api.mvc.Result"></a>
+      <a id="Redirect(url:String,queryString:Map[String,Seq[String]],status:Int):play.api.mvc.Result"></a>
       <a id="Redirect(String,Map[String,Seq[String]],Int):Result"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -2428,13 +2425,13 @@
         <span class="name">Redirect</span><span class="params">(<span name="url">url: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="queryString">queryString: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]]</span>, <span name="status">status: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="play.api.mvc.Result">Result</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@Redirect(url:String,queryString:Map[String,Seq[String]],status:Int):play.api.mvc.Result" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@Redirect(url:String,queryString:Map[String,Seq[String]],status:Int):play.api.mvc.Result" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Results</dd></dl></div>
     </li><li name="play.api.mvc.Results#Redirect" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="Redirect(url:&lt;?&gt;,status:&lt;?&gt;):play.api.mvc.Result"></a>
+      <a id="Redirect(url:String,status:Int):play.api.mvc.Result"></a>
       <a id="Redirect(String,Int):Result"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -2445,7 +2442,7 @@
         <span class="name">Redirect</span><span class="params">(<span name="url">url: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="status">status: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="play.api.mvc.Result">Result</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@Redirect(url:String,status:Int):play.api.mvc.Result" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@Redirect(url:String,status:Int):play.api.mvc.Result" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2459,10 +2456,10 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">RequestTimeout</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.QueryController.Status">Status</a></span>
+        <span class="name">RequestTimeout</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.MainController.Status">Status</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@RequestTimeout:Results.this.Status" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@RequestTimeout:Results.this.Status" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2479,7 +2476,7 @@
         <span class="name">ResetContent</span><span class="result">: <span class="extype" name="play.api.mvc.Result">Result</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@ResetContent:play.api.mvc.Result" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@ResetContent:play.api.mvc.Result" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2496,7 +2493,7 @@
         <span class="name">SEE_OTHER</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@SEE_OTHER:Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@SEE_OTHER:Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2513,7 +2510,7 @@
         <span class="name">SERVER</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@SERVER:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@SERVER:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2530,7 +2527,7 @@
         <span class="name">SERVICE_UNAVAILABLE</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@SERVICE_UNAVAILABLE:Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@SERVICE_UNAVAILABLE:Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2547,7 +2544,7 @@
         <span class="name">SET_COOKIE</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@SET_COOKIE:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@SET_COOKIE:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2564,7 +2561,7 @@
         <span class="name">SET_COOKIE2</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@SET_COOKIE2:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@SET_COOKIE2:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2581,13 +2578,13 @@
         <span class="name">SWITCHING_PROTOCOLS</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@SWITCHING_PROTOCOLS:Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@SWITCHING_PROTOCOLS:Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Status</dd></dl></div>
     </li><li name="play.api.mvc.Results#SeeOther" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="SeeOther(url:&lt;?&gt;):play.api.mvc.Result"></a>
+      <a id="SeeOther(url:String):play.api.mvc.Result"></a>
       <a id="SeeOther(String):Result"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -2598,7 +2595,7 @@
         <span class="name">SeeOther</span><span class="params">(<span name="url">url: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="play.api.mvc.Result">Result</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@SeeOther(url:String):play.api.mvc.Result" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@SeeOther(url:String):play.api.mvc.Result" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2612,16 +2609,16 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">ServiceUnavailable</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.QueryController.Status">Status</a></span>
+        <span class="name">ServiceUnavailable</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.MainController.Status">Status</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@ServiceUnavailable:Results.this.Status" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@ServiceUnavailable:Results.this.Status" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Results</dd></dl></div>
     </li><li name="play.api.mvc.Results#Status" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="Status(code:&lt;?&gt;):Results.this.Status"></a>
+      <a id="Status(code:Int):Results.this.Status"></a>
       <a id="Status(Int):Status"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -2629,10 +2626,10 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">Status</span><span class="params">(<span name="code">code: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.QueryController.Status">Status</a></span>
+        <span class="name">Status</span><span class="params">(<span name="code">code: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.MainController.Status">Status</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@Status(code:Int):Results.this.Status" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@Status(code:Int):Results.this.Status" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2649,7 +2646,7 @@
         <span class="name">TE</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@TE:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@TE:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2666,13 +2663,13 @@
         <span class="name">TEMPORARY_REDIRECT</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@TEMPORARY_REDIRECT:Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@TEMPORARY_REDIRECT:Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Status</dd></dl></div>
     </li><li name="play.api.http.ContentTypes#TEXT" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="TEXT(implicitcodec:&lt;?&gt;):String"></a>
+      <a id="TEXT(implicitcodec:play.api.mvc.Codec):String"></a>
       <a id="TEXT(Codec):String"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -2683,7 +2680,7 @@
         <span class="name">TEXT</span><span class="params">(<span class="implicit">implicit </span><span name="codec">codec: <span class="extype" name="play.api.mvc.Codec">Codec</span></span>)</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@TEXT(implicitcodec:play.api.mvc.Codec):String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@TEXT(implicitcodec:play.api.mvc.Codec):String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2700,7 +2697,7 @@
         <span class="name">TODO</span><span class="result">: <span class="extype" name="play.api.mvc.Action">Action</span>[<span class="extype" name="play.api.mvc.AnyContent">AnyContent</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@TODO:play.api.mvc.Action[play.api.mvc.AnyContent]" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@TODO:play.api.mvc.Action[play.api.mvc.AnyContent]" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2717,7 +2714,7 @@
         <span class="name">TOO_MANY_REQUESTS</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@TOO_MANY_REQUESTS:Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@TOO_MANY_REQUESTS:Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2734,7 +2731,7 @@
         <span class="name">TRAILER</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@TRAILER:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@TRAILER:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2751,13 +2748,13 @@
         <span class="name">TRANSFER_ENCODING</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@TRANSFER_ENCODING:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@TRANSFER_ENCODING:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>HeaderNames</dd></dl></div>
     </li><li name="play.api.mvc.Results#TemporaryRedirect" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="TemporaryRedirect(url:&lt;?&gt;):play.api.mvc.Result"></a>
+      <a id="TemporaryRedirect(url:String):play.api.mvc.Result"></a>
       <a id="TemporaryRedirect(String):Result"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -2768,7 +2765,7 @@
         <span class="name">TemporaryRedirect</span><span class="params">(<span name="url">url: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="play.api.mvc.Result">Result</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@TemporaryRedirect(url:String):play.api.mvc.Result" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@TemporaryRedirect(url:String):play.api.mvc.Result" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2782,10 +2779,10 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">TooManyRequests</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.QueryController.Status">Status</a></span>
+        <span class="name">TooManyRequests</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.MainController.Status">Status</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@TooManyRequests:Results.this.Status" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@TooManyRequests:Results.this.Status" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2802,7 +2799,7 @@
         <span class="name">UNAUTHORIZED</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@UNAUTHORIZED:Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@UNAUTHORIZED:Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2819,7 +2816,7 @@
         <span class="name">UNPROCESSABLE_ENTITY</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@UNPROCESSABLE_ENTITY:Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@UNPROCESSABLE_ENTITY:Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2836,7 +2833,7 @@
         <span class="name">UNSUPPORTED_MEDIA_TYPE</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@UNSUPPORTED_MEDIA_TYPE:Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@UNSUPPORTED_MEDIA_TYPE:Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2853,7 +2850,7 @@
         <span class="name">UPGRADE</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@UPGRADE:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@UPGRADE:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2870,7 +2867,7 @@
         <span class="name">UPGRADE_REQUIRED</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@UPGRADE_REQUIRED:Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@UPGRADE_REQUIRED:Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2887,7 +2884,7 @@
         <span class="name">USER_AGENT</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@USER_AGENT:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@USER_AGENT:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2904,7 +2901,7 @@
         <span class="name">USE_PROXY</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@USE_PROXY:Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@USE_PROXY:Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2918,10 +2915,10 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">Unauthorized</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.QueryController.Status">Status</a></span>
+        <span class="name">Unauthorized</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.MainController.Status">Status</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@Unauthorized:Results.this.Status" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@Unauthorized:Results.this.Status" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2935,10 +2932,10 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">UnprocessableEntity</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.QueryController.Status">Status</a></span>
+        <span class="name">UnprocessableEntity</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.MainController.Status">Status</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@UnprocessableEntity:Results.this.Status" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@UnprocessableEntity:Results.this.Status" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2952,10 +2949,10 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">UnsupportedMediaType</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.QueryController.Status">Status</a></span>
+        <span class="name">UnsupportedMediaType</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.MainController.Status">Status</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@UnsupportedMediaType:Results.this.Status" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@UnsupportedMediaType:Results.this.Status" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2969,10 +2966,10 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">UriTooLong</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.QueryController.Status">Status</a></span>
+        <span class="name">UriTooLong</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.MainController.Status">Status</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@UriTooLong:Results.this.Status" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@UriTooLong:Results.this.Status" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2989,7 +2986,7 @@
         <span class="name">VARY</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@VARY:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@VARY:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -3006,7 +3003,7 @@
         <span class="name">VIA</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@VIA:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@VIA:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -3023,7 +3020,7 @@
         <span class="name">WARNING</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@WARNING:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@WARNING:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -3040,13 +3037,13 @@
         <span class="name">WWW_AUTHENTICATE</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@WWW_AUTHENTICATE:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@WWW_AUTHENTICATE:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>HeaderNames</dd></dl></div>
     </li><li name="play.api.http.ContentTypes#XML" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="XML(implicitcodec:&lt;?&gt;):String"></a>
+      <a id="XML(implicitcodec:play.api.mvc.Codec):String"></a>
       <a id="XML(Codec):String"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -3057,7 +3054,7 @@
         <span class="name">XML</span><span class="params">(<span class="implicit">implicit </span><span name="codec">codec: <span class="extype" name="play.api.mvc.Codec">Codec</span></span>)</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@XML(implicitcodec:play.api.mvc.Codec):String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@XML(implicitcodec:play.api.mvc.Codec):String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -3074,7 +3071,7 @@
         <span class="name">X_FORWARDED_FOR</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@X_FORWARDED_FOR:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@X_FORWARDED_FOR:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -3091,7 +3088,7 @@
         <span class="name">X_FORWARDED_HOST</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@X_FORWARDED_HOST:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@X_FORWARDED_HOST:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -3108,7 +3105,7 @@
         <span class="name">X_FORWARDED_PORT</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@X_FORWARDED_PORT:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@X_FORWARDED_PORT:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -3125,7 +3122,7 @@
         <span class="name">X_FORWARDED_PROTO</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@X_FORWARDED_PROTO:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@X_FORWARDED_PROTO:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -3142,7 +3139,7 @@
         <span class="name">X_REQUESTED_WITH</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@X_REQUESTED_WITH:String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@X_REQUESTED_WITH:String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -3159,7 +3156,7 @@
         <span class="name">asInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Any.asInstanceOf.T0">T0</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@asInstanceOf[T0]:T0" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@asInstanceOf[T0]:T0" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -3176,7 +3173,7 @@
         <span class="name">clone</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@clone():Object" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@clone():Object" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -3199,7 +3196,7 @@
         <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@eq(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@eq(x$1:AnyRef):Boolean" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -3216,7 +3213,7 @@
         <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@equals(x$1:Any):Boolean" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@equals(x$1:Any):Boolean" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -3233,7 +3230,7 @@
         <span class="name">finalize</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@finalize():Unit" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@finalize():Unit" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -3244,23 +3241,6 @@
     </span>)</span>
               
         </dd></dl></div>
-    </li><li name="controllers.QueryController#geoJSONFeatureCollectionWrite" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="geoJSONFeatureCollectionWrite:models.gmd.GeoJSONFeatureCollectionWriter.type"></a>
-      <a id="geoJSONFeatureCollectionWrite:GeoJSONFeatureCollectionWriter.type"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">implicit </span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">geoJSONFeatureCollectionWrite</span><span class="result">: <a href="../models/gmd/GeoJSONFeatureCollectionWriter$.html" class="extype" name="models.gmd.GeoJSONFeatureCollectionWriter">GeoJSONFeatureCollectionWriter</a>.type</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@geoJSONFeatureCollectionWrite:models.gmd.GeoJSONFeatureCollectionWriter.type" title="Permalink" target="_top">
-        <img src="../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      
     </li><li name="scala.AnyRef#getClass" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getClass():Class[_]"></a>
       <a id="getClass():Class[_]"></a>
@@ -3273,7 +3253,7 @@
         <span class="name">getClass</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.Class">Class</span>[_]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@getClass():Class[_]" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@getClass():Class[_]" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -3290,11 +3270,32 @@
         <span class="name">hashCode</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@hashCode():Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@hashCode():Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="controllers.MainController#index" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="index:play.api.mvc.Action[play.api.mvc.AnyContent]"></a>
+      <a id="index:Action[AnyContent]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">index</span><span class="result">: <span class="extype" name="play.api.mvc.Action">Action</span>[<span class="extype" name="play.api.mvc.AnyContent">AnyContent</span>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../index.html#controllers.MainController@index:play.api.mvc.Action[play.api.mvc.AnyContent]" title="Permalink" target="_top">
+        <img src="../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Create an Action to render an HTML page with a welcome message.</p><div class="fullcomment"><div class="comment cmt"><p>Create an Action to render an HTML page with a welcome message.
+The configuration in the <code>routes</code> file means that this method
+will be called when the application receives a <code>GET</code> request with
+a path of <code>/</code>.
+</p></div></div>
     </li><li name="scala.Any#isInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isInstanceOf[T0]:Boolean"></a>
       <a id="isInstanceOf[T0]:Boolean"></a>
@@ -3307,7 +3308,7 @@
         <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@isInstanceOf[T0]:Boolean" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@isInstanceOf[T0]:Boolean" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -3324,7 +3325,7 @@
         <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@ne(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@ne(x$1:AnyRef):Boolean" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -3341,7 +3342,7 @@
         <span class="name">notify</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@notify():Unit" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@notify():Unit" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -3358,29 +3359,11 @@
         <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@notifyAll():Unit" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@notifyAll():Unit" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="controllers.QueryController#query" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="query(query:Option[String],bboxWkt:Option[String],fromDateStr:Option[String],toDateStr:Option[String]):play.api.mvc.Action[play.api.mvc.AnyContent]"></a>
-      <a id="query(Option[String],Option[String],Option[String],Option[String]):Action[AnyContent]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">query</span><span class="params">(<span name="query">query: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="bboxWkt">bboxWkt: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="fromDateStr">fromDateStr: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="toDateStr">toDateStr: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="result">: <span class="extype" name="play.api.mvc.Action">Action</span>[<span class="extype" name="play.api.mvc.AnyContent">AnyContent</span>]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@query(query:Option[String],bboxWkt:Option[String],fromDateStr:Option[String],toDateStr:Option[String]):play.api.mvc.Action[play.api.mvc.AnyContent]" title="Permalink" target="_top">
-        <img src="../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Action that passes the query from URL to the <a href="../services/LuceneService.html" class="extype" name="services.LuceneService">services.LuceneService</a>.</p><div class="fullcomment"><div class="comment cmt"><p>Action that passes the query from URL to the <a href="../services/LuceneService.html" class="extype" name="services.LuceneService">services.LuceneService</a>.
-</p></div><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p>services.LuceneService</p></span></dd></dl></div>
     </li><li name="play.api.mvc.Controller#request2flash" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="request2flash(implicitrequest:play.api.mvc.RequestHeader):play.api.mvc.Flash"></a>
       <a id="request2flash(RequestHeader):Flash"></a>
@@ -3393,7 +3376,7 @@
         <span class="name">request2flash</span><span class="params">(<span class="implicit">implicit </span><span name="request">request: <span class="extype" name="play.api.mvc.RequestHeader">RequestHeader</span></span>)</span><span class="result">: <span class="extype" name="play.api.mvc.Flash">Flash</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@request2flash(implicitrequest:play.api.mvc.RequestHeader):play.api.mvc.Flash" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@request2flash(implicitrequest:play.api.mvc.RequestHeader):play.api.mvc.Flash" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -3410,7 +3393,7 @@
         <span class="name">request2lang</span><span class="params">(<span class="implicit">implicit </span><span name="request">request: <span class="extype" name="play.api.mvc.RequestHeader">RequestHeader</span></span>)</span><span class="result">: <span class="extype" name="play.api.i18n.Lang">Lang</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@request2lang(implicitrequest:play.api.mvc.RequestHeader):play.api.i18n.Lang" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@request2lang(implicitrequest:play.api.mvc.RequestHeader):play.api.i18n.Lang" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -3427,7 +3410,7 @@
         <span class="name">request2session</span><span class="params">(<span class="implicit">implicit </span><span name="request">request: <span class="extype" name="play.api.mvc.RequestHeader">RequestHeader</span></span>)</span><span class="result">: <span class="extype" name="play.api.mvc.Session">Session</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@request2session(implicitrequest:play.api.mvc.RequestHeader):play.api.mvc.Session" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@request2session(implicitrequest:play.api.mvc.RequestHeader):play.api.mvc.Session" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -3444,7 +3427,7 @@
         <span class="name">synchronized</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="params">(<span name="arg0">arg0: ⇒ <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>)</span><span class="result">: <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@synchronized[T0](x$1:=&gt;T0):T0" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@synchronized[T0](x$1:=&gt;T0):T0" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -3461,11 +3444,28 @@
         <span class="name">toString</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@toString():String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@toString():String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="controllers.MainController#untrail" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="untrail(path:String):play.api.mvc.Action[play.api.mvc.AnyContent]"></a>
+      <a id="untrail(String):Action[AnyContent]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">untrail</span><span class="params">(<span name="path">path: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="play.api.mvc.Action">Action</span>[<span class="extype" name="play.api.mvc.AnyContent">AnyContent</span>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../index.html#controllers.MainController@untrail(path:String):play.api.mvc.Action[play.api.mvc.AnyContent]" title="Permalink" target="_top">
+        <img src="../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">cuts off any trailing &quot;/&quot; from the path</p>
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <a id="wait():Unit"></a>
@@ -3478,7 +3478,7 @@
         <span class="name">wait</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@wait():Unit" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@wait():Unit" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -3501,7 +3501,7 @@
         <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>, <span name="arg1">arg1: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@wait(x$1:Long,x$2:Int):Unit" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@wait(x$1:Long,x$2:Int):Unit" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -3524,7 +3524,7 @@
         <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@wait(x$1:Long):Unit" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@wait(x$1:Long):Unit" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -3536,7 +3536,7 @@
               
         </dd></dl></div>
     </li><li name="play.api.http.ContentTypes#withCharset" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="withCharset(mimeType:&lt;?&gt;)(implicitcodec:&lt;?&gt;):String"></a>
+      <a id="withCharset(mimeType:String)(implicitcodec:play.api.mvc.Codec):String"></a>
       <a id="withCharset(String)(Codec):String"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -3547,7 +3547,7 @@
         <span class="name">withCharset</span><span class="params">(<span name="mimeType">mimeType: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="codec">codec: <span class="extype" name="play.api.mvc.Codec">Codec</span></span>)</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@withCharset(mimeType:String)(implicitcodec:play.api.mvc.Codec):String" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@withCharset(mimeType:String)(implicitcodec:play.api.mvc.Codec):String" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -3571,7 +3571,7 @@
         <span class="name deprecated" title="Deprecated: (Since version 3.0.0) Use TOO_MANY_REQUESTS instead">TOO_MANY_REQUEST</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@TOO_MANY_REQUEST:Int" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@TOO_MANY_REQUEST:Int" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -3588,10 +3588,10 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name deprecated" title="Deprecated: (Since version 3.0.0) Use TooManyRequests instead">TooManyRequest</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.QueryController.Status">Status</a></span>
+        <span class="name deprecated" title="Deprecated: (Since version 3.0.0) Use TooManyRequests instead">TooManyRequest</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.MainController.Status">Status</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#controllers.QueryController@TooManyRequest:Results.this.Status" title="Permalink" target="_top">
+      <a href="../index.html#controllers.MainController@TooManyRequest:Results.this.Status" title="Permalink" target="_top">
         <img src="../lib/permalink.png" alt="Permalink" />
       </a>
     </span>

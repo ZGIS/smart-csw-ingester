@@ -25,7 +25,7 @@
             <pre style='font-size: 12pt; font-family: courier;'>1 <span style=''>
 </span>2 <span style=''>// @GENERATOR:play-routes-compiler
 </span>3 <span style=''>// @SOURCE:/home/travis/build/ZGIS/smart-csw-ingester/conf/routes
-</span>4 <span style=''>// @DATE:Fri Sep 09 03:41:00 UTC 2016
+</span>4 <span style=''>// @DATE:Mon Sep 12 03:42:39 UTC 2016
 </span>5 <span style=''>
 </span>6 <span style=''>import play.api.mvc.{ QueryStringBindable, PathBindable, Call, JavascriptLiteral }
 </span>7 <span style=''>import play.core.routing.{ HandlerDef, ReverseRouteContext, queryString, dynamicString }
@@ -36,57 +36,59 @@
 </span>12 <span style=''>// @LINE:6
 </span>13 <span style=''>package controllers {
 </span>14 <span style=''>
-</span>15 <span style=''>  // @LINE:6
+</span>15 <span style=''>  // @LINE:11
 </span>16 <span style=''>  class ReverseQueryController(_prefix: => String) {
 </span>17 <span style=''>    def _defaultPrefix: String = {
 </span>18 <span style=''>      if (</span><span style='background: #F0ADAD'>_prefix.endsWith("/")</span><span style=''>) </span><span style='background: #F0ADAD'>""</span><span style=''> else </span><span style='background: #F0ADAD'>"/"</span><span style=''>
 </span>19 <span style=''>    }
 </span>20 <span style=''>
 </span>21 <span style=''>  
-</span>22 <span style=''>    // @LINE:10
-</span>23 <span style=''>    def query(query:String): Call = {
-</span>24 <span style=''>    
-</span>25 <span style=''>      (query: @unchecked) match {
-</span>26 <span style=''>      
-</span>27 <span style=''>        // @LINE:10
-</span>28 <span style=''>        case (query) if </span><span style='background: #F0ADAD'>query == ""</span><span style=''> =>
-</span>29 <span style=''>          implicit val _rrc = </span><span style='background: #F0ADAD'>new ReverseRouteContext(Map(("query", "")))</span><span style=''>
-</span>30 <span style=''>          </span><span style='background: #F0ADAD'>Call("GET", _prefix + { _defaultPrefix } + "query")</span><span style=''>
-</span>31 <span style=''>      
-</span>32 <span style=''>        // @LINE:11
-</span>33 <span style=''>        case (query)  =>
-</span>34 <span style=''>          import ReverseRouteContext.empty
-</span>35 <span style=''>          </span><span style='background: #F0ADAD'>Call("GET", _prefix + { _defaultPrefix } + "query/" + implicitly[PathBindable[String]].unbind("query", dynamicString(query)))</span><span style=''>
-</span>36 <span style=''>      
-</span>37 <span style=''>      }
-</span>38 <span style=''>    
-</span>39 <span style=''>    }
-</span>40 <span style=''>  
-</span>41 <span style=''>    // @LINE:6
-</span>42 <span style=''>    def index(): Call = {
-</span>43 <span style=''>      import ReverseRouteContext.empty
-</span>44 <span style=''>      </span><span style='background: #F0ADAD'>Call("GET", _prefix)</span><span style=''>
-</span>45 <span style=''>    }
-</span>46 <span style=''>  
-</span>47 <span style=''>  }
-</span>48 <span style=''>
-</span>49 <span style=''>  // @LINE:14
-</span>50 <span style=''>  class ReverseAssets(_prefix: => String) {
-</span>51 <span style=''>    def _defaultPrefix: String = {
-</span>52 <span style=''>      if (</span><span style='background: #F0ADAD'>_prefix.endsWith("/")</span><span style=''>) </span><span style='background: #F0ADAD'>""</span><span style=''> else </span><span style='background: #F0ADAD'>"/"</span><span style=''>
-</span>53 <span style=''>    }
-</span>54 <span style=''>
-</span>55 <span style=''>  
-</span>56 <span style=''>    // @LINE:14
-</span>57 <span style=''>    def versioned(file:Asset): Call = {
-</span>58 <span style=''>      implicit val _rrc = </span><span style='background: #F0ADAD'>new ReverseRouteContext(Map(("path", "/public")))</span><span style=''>
-</span>59 <span style=''>      </span><span style='background: #F0ADAD'>Call("GET", _prefix + { _defaultPrefix } + "assets/" + implicitly[PathBindable[Asset]].unbind("file", file))</span><span style=''>
-</span>60 <span style=''>    }
-</span>61 <span style=''>  
-</span>62 <span style=''>  }
-</span>63 <span style=''>
-</span>64 <span style=''>
-</span>65 <span style=''>}
+</span>22 <span style=''>    // @LINE:11
+</span>23 <span style=''>    def query(query:Option[String], bbox:Option[String], fromDate:Option[String], toDate:Option[String]): Call = {
+</span>24 <span style=''>      import ReverseRouteContext.empty
+</span>25 <span style=''>      </span><span style='background: #F0ADAD'>Call("GET", _prefix + { _defaultPrefix } + "query" + queryString(List(Some(implicitly[QueryStringBindable[Option[String]]].unbind("query", query)), Some(implicitly[QueryStringBindable[Option[String]]].unbind("bbox", bbox)), Some(implicitly[QueryStringBindable[Option[String]]].unbind("fromDate", fromDate)), Some(implicitly[QueryStringBindable[Option[String]]].unbind("toDate", toDate)))))</span><span style=''>
+</span>26 <span style=''>    }
+</span>27 <span style=''>  
+</span>28 <span style=''>  }
+</span>29 <span style=''>
+</span>30 <span style=''>  // @LINE:6
+</span>31 <span style=''>  class ReverseMainController(_prefix: => String) {
+</span>32 <span style=''>    def _defaultPrefix: String = {
+</span>33 <span style=''>      if (</span><span style='background: #F0ADAD'>_prefix.endsWith("/")</span><span style=''>) </span><span style='background: #F0ADAD'>""</span><span style=''> else </span><span style='background: #F0ADAD'>"/"</span><span style=''>
+</span>34 <span style=''>    }
+</span>35 <span style=''>
+</span>36 <span style=''>  
+</span>37 <span style=''>    // @LINE:6
+</span>38 <span style=''>    def index(): Call = {
+</span>39 <span style=''>      import ReverseRouteContext.empty
+</span>40 <span style=''>      </span><span style='background: #F0ADAD'>Call("GET", _prefix)</span><span style=''>
+</span>41 <span style=''>    }
+</span>42 <span style=''>  
+</span>43 <span style=''>    // @LINE:7
+</span>44 <span style=''>    def untrail(path:String): Call = {
+</span>45 <span style=''>      import ReverseRouteContext.empty
+</span>46 <span style=''>      </span><span style='background: #F0ADAD'>Call("GET", _prefix + { _defaultPrefix } + implicitly[PathBindable[String]].unbind("path", path) + "/")</span><span style=''>
+</span>47 <span style=''>    }
+</span>48 <span style=''>  
+</span>49 <span style=''>  }
+</span>50 <span style=''>
+</span>51 <span style=''>  // @LINE:17
+</span>52 <span style=''>  class ReverseAssets(_prefix: => String) {
+</span>53 <span style=''>    def _defaultPrefix: String = {
+</span>54 <span style=''>      if (</span><span style='background: #F0ADAD'>_prefix.endsWith("/")</span><span style=''>) </span><span style='background: #F0ADAD'>""</span><span style=''> else </span><span style='background: #F0ADAD'>"/"</span><span style=''>
+</span>55 <span style=''>    }
+</span>56 <span style=''>
+</span>57 <span style=''>  
+</span>58 <span style=''>    // @LINE:17
+</span>59 <span style=''>    def versioned(file:Asset): Call = {
+</span>60 <span style=''>      implicit val _rrc = </span><span style='background: #F0ADAD'>new ReverseRouteContext(Map(("path", "/public")))</span><span style=''>
+</span>61 <span style=''>      </span><span style='background: #F0ADAD'>Call("GET", _prefix + { _defaultPrefix } + "assets/" + implicitly[PathBindable[Asset]].unbind("file", file))</span><span style=''>
+</span>62 <span style=''>    }
+</span>63 <span style=''>  
+</span>64 <span style=''>  }
+</span>65 <span style=''>
+</span>66 <span style=''>
+</span>67 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -103,54 +105,12 @@
           18
         </td>
         <td>
-          819
+          837
         </td>
         <td>
-          523
+          524
           -
-          525
-        </td>
-        <td>
-          Block
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;&quot;
-        </td>
-      </tr><tr>
-        <td>
-          18
-        </td>
-        <td>
-          821
-        </td>
-        <td>
-          531
-          -
-          534
-        </td>
-        <td>
-          Block
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;/&quot;
-        </td>
-      </tr><tr>
-        <td>
-          18
-        </td>
-        <td>
-          818
-        </td>
-        <td>
-          523
-          -
-          525
+          526
         </td>
         <td>
           Literal
@@ -166,12 +126,33 @@
           18
         </td>
         <td>
-          817
+          839
         </td>
         <td>
-          500
+          532
           -
-          521
+          535
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;/&quot;
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          836
+        </td>
+        <td>
+          501
+          -
+          522
         </td>
         <td>
           Apply
@@ -187,15 +168,36 @@
           18
         </td>
         <td>
-          820
+          838
         </td>
         <td>
-          531
+          524
           -
-          534
+          526
         </td>
         <td>
-          Literal
+          Block
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;&quot;
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          840
+        </td>
+        <td>
+          532
+          -
+          535
+        </td>
+        <td>
+          Block
         </td>
         <td>
           &lt;nosymbol&gt;
@@ -205,99 +207,36 @@
         </td>
       </tr><tr>
         <td>
-          28
+          25
         </td>
         <td>
-          822
+          846
         </td>
         <td>
-          689
+          875
           -
-          700
+          943
         </td>
         <td>
           Apply
         </td>
         <td>
-          java.lang.Object.==
+          play.api.mvc.QueryStringBindable.unbind
         </td>
         <td style="background: #F0ADAD">
-          query.==(&quot;&quot;)
+          scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).unbind(&quot;bbox&quot;, bbox)
         </td>
       </tr><tr>
         <td>
-          29
+          25
         </td>
         <td>
-          824
+          855
         </td>
         <td>
-          758
+          722
           -
-          776
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.collection.generic.GenMapFactory.apply
-        </td>
-        <td style="background: #F0ADAD">
-          scala.this.Predef.Map.apply[String, String](scala.Tuple2.apply[String, String](&quot;query&quot;, &quot;&quot;))
-        </td>
-      </tr><tr>
-        <td>
-          29
-        </td>
-        <td>
-          823
-        </td>
-        <td>
-          762
-          -
-          775
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.Tuple2.apply
-        </td>
-        <td style="background: #F0ADAD">
-          scala.Tuple2.apply[String, String](&quot;query&quot;, &quot;&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          29
-        </td>
-        <td>
-          825
-        </td>
-        <td>
-          734
-          -
-          777
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          play.core.routing.ReverseRouteContext.&lt;init&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          new play.core.routing.ReverseRouteContext(scala.this.Predef.Map.apply[String, String](scala.Tuple2.apply[String, String](&quot;query&quot;, &quot;&quot;)))
-        </td>
-      </tr><tr>
-        <td>
-          30
-        </td>
-        <td>
-          828
-        </td>
-        <td>
-          788
-          -
-          788
+          722
         </td>
         <td>
           Select
@@ -310,99 +249,57 @@
         </td>
       </tr><tr>
         <td>
-          30
+          25
         </td>
         <td>
-          827
+          848
         </td>
         <td>
-          800
+          951
           -
-          838
+          1027
         </td>
         <td>
           Apply
         </td>
         <td>
-          java.lang.String.+
+          play.api.mvc.QueryStringBindable.unbind
         </td>
         <td style="background: #F0ADAD">
-          ReverseQueryController.this._prefix.+(ReverseQueryController.this._defaultPrefix).+(&quot;query&quot;)
+          scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).unbind(&quot;fromDate&quot;, fromDate)
         </td>
       </tr><tr>
         <td>
-          30
+          25
         </td>
         <td>
-          826
+          851
         </td>
         <td>
-          793
+          1030
           -
-          798
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;GET&quot;
-        </td>
-      </tr><tr>
-        <td>
-          30
-        </td>
-        <td>
-          829
-        </td>
-        <td>
-          788
-          -
-          839
+          1108
         </td>
         <td>
           Apply
         </td>
         <td>
-          play.api.mvc.Call.apply
+          scala.Some.apply
         </td>
         <td style="background: #F0ADAD">
-          play.api.mvc.Call.apply(&quot;GET&quot;, ReverseQueryController.this._prefix.+(ReverseQueryController.this._defaultPrefix).+(&quot;query&quot;), play.api.mvc.Call.apply$default$3)
+          scala.Some.apply[String](scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).unbind(&quot;toDate&quot;, toDate))
         </td>
       </tr><tr>
         <td>
-          35
+          25
         </td>
         <td>
-          837
+          842
         </td>
         <td>
-          957
+          746
           -
-          1069
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          java.lang.String.+
-        </td>
-        <td style="background: #F0ADAD">
-          ReverseQueryController.this._prefix.+(ReverseQueryController.this._defaultPrefix).+(&quot;query/&quot;).+(scala.this.Predef.implicitly[play.api.mvc.PathBindable[String]](mvc.this.PathBindable.bindableString).unbind(&quot;query&quot;, play.core.routing.`package`.dynamicString(query)))
-        </td>
-      </tr><tr>
-        <td>
-          35
-        </td>
-        <td>
-          831
-        </td>
-        <td>
-          969
-          -
-          983
+          760
         </td>
         <td>
           Select
@@ -415,15 +312,162 @@
         </td>
       </tr><tr>
         <td>
-          35
+          25
         </td>
         <td>
-          830
+          854
         </td>
         <td>
-          950
+          734
           -
-          955
+          1110
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.String.+
+        </td>
+        <td style="background: #F0ADAD">
+          ReverseQueryController.this._prefix.+(ReverseQueryController.this._defaultPrefix).+(&quot;query&quot;).+(play.core.routing.`package`.queryString(immutable.this.List.apply[Some[String]](scala.Some.apply[String](scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).unbind(&quot;query&quot;, query)), scala.Some.apply[String](scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).unbind(&quot;bbox&quot;, bbox)), scala.Some.apply[String](scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).unbind(&quot;fromDate&quot;, fromDate)), scala.Some.apply[String](scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).unbind(&quot;toDate&quot;, toDate)))))
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          845
+        </td>
+        <td>
+          792
+          -
+          868
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Some.apply
+        </td>
+        <td style="background: #F0ADAD">
+          scala.Some.apply[String](scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).unbind(&quot;query&quot;, query))
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          853
+        </td>
+        <td>
+          775
+          -
+          1110
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.core.routing.queryString
+        </td>
+        <td style="background: #F0ADAD">
+          play.core.routing.`package`.queryString(immutable.this.List.apply[Some[String]](scala.Some.apply[String](scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).unbind(&quot;query&quot;, query)), scala.Some.apply[String](scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).unbind(&quot;bbox&quot;, bbox)), scala.Some.apply[String](scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).unbind(&quot;fromDate&quot;, fromDate)), scala.Some.apply[String](scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).unbind(&quot;toDate&quot;, toDate))))
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          844
+        </td>
+        <td>
+          797
+          -
+          867
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.mvc.QueryStringBindable.unbind
+        </td>
+        <td style="background: #F0ADAD">
+          scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).unbind(&quot;query&quot;, query)
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          847
+        </td>
+        <td>
+          870
+          -
+          944
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Some.apply
+        </td>
+        <td style="background: #F0ADAD">
+          scala.Some.apply[String](scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).unbind(&quot;bbox&quot;, bbox))
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          856
+        </td>
+        <td>
+          722
+          -
+          1111
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.mvc.Call.apply
+        </td>
+        <td style="background: #F0ADAD">
+          play.api.mvc.Call.apply(&quot;GET&quot;, ReverseQueryController.this._prefix.+(ReverseQueryController.this._defaultPrefix).+(&quot;query&quot;).+(play.core.routing.`package`.queryString(immutable.this.List.apply[Some[String]](scala.Some.apply[String](scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).unbind(&quot;query&quot;, query)), scala.Some.apply[String](scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).unbind(&quot;bbox&quot;, bbox)), scala.Some.apply[String](scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).unbind(&quot;fromDate&quot;, fromDate)), scala.Some.apply[String](scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).unbind(&quot;toDate&quot;, toDate))))), play.api.mvc.Call.apply$default$3)
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          850
+        </td>
+        <td>
+          1035
+          -
+          1107
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.mvc.QueryStringBindable.unbind
+        </td>
+        <td style="background: #F0ADAD">
+          scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).unbind(&quot;toDate&quot;, toDate)
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          841
+        </td>
+        <td>
+          727
+          -
+          732
         </td>
         <td>
           Literal
@@ -436,141 +480,57 @@
         </td>
       </tr><tr>
         <td>
-          35
+          25
         </td>
         <td>
-          839
+          849
         </td>
         <td>
-          945
+          946
           -
-          1070
+          1028
         </td>
         <td>
           Apply
         </td>
         <td>
-          play.api.mvc.Call.apply
+          scala.Some.apply
         </td>
         <td style="background: #F0ADAD">
-          play.api.mvc.Call.apply(&quot;GET&quot;, ReverseQueryController.this._prefix.+(ReverseQueryController.this._defaultPrefix).+(&quot;query/&quot;).+(scala.this.Predef.implicitly[play.api.mvc.PathBindable[String]](mvc.this.PathBindable.bindableString).unbind(&quot;query&quot;, play.core.routing.`package`.dynamicString(query))), play.api.mvc.Call.apply$default$3)
+          scala.Some.apply[String](scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).unbind(&quot;fromDate&quot;, fromDate))
         </td>
       </tr><tr>
         <td>
-          35
+          25
         </td>
         <td>
-          833
+          852
         </td>
         <td>
-          1009
+          787
           -
-          1009
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          play.api.mvc.PathBindable.bindableString
-        </td>
-        <td style="background: #F0ADAD">
-          mvc.this.PathBindable.bindableString
-        </td>
-      </tr><tr>
-        <td>
-          35
-        </td>
-        <td>
-          836
-        </td>
-        <td>
-          999
-          -
-          1069
+          1109
         </td>
         <td>
           Apply
         </td>
         <td>
-          play.api.mvc.PathBindable.unbind
+          scala.collection.immutable.List.apply
         </td>
         <td style="background: #F0ADAD">
-          scala.this.Predef.implicitly[play.api.mvc.PathBindable[String]](mvc.this.PathBindable.bindableString).unbind(&quot;query&quot;, play.core.routing.`package`.dynamicString(query))
+          immutable.this.List.apply[Some[String]](scala.Some.apply[String](scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).unbind(&quot;query&quot;, query)), scala.Some.apply[String](scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).unbind(&quot;bbox&quot;, bbox)), scala.Some.apply[String](scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).unbind(&quot;fromDate&quot;, fromDate)), scala.Some.apply[String](scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).unbind(&quot;toDate&quot;, toDate)))
         </td>
       </tr><tr>
         <td>
-          35
+          25
         </td>
         <td>
-          835
+          843
         </td>
         <td>
-          1048
+          765
           -
-          1068
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          play.core.routing.dynamicString
-        </td>
-        <td style="background: #F0ADAD">
-          play.core.routing.`package`.dynamicString(query)
-        </td>
-      </tr><tr>
-        <td>
-          35
-        </td>
-        <td>
-          838
-        </td>
-        <td>
-          945
-          -
-          945
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          play.api.mvc.Call.apply$default$3
-        </td>
-        <td style="background: #F0ADAD">
-          play.api.mvc.Call.apply$default$3
-        </td>
-      </tr><tr>
-        <td>
-          35
-        </td>
-        <td>
-          832
-        </td>
-        <td>
-          988
-          -
-          996
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;query/&quot;
-        </td>
-      </tr><tr>
-        <td>
-          35
-        </td>
-        <td>
-          834
-        </td>
-        <td>
-          1039
-          -
-          1046
+          772
         </td>
         <td>
           Literal
@@ -583,57 +543,36 @@
         </td>
       </tr><tr>
         <td>
-          44
+          33
         </td>
         <td>
-          842
+          857
         </td>
         <td>
-          1186
+          1236
           -
-          1186
+          1257
         </td>
         <td>
-          Select
+          Apply
         </td>
         <td>
-          play.api.mvc.Call.apply$default$3
+          java.lang.String.endsWith
         </td>
         <td style="background: #F0ADAD">
-          play.api.mvc.Call.apply$default$3
+          ReverseMainController.this._prefix.endsWith(&quot;/&quot;)
         </td>
       </tr><tr>
         <td>
-          44
+          33
         </td>
         <td>
-          841
+          860
         </td>
         <td>
-          1198
+          1267
           -
-          1205
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          controllers.ReverseQueryController._prefix
-        </td>
-        <td style="background: #F0ADAD">
-          ReverseQueryController.this._prefix
-        </td>
-      </tr><tr>
-        <td>
-          44
-        </td>
-        <td>
-          840
-        </td>
-        <td>
-          1191
-          -
-          1196
+          1270
         </td>
         <td>
           Literal
@@ -642,40 +581,19 @@
           &lt;nosymbol&gt;
         </td>
         <td style="background: #F0ADAD">
-          &quot;GET&quot;
+          &quot;/&quot;
         </td>
       </tr><tr>
         <td>
-          44
+          33
         </td>
         <td>
-          843
+          859
         </td>
         <td>
-          1186
+          1259
           -
-          1206
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          play.api.mvc.Call.apply
-        </td>
-        <td style="background: #F0ADAD">
-          play.api.mvc.Call.apply(&quot;GET&quot;, ReverseQueryController.this._prefix, play.api.mvc.Call.apply$default$3)
-        </td>
-      </tr><tr>
-        <td>
-          52
-        </td>
-        <td>
-          846
-        </td>
-        <td>
-          1347
-          -
-          1349
+          1261
         </td>
         <td>
           Block
@@ -688,15 +606,36 @@
         </td>
       </tr><tr>
         <td>
-          52
+          33
         </td>
         <td>
-          848
+          858
         </td>
         <td>
-          1355
+          1259
           -
-          1358
+          1261
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;&quot;
+        </td>
+      </tr><tr>
+        <td>
+          33
+        </td>
+        <td>
+          861
+        </td>
+        <td>
+          1267
+          -
+          1270
         </td>
         <td>
           Block
@@ -709,15 +648,225 @@
         </td>
       </tr><tr>
         <td>
-          52
+          40
         </td>
         <td>
-          845
+          864
         </td>
         <td>
-          1347
+          1367
           -
-          1349
+          1367
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          play.api.mvc.Call.apply$default$3
+        </td>
+        <td style="background: #F0ADAD">
+          play.api.mvc.Call.apply$default$3
+        </td>
+      </tr><tr>
+        <td>
+          40
+        </td>
+        <td>
+          863
+        </td>
+        <td>
+          1379
+          -
+          1386
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          controllers.ReverseMainController._prefix
+        </td>
+        <td style="background: #F0ADAD">
+          ReverseMainController.this._prefix
+        </td>
+      </tr><tr>
+        <td>
+          40
+        </td>
+        <td>
+          862
+        </td>
+        <td>
+          1372
+          -
+          1377
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;GET&quot;
+        </td>
+      </tr><tr>
+        <td>
+          40
+        </td>
+        <td>
+          865
+        </td>
+        <td>
+          1367
+          -
+          1387
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.mvc.Call.apply
+        </td>
+        <td style="background: #F0ADAD">
+          play.api.mvc.Call.apply(&quot;GET&quot;, ReverseMainController.this._prefix, play.api.mvc.Call.apply$default$3)
+        </td>
+      </tr><tr>
+        <td>
+          46
+        </td>
+        <td>
+          866
+        </td>
+        <td>
+          1501
+          -
+          1506
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;GET&quot;
+        </td>
+      </tr><tr>
+        <td>
+          46
+        </td>
+        <td>
+          869
+        </td>
+        <td>
+          1496
+          -
+          1599
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.mvc.Call.apply
+        </td>
+        <td style="background: #F0ADAD">
+          play.api.mvc.Call.apply(&quot;GET&quot;, ReverseMainController.this._prefix.+(ReverseMainController.this._defaultPrefix).+(scala.this.Predef.implicitly[play.api.mvc.PathBindable[String]](mvc.this.PathBindable.bindableString).unbind(&quot;path&quot;, path)).+(&quot;/&quot;), play.api.mvc.Call.apply$default$3)
+        </td>
+      </tr><tr>
+        <td>
+          46
+        </td>
+        <td>
+          868
+        </td>
+        <td>
+          1496
+          -
+          1496
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          play.api.mvc.Call.apply$default$3
+        </td>
+        <td style="background: #F0ADAD">
+          play.api.mvc.Call.apply$default$3
+        </td>
+      </tr><tr>
+        <td>
+          46
+        </td>
+        <td>
+          867
+        </td>
+        <td>
+          1508
+          -
+          1598
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.String.+
+        </td>
+        <td style="background: #F0ADAD">
+          ReverseMainController.this._prefix.+(ReverseMainController.this._defaultPrefix).+(scala.this.Predef.implicitly[play.api.mvc.PathBindable[String]](mvc.this.PathBindable.bindableString).unbind(&quot;path&quot;, path)).+(&quot;/&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          54
+        </td>
+        <td>
+          873
+        </td>
+        <td>
+          1748
+          -
+          1751
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;/&quot;
+        </td>
+      </tr><tr>
+        <td>
+          54
+        </td>
+        <td>
+          872
+        </td>
+        <td>
+          1740
+          -
+          1742
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;&quot;
+        </td>
+      </tr><tr>
+        <td>
+          54
+        </td>
+        <td>
+          871
+        </td>
+        <td>
+          1740
+          -
+          1742
         </td>
         <td>
           Literal
@@ -730,15 +879,36 @@
         </td>
       </tr><tr>
         <td>
-          52
+          54
         </td>
         <td>
-          844
+          874
         </td>
         <td>
-          1324
+          1748
           -
-          1345
+          1751
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;/&quot;
+        </td>
+      </tr><tr>
+        <td>
+          54
+        </td>
+        <td>
+          870
+        </td>
+        <td>
+          1717
+          -
+          1738
         </td>
         <td>
           Apply
@@ -751,78 +921,15 @@
         </td>
       </tr><tr>
         <td>
-          52
+          60
         </td>
         <td>
-          847
+          875
         </td>
         <td>
-          1355
+          1872
           -
-          1358
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;/&quot;
-        </td>
-      </tr><tr>
-        <td>
-          58
-        </td>
-        <td>
-          851
-        </td>
-        <td>
-          1451
-          -
-          1500
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          play.core.routing.ReverseRouteContext.&lt;init&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          new play.core.routing.ReverseRouteContext(scala.this.Predef.Map.apply[String, String](scala.Tuple2.apply[String, String](&quot;path&quot;, &quot;/public&quot;)))
-        </td>
-      </tr><tr>
-        <td>
-          58
-        </td>
-        <td>
-          850
-        </td>
-        <td>
-          1475
-          -
-          1499
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.collection.generic.GenMapFactory.apply
-        </td>
-        <td style="background: #F0ADAD">
-          scala.this.Predef.Map.apply[String, String](scala.Tuple2.apply[String, String](&quot;path&quot;, &quot;/public&quot;))
-        </td>
-      </tr><tr>
-        <td>
-          58
-        </td>
-        <td>
-          849
-        </td>
-        <td>
-          1479
-          -
-          1498
+          1891
         </td>
         <td>
           Apply
@@ -835,99 +942,57 @@
         </td>
       </tr><tr>
         <td>
-          59
+          60
         </td>
         <td>
-          855
+          877
         </td>
         <td>
-          1562
+          1844
           -
-          1614
+          1893
         </td>
         <td>
           Apply
         </td>
         <td>
-          play.api.mvc.PathBindable.unbind
+          play.core.routing.ReverseRouteContext.&lt;init&gt;
         </td>
         <td style="background: #F0ADAD">
-          scala.this.Predef.implicitly[play.api.mvc.PathBindable[controllers.Assets.Asset]](Assets.this.Asset.assetPathBindable(_rrc)).unbind(&quot;file&quot;, file)
+          new play.core.routing.ReverseRouteContext(scala.this.Predef.Map.apply[String, String](scala.Tuple2.apply[String, String](&quot;path&quot;, &quot;/public&quot;)))
         </td>
       </tr><tr>
         <td>
-          59
+          60
         </td>
         <td>
-          857
+          876
         </td>
         <td>
-          1507
+          1868
           -
-          1507
+          1892
         </td>
         <td>
-          Select
+          Apply
         </td>
         <td>
-          play.api.mvc.Call.apply$default$3
+          scala.collection.generic.GenMapFactory.apply
         </td>
         <td style="background: #F0ADAD">
-          play.api.mvc.Call.apply$default$3
+          scala.this.Predef.Map.apply[String, String](scala.Tuple2.apply[String, String](&quot;path&quot;, &quot;/public&quot;))
         </td>
       </tr><tr>
         <td>
-          59
+          61
         </td>
         <td>
-          854
+          882
         </td>
         <td>
-          1550
+          1912
           -
-          1559
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;assets/&quot;
-        </td>
-      </tr><tr>
-        <td>
-          59
-        </td>
-        <td>
-          853
-        </td>
-        <td>
-          1531
-          -
-          1545
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          controllers.ReverseAssets._defaultPrefix
-        </td>
-        <td style="background: #F0ADAD">
-          ReverseAssets.this._defaultPrefix
-        </td>
-      </tr><tr>
-        <td>
-          59
-        </td>
-        <td>
-          856
-        </td>
-        <td>
-          1519
-          -
-          1614
+          2007
         </td>
         <td>
           Apply
@@ -940,15 +1005,36 @@
         </td>
       </tr><tr>
         <td>
-          59
+          61
         </td>
         <td>
-          858
+          881
         </td>
         <td>
-          1507
+          1955
           -
-          1615
+          2007
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.mvc.PathBindable.unbind
+        </td>
+        <td style="background: #F0ADAD">
+          scala.this.Predef.implicitly[play.api.mvc.PathBindable[controllers.Assets.Asset]](Assets.this.Asset.assetPathBindable(_rrc)).unbind(&quot;file&quot;, file)
+        </td>
+      </tr><tr>
+        <td>
+          61
+        </td>
+        <td>
+          884
+        </td>
+        <td>
+          1900
+          -
+          2008
         </td>
         <td>
           Apply
@@ -961,15 +1047,15 @@
         </td>
       </tr><tr>
         <td>
-          59
+          61
         </td>
         <td>
-          852
+          878
         </td>
         <td>
-          1512
+          1905
           -
-          1517
+          1910
         </td>
         <td>
           Literal
@@ -979,6 +1065,69 @@
         </td>
         <td style="background: #F0ADAD">
           &quot;GET&quot;
+        </td>
+      </tr><tr>
+        <td>
+          61
+        </td>
+        <td>
+          880
+        </td>
+        <td>
+          1943
+          -
+          1952
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;assets/&quot;
+        </td>
+      </tr><tr>
+        <td>
+          61
+        </td>
+        <td>
+          883
+        </td>
+        <td>
+          1900
+          -
+          1900
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          play.api.mvc.Call.apply$default$3
+        </td>
+        <td style="background: #F0ADAD">
+          play.api.mvc.Call.apply$default$3
+        </td>
+      </tr><tr>
+        <td>
+          61
+        </td>
+        <td>
+          879
+        </td>
+        <td>
+          1924
+          -
+          1938
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          controllers.ReverseAssets._defaultPrefix
+        </td>
+        <td style="background: #F0ADAD">
+          ReverseAssets.this._defaultPrefix
         </td>
       </tr>
     </table>

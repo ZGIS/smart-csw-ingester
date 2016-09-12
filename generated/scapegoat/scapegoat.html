@@ -59,12 +59,34 @@
         Errors
         0
         Warnings
-        15
+        16
         Infos
-        17
+        19
       </h3><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:487
+            .home.travis.build.ZGIS.smart-csw-ingester.app.controllers.QueryController.scala:53
+          </div>
+          <div class="title">
+            <span class="label label-warning">Warning</span>
+            &nbsp;Use of Option.get
+            &nbsp;<span class="inspection">com.sksamuel.scapegoat.inspections.option.OptionGet</span>
+          </div><div class="snippet">
+                  fromDateStr.get
+                </div>
+        </div><div class="warning">
+          <div class="source">
+            .home.travis.build.ZGIS.smart-csw-ingester.app.controllers.QueryController.scala:58
+          </div>
+          <div class="title">
+            <span class="label label-warning">Warning</span>
+            &nbsp;Use of Option.get
+            &nbsp;<span class="inspection">com.sksamuel.scapegoat.inspections.option.OptionGet</span>
+          </div><div class="snippet">
+                  toDateStr.get
+                </div>
+        </div><div class="warning">
+          <div class="source">
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:494
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -75,7 +97,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:185
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:186
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -85,34 +107,6 @@
                   Did you intend to catch all exceptions, consider catching a more specific exception class: try {
   nodeSeq.head.label match {
     case &quot;MD_Metadata&quot; =&gt; scala.Some.apply[models.gmd.MdMetadataSet](MdMetadataSet.apply(nodeSeq.\(&quot;fileIdentifier&quot;).\(&quot;CharacterString&quot;).text, MdMetadataSet.this.dateFromXml(nodeSeq), nodeSeq.\\(&quot;identificationInfo&quot;).\(&quot;MD_DataIdentification&quot;).\(&quot;citation&quot;).\(&quot;CI_
-                </div>
-        </div><div class="warning">
-          <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:504
-          </div>
-          <div class="title">
-            <span class="label label-warning">Warning</span>
-            &nbsp;Catch exception
-            &nbsp;<span class="inspection">com.sksamuel.scapegoat.inspections.exception.CatchException</span>
-          </div><div class="snippet">
-                  Did you intend to catch all exceptions, consider catching a more specific exception class: try {
-  scala.Some.apply[Double](scala.this.Predef.augmentString(textIn).toDouble)
-} catch {
-  case (e @ (_: NumberFormatException)) =&gt; {
-    MdMetadataSet.this.logger.warn(({
-      val arg$macro$42: Any = textIn;
-      new scala.collection.immutable.StringOps(&quot;Bad lat/lon value: %s&quot;).format(arg$mac
-                </div>
-        </div><div class="warning">
-          <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:283
-          </div>
-          <div class="title">
-            <span class="label label-info">Info</span>
-            &nbsp;List.size is O(n)
-            &nbsp;<span class="inspection">com.sksamuel.scapegoat.inspections.collections.ListSize</span>
-          </div><div class="snippet">
-                  List.size is O(n). Consider using a different data type with O(1) size lookup such as Vector or Array.
                 </div>
         </div><div class="warning">
           <div class="source">
@@ -127,7 +121,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:637
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:285
           </div>
           <div class="title">
             <span class="label label-info">Info</span>
@@ -138,7 +132,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:671
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:614
           </div>
           <div class="title">
             <span class="label label-info">Info</span>
@@ -149,7 +143,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:680
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:649
           </div>
           <div class="title">
             <span class="label label-info">Info</span>
@@ -160,7 +154,18 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:276
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:658
+          </div>
+          <div class="title">
+            <span class="label label-info">Info</span>
+            &nbsp;List.size is O(n)
+            &nbsp;<span class="inspection">com.sksamuel.scapegoat.inspections.collections.ListSize</span>
+          </div><div class="snippet">
+                  List.size is O(n). Consider using a different data type with O(1) size lookup such as Vector or Array.
+                </div>
+        </div><div class="warning">
+          <div class="source">
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:277
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -171,7 +176,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:186
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:187
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -182,7 +187,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:203
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:204
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -193,7 +198,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:286
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:287
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -204,7 +209,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:111
+            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:113
           </div>
           <div class="title">
             <span class="label label-info">Info</span>
@@ -215,7 +220,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:216
+            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:219
           </div>
           <div class="title">
             <span class="label label-info">Info</span>
@@ -224,12 +229,12 @@
           </div><div class="snippet">
                   .filter(_.isDefined).map(_.get) can be replaced with flatten: cswGetRecordsResponses.flatMap[Option[models.gmd.MdMetadataSet], List[Option[models.gmd.MdMetadataSet]]](((cswGetRecordsResponse: models.csw.CswGetRecordsResponse) =&gt; cswGetRecordsResponse.xml.\\(&quot;MD_Metadata&quot;).map[Option[models.gmd.MdMetadataSet], scala.collection.immutable.Seq[Option[models.gmd.MdMetadataSet]]](((mdMetadataNode: scala.xml.Node) =&gt; {
   LuceneService.this.logger.debug(({
-    val arg$macro$63: Any = catalogueName;
-    val arg$macro$64: Any = mdMetadataNode.\(&quot;fileIdentifier&quot;).\(&quot;
+    val arg$macro$62: Any = catalogueName;
+    val arg$macro$63: Any = mdMetadataNode.\(&quot;fileIdentifier&quot;).\(&quot;
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:112
+            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:114
           </div>
           <div class="title">
             <span class="label label-info">Info</span>
@@ -240,7 +245,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:243
+            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:276
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -251,7 +256,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:76
+            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:78
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -262,7 +267,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:77
+            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:79
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -273,7 +278,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:77
+            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:79
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -284,7 +289,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:216
+            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:219
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -295,7 +300,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:157
+            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:159
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -317,7 +322,18 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.target.scala-2.11.routes.main.controllers.ReverseRoutes.scala:51
+            .home.travis.build.ZGIS.smart-csw-ingester.target.scala-2.11.routes.main.controllers.ReverseRoutes.scala:32
+          </div>
+          <div class="title">
+            <span class="label label-info">Info</span>
+            &nbsp;Method name not recommended
+            &nbsp;<span class="inspection">com.sksamuel.scapegoat.inspections.naming.MethodNames</span>
+          </div><div class="snippet">
+                  Methods should be in camelCase style with the first letter lower-case. See http://docs.scala-lang.org/style/naming-conventions.html#methods
+                </div>
+        </div><div class="warning">
+          <div class="source">
+            .home.travis.build.ZGIS.smart-csw-ingester.target.scala-2.11.routes.main.controllers.ReverseRoutes.scala:53
           </div>
           <div class="title">
             <span class="label label-info">Info</span>
@@ -339,7 +355,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.target.scala-2.11.routes.main.controllers.javascript.JavaScriptReverseRoutes.scala:58
+            .home.travis.build.ZGIS.smart-csw-ingester.target.scala-2.11.routes.main.controllers.javascript.JavaScriptReverseRoutes.scala:40
           </div>
           <div class="title">
             <span class="label label-info">Info</span>
@@ -350,7 +366,18 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.target.scala-2.11.routes.main.router.Routes.scala:51
+            .home.travis.build.ZGIS.smart-csw-ingester.target.scala-2.11.routes.main.controllers.javascript.JavaScriptReverseRoutes.scala:70
+          </div>
+          <div class="title">
+            <span class="label label-info">Info</span>
+            &nbsp;Method name not recommended
+            &nbsp;<span class="inspection">com.sksamuel.scapegoat.inspections.naming.MethodNames</span>
+          </div><div class="snippet">
+                  Methods should be in camelCase style with the first letter lower-case. See http://docs.scala-lang.org/style/naming-conventions.html#methods
+                </div>
+        </div><div class="warning">
+          <div class="source">
+            .home.travis.build.ZGIS.smart-csw-ingester.target.scala-2.11.routes.main.router.Routes.scala:55
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -361,7 +388,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.target.scala-2.11.routes.main.router.Routes.scala:52
+            .home.travis.build.ZGIS.smart-csw-ingester.target.scala-2.11.routes.main.router.Routes.scala:56
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -372,7 +399,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.target.scala-2.11.routes.main.router.Routes.scala:51
+            .home.travis.build.ZGIS.smart-csw-ingester.target.scala-2.11.routes.main.router.Routes.scala:55
           </div>
           <div class="title">
             <span class="label label-info">Info</span>

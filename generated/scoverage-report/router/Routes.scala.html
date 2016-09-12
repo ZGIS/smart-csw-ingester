@@ -25,7 +25,7 @@
             <pre style='font-size: 12pt; font-family: courier;'>1 <span style=''>
 </span>2 <span style=''>// @GENERATOR:play-routes-compiler
 </span>3 <span style=''>// @SOURCE:/home/travis/build/ZGIS/smart-csw-ingester/conf/routes
-</span>4 <span style=''>// @DATE:Fri Sep 09 03:41:00 UTC 2016
+</span>4 <span style=''>// @DATE:Mon Sep 12 03:42:39 UTC 2016
 </span>5 <span style=''>
 </span>6 <span style=''>package router
 </span>7 <span style=''>
@@ -40,140 +40,144 @@
 </span>16 <span style=''>class Routes(
 </span>17 <span style=''>  override val errorHandler: play.api.http.HttpErrorHandler, 
 </span>18 <span style=''>  // @LINE:6
-</span>19 <span style=''>  QueryController_1: controllers.QueryController,
-</span>20 <span style=''>  // @LINE:14
-</span>21 <span style=''>  Assets_0: controllers.Assets,
-</span>22 <span style=''>  val prefix: String
-</span>23 <span style=''>) extends GeneratedRouter {
-</span>24 <span style=''>
-</span>25 <span style=''>   @javax.inject.Inject()
-</span>26 <span style=''>   def this(errorHandler: play.api.http.HttpErrorHandler,
-</span>27 <span style=''>    // @LINE:6
-</span>28 <span style=''>    QueryController_1: controllers.QueryController,
-</span>29 <span style=''>    // @LINE:14
-</span>30 <span style=''>    Assets_0: controllers.Assets
-</span>31 <span style=''>  ) = </span><span style='background: #F0ADAD'>this(errorHandler, QueryController_1, Assets_0, "/")</span><span style=''>
-</span>32 <span style=''>
-</span>33 <span style=''>  import ReverseRouteContext.empty
-</span>34 <span style=''>
-</span>35 <span style=''>  def withPrefix(prefix: String): Routes = {
-</span>36 <span style=''>    </span><span style='background: #F0ADAD'>router.RoutesPrefix.setPrefix(prefix)</span><span style=''>
-</span>37 <span style=''>    </span><span style='background: #F0ADAD'>new Routes(errorHandler, QueryController_1, Assets_0, prefix)</span><span style=''>
-</span>38 <span style=''>  }
-</span>39 <span style=''>
-</span>40 <span style=''>  private[this] val defaultPrefix: String = {
-</span>41 <span style=''>    if (</span><span style='background: #F0ADAD'>this.prefix.endsWith("/")</span><span style=''>) </span><span style='background: #F0ADAD'>""</span><span style=''> else </span><span style='background: #F0ADAD'>"/"</span><span style=''>
+</span>19 <span style=''>  MainController_0: controllers.MainController,
+</span>20 <span style=''>  // @LINE:11
+</span>21 <span style=''>  QueryController_2: controllers.QueryController,
+</span>22 <span style=''>  // @LINE:17
+</span>23 <span style=''>  Assets_1: controllers.Assets,
+</span>24 <span style=''>  val prefix: String
+</span>25 <span style=''>) extends GeneratedRouter {
+</span>26 <span style=''>
+</span>27 <span style=''>   @javax.inject.Inject()
+</span>28 <span style=''>   def this(errorHandler: play.api.http.HttpErrorHandler,
+</span>29 <span style=''>    // @LINE:6
+</span>30 <span style=''>    MainController_0: controllers.MainController,
+</span>31 <span style=''>    // @LINE:11
+</span>32 <span style=''>    QueryController_2: controllers.QueryController,
+</span>33 <span style=''>    // @LINE:17
+</span>34 <span style=''>    Assets_1: controllers.Assets
+</span>35 <span style=''>  ) = </span><span style='background: #F0ADAD'>this(errorHandler, MainController_0, QueryController_2, Assets_1, "/")</span><span style=''>
+</span>36 <span style=''>
+</span>37 <span style=''>  import ReverseRouteContext.empty
+</span>38 <span style=''>
+</span>39 <span style=''>  def withPrefix(prefix: String): Routes = {
+</span>40 <span style=''>    </span><span style='background: #F0ADAD'>router.RoutesPrefix.setPrefix(prefix)</span><span style=''>
+</span>41 <span style=''>    </span><span style='background: #F0ADAD'>new Routes(errorHandler, MainController_0, QueryController_2, Assets_1, prefix)</span><span style=''>
 </span>42 <span style=''>  }
 </span>43 <span style=''>
-</span>44 <span style=''>  def documentation = </span><span style='background: #F0ADAD'>List(
-</span>45 <span style=''></span><span style='background: #F0ADAD'>    ("""GET""", this.prefix, """controllers.QueryController.index"""),
-</span>46 <span style=''></span><span style='background: #F0ADAD'>    ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """query""", """controllers.QueryController.query(query:String = "")"""),
-</span>47 <span style=''></span><span style='background: #F0ADAD'>    ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """query/""" + "$" + """query<[^/]+>""", """controllers.QueryController.query(query:String)"""),
-</span>48 <span style=''></span><span style='background: #F0ADAD'>    ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """assets/""" + "$" + """file<.+>""", """controllers.Assets.versioned(path:String = "/public", file:Asset)"""),
-</span>49 <span style=''></span><span style='background: #F0ADAD'>    Nil
-</span>50 <span style=''></span><span style='background: #F0ADAD'>  ).foldLeft(List.empty[(String,String,String)]) { (s,e) => e.asInstanceOf[Any] match {
-</span>51 <span style=''></span><span style='background: #F0ADAD'>    case r @ (_,_,_) => s :+ r.asInstanceOf[(String,String,String)]
-</span>52 <span style=''></span><span style='background: #F0ADAD'>    case l => s ++ l.asInstanceOf[List[(String,String,String)]]
-</span>53 <span style=''></span><span style='background: #F0ADAD'>  }}</span><span style=''>
-</span>54 <span style=''>
-</span>55 <span style=''>
-</span>56 <span style=''>  // @LINE:6
-</span>57 <span style=''>  private[this] lazy val controllers_QueryController_index0_route = </span><span style='background: #F0ADAD'>Route("GET",
-</span>58 <span style=''></span><span style='background: #F0ADAD'>    PathPattern(List(StaticPart(this.prefix)))
-</span>59 <span style=''></span><span style='background: #F0ADAD'>  )</span><span style=''>
-</span>60 <span style=''>  private[this] lazy val controllers_QueryController_index0_invoker = </span><span style='background: #F0ADAD'>createInvoker(
-</span>61 <span style=''></span><span style='background: #F0ADAD'>    QueryController_1.index,
-</span>62 <span style=''></span><span style='background: #F0ADAD'>    HandlerDef(this.getClass.getClassLoader,
-</span>63 <span style=''></span><span style='background: #F0ADAD'>      "router",
-</span>64 <span style=''></span><span style='background: #F0ADAD'>      "controllers.QueryController",
-</span>65 <span style=''></span><span style='background: #F0ADAD'>      "index",
-</span>66 <span style=''></span><span style='background: #F0ADAD'>      Nil,
-</span>67 <span style=''></span><span style='background: #F0ADAD'>      "GET",
-</span>68 <span style=''></span><span style='background: #F0ADAD'>      """ home page""",
-</span>69 <span style=''></span><span style='background: #F0ADAD'>      this.prefix + """"""
-</span>70 <span style=''></span><span style='background: #F0ADAD'>    )
-</span>71 <span style=''></span><span style='background: #F0ADAD'>  )</span><span style=''>
-</span>72 <span style=''>
-</span>73 <span style=''>  // @LINE:10
-</span>74 <span style=''>  private[this] lazy val controllers_QueryController_query1_route = </span><span style='background: #F0ADAD'>Route("GET",
-</span>75 <span style=''></span><span style='background: #F0ADAD'>    PathPattern(List(StaticPart(this.prefix), StaticPart(this.defaultPrefix), StaticPart("query")))
-</span>76 <span style=''></span><span style='background: #F0ADAD'>  )</span><span style=''>
-</span>77 <span style=''>  private[this] lazy val controllers_QueryController_query1_invoker = </span><span style='background: #F0ADAD'>createInvoker(
-</span>78 <span style=''></span><span style='background: #F0ADAD'>    QueryController_1.query(fakeValue[String]),
-</span>79 <span style=''></span><span style='background: #F0ADAD'>    HandlerDef(this.getClass.getClassLoader,
-</span>80 <span style=''></span><span style='background: #F0ADAD'>      "router",
-</span>81 <span style=''></span><span style='background: #F0ADAD'>      "controllers.QueryController",
-</span>82 <span style=''></span><span style='background: #F0ADAD'>      "query",
-</span>83 <span style=''></span><span style='background: #F0ADAD'>      Seq(classOf[String]),
-</span>84 <span style=''></span><span style='background: #F0ADAD'>      "GET",
-</span>85 <span style=''></span><span style='background: #F0ADAD'>      """ Lucene query
-</span>86 <span style=''></span><span style='background: #F0ADAD'> TODO better to use "Option"?""",
-</span>87 <span style=''></span><span style='background: #F0ADAD'>      this.prefix + """query"""
-</span>88 <span style=''></span><span style='background: #F0ADAD'>    )
-</span>89 <span style=''></span><span style='background: #F0ADAD'>  )</span><span style=''>
-</span>90 <span style=''>
-</span>91 <span style=''>  // @LINE:11
-</span>92 <span style=''>  private[this] lazy val controllers_QueryController_query2_route = </span><span style='background: #F0ADAD'>Route("GET",
-</span>93 <span style=''></span><span style='background: #F0ADAD'>    PathPattern(List(StaticPart(this.prefix), StaticPart(this.defaultPrefix), StaticPart("query/"), DynamicPart("query", """[^/]+""",true)))
-</span>94 <span style=''></span><span style='background: #F0ADAD'>  )</span><span style=''>
-</span>95 <span style=''>  private[this] lazy val controllers_QueryController_query2_invoker = </span><span style='background: #F0ADAD'>createInvoker(
-</span>96 <span style=''></span><span style='background: #F0ADAD'>    QueryController_1.query(fakeValue[String]),
-</span>97 <span style=''></span><span style='background: #F0ADAD'>    HandlerDef(this.getClass.getClassLoader,
-</span>98 <span style=''></span><span style='background: #F0ADAD'>      "router",
-</span>99 <span style=''></span><span style='background: #F0ADAD'>      "controllers.QueryController",
-</span>100 <span style=''></span><span style='background: #F0ADAD'>      "query",
-</span>101 <span style=''></span><span style='background: #F0ADAD'>      Seq(classOf[String]),
-</span>102 <span style=''></span><span style='background: #F0ADAD'>      "GET",
-</span>103 <span style=''></span><span style='background: #F0ADAD'>      """""",
-</span>104 <span style=''></span><span style='background: #F0ADAD'>      this.prefix + """query/""" + "$" + """query<[^/]+>"""
-</span>105 <span style=''></span><span style='background: #F0ADAD'>    )
-</span>106 <span style=''></span><span style='background: #F0ADAD'>  )</span><span style=''>
-</span>107 <span style=''>
-</span>108 <span style=''>  // @LINE:14
-</span>109 <span style=''>  private[this] lazy val controllers_Assets_versioned3_route = </span><span style='background: #F0ADAD'>Route("GET",
-</span>110 <span style=''></span><span style='background: #F0ADAD'>    PathPattern(List(StaticPart(this.prefix), StaticPart(this.defaultPrefix), StaticPart("assets/"), DynamicPart("file", """.+""",false)))
-</span>111 <span style=''></span><span style='background: #F0ADAD'>  )</span><span style=''>
-</span>112 <span style=''>  private[this] lazy val controllers_Assets_versioned3_invoker = </span><span style='background: #F0ADAD'>createInvoker(
-</span>113 <span style=''></span><span style='background: #F0ADAD'>    Assets_0.versioned(fakeValue[String], fakeValue[Asset]),
-</span>114 <span style=''></span><span style='background: #F0ADAD'>    HandlerDef(this.getClass.getClassLoader,
-</span>115 <span style=''></span><span style='background: #F0ADAD'>      "router",
-</span>116 <span style=''></span><span style='background: #F0ADAD'>      "controllers.Assets",
-</span>117 <span style=''></span><span style='background: #F0ADAD'>      "versioned",
-</span>118 <span style=''></span><span style='background: #F0ADAD'>      Seq(classOf[String], classOf[Asset]),
-</span>119 <span style=''></span><span style='background: #F0ADAD'>      "GET",
-</span>120 <span style=''></span><span style='background: #F0ADAD'>      """ Map static resources from the /public folder to the /assets URL path""",
-</span>121 <span style=''></span><span style='background: #F0ADAD'>      this.prefix + """assets/""" + "$" + """file<.+>"""
-</span>122 <span style=''></span><span style='background: #F0ADAD'>    )
-</span>123 <span style=''></span><span style='background: #F0ADAD'>  )</span><span style=''>
-</span>124 <span style=''>
-</span>125 <span style=''>
-</span>126 <span style=''>  def routes: PartialFunction[RequestHeader, Handler] = {
-</span>127 <span style=''>  
-</span>128 <span style=''>    // @LINE:6
-</span>129 <span style=''>    case controllers_QueryController_index0_route(params) =>
-</span>130 <span style=''>      </span><span style='background: #F0ADAD'>call { 
-</span>131 <span style=''></span><span style='background: #F0ADAD'>        controllers_QueryController_index0_invoker.call(QueryController_1.index)
-</span>132 <span style=''></span><span style='background: #F0ADAD'>      }</span><span style=''>
-</span>133 <span style=''>  
-</span>134 <span style=''>    // @LINE:10
-</span>135 <span style=''>    case controllers_QueryController_query1_route(params) =>
-</span>136 <span style=''>      </span><span style='background: #F0ADAD'>call(Param[String]("query", Right(""))) { (query) =>
-</span>137 <span style=''></span><span style='background: #F0ADAD'>        controllers_QueryController_query1_invoker.call(QueryController_1.query(query))
-</span>138 <span style=''></span><span style='background: #F0ADAD'>      }</span><span style=''>
-</span>139 <span style=''>  
-</span>140 <span style=''>    // @LINE:11
-</span>141 <span style=''>    case controllers_QueryController_query2_route(params) =>
-</span>142 <span style=''>      </span><span style='background: #F0ADAD'>call(params.fromPath[String]("query", None)) { (query) =>
-</span>143 <span style=''></span><span style='background: #F0ADAD'>        controllers_QueryController_query2_invoker.call(QueryController_1.query(query))
-</span>144 <span style=''></span><span style='background: #F0ADAD'>      }</span><span style=''>
-</span>145 <span style=''>  
-</span>146 <span style=''>    // @LINE:14
-</span>147 <span style=''>    case controllers_Assets_versioned3_route(params) =>
-</span>148 <span style=''>      </span><span style='background: #F0ADAD'>call(Param[String]("path", Right("/public")), params.fromPath[Asset]("file", None)) { (path, file) =>
-</span>149 <span style=''></span><span style='background: #F0ADAD'>        controllers_Assets_versioned3_invoker.call(Assets_0.versioned(path, file))
-</span>150 <span style=''></span><span style='background: #F0ADAD'>      }</span><span style=''>
-</span>151 <span style=''>  }
-</span>152 <span style=''>}
+</span>44 <span style=''>  private[this] val defaultPrefix: String = {
+</span>45 <span style=''>    if (</span><span style='background: #F0ADAD'>this.prefix.endsWith("/")</span><span style=''>) </span><span style='background: #F0ADAD'>""</span><span style=''> else </span><span style='background: #F0ADAD'>"/"</span><span style=''>
+</span>46 <span style=''>  }
+</span>47 <span style=''>
+</span>48 <span style=''>  def documentation = </span><span style='background: #F0ADAD'>List(
+</span>49 <span style=''></span><span style='background: #F0ADAD'>    ("""GET""", this.prefix, """controllers.MainController.index"""),
+</span>50 <span style=''></span><span style='background: #F0ADAD'>    ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """""" + "$" + """path<.+>/""", """controllers.MainController.untrail(path:String)"""),
+</span>51 <span style=''></span><span style='background: #F0ADAD'>    ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """query""", """controllers.QueryController.query(query:Option[String], bbox:Option[String], fromDate:Option[String], toDate:Option[String])"""),
+</span>52 <span style=''></span><span style='background: #F0ADAD'>    ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """assets/""" + "$" + """file<.+>""", """controllers.Assets.versioned(path:String = "/public", file:Asset)"""),
+</span>53 <span style=''></span><span style='background: #F0ADAD'>    Nil
+</span>54 <span style=''></span><span style='background: #F0ADAD'>  ).foldLeft(List.empty[(String,String,String)]) { (s,e) => e.asInstanceOf[Any] match {
+</span>55 <span style=''></span><span style='background: #F0ADAD'>    case r @ (_,_,_) => s :+ r.asInstanceOf[(String,String,String)]
+</span>56 <span style=''></span><span style='background: #F0ADAD'>    case l => s ++ l.asInstanceOf[List[(String,String,String)]]
+</span>57 <span style=''></span><span style='background: #F0ADAD'>  }}</span><span style=''>
+</span>58 <span style=''>
+</span>59 <span style=''>
+</span>60 <span style=''>  // @LINE:6
+</span>61 <span style=''>  private[this] lazy val controllers_MainController_index0_route = </span><span style='background: #F0ADAD'>Route("GET",
+</span>62 <span style=''></span><span style='background: #F0ADAD'>    PathPattern(List(StaticPart(this.prefix)))
+</span>63 <span style=''></span><span style='background: #F0ADAD'>  )</span><span style=''>
+</span>64 <span style=''>  private[this] lazy val controllers_MainController_index0_invoker = </span><span style='background: #F0ADAD'>createInvoker(
+</span>65 <span style=''></span><span style='background: #F0ADAD'>    MainController_0.index,
+</span>66 <span style=''></span><span style='background: #F0ADAD'>    HandlerDef(this.getClass.getClassLoader,
+</span>67 <span style=''></span><span style='background: #F0ADAD'>      "router",
+</span>68 <span style=''></span><span style='background: #F0ADAD'>      "controllers.MainController",
+</span>69 <span style=''></span><span style='background: #F0ADAD'>      "index",
+</span>70 <span style=''></span><span style='background: #F0ADAD'>      Nil,
+</span>71 <span style=''></span><span style='background: #F0ADAD'>      "GET",
+</span>72 <span style=''></span><span style='background: #F0ADAD'>      """ home page""",
+</span>73 <span style=''></span><span style='background: #F0ADAD'>      this.prefix + """"""
+</span>74 <span style=''></span><span style='background: #F0ADAD'>    )
+</span>75 <span style=''></span><span style='background: #F0ADAD'>  )</span><span style=''>
+</span>76 <span style=''>
+</span>77 <span style=''>  // @LINE:7
+</span>78 <span style=''>  private[this] lazy val controllers_MainController_untrail1_route = </span><span style='background: #F0ADAD'>Route("GET",
+</span>79 <span style=''></span><span style='background: #F0ADAD'>    PathPattern(List(StaticPart(this.prefix), StaticPart(this.defaultPrefix), DynamicPart("path", """.+""",false), StaticPart("/")))
+</span>80 <span style=''></span><span style='background: #F0ADAD'>  )</span><span style=''>
+</span>81 <span style=''>  private[this] lazy val controllers_MainController_untrail1_invoker = </span><span style='background: #F0ADAD'>createInvoker(
+</span>82 <span style=''></span><span style='background: #F0ADAD'>    MainController_0.untrail(fakeValue[String]),
+</span>83 <span style=''></span><span style='background: #F0ADAD'>    HandlerDef(this.getClass.getClassLoader,
+</span>84 <span style=''></span><span style='background: #F0ADAD'>      "router",
+</span>85 <span style=''></span><span style='background: #F0ADAD'>      "controllers.MainController",
+</span>86 <span style=''></span><span style='background: #F0ADAD'>      "untrail",
+</span>87 <span style=''></span><span style='background: #F0ADAD'>      Seq(classOf[String]),
+</span>88 <span style=''></span><span style='background: #F0ADAD'>      "GET",
+</span>89 <span style=''></span><span style='background: #F0ADAD'>      """""",
+</span>90 <span style=''></span><span style='background: #F0ADAD'>      this.prefix + """""" + "$" + """path<.+>/"""
+</span>91 <span style=''></span><span style='background: #F0ADAD'>    )
+</span>92 <span style=''></span><span style='background: #F0ADAD'>  )</span><span style=''>
+</span>93 <span style=''>
+</span>94 <span style=''>  // @LINE:11
+</span>95 <span style=''>  private[this] lazy val controllers_QueryController_query2_route = </span><span style='background: #F0ADAD'>Route("GET",
+</span>96 <span style=''></span><span style='background: #F0ADAD'>    PathPattern(List(StaticPart(this.prefix), StaticPart(this.defaultPrefix), StaticPart("query")))
+</span>97 <span style=''></span><span style='background: #F0ADAD'>  )</span><span style=''>
+</span>98 <span style=''>  private[this] lazy val controllers_QueryController_query2_invoker = </span><span style='background: #F0ADAD'>createInvoker(
+</span>99 <span style=''></span><span style='background: #F0ADAD'>    QueryController_2.query(fakeValue[Option[String]], fakeValue[Option[String]], fakeValue[Option[String]], fakeValue[Option[String]]),
+</span>100 <span style=''></span><span style='background: #F0ADAD'>    HandlerDef(this.getClass.getClassLoader,
+</span>101 <span style=''></span><span style='background: #F0ADAD'>      "router",
+</span>102 <span style=''></span><span style='background: #F0ADAD'>      "controllers.QueryController",
+</span>103 <span style=''></span><span style='background: #F0ADAD'>      "query",
+</span>104 <span style=''></span><span style='background: #F0ADAD'>      Seq(classOf[Option[String]], classOf[Option[String]], classOf[Option[String]], classOf[Option[String]]),
+</span>105 <span style=''></span><span style='background: #F0ADAD'>      "GET",
+</span>106 <span style=''></span><span style='background: #F0ADAD'>      """ Routes for querying Lucene Index
+</span>107 <span style=''></span><span style='background: #F0ADAD'> FIXME SR is there a way to get Option[String] for the URL path binder?""",
+</span>108 <span style=''></span><span style='background: #F0ADAD'>      this.prefix + """query"""
+</span>109 <span style=''></span><span style='background: #F0ADAD'>    )
+</span>110 <span style=''></span><span style='background: #F0ADAD'>  )</span><span style=''>
+</span>111 <span style=''>
+</span>112 <span style=''>  // @LINE:17
+</span>113 <span style=''>  private[this] lazy val controllers_Assets_versioned3_route = </span><span style='background: #F0ADAD'>Route("GET",
+</span>114 <span style=''></span><span style='background: #F0ADAD'>    PathPattern(List(StaticPart(this.prefix), StaticPart(this.defaultPrefix), StaticPart("assets/"), DynamicPart("file", """.+""",false)))
+</span>115 <span style=''></span><span style='background: #F0ADAD'>  )</span><span style=''>
+</span>116 <span style=''>  private[this] lazy val controllers_Assets_versioned3_invoker = </span><span style='background: #F0ADAD'>createInvoker(
+</span>117 <span style=''></span><span style='background: #F0ADAD'>    Assets_1.versioned(fakeValue[String], fakeValue[Asset]),
+</span>118 <span style=''></span><span style='background: #F0ADAD'>    HandlerDef(this.getClass.getClassLoader,
+</span>119 <span style=''></span><span style='background: #F0ADAD'>      "router",
+</span>120 <span style=''></span><span style='background: #F0ADAD'>      "controllers.Assets",
+</span>121 <span style=''></span><span style='background: #F0ADAD'>      "versioned",
+</span>122 <span style=''></span><span style='background: #F0ADAD'>      Seq(classOf[String], classOf[Asset]),
+</span>123 <span style=''></span><span style='background: #F0ADAD'>      "GET",
+</span>124 <span style=''></span><span style='background: #F0ADAD'>      """ Map static resources from the /public folder to the /assets URL path""",
+</span>125 <span style=''></span><span style='background: #F0ADAD'>      this.prefix + """assets/""" + "$" + """file<.+>"""
+</span>126 <span style=''></span><span style='background: #F0ADAD'>    )
+</span>127 <span style=''></span><span style='background: #F0ADAD'>  )</span><span style=''>
+</span>128 <span style=''>
+</span>129 <span style=''>
+</span>130 <span style=''>  def routes: PartialFunction[RequestHeader, Handler] = {
+</span>131 <span style=''>  
+</span>132 <span style=''>    // @LINE:6
+</span>133 <span style=''>    case controllers_MainController_index0_route(params) =>
+</span>134 <span style=''>      </span><span style='background: #F0ADAD'>call { 
+</span>135 <span style=''></span><span style='background: #F0ADAD'>        controllers_MainController_index0_invoker.call(MainController_0.index)
+</span>136 <span style=''></span><span style='background: #F0ADAD'>      }</span><span style=''>
+</span>137 <span style=''>  
+</span>138 <span style=''>    // @LINE:7
+</span>139 <span style=''>    case controllers_MainController_untrail1_route(params) =>
+</span>140 <span style=''>      </span><span style='background: #F0ADAD'>call(params.fromPath[String]("path", None)) { (path) =>
+</span>141 <span style=''></span><span style='background: #F0ADAD'>        controllers_MainController_untrail1_invoker.call(MainController_0.untrail(path))
+</span>142 <span style=''></span><span style='background: #F0ADAD'>      }</span><span style=''>
+</span>143 <span style=''>  
+</span>144 <span style=''>    // @LINE:11
+</span>145 <span style=''>    case controllers_QueryController_query2_route(params) =>
+</span>146 <span style=''>      </span><span style='background: #F0ADAD'>call(params.fromQuery[Option[String]]("query", None), params.fromQuery[Option[String]]("bbox", None), params.fromQuery[Option[String]]("fromDate", None), params.fromQuery[Option[String]]("toDate", None)) { (query, bbox, fromDate, toDate) =>
+</span>147 <span style=''></span><span style='background: #F0ADAD'>        controllers_QueryController_query2_invoker.call(QueryController_2.query(query, bbox, fromDate, toDate))
+</span>148 <span style=''></span><span style='background: #F0ADAD'>      }</span><span style=''>
+</span>149 <span style=''>  
+</span>150 <span style=''>    // @LINE:17
+</span>151 <span style=''>    case controllers_Assets_versioned3_route(params) =>
+</span>152 <span style=''>      </span><span style='background: #F0ADAD'>call(Param[String]("path", Right("/public")), params.fromPath[Asset]("file", None)) { (path, file) =>
+</span>153 <span style=''></span><span style='background: #F0ADAD'>        controllers_Assets_versioned3_invoker.call(Assets_1.versioned(path, file))
+</span>154 <span style=''></span><span style='background: #F0ADAD'>      }</span><span style=''>
+</span>155 <span style=''>  }
+</span>156 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -187,36 +191,15 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          31
+          35
         </td>
         <td>
-          878
+          913
         </td>
         <td>
-          759
+          887
           -
-          811
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          router.Routes.&lt;init&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          Routes.this.&lt;init&gt;(errorHandler, QueryController_1, Assets_0, &quot;/&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          31
-        </td>
-        <td>
-          879
-        </td>
-        <td>
-          759
-          -
-          759
+          887
         </td>
         <td>
           Literal
@@ -229,15 +212,36 @@
         </td>
       </tr><tr>
         <td>
-          36
+          35
         </td>
         <td>
-          880
+          912
         </td>
         <td>
-          898
+          887
           -
-          935
+          957
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          router.Routes.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          Routes.this.&lt;init&gt;(errorHandler, MainController_0, QueryController_2, Assets_1, &quot;/&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          40
+        </td>
+        <td>
+          914
+        </td>
+        <td>
+          1044
+          -
+          1081
         </td>
         <td>
           Apply
@@ -250,36 +254,99 @@
         </td>
       </tr><tr>
         <td>
-          37
+          41
         </td>
         <td>
-          882
+          917
         </td>
         <td>
-          965
+          1129
           -
-          982
+          1146
         </td>
         <td>
           Select
         </td>
         <td>
-          router.Routes.QueryController_1
+          router.Routes.QueryController_2
         </td>
         <td style="background: #F0ADAD">
-          Routes.this.QueryController_1
+          Routes.this.QueryController_2
         </td>
       </tr><tr>
         <td>
-          37
+          41
         </td>
         <td>
-          881
+          916
         </td>
         <td>
-          951
+          1111
           -
-          963
+          1127
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          router.Routes.MainController_0
+        </td>
+        <td style="background: #F0ADAD">
+          Routes.this.MainController_0
+        </td>
+      </tr><tr>
+        <td>
+          41
+        </td>
+        <td>
+          919
+        </td>
+        <td>
+          1086
+          -
+          1165
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          router.Routes.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new Routes(Routes.this.errorHandler, Routes.this.MainController_0, Routes.this.QueryController_2, Routes.this.Assets_1, prefix)
+        </td>
+      </tr><tr>
+        <td>
+          41
+        </td>
+        <td>
+          918
+        </td>
+        <td>
+          1148
+          -
+          1156
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          router.Routes.Assets_1
+        </td>
+        <td style="background: #F0ADAD">
+          Routes.this.Assets_1
+        </td>
+      </tr><tr>
+        <td>
+          41
+        </td>
+        <td>
+          915
+        </td>
+        <td>
+          1097
+          -
+          1109
         </td>
         <td>
           Select
@@ -292,102 +359,18 @@
         </td>
       </tr><tr>
         <td>
-          37
+          45
         </td>
         <td>
-          884
+          923
         </td>
         <td>
-          940
+          1260
           -
-          1001
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          router.Routes.&lt;init&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          new Routes(Routes.this.errorHandler, Routes.this.QueryController_1, Routes.this.Assets_0, prefix)
-        </td>
-      </tr><tr>
-        <td>
-          37
-        </td>
-        <td>
-          883
-        </td>
-        <td>
-          984
-          -
-          992
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          router.Routes.Assets_0
-        </td>
-        <td style="background: #F0ADAD">
-          Routes.this.Assets_0
-        </td>
-      </tr><tr>
-        <td>
-          41
-        </td>
-        <td>
-          887
-        </td>
-        <td>
-          1088
-          -
-          1090
-        </td>
-        <td>
-          Block
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;&quot;
-        </td>
-      </tr><tr>
-        <td>
-          41
-        </td>
-        <td>
-          886
-        </td>
-        <td>
-          1088
-          -
-          1090
+          1263
         </td>
         <td>
           Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;&quot;
-        </td>
-      </tr><tr>
-        <td>
-          41
-        </td>
-        <td>
-          889
-        </td>
-        <td>
-          1096
-          -
-          1099
-        </td>
-        <td>
-          Block
         </td>
         <td>
           &lt;nosymbol&gt;
@@ -397,15 +380,15 @@
         </td>
       </tr><tr>
         <td>
-          41
+          45
         </td>
         <td>
-          885
+          920
         </td>
         <td>
-          1061
+          1225
           -
-          1086
+          1250
         </td>
         <td>
           Apply
@@ -418,18 +401,60 @@
         </td>
       </tr><tr>
         <td>
-          41
+          45
         </td>
         <td>
-          888
+          922
         </td>
         <td>
-          1096
+          1252
           -
-          1099
+          1254
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;&quot;
+        </td>
+      </tr><tr>
+        <td>
+          45
+        </td>
+        <td>
+          921
+        </td>
+        <td>
+          1252
+          -
+          1254
         </td>
         <td>
           Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;&quot;
+        </td>
+      </tr><tr>
+        <td>
+          45
+        </td>
+        <td>
+          924
+        </td>
+        <td>
+          1260
+          -
+          1263
+        </td>
+        <td>
+          Block
         </td>
         <td>
           &lt;nosymbol&gt;
@@ -439,15 +464,15 @@
         </td>
       </tr><tr>
         <td>
-          45
+          49
         </td>
         <td>
-          891
+          926
         </td>
         <td>
-          1149
+          1313
           -
-          1160
+          1324
         </td>
         <td>
           Select
@@ -460,15 +485,15 @@
         </td>
       </tr><tr>
         <td>
-          45
+          49
         </td>
         <td>
-          890
+          925
         </td>
         <td>
-          1138
+          1302
           -
-          1147
+          1311
         </td>
         <td>
           Literal
@@ -481,15 +506,15 @@
         </td>
       </tr><tr>
         <td>
-          45
+          49
         </td>
         <td>
-          893
+          928
         </td>
         <td>
-          1137
+          1301
           -
-          1202
+          1365
         </td>
         <td>
           Apply
@@ -498,19 +523,19 @@
           scala.Tuple3.apply
         </td>
         <td style="background: #F0ADAD">
-          scala.Tuple3.apply[String, String, String](&quot;GET&quot;, this.prefix, &quot;controllers.QueryController.index&quot;)
+          scala.Tuple3.apply[String, String, String](&quot;GET&quot;, this.prefix, &quot;controllers.MainController.index&quot;)
         </td>
       </tr><tr>
         <td>
-          45
+          49
         </td>
         <td>
-          892
+          927
         </td>
         <td>
-          1162
+          1326
           -
-          1201
+          1364
         </td>
         <td>
           Literal
@@ -519,19 +544,43 @@
           &lt;nosymbol&gt;
         </td>
         <td style="background: #F0ADAD">
-          &quot;controllers.QueryController.index&quot;
+          &quot;controllers.MainController.index&quot;
         </td>
       </tr><tr>
         <td>
-          46
+          50
         </td>
         <td>
-          896
+          932
         </td>
         <td>
-          1293
+          1371
           -
-          1351
+          1529
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Tuple3.apply
+        </td>
+        <td style="background: #F0ADAD">
+          scala.Tuple3.apply[String, String, String](&quot;GET&quot;, this.prefix.+(if (this.prefix.endsWith(&quot;/&quot;))
+  &quot;&quot;
+else
+  &quot;/&quot;).+(&quot;&quot;).+(&quot;$&quot;).+(&quot;path&lt;.+&gt;/&quot;), &quot;controllers.MainController.untrail(path:String)&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          50
+        </td>
+        <td>
+          929
+        </td>
+        <td>
+          1372
+          -
+          1381
         </td>
         <td>
           Literal
@@ -540,19 +589,85 @@
           &lt;nosymbol&gt;
         </td>
         <td style="background: #F0ADAD">
-          &quot;controllers.QueryController.query(query:String = \&quot;\&quot;)&quot;
+          &quot;GET&quot;
         </td>
       </tr><tr>
         <td>
-          46
+          50
         </td>
         <td>
-          895
+          931
         </td>
         <td>
-          1220
+          1475
           -
-          1291
+          1528
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;controllers.MainController.untrail(path:String)&quot;
+        </td>
+      </tr><tr>
+        <td>
+          50
+        </td>
+        <td>
+          930
+        </td>
+        <td>
+          1383
+          -
+          1473
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.String.+
+        </td>
+        <td style="background: #F0ADAD">
+          this.prefix.+(if (this.prefix.endsWith(&quot;/&quot;))
+  &quot;&quot;
+else
+  &quot;/&quot;).+(&quot;&quot;).+(&quot;$&quot;).+(&quot;path&lt;.+&gt;/&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          51
+        </td>
+        <td>
+          935
+        </td>
+        <td>
+          1620
+          -
+          1750
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;controllers.QueryController.query(query:Option[String], bbox:Option[String], fromDate:Option[String], toDate:Option[String])&quot;
+        </td>
+      </tr><tr>
+        <td>
+          51
+        </td>
+        <td>
+          934
+        </td>
+        <td>
+          1547
+          -
+          1618
         </td>
         <td>
           Apply
@@ -568,15 +683,39 @@ else
         </td>
       </tr><tr>
         <td>
-          46
+          51
         </td>
         <td>
-          894
+          936
         </td>
         <td>
-          1209
+          1535
           -
-          1218
+          1751
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Tuple3.apply
+        </td>
+        <td style="background: #F0ADAD">
+          scala.Tuple3.apply[String, String, String](&quot;GET&quot;, this.prefix.+(if (this.prefix.endsWith(&quot;/&quot;))
+  &quot;&quot;
+else
+  &quot;/&quot;).+(&quot;query&quot;), &quot;controllers.QueryController.query(query:Option[String], bbox:Option[String], fromDate:Option[String], toDate:Option[String])&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          51
+        </td>
+        <td>
+          933
+        </td>
+        <td>
+          1536
+          -
+          1545
         </td>
         <td>
           Literal
@@ -589,195 +728,15 @@ else
         </td>
       </tr><tr>
         <td>
-          46
+          52
         </td>
         <td>
-          897
+          938
         </td>
         <td>
-          1208
+          1769
           -
-          1352
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.Tuple3.apply
-        </td>
-        <td style="background: #F0ADAD">
-          scala.Tuple3.apply[String, String, String](&quot;GET&quot;, this.prefix.+(if (this.prefix.endsWith(&quot;/&quot;))
-  &quot;&quot;
-else
-  &quot;/&quot;).+(&quot;query&quot;), &quot;controllers.QueryController.query(query:String = \&quot;\&quot;)&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          47
-        </td>
-        <td>
-          899
-        </td>
-        <td>
-          1370
-          -
-          1469
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          java.lang.String.+
-        </td>
-        <td style="background: #F0ADAD">
-          this.prefix.+(if (this.prefix.endsWith(&quot;/&quot;))
-  &quot;&quot;
-else
-  &quot;/&quot;).+(&quot;query/&quot;).+(&quot;$&quot;).+(&quot;query&lt;[^/]+&gt;&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          47
-        </td>
-        <td>
-          898
-        </td>
-        <td>
-          1359
-          -
-          1368
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;GET&quot;
-        </td>
-      </tr><tr>
-        <td>
-          47
-        </td>
-        <td>
-          901
-        </td>
-        <td>
-          1358
-          -
-          1525
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.Tuple3.apply
-        </td>
-        <td style="background: #F0ADAD">
-          scala.Tuple3.apply[String, String, String](&quot;GET&quot;, this.prefix.+(if (this.prefix.endsWith(&quot;/&quot;))
-  &quot;&quot;
-else
-  &quot;/&quot;).+(&quot;query/&quot;).+(&quot;$&quot;).+(&quot;query&lt;[^/]+&gt;&quot;), &quot;controllers.QueryController.query(query:String)&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          47
-        </td>
-        <td>
-          900
-        </td>
-        <td>
-          1471
-          -
-          1524
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;controllers.QueryController.query(query:String)&quot;
-        </td>
-      </tr><tr>
-        <td>
-          48
-        </td>
-        <td>
-          902
-        </td>
-        <td>
-          1532
-          -
-          1541
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;GET&quot;
-        </td>
-      </tr><tr>
-        <td>
-          48
-        </td>
-        <td>
-          905
-        </td>
-        <td>
-          1531
-          -
-          1713
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.Tuple3.apply
-        </td>
-        <td style="background: #F0ADAD">
-          scala.Tuple3.apply[String, String, String](&quot;GET&quot;, this.prefix.+(if (this.prefix.endsWith(&quot;/&quot;))
-  &quot;&quot;
-else
-  &quot;/&quot;).+(&quot;assets/&quot;).+(&quot;$&quot;).+(&quot;file&lt;.+&gt;&quot;), &quot;controllers.Assets.versioned(path:String = \&quot;/public\&quot;, file:Asset)&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          48
-        </td>
-        <td>
-          904
-        </td>
-        <td>
-          1641
-          -
-          1712
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;controllers.Assets.versioned(path:String = \&quot;/public\&quot;, file:Asset)&quot;
-        </td>
-      </tr><tr>
-        <td>
-          48
-        </td>
-        <td>
-          903
-        </td>
-        <td>
-          1543
-          -
-          1639
+          1865
         </td>
         <td>
           Apply
@@ -793,15 +752,81 @@ else
         </td>
       </tr><tr>
         <td>
-          49
+          52
         </td>
         <td>
-          906
+          937
         </td>
         <td>
-          1719
+          1758
           -
-          1722
+          1767
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;GET&quot;
+        </td>
+      </tr><tr>
+        <td>
+          52
+        </td>
+        <td>
+          940
+        </td>
+        <td>
+          1757
+          -
+          1939
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Tuple3.apply
+        </td>
+        <td style="background: #F0ADAD">
+          scala.Tuple3.apply[String, String, String](&quot;GET&quot;, this.prefix.+(if (this.prefix.endsWith(&quot;/&quot;))
+  &quot;&quot;
+else
+  &quot;/&quot;).+(&quot;assets/&quot;).+(&quot;$&quot;).+(&quot;file&lt;.+&gt;&quot;), &quot;controllers.Assets.versioned(path:String = \&quot;/public\&quot;, file:Asset)&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          52
+        </td>
+        <td>
+          939
+        </td>
+        <td>
+          1867
+          -
+          1938
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;controllers.Assets.versioned(path:String = \&quot;/public\&quot;, file:Asset)&quot;
+        </td>
+      </tr><tr>
+        <td>
+          53
+        </td>
+        <td>
+          941
+        </td>
+        <td>
+          1945
+          -
+          1948
         </td>
         <td>
           Select
@@ -814,15 +839,48 @@ else
         </td>
       </tr><tr>
         <td>
-          50
+          54
         </td>
         <td>
-          908
+          950
         </td>
         <td>
-          1783
+          1291
           -
-          1802
+          2173
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.LinearSeqOptimized.foldLeft
+        </td>
+        <td style="background: #F0ADAD">
+          immutable.this.List.apply[Product with Serializable](scala.Tuple3.apply[String, String, String](&quot;GET&quot;, this.prefix, &quot;controllers.MainController.index&quot;), scala.Tuple3.apply[String, String, String](&quot;GET&quot;, this.prefix.+(if (this.prefix.endsWith(&quot;/&quot;))
+  &quot;&quot;
+else
+  &quot;/&quot;).+(&quot;&quot;).+(&quot;$&quot;).+(&quot;path&lt;.+&gt;/&quot;), &quot;controllers.MainController.untrail(path:String)&quot;), scala.Tuple3.apply[String, String, String](&quot;GET&quot;, this.prefix.+(if (this.prefix.endsWith(&quot;/&quot;))
+  &quot;&quot;
+else
+  &quot;/&quot;).+(&quot;query&quot;), &quot;controllers.QueryController.query(query:Option[String], bbox:Option[String], fromDate:Option[String], toDate:Option[String])&quot;), scala.Tuple3.apply[String, String, String](&quot;GET&quot;, this.prefix.+(if (this.prefix.endsWith(&quot;/&quot;))
+  &quot;&quot;
+else
+  &quot;/&quot;).+(&quot;assets/&quot;).+(&quot;$&quot;).+(&quot;file&lt;.+&gt;&quot;), &quot;controllers.Assets.versioned(path:String = \&quot;/public\&quot;, file:Asset)&quot;), immutable.this.Nil).foldLeft[List[(String, String, String)]](immutable.this.List.empty[(String, String, String)])(((s: List[(String, String, String)], e: Product with Serializable) =&gt; e.asInstanceOf[Any] match {
+  case (r @ (_1: Any, _2: Any, _3: Any)(Any, Any, Any)(_, _, _)) =&gt; s.:+[(String, String, String), List[(String, String, String)]](r.asInstanceOf[(String, String, String)])(immutable.this.List.canBuildFrom[(String, String, String)])
+  case (l @ _) =&gt; s.++[(String, String, String), List[(String, String, String)]](l.asInstanceOf[List[(String, String, String)]])(immutable.this.List.canBuildFrom[(String, String, String)])
+}))
+        </td>
+      </tr><tr>
+        <td>
+          54
+        </td>
+        <td>
+          943
+        </td>
+        <td>
+          2009
+          -
+          2028
         </td>
         <td>
           TypeApply
@@ -835,15 +893,15 @@ else
         </td>
       </tr><tr>
         <td>
-          50
+          54
         </td>
         <td>
-          907
+          942
         </td>
         <td>
-          1736
+          1962
           -
-          1770
+          1996
         </td>
         <td>
           TypeApply
@@ -856,90 +914,15 @@ else
         </td>
       </tr><tr>
         <td>
-          50
+          55
         </td>
         <td>
-          915
+          944
         </td>
         <td>
-          1127
+          2066
           -
-          1947
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.collection.LinearSeqOptimized.foldLeft
-        </td>
-        <td style="background: #F0ADAD">
-          immutable.this.List.apply[Product with Serializable](scala.Tuple3.apply[String, String, String](&quot;GET&quot;, this.prefix, &quot;controllers.QueryController.index&quot;), scala.Tuple3.apply[String, String, String](&quot;GET&quot;, this.prefix.+(if (this.prefix.endsWith(&quot;/&quot;))
-  &quot;&quot;
-else
-  &quot;/&quot;).+(&quot;query&quot;), &quot;controllers.QueryController.query(query:String = \&quot;\&quot;)&quot;), scala.Tuple3.apply[String, String, String](&quot;GET&quot;, this.prefix.+(if (this.prefix.endsWith(&quot;/&quot;))
-  &quot;&quot;
-else
-  &quot;/&quot;).+(&quot;query/&quot;).+(&quot;$&quot;).+(&quot;query&lt;[^/]+&gt;&quot;), &quot;controllers.QueryController.query(query:String)&quot;), scala.Tuple3.apply[String, String, String](&quot;GET&quot;, this.prefix.+(if (this.prefix.endsWith(&quot;/&quot;))
-  &quot;&quot;
-else
-  &quot;/&quot;).+(&quot;assets/&quot;).+(&quot;$&quot;).+(&quot;file&lt;.+&gt;&quot;), &quot;controllers.Assets.versioned(path:String = \&quot;/public\&quot;, file:Asset)&quot;), immutable.this.Nil).foldLeft[List[(String, String, String)]](immutable.this.List.empty[(String, String, String)])(((s: List[(String, String, String)], e: Product with Serializable) =&gt; e.asInstanceOf[Any] match {
-  case (r @ (_1: Any, _2: Any, _3: Any)(Any, Any, Any)(_, _, _)) =&gt; s.:+[(String, String, String), List[(String, String, String)]](r.asInstanceOf[(String, String, String)])(immutable.this.List.canBuildFrom[(String, String, String)])
-  case (l @ _) =&gt; s.++[(String, String, String), List[(String, String, String)]](l.asInstanceOf[List[(String, String, String)]])(immutable.this.List.canBuildFrom[(String, String, String)])
-}))
-        </td>
-      </tr><tr>
-        <td>
-          51
-        </td>
-        <td>
-          911
-        </td>
-        <td>
-          1835
-          -
-          1878
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          scala.collection.SeqLike.:+
-        </td>
-        <td style="background: #F0ADAD">
-          s.:+[(String, String, String), List[(String, String, String)]](r.asInstanceOf[(String, String, String)])(immutable.this.List.canBuildFrom[(String, String, String)])
-        </td>
-      </tr><tr>
-        <td>
-          51
-        </td>
-        <td>
-          910
-        </td>
-        <td>
-          1837
-          -
-          1837
-        </td>
-        <td>
-          TypeApply
-        </td>
-        <td>
-          scala.collection.immutable.List.canBuildFrom
-        </td>
-        <td style="background: #F0ADAD">
-          immutable.this.List.canBuildFrom[(String, String, String)]
-        </td>
-      </tr><tr>
-        <td>
-          51
-        </td>
-        <td>
-          909
-        </td>
-        <td>
-          1840
-          -
-          1878
+          2104
         </td>
         <td>
           TypeApply
@@ -952,36 +935,36 @@ else
         </td>
       </tr><tr>
         <td>
-          52
+          55
         </td>
         <td>
-          914
+          946
         </td>
         <td>
-          1893
+          2061
           -
-          1942
+          2104
         </td>
         <td>
           ApplyToImplicitArgs
         </td>
         <td>
-          scala.collection.immutable.List.++
+          scala.collection.SeqLike.:+
         </td>
         <td style="background: #F0ADAD">
-          s.++[(String, String, String), List[(String, String, String)]](l.asInstanceOf[List[(String, String, String)]])(immutable.this.List.canBuildFrom[(String, String, String)])
+          s.:+[(String, String, String), List[(String, String, String)]](r.asInstanceOf[(String, String, String)])(immutable.this.List.canBuildFrom[(String, String, String)])
         </td>
       </tr><tr>
         <td>
-          52
+          55
         </td>
         <td>
-          913
+          945
         </td>
         <td>
-          1895
+          2063
           -
-          1895
+          2063
         </td>
         <td>
           TypeApply
@@ -994,15 +977,15 @@ else
         </td>
       </tr><tr>
         <td>
-          52
+          56
         </td>
         <td>
-          912
+          947
         </td>
         <td>
-          1898
+          2124
           -
-          1942
+          2168
         </td>
         <td>
           TypeApply
@@ -1015,36 +998,57 @@ else
         </td>
       </tr><tr>
         <td>
-          57
+          56
         </td>
         <td>
-          916
+          949
         </td>
         <td>
-          2037
+          2119
           -
-          2042
+          2168
         </td>
         <td>
-          Literal
+          ApplyToImplicitArgs
         </td>
         <td>
-          &lt;nosymbol&gt;
+          scala.collection.immutable.List.++
         </td>
         <td style="background: #F0ADAD">
-          &quot;GET&quot;
+          s.++[(String, String, String), List[(String, String, String)]](l.asInstanceOf[List[(String, String, String)]])(immutable.this.List.canBuildFrom[(String, String, String)])
         </td>
       </tr><tr>
         <td>
-          57
+          56
         </td>
         <td>
-          921
+          948
         </td>
         <td>
-          2031
+          2121
           -
-          2094
+          2121
+        </td>
+        <td>
+          TypeApply
+        </td>
+        <td>
+          scala.collection.immutable.List.canBuildFrom
+        </td>
+        <td style="background: #F0ADAD">
+          immutable.this.List.canBuildFrom[(String, String, String)]
+        </td>
+      </tr><tr>
+        <td>
+          61
+        </td>
+        <td>
+          956
+        </td>
+        <td>
+          2256
+          -
+          2319
         </td>
         <td>
           Apply
@@ -1057,36 +1061,57 @@ else
         </td>
       </tr><tr>
         <td>
-          58
+          61
         </td>
         <td>
-          917
+          951
         </td>
         <td>
-          2076
+          2262
           -
-          2087
+          2267
         </td>
         <td>
-          Select
+          Literal
         </td>
         <td>
-          router.Routes.prefix
+          &lt;nosymbol&gt;
         </td>
         <td style="background: #F0ADAD">
-          this.prefix
+          &quot;GET&quot;
         </td>
       </tr><tr>
         <td>
-          58
+          62
         </td>
         <td>
-          920
+          953
         </td>
         <td>
-          2048
+          2290
           -
-          2090
+          2313
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.core.routing.StaticPart.apply
+        </td>
+        <td style="background: #F0ADAD">
+          play.core.routing.StaticPart.apply(this.prefix)
+        </td>
+      </tr><tr>
+        <td>
+          62
+        </td>
+        <td>
+          955
+        </td>
+        <td>
+          2273
+          -
+          2315
         </td>
         <td>
           Apply
@@ -1099,15 +1124,36 @@ else
         </td>
       </tr><tr>
         <td>
-          58
+          62
         </td>
         <td>
-          919
+          952
         </td>
         <td>
-          2060
+          2301
           -
-          2089
+          2312
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          router.Routes.prefix
+        </td>
+        <td style="background: #F0ADAD">
+          this.prefix
+        </td>
+      </tr><tr>
+        <td>
+          62
+        </td>
+        <td>
+          954
+        </td>
+        <td>
+          2285
+          -
+          2314
         </td>
         <td>
           Apply
@@ -1120,36 +1166,36 @@ else
         </td>
       </tr><tr>
         <td>
-          58
+          64
         </td>
         <td>
-          918
+          968
         </td>
         <td>
-          2065
+          2389
           -
-          2088
+          2628
         </td>
         <td>
-          Apply
+          ApplyToImplicitArgs
         </td>
         <td>
-          play.core.routing.StaticPart.apply
+          play.core.routing.GeneratedRouter.createInvoker
         </td>
         <td style="background: #F0ADAD">
-          play.core.routing.StaticPart.apply(this.prefix)
+          Routes.this.createInvoker[play.api.mvc.Action[play.api.mvc.AnyContent]](Routes.this.MainController_0.index, play.core.routing.HandlerDef.apply(this.getClass().getClassLoader(), &quot;router&quot;, &quot;controllers.MainController&quot;, &quot;index&quot;, immutable.this.Nil, &quot;GET&quot;, &quot; home page&quot;, this.prefix.+(&quot;&quot;)))(play.core.routing.HandlerInvokerFactory.passThrough[play.api.mvc.Handler])
         </td>
       </tr><tr>
         <td>
-          60
+          64
         </td>
         <td>
-          932
+          967
         </td>
         <td>
-          2178
+          2402
           -
-          2178
+          2402
         </td>
         <td>
           TypeApply
@@ -1162,57 +1208,36 @@ else
         </td>
       </tr><tr>
         <td>
-          60
+          65
         </td>
         <td>
-          933
+          957
         </td>
         <td>
-          2165
+          2408
           -
-          2406
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          play.core.routing.GeneratedRouter.createInvoker
-        </td>
-        <td style="background: #F0ADAD">
-          Routes.this.createInvoker[play.api.mvc.Action[play.api.mvc.AnyContent]](Routes.this.QueryController_1.index, play.core.routing.HandlerDef.apply(this.getClass().getClassLoader(), &quot;router&quot;, &quot;controllers.QueryController&quot;, &quot;index&quot;, immutable.this.Nil, &quot;GET&quot;, &quot; home page&quot;, this.prefix.+(&quot;&quot;)))(play.core.routing.HandlerInvokerFactory.passThrough[play.api.mvc.Handler])
-        </td>
-      </tr><tr>
-        <td>
-          61
-        </td>
-        <td>
-          922
-        </td>
-        <td>
-          2184
-          -
-          2207
+          2430
         </td>
         <td>
           Select
         </td>
         <td>
-          controllers.QueryController.index
+          controllers.MainController.index
         </td>
         <td style="background: #F0ADAD">
-          Routes.this.QueryController_1.index
+          Routes.this.MainController_0.index
         </td>
       </tr><tr>
         <td>
-          62
+          66
         </td>
         <td>
-          923
+          958
         </td>
         <td>
-          2224
+          2447
           -
-          2252
+          2475
         </td>
         <td>
           Apply
@@ -1225,15 +1250,15 @@ else
         </td>
       </tr><tr>
         <td>
-          62
+          66
         </td>
         <td>
-          931
+          966
         </td>
         <td>
-          2213
+          2436
           -
-          2402
+          2624
         </td>
         <td>
           Apply
@@ -1242,19 +1267,19 @@ else
           play.core.routing.HandlerDef.apply
         </td>
         <td style="background: #F0ADAD">
-          play.core.routing.HandlerDef.apply(this.getClass().getClassLoader(), &quot;router&quot;, &quot;controllers.QueryController&quot;, &quot;index&quot;, immutable.this.Nil, &quot;GET&quot;, &quot; home page&quot;, this.prefix.+(&quot;&quot;))
+          play.core.routing.HandlerDef.apply(this.getClass().getClassLoader(), &quot;router&quot;, &quot;controllers.MainController&quot;, &quot;index&quot;, immutable.this.Nil, &quot;GET&quot;, &quot; home page&quot;, this.prefix.+(&quot;&quot;))
         </td>
       </tr><tr>
         <td>
-          63
+          67
         </td>
         <td>
-          924
+          959
         </td>
         <td>
-          2260
+          2483
           -
-          2268
+          2491
         </td>
         <td>
           Literal
@@ -1267,15 +1292,15 @@ else
         </td>
       </tr><tr>
         <td>
-          64
+          68
         </td>
         <td>
-          925
+          960
         </td>
         <td>
-          2276
+          2499
           -
-          2305
+          2527
         </td>
         <td>
           Literal
@@ -1284,19 +1309,19 @@ else
           &lt;nosymbol&gt;
         </td>
         <td style="background: #F0ADAD">
-          &quot;controllers.QueryController&quot;
+          &quot;controllers.MainController&quot;
         </td>
       </tr><tr>
         <td>
-          65
+          69
         </td>
         <td>
-          926
+          961
         </td>
         <td>
-          2313
+          2535
           -
-          2320
+          2542
         </td>
         <td>
           Literal
@@ -1309,15 +1334,15 @@ else
         </td>
       </tr><tr>
         <td>
-          66
+          70
         </td>
         <td>
-          927
+          962
         </td>
         <td>
-          2328
+          2550
           -
-          2331
+          2553
         </td>
         <td>
           Select
@@ -1330,15 +1355,15 @@ else
         </td>
       </tr><tr>
         <td>
-          67
+          71
         </td>
         <td>
-          928
+          963
         </td>
         <td>
-          2339
+          2561
           -
-          2344
+          2566
         </td>
         <td>
           Literal
@@ -1351,15 +1376,15 @@ else
         </td>
       </tr><tr>
         <td>
-          68
+          72
         </td>
         <td>
-          929
+          964
         </td>
         <td>
-          2352
+          2574
           -
-          2368
+          2590
         </td>
         <td>
           Literal
@@ -1372,15 +1397,15 @@ else
         </td>
       </tr><tr>
         <td>
-          69
+          73
         </td>
         <td>
-          930
+          965
         </td>
         <td>
-          2376
+          2598
           -
-          2396
+          2618
         </td>
         <td>
           Apply
@@ -1393,15 +1418,36 @@ else
         </td>
       </tr><tr>
         <td>
-          74
+          78
         </td>
         <td>
-          934
+          978
         </td>
         <td>
-          2496
+          2712
           -
-          2501
+          2861
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.core.routing.Route.apply
+        </td>
+        <td style="background: #F0ADAD">
+          play.core.routing.Route.apply(&quot;GET&quot;, play.core.routing.PathPattern.apply(immutable.this.List.apply[Product with Serializable with play.core.routing.PathPart](play.core.routing.StaticPart.apply(this.prefix), play.core.routing.StaticPart.apply(this.defaultPrefix), play.core.routing.DynamicPart.apply(&quot;path&quot;, &quot;.+&quot;, false), play.core.routing.StaticPart.apply(&quot;/&quot;))))
+        </td>
+      </tr><tr>
+        <td>
+          78
+        </td>
+        <td>
+          969
+        </td>
+        <td>
+          2718
+          -
+          2723
         </td>
         <td>
           Literal
@@ -1414,36 +1460,15 @@ else
         </td>
       </tr><tr>
         <td>
-          74
+          79
         </td>
         <td>
-          942
+          977
         </td>
         <td>
-          2490
+          2729
           -
-          2606
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          play.core.routing.Route.apply
-        </td>
-        <td style="background: #F0ADAD">
-          play.core.routing.Route.apply(&quot;GET&quot;, play.core.routing.PathPattern.apply(immutable.this.List.apply[play.core.routing.StaticPart](play.core.routing.StaticPart.apply(this.prefix), play.core.routing.StaticPart.apply(this.defaultPrefix), play.core.routing.StaticPart.apply(&quot;query&quot;))))
-        </td>
-      </tr><tr>
-        <td>
-          75
-        </td>
-        <td>
-          941
-        </td>
-        <td>
-          2507
-          -
-          2602
+          2857
         </td>
         <td>
           Apply
@@ -1452,103 +1477,19 @@ else
           play.core.routing.PathPattern.apply
         </td>
         <td style="background: #F0ADAD">
-          play.core.routing.PathPattern.apply(immutable.this.List.apply[play.core.routing.StaticPart](play.core.routing.StaticPart.apply(this.prefix), play.core.routing.StaticPart.apply(this.defaultPrefix), play.core.routing.StaticPart.apply(&quot;query&quot;)))
+          play.core.routing.PathPattern.apply(immutable.this.List.apply[Product with Serializable with play.core.routing.PathPart](play.core.routing.StaticPart.apply(this.prefix), play.core.routing.StaticPart.apply(this.defaultPrefix), play.core.routing.DynamicPart.apply(&quot;path&quot;, &quot;.+&quot;, false), play.core.routing.StaticPart.apply(&quot;/&quot;)))
         </td>
       </tr><tr>
         <td>
-          75
+          79
         </td>
         <td>
-          935
+          971
         </td>
         <td>
-          2535
+          2746
           -
-          2546
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          router.Routes.prefix
-        </td>
-        <td style="background: #F0ADAD">
-          this.prefix
-        </td>
-      </tr><tr>
-        <td>
-          75
-        </td>
-        <td>
-          938
-        </td>
-        <td>
-          2549
-          -
-          2579
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          play.core.routing.StaticPart.apply
-        </td>
-        <td style="background: #F0ADAD">
-          play.core.routing.StaticPart.apply(this.defaultPrefix)
-        </td>
-      </tr><tr>
-        <td>
-          75
-        </td>
-        <td>
-          937
-        </td>
-        <td>
-          2560
-          -
-          2578
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          router.Routes.defaultPrefix
-        </td>
-        <td style="background: #F0ADAD">
-          this.defaultPrefix
-        </td>
-      </tr><tr>
-        <td>
-          75
-        </td>
-        <td>
-          940
-        </td>
-        <td>
-          2519
-          -
-          2601
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.collection.immutable.List.apply
-        </td>
-        <td style="background: #F0ADAD">
-          immutable.this.List.apply[play.core.routing.StaticPart](play.core.routing.StaticPart.apply(this.prefix), play.core.routing.StaticPart.apply(this.defaultPrefix), play.core.routing.StaticPart.apply(&quot;query&quot;))
-        </td>
-      </tr><tr>
-        <td>
-          75
-        </td>
-        <td>
-          936
-        </td>
-        <td>
-          2524
-          -
-          2547
+          2769
         </td>
         <td>
           Apply
@@ -1561,372 +1502,15 @@ else
         </td>
       </tr><tr>
         <td>
-          75
-        </td>
-        <td>
-          939
-        </td>
-        <td>
-          2581
-          -
-          2600
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          play.core.routing.StaticPart.apply
-        </td>
-        <td style="background: #F0ADAD">
-          play.core.routing.StaticPart.apply(&quot;query&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          77
-        </td>
-        <td>
-          955
-        </td>
-        <td>
-          2677
-          -
-          2992
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          play.core.routing.GeneratedRouter.createInvoker
-        </td>
-        <td style="background: #F0ADAD">
-          Routes.this.createInvoker[play.api.mvc.Action[play.api.mvc.AnyContent]](Routes.this.QueryController_1.query(Routes.this.fakeValue[String]), play.core.routing.HandlerDef.apply(this.getClass().getClassLoader(), &quot;router&quot;, &quot;controllers.QueryController&quot;, &quot;query&quot;, collection.this.Seq.apply[Class[String]](classOf[java.lang.String]), &quot;GET&quot;, &quot; Lucene query\n TODO better to use \&quot;Option\&quot;?&quot;, this.prefix.+(&quot;query&quot;)))(play.core.routing.HandlerInvokerFactory.passThrough[play.api.mvc.Handler])
-        </td>
-      </tr><tr>
-        <td>
-          77
-        </td>
-        <td>
-          954
-        </td>
-        <td>
-          2690
-          -
-          2690
-        </td>
-        <td>
-          TypeApply
-        </td>
-        <td>
-          play.core.routing.HandlerInvokerFactory.passThrough
-        </td>
-        <td style="background: #F0ADAD">
-          play.core.routing.HandlerInvokerFactory.passThrough[play.api.mvc.Handler]
-        </td>
-      </tr><tr>
-        <td>
-          78
-        </td>
-        <td>
-          944
-        </td>
-        <td>
-          2696
-          -
-          2738
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          controllers.QueryController.query
-        </td>
-        <td style="background: #F0ADAD">
-          Routes.this.QueryController_1.query(Routes.this.fakeValue[String])
-        </td>
-      </tr><tr>
-        <td>
-          78
-        </td>
-        <td>
-          943
-        </td>
-        <td>
-          2720
-          -
-          2737
-        </td>
-        <td>
-          TypeApply
-        </td>
-        <td>
-          play.core.routing.GeneratedRouter.fakeValue
-        </td>
-        <td style="background: #F0ADAD">
-          Routes.this.fakeValue[String]
-        </td>
-      </tr><tr>
-        <td>
           79
         </td>
         <td>
-          953
+          974
         </td>
         <td>
-          2744
+          2803
           -
-          2988
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          play.core.routing.HandlerDef.apply
-        </td>
-        <td style="background: #F0ADAD">
-          play.core.routing.HandlerDef.apply(this.getClass().getClassLoader(), &quot;router&quot;, &quot;controllers.QueryController&quot;, &quot;query&quot;, collection.this.Seq.apply[Class[String]](classOf[java.lang.String]), &quot;GET&quot;, &quot; Lucene query\n TODO better to use \&quot;Option\&quot;?&quot;, this.prefix.+(&quot;query&quot;))
-        </td>
-      </tr><tr>
-        <td>
-          79
-        </td>
-        <td>
-          945
-        </td>
-        <td>
-          2755
-          -
-          2783
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          java.lang.Class.getClassLoader
-        </td>
-        <td style="background: #F0ADAD">
-          this.getClass().getClassLoader()
-        </td>
-      </tr><tr>
-        <td>
-          80
-        </td>
-        <td>
-          946
-        </td>
-        <td>
-          2791
-          -
-          2799
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;router&quot;
-        </td>
-      </tr><tr>
-        <td>
-          81
-        </td>
-        <td>
-          947
-        </td>
-        <td>
-          2807
-          -
-          2836
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;controllers.QueryController&quot;
-        </td>
-      </tr><tr>
-        <td>
-          82
-        </td>
-        <td>
-          948
-        </td>
-        <td>
-          2844
-          -
-          2851
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;query&quot;
-        </td>
-      </tr><tr>
-        <td>
-          83
-        </td>
-        <td>
-          949
-        </td>
-        <td>
-          2859
-          -
-          2879
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.collection.generic.GenericCompanion.apply
-        </td>
-        <td style="background: #F0ADAD">
-          collection.this.Seq.apply[Class[String]](classOf[java.lang.String])
-        </td>
-      </tr><tr>
-        <td>
-          84
-        </td>
-        <td>
-          950
-        </td>
-        <td>
-          2887
-          -
-          2892
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;GET&quot;
-        </td>
-      </tr><tr>
-        <td>
-          85
-        </td>
-        <td>
-          951
-        </td>
-        <td>
-          2900
-          -
-          2949
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot; Lucene query\n TODO better to use \&quot;Option\&quot;?&quot;
-        </td>
-      </tr><tr>
-        <td>
-          87
-        </td>
-        <td>
-          952
-        </td>
-        <td>
-          2957
-          -
-          2982
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          java.lang.String.+
-        </td>
-        <td style="background: #F0ADAD">
-          this.prefix.+(&quot;query&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          92
-        </td>
-        <td>
-          965
-        </td>
-        <td>
-          3076
-          -
-          3233
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          play.core.routing.Route.apply
-        </td>
-        <td style="background: #F0ADAD">
-          play.core.routing.Route.apply(&quot;GET&quot;, play.core.routing.PathPattern.apply(immutable.this.List.apply[Product with Serializable with play.core.routing.PathPart](play.core.routing.StaticPart.apply(this.prefix), play.core.routing.StaticPart.apply(this.defaultPrefix), play.core.routing.StaticPart.apply(&quot;query/&quot;), play.core.routing.DynamicPart.apply(&quot;query&quot;, &quot;[^/]+&quot;, true))))
-        </td>
-      </tr><tr>
-        <td>
-          92
-        </td>
-        <td>
-          956
-        </td>
-        <td>
-          3082
-          -
-          3087
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;GET&quot;
-        </td>
-      </tr><tr>
-        <td>
-          93
-        </td>
-        <td>
-          959
-        </td>
-        <td>
-          3146
-          -
-          3164
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          router.Routes.defaultPrefix
-        </td>
-        <td style="background: #F0ADAD">
-          this.defaultPrefix
-        </td>
-      </tr><tr>
-        <td>
-          93
-        </td>
-        <td>
-          962
-        </td>
-        <td>
-          3189
-          -
-          3227
+          2838
         </td>
         <td>
           Apply
@@ -1935,82 +1519,19 @@ else
           play.core.routing.DynamicPart.apply
         </td>
         <td style="background: #F0ADAD">
-          play.core.routing.DynamicPart.apply(&quot;query&quot;, &quot;[^/]+&quot;, true)
+          play.core.routing.DynamicPart.apply(&quot;path&quot;, &quot;.+&quot;, false)
         </td>
       </tr><tr>
         <td>
-          93
+          79
         </td>
         <td>
-          964
+          973
         </td>
         <td>
-          3093
+          2771
           -
-          3229
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          play.core.routing.PathPattern.apply
-        </td>
-        <td style="background: #F0ADAD">
-          play.core.routing.PathPattern.apply(immutable.this.List.apply[Product with Serializable with play.core.routing.PathPart](play.core.routing.StaticPart.apply(this.prefix), play.core.routing.StaticPart.apply(this.defaultPrefix), play.core.routing.StaticPart.apply(&quot;query/&quot;), play.core.routing.DynamicPart.apply(&quot;query&quot;, &quot;[^/]+&quot;, true)))
-        </td>
-      </tr><tr>
-        <td>
-          93
-        </td>
-        <td>
-          958
-        </td>
-        <td>
-          3110
-          -
-          3133
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          play.core.routing.StaticPart.apply
-        </td>
-        <td style="background: #F0ADAD">
-          play.core.routing.StaticPart.apply(this.prefix)
-        </td>
-      </tr><tr>
-        <td>
-          93
-        </td>
-        <td>
-          961
-        </td>
-        <td>
-          3167
-          -
-          3187
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          play.core.routing.StaticPart.apply
-        </td>
-        <td style="background: #F0ADAD">
-          play.core.routing.StaticPart.apply(&quot;query/&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          93
-        </td>
-        <td>
-          960
-        </td>
-        <td>
-          3135
-          -
-          3165
+          2801
         </td>
         <td>
           Apply
@@ -2023,15 +1544,15 @@ else
         </td>
       </tr><tr>
         <td>
-          93
+          79
         </td>
         <td>
-          963
+          976
         </td>
         <td>
-          3105
+          2741
           -
-          3228
+          2856
         </td>
         <td>
           Apply
@@ -2040,19 +1561,19 @@ else
           scala.collection.immutable.List.apply
         </td>
         <td style="background: #F0ADAD">
-          immutable.this.List.apply[Product with Serializable with play.core.routing.PathPart](play.core.routing.StaticPart.apply(this.prefix), play.core.routing.StaticPart.apply(this.defaultPrefix), play.core.routing.StaticPart.apply(&quot;query/&quot;), play.core.routing.DynamicPart.apply(&quot;query&quot;, &quot;[^/]+&quot;, true))
+          immutable.this.List.apply[Product with Serializable with play.core.routing.PathPart](play.core.routing.StaticPart.apply(this.prefix), play.core.routing.StaticPart.apply(this.defaultPrefix), play.core.routing.DynamicPart.apply(&quot;path&quot;, &quot;.+&quot;, false), play.core.routing.StaticPart.apply(&quot;/&quot;))
         </td>
       </tr><tr>
         <td>
-          93
+          79
         </td>
         <td>
-          957
+          970
         </td>
         <td>
-          3121
+          2757
           -
-          3132
+          2768
         </td>
         <td>
           Select
@@ -2065,15 +1586,78 @@ else
         </td>
       </tr><tr>
         <td>
-          95
+          79
         </td>
         <td>
-          977
+          972
         </td>
         <td>
-          3317
+          2782
           -
-          3317
+          2800
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          router.Routes.defaultPrefix
+        </td>
+        <td style="background: #F0ADAD">
+          this.defaultPrefix
+        </td>
+      </tr><tr>
+        <td>
+          79
+        </td>
+        <td>
+          975
+        </td>
+        <td>
+          2840
+          -
+          2855
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.core.routing.StaticPart.apply
+        </td>
+        <td style="background: #F0ADAD">
+          play.core.routing.StaticPart.apply(&quot;/&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          81
+        </td>
+        <td>
+          991
+        </td>
+        <td>
+          2933
+          -
+          3226
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.core.routing.GeneratedRouter.createInvoker
+        </td>
+        <td style="background: #F0ADAD">
+          Routes.this.createInvoker[play.api.mvc.Action[play.api.mvc.AnyContent]](Routes.this.MainController_0.untrail(Routes.this.fakeValue[String]), play.core.routing.HandlerDef.apply(this.getClass().getClassLoader(), &quot;router&quot;, &quot;controllers.MainController&quot;, &quot;untrail&quot;, collection.this.Seq.apply[Class[String]](classOf[java.lang.String]), &quot;GET&quot;, &quot;&quot;, this.prefix.+(&quot;&quot;).+(&quot;$&quot;).+(&quot;path&lt;.+&gt;/&quot;)))(play.core.routing.HandlerInvokerFactory.passThrough[play.api.mvc.Handler])
+        </td>
+      </tr><tr>
+        <td>
+          81
+        </td>
+        <td>
+          990
+        </td>
+        <td>
+          2946
+          -
+          2946
         </td>
         <td>
           TypeApply
@@ -2086,57 +1670,36 @@ else
         </td>
       </tr><tr>
         <td>
-          95
+          82
         </td>
         <td>
-          978
+          980
         </td>
         <td>
-          3304
+          2952
           -
-          3604
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          play.core.routing.GeneratedRouter.createInvoker
-        </td>
-        <td style="background: #F0ADAD">
-          Routes.this.createInvoker[play.api.mvc.Action[play.api.mvc.AnyContent]](Routes.this.QueryController_1.query(Routes.this.fakeValue[String]), play.core.routing.HandlerDef.apply(this.getClass().getClassLoader(), &quot;router&quot;, &quot;controllers.QueryController&quot;, &quot;query&quot;, collection.this.Seq.apply[Class[String]](classOf[java.lang.String]), &quot;GET&quot;, &quot;&quot;, this.prefix.+(&quot;query/&quot;).+(&quot;$&quot;).+(&quot;query&lt;[^/]+&gt;&quot;)))(play.core.routing.HandlerInvokerFactory.passThrough[play.api.mvc.Handler])
-        </td>
-      </tr><tr>
-        <td>
-          96
-        </td>
-        <td>
-          967
-        </td>
-        <td>
-          3323
-          -
-          3365
+          2995
         </td>
         <td>
           Apply
         </td>
         <td>
-          controllers.QueryController.query
+          controllers.MainController.untrail
         </td>
         <td style="background: #F0ADAD">
-          Routes.this.QueryController_1.query(Routes.this.fakeValue[String])
+          Routes.this.MainController_0.untrail(Routes.this.fakeValue[String])
         </td>
       </tr><tr>
         <td>
-          96
+          82
         </td>
         <td>
-          966
+          979
         </td>
         <td>
-          3347
+          2977
           -
-          3364
+          2994
         </td>
         <td>
           TypeApply
@@ -2149,15 +1712,36 @@ else
         </td>
       </tr><tr>
         <td>
-          97
+          83
         </td>
         <td>
-          968
+          989
         </td>
         <td>
-          3382
+          3001
           -
-          3410
+          3222
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.core.routing.HandlerDef.apply
+        </td>
+        <td style="background: #F0ADAD">
+          play.core.routing.HandlerDef.apply(this.getClass().getClassLoader(), &quot;router&quot;, &quot;controllers.MainController&quot;, &quot;untrail&quot;, collection.this.Seq.apply[Class[String]](classOf[java.lang.String]), &quot;GET&quot;, &quot;&quot;, this.prefix.+(&quot;&quot;).+(&quot;$&quot;).+(&quot;path&lt;.+&gt;/&quot;))
+        </td>
+      </tr><tr>
+        <td>
+          83
+        </td>
+        <td>
+          981
+        </td>
+        <td>
+          3012
+          -
+          3040
         </td>
         <td>
           Apply
@@ -2170,36 +1754,15 @@ else
         </td>
       </tr><tr>
         <td>
-          97
+          84
         </td>
         <td>
-          976
+          982
         </td>
         <td>
-          3371
+          3048
           -
-          3600
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          play.core.routing.HandlerDef.apply
-        </td>
-        <td style="background: #F0ADAD">
-          play.core.routing.HandlerDef.apply(this.getClass().getClassLoader(), &quot;router&quot;, &quot;controllers.QueryController&quot;, &quot;query&quot;, collection.this.Seq.apply[Class[String]](classOf[java.lang.String]), &quot;GET&quot;, &quot;&quot;, this.prefix.+(&quot;query/&quot;).+(&quot;$&quot;).+(&quot;query&lt;[^/]+&gt;&quot;))
-        </td>
-      </tr><tr>
-        <td>
-          98
-        </td>
-        <td>
-          969
-        </td>
-        <td>
-          3418
-          -
-          3426
+          3056
         </td>
         <td>
           Literal
@@ -2212,15 +1775,15 @@ else
         </td>
       </tr><tr>
         <td>
-          99
+          85
         </td>
         <td>
-          970
+          983
         </td>
         <td>
-          3434
+          3064
           -
-          3463
+          3092
         </td>
         <td>
           Literal
@@ -2229,19 +1792,19 @@ else
           &lt;nosymbol&gt;
         </td>
         <td style="background: #F0ADAD">
-          &quot;controllers.QueryController&quot;
+          &quot;controllers.MainController&quot;
         </td>
       </tr><tr>
         <td>
-          100
+          86
         </td>
         <td>
-          971
+          984
         </td>
         <td>
-          3471
+          3100
           -
-          3478
+          3109
         </td>
         <td>
           Literal
@@ -2250,19 +1813,19 @@ else
           &lt;nosymbol&gt;
         </td>
         <td style="background: #F0ADAD">
-          &quot;query&quot;
+          &quot;untrail&quot;
         </td>
       </tr><tr>
         <td>
-          101
+          87
         </td>
         <td>
-          972
+          985
         </td>
         <td>
-          3486
+          3117
           -
-          3506
+          3137
         </td>
         <td>
           Apply
@@ -2275,15 +1838,15 @@ else
         </td>
       </tr><tr>
         <td>
-          102
+          88
         </td>
         <td>
-          973
+          986
         </td>
         <td>
-          3514
+          3145
           -
-          3519
+          3150
         </td>
         <td>
           Literal
@@ -2296,15 +1859,15 @@ else
         </td>
       </tr><tr>
         <td>
-          103
+          89
         </td>
         <td>
-          974
+          987
         </td>
         <td>
-          3527
+          3158
           -
-          3533
+          3164
         </td>
         <td>
           Literal
@@ -2317,15 +1880,15 @@ else
         </td>
       </tr><tr>
         <td>
-          104
+          90
         </td>
         <td>
-          975
+          988
         </td>
         <td>
-          3541
+          3172
           -
-          3594
+          3216
         </td>
         <td>
           Apply
@@ -2334,19 +1897,19 @@ else
           java.lang.String.+
         </td>
         <td style="background: #F0ADAD">
-          this.prefix.+(&quot;query/&quot;).+(&quot;$&quot;).+(&quot;query&lt;[^/]+&gt;&quot;)
+          this.prefix.+(&quot;&quot;).+(&quot;$&quot;).+(&quot;path&lt;.+&gt;/&quot;)
         </td>
       </tr><tr>
         <td>
-          109
+          95
         </td>
         <td>
-          979
+          992
         </td>
         <td>
-          3689
+          3316
           -
-          3694
+          3321
         </td>
         <td>
           Literal
@@ -2359,15 +1922,15 @@ else
         </td>
       </tr><tr>
         <td>
-          109
+          95
         </td>
         <td>
-          988
+          1000
         </td>
         <td>
-          3683
+          3310
           -
-          3838
+          3426
         </td>
         <td>
           Apply
@@ -2376,82 +1939,19 @@ else
           play.core.routing.Route.apply
         </td>
         <td style="background: #F0ADAD">
-          play.core.routing.Route.apply(&quot;GET&quot;, play.core.routing.PathPattern.apply(immutable.this.List.apply[Product with Serializable with play.core.routing.PathPart](play.core.routing.StaticPart.apply(this.prefix), play.core.routing.StaticPart.apply(this.defaultPrefix), play.core.routing.StaticPart.apply(&quot;assets/&quot;), play.core.routing.DynamicPart.apply(&quot;file&quot;, &quot;.+&quot;, false))))
+          play.core.routing.Route.apply(&quot;GET&quot;, play.core.routing.PathPattern.apply(immutable.this.List.apply[play.core.routing.StaticPart](play.core.routing.StaticPart.apply(this.prefix), play.core.routing.StaticPart.apply(this.defaultPrefix), play.core.routing.StaticPart.apply(&quot;query&quot;))))
         </td>
       </tr><tr>
         <td>
-          110
+          96
         </td>
         <td>
-          983
+          995
         </td>
         <td>
-          3742
+          3380
           -
-          3772
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          play.core.routing.StaticPart.apply
-        </td>
-        <td style="background: #F0ADAD">
-          play.core.routing.StaticPart.apply(this.defaultPrefix)
-        </td>
-      </tr><tr>
-        <td>
-          110
-        </td>
-        <td>
-          986
-        </td>
-        <td>
-          3712
-          -
-          3833
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.collection.immutable.List.apply
-        </td>
-        <td style="background: #F0ADAD">
-          immutable.this.List.apply[Product with Serializable with play.core.routing.PathPart](play.core.routing.StaticPart.apply(this.prefix), play.core.routing.StaticPart.apply(this.defaultPrefix), play.core.routing.StaticPart.apply(&quot;assets/&quot;), play.core.routing.DynamicPart.apply(&quot;file&quot;, &quot;.+&quot;, false))
-        </td>
-      </tr><tr>
-        <td>
-          110
-        </td>
-        <td>
-          980
-        </td>
-        <td>
-          3728
-          -
-          3739
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          router.Routes.prefix
-        </td>
-        <td style="background: #F0ADAD">
-          this.prefix
-        </td>
-      </tr><tr>
-        <td>
-          110
-        </td>
-        <td>
-          982
-        </td>
-        <td>
-          3753
-          -
-          3771
+          3398
         </td>
         <td>
           Select
@@ -2464,57 +1964,57 @@ else
         </td>
       </tr><tr>
         <td>
-          110
+          96
         </td>
         <td>
-          985
+          998
         </td>
         <td>
-          3797
+          3339
           -
-          3832
+          3421
         </td>
         <td>
           Apply
         </td>
         <td>
-          play.core.routing.DynamicPart.apply
+          scala.collection.immutable.List.apply
         </td>
         <td style="background: #F0ADAD">
-          play.core.routing.DynamicPart.apply(&quot;file&quot;, &quot;.+&quot;, false)
+          immutable.this.List.apply[play.core.routing.StaticPart](play.core.routing.StaticPart.apply(this.prefix), play.core.routing.StaticPart.apply(this.defaultPrefix), play.core.routing.StaticPart.apply(&quot;query&quot;))
         </td>
       </tr><tr>
         <td>
-          110
+          96
         </td>
         <td>
-          987
+          997
         </td>
         <td>
-          3700
+          3401
           -
-          3834
+          3420
         </td>
         <td>
           Apply
         </td>
         <td>
-          play.core.routing.PathPattern.apply
+          play.core.routing.StaticPart.apply
         </td>
         <td style="background: #F0ADAD">
-          play.core.routing.PathPattern.apply(immutable.this.List.apply[Product with Serializable with play.core.routing.PathPart](play.core.routing.StaticPart.apply(this.prefix), play.core.routing.StaticPart.apply(this.defaultPrefix), play.core.routing.StaticPart.apply(&quot;assets/&quot;), play.core.routing.DynamicPart.apply(&quot;file&quot;, &quot;.+&quot;, false)))
+          play.core.routing.StaticPart.apply(&quot;query&quot;)
         </td>
       </tr><tr>
         <td>
-          110
+          96
         </td>
         <td>
-          981
+          994
         </td>
         <td>
-          3717
+          3344
           -
-          3740
+          3367
         </td>
         <td>
           Apply
@@ -2527,15 +2027,15 @@ else
         </td>
       </tr><tr>
         <td>
-          110
+          96
         </td>
         <td>
-          984
+          996
         </td>
         <td>
-          3774
+          3369
           -
-          3795
+          3399
         </td>
         <td>
           Apply
@@ -2544,19 +2044,82 @@ else
           play.core.routing.StaticPart.apply
         </td>
         <td style="background: #F0ADAD">
-          play.core.routing.StaticPart.apply(&quot;assets/&quot;)
+          play.core.routing.StaticPart.apply(this.defaultPrefix)
         </td>
       </tr><tr>
         <td>
-          112
+          96
         </td>
         <td>
-          1001
+          999
         </td>
         <td>
-          3917
+          3327
           -
-          3917
+          3422
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.core.routing.PathPattern.apply
+        </td>
+        <td style="background: #F0ADAD">
+          play.core.routing.PathPattern.apply(immutable.this.List.apply[play.core.routing.StaticPart](play.core.routing.StaticPart.apply(this.prefix), play.core.routing.StaticPart.apply(this.defaultPrefix), play.core.routing.StaticPart.apply(&quot;query&quot;)))
+        </td>
+      </tr><tr>
+        <td>
+          96
+        </td>
+        <td>
+          993
+        </td>
+        <td>
+          3355
+          -
+          3366
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          router.Routes.prefix
+        </td>
+        <td style="background: #F0ADAD">
+          this.prefix
+        </td>
+      </tr><tr>
+        <td>
+          98
+        </td>
+        <td>
+          1016
+        </td>
+        <td>
+          3497
+          -
+          4046
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.core.routing.GeneratedRouter.createInvoker
+        </td>
+        <td style="background: #F0ADAD">
+          Routes.this.createInvoker[play.api.mvc.Action[play.api.mvc.AnyContent]](Routes.this.QueryController_2.query(Routes.this.fakeValue[Option[String]], Routes.this.fakeValue[Option[String]], Routes.this.fakeValue[Option[String]], Routes.this.fakeValue[Option[String]]), play.core.routing.HandlerDef.apply(this.getClass().getClassLoader(), &quot;router&quot;, &quot;controllers.QueryController&quot;, &quot;query&quot;, collection.this.Seq.apply[Class[Option[String]]](classOf[scala.Option], classOf[scala.Option], classOf[scala.Option], classOf[scala.Option]), &quot;GET&quot;, &quot; Routes for querying Lucene Index\n FIXME SR is there a way to get Option[String] for the URL path binder?&quot;, this.prefix.+(&quot;query&quot;)))(play.core.routing.HandlerInvokerFactory.passThrough[play.api.mvc.Handler])
+        </td>
+      </tr><tr>
+        <td>
+          98
+        </td>
+        <td>
+          1015
+        </td>
+        <td>
+          3510
+          -
+          3510
         </td>
         <td>
           TypeApply
@@ -2569,36 +2132,15 @@ else
         </td>
       </tr><tr>
         <td>
-          112
+          99
         </td>
         <td>
-          1002
+          1001
         </td>
         <td>
-          3904
+          3540
           -
-          4294
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          play.core.routing.GeneratedRouter.createInvoker
-        </td>
-        <td style="background: #F0ADAD">
-          Routes.this.createInvoker[play.api.mvc.Action[play.api.mvc.AnyContent]](Routes.this.Assets_0.versioned(Routes.this.fakeValue[String], Routes.this.fakeValue[controllers.Assets.Asset]), play.core.routing.HandlerDef.apply(this.getClass().getClassLoader(), &quot;router&quot;, &quot;controllers.Assets&quot;, &quot;versioned&quot;, collection.this.Seq.apply[Class[_ &gt;: controllers.Assets.Asset with String &lt;: java.io.Serializable]](classOf[java.lang.String], classOf[controllers.Assets$$Asset]), &quot;GET&quot;, &quot; Map static resources from the /public folder to the /assets URL path&quot;, this.prefix.+(&quot;assets/&quot;).+(&quot;$&quot;).+(&quot;file&lt;.+&gt;&quot;)))(play.core.routing.HandlerInvokerFactory.passThrough[play.api.mvc.Handler])
-        </td>
-      </tr><tr>
-        <td>
-          113
-        </td>
-        <td>
-          989
-        </td>
-        <td>
-          3942
-          -
-          3959
+          3565
         </td>
         <td>
           TypeApply
@@ -2607,40 +2149,82 @@ else
           play.core.routing.GeneratedRouter.fakeValue
         </td>
         <td style="background: #F0ADAD">
-          Routes.this.fakeValue[String]
+          Routes.this.fakeValue[Option[String]]
         </td>
       </tr><tr>
         <td>
-          113
+          99
         </td>
         <td>
-          991
+          1004
         </td>
         <td>
-          3923
+          3621
           -
-          3978
+          3646
+        </td>
+        <td>
+          TypeApply
+        </td>
+        <td>
+          play.core.routing.GeneratedRouter.fakeValue
+        </td>
+        <td style="background: #F0ADAD">
+          Routes.this.fakeValue[Option[String]]
+        </td>
+      </tr><tr>
+        <td>
+          99
+        </td>
+        <td>
+          1003
+        </td>
+        <td>
+          3594
+          -
+          3619
+        </td>
+        <td>
+          TypeApply
+        </td>
+        <td>
+          play.core.routing.GeneratedRouter.fakeValue
+        </td>
+        <td style="background: #F0ADAD">
+          Routes.this.fakeValue[Option[String]]
+        </td>
+      </tr><tr>
+        <td>
+          99
+        </td>
+        <td>
+          1005
+        </td>
+        <td>
+          3516
+          -
+          3647
         </td>
         <td>
           Apply
         </td>
         <td>
-          controllers.AssetsBuilder.versioned
+          controllers.QueryController.query
         </td>
         <td style="background: #F0ADAD">
-          Routes.this.Assets_0.versioned(Routes.this.fakeValue[String], Routes.this.fakeValue[controllers.Assets.Asset])
+          Routes.this.QueryController_2.query(Routes.this.fakeValue[Option[String]], Routes.this.fakeValue[Option[String]], Routes.this.fakeValue[Option[String]], Routes.this.fakeValue[Option[String]])
         </td>
       </tr><tr>
         <td>
-          113
+          99
         </td>
         <td>
-          990
+          1002
         </td>
         <td>
-          3961
+          3567
           -
-          3977
+          3592
         </td>
         <td>
           TypeApply
@@ -2649,19 +2233,19 @@ else
           play.core.routing.GeneratedRouter.fakeValue
         </td>
         <td style="background: #F0ADAD">
-          Routes.this.fakeValue[controllers.Assets.Asset]
+          Routes.this.fakeValue[Option[String]]
         </td>
       </tr><tr>
         <td>
-          114
+          100
         </td>
         <td>
-          992
+          1006
         </td>
         <td>
-          3995
+          3664
           -
-          4023
+          3692
         </td>
         <td>
           Apply
@@ -2674,15 +2258,15 @@ else
         </td>
       </tr><tr>
         <td>
-          114
+          100
         </td>
         <td>
-          1000
+          1014
         </td>
         <td>
-          3984
+          3653
           -
-          4290
+          4042
         </td>
         <td>
           Apply
@@ -2691,19 +2275,19 @@ else
           play.core.routing.HandlerDef.apply
         </td>
         <td style="background: #F0ADAD">
-          play.core.routing.HandlerDef.apply(this.getClass().getClassLoader(), &quot;router&quot;, &quot;controllers.Assets&quot;, &quot;versioned&quot;, collection.this.Seq.apply[Class[_ &gt;: controllers.Assets.Asset with String &lt;: java.io.Serializable]](classOf[java.lang.String], classOf[controllers.Assets$$Asset]), &quot;GET&quot;, &quot; Map static resources from the /public folder to the /assets URL path&quot;, this.prefix.+(&quot;assets/&quot;).+(&quot;$&quot;).+(&quot;file&lt;.+&gt;&quot;))
+          play.core.routing.HandlerDef.apply(this.getClass().getClassLoader(), &quot;router&quot;, &quot;controllers.QueryController&quot;, &quot;query&quot;, collection.this.Seq.apply[Class[Option[String]]](classOf[scala.Option], classOf[scala.Option], classOf[scala.Option], classOf[scala.Option]), &quot;GET&quot;, &quot; Routes for querying Lucene Index\n FIXME SR is there a way to get Option[String] for the URL path binder?&quot;, this.prefix.+(&quot;query&quot;))
         </td>
       </tr><tr>
         <td>
-          115
+          101
         </td>
         <td>
-          993
+          1007
         </td>
         <td>
-          4031
+          3700
           -
-          4039
+          3708
         </td>
         <td>
           Literal
@@ -2716,15 +2300,15 @@ else
         </td>
       </tr><tr>
         <td>
-          116
+          102
         </td>
         <td>
-          994
+          1008
         </td>
         <td>
-          4047
+          3716
           -
-          4067
+          3745
         </td>
         <td>
           Literal
@@ -2733,19 +2317,19 @@ else
           &lt;nosymbol&gt;
         </td>
         <td style="background: #F0ADAD">
-          &quot;controllers.Assets&quot;
+          &quot;controllers.QueryController&quot;
         </td>
       </tr><tr>
         <td>
-          117
+          103
         </td>
         <td>
-          995
+          1009
         </td>
         <td>
-          4075
+          3753
           -
-          4086
+          3760
         </td>
         <td>
           Literal
@@ -2754,19 +2338,19 @@ else
           &lt;nosymbol&gt;
         </td>
         <td style="background: #F0ADAD">
-          &quot;versioned&quot;
+          &quot;query&quot;
         </td>
       </tr><tr>
         <td>
-          118
+          104
         </td>
         <td>
-          996
+          1010
         </td>
         <td>
-          4094
+          3768
           -
-          4130
+          3871
         </td>
         <td>
           Apply
@@ -2775,19 +2359,19 @@ else
           scala.collection.generic.GenericCompanion.apply
         </td>
         <td style="background: #F0ADAD">
-          collection.this.Seq.apply[Class[_ &gt;: controllers.Assets.Asset with String &lt;: java.io.Serializable]](classOf[java.lang.String], classOf[controllers.Assets$$Asset])
+          collection.this.Seq.apply[Class[Option[String]]](classOf[scala.Option], classOf[scala.Option], classOf[scala.Option], classOf[scala.Option])
         </td>
       </tr><tr>
         <td>
-          119
+          105
         </td>
         <td>
-          997
+          1011
         </td>
         <td>
-          4138
+          3879
           -
-          4143
+          3884
         </td>
         <td>
           Literal
@@ -2800,15 +2384,519 @@ else
         </td>
       </tr><tr>
         <td>
+          106
+        </td>
+        <td>
+          1012
+        </td>
+        <td>
+          3892
+          -
+          4003
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot; Routes for querying Lucene Index\n FIXME SR is there a way to get Option[String] for the URL path binder?&quot;
+        </td>
+      </tr><tr>
+        <td>
+          108
+        </td>
+        <td>
+          1013
+        </td>
+        <td>
+          4011
+          -
+          4036
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.String.+
+        </td>
+        <td style="background: #F0ADAD">
+          this.prefix.+(&quot;query&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          113
+        </td>
+        <td>
+          1026
+        </td>
+        <td>
+          4125
+          -
+          4280
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.core.routing.Route.apply
+        </td>
+        <td style="background: #F0ADAD">
+          play.core.routing.Route.apply(&quot;GET&quot;, play.core.routing.PathPattern.apply(immutable.this.List.apply[Product with Serializable with play.core.routing.PathPart](play.core.routing.StaticPart.apply(this.prefix), play.core.routing.StaticPart.apply(this.defaultPrefix), play.core.routing.StaticPart.apply(&quot;assets/&quot;), play.core.routing.DynamicPart.apply(&quot;file&quot;, &quot;.+&quot;, false))))
+        </td>
+      </tr><tr>
+        <td>
+          113
+        </td>
+        <td>
+          1017
+        </td>
+        <td>
+          4131
+          -
+          4136
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;GET&quot;
+        </td>
+      </tr><tr>
+        <td>
+          114
+        </td>
+        <td>
+          1019
+        </td>
+        <td>
+          4159
+          -
+          4182
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.core.routing.StaticPart.apply
+        </td>
+        <td style="background: #F0ADAD">
+          play.core.routing.StaticPart.apply(this.prefix)
+        </td>
+      </tr><tr>
+        <td>
+          114
+        </td>
+        <td>
+          1022
+        </td>
+        <td>
+          4216
+          -
+          4237
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.core.routing.StaticPart.apply
+        </td>
+        <td style="background: #F0ADAD">
+          play.core.routing.StaticPart.apply(&quot;assets/&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          114
+        </td>
+        <td>
+          1025
+        </td>
+        <td>
+          4142
+          -
+          4276
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.core.routing.PathPattern.apply
+        </td>
+        <td style="background: #F0ADAD">
+          play.core.routing.PathPattern.apply(immutable.this.List.apply[Product with Serializable with play.core.routing.PathPart](play.core.routing.StaticPart.apply(this.prefix), play.core.routing.StaticPart.apply(this.defaultPrefix), play.core.routing.StaticPart.apply(&quot;assets/&quot;), play.core.routing.DynamicPart.apply(&quot;file&quot;, &quot;.+&quot;, false)))
+        </td>
+      </tr><tr>
+        <td>
+          114
+        </td>
+        <td>
+          1024
+        </td>
+        <td>
+          4154
+          -
+          4275
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.immutable.List.apply
+        </td>
+        <td style="background: #F0ADAD">
+          immutable.this.List.apply[Product with Serializable with play.core.routing.PathPart](play.core.routing.StaticPart.apply(this.prefix), play.core.routing.StaticPart.apply(this.defaultPrefix), play.core.routing.StaticPart.apply(&quot;assets/&quot;), play.core.routing.DynamicPart.apply(&quot;file&quot;, &quot;.+&quot;, false))
+        </td>
+      </tr><tr>
+        <td>
+          114
+        </td>
+        <td>
+          1018
+        </td>
+        <td>
+          4170
+          -
+          4181
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          router.Routes.prefix
+        </td>
+        <td style="background: #F0ADAD">
+          this.prefix
+        </td>
+      </tr><tr>
+        <td>
+          114
+        </td>
+        <td>
+          1021
+        </td>
+        <td>
+          4184
+          -
+          4214
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.core.routing.StaticPart.apply
+        </td>
+        <td style="background: #F0ADAD">
+          play.core.routing.StaticPart.apply(this.defaultPrefix)
+        </td>
+      </tr><tr>
+        <td>
+          114
+        </td>
+        <td>
+          1020
+        </td>
+        <td>
+          4195
+          -
+          4213
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          router.Routes.defaultPrefix
+        </td>
+        <td style="background: #F0ADAD">
+          this.defaultPrefix
+        </td>
+      </tr><tr>
+        <td>
+          114
+        </td>
+        <td>
+          1023
+        </td>
+        <td>
+          4239
+          -
+          4274
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.core.routing.DynamicPart.apply
+        </td>
+        <td style="background: #F0ADAD">
+          play.core.routing.DynamicPart.apply(&quot;file&quot;, &quot;.+&quot;, false)
+        </td>
+      </tr><tr>
+        <td>
+          116
+        </td>
+        <td>
+          1040
+        </td>
+        <td>
+          4346
+          -
+          4736
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.core.routing.GeneratedRouter.createInvoker
+        </td>
+        <td style="background: #F0ADAD">
+          Routes.this.createInvoker[play.api.mvc.Action[play.api.mvc.AnyContent]](Routes.this.Assets_1.versioned(Routes.this.fakeValue[String], Routes.this.fakeValue[controllers.Assets.Asset]), play.core.routing.HandlerDef.apply(this.getClass().getClassLoader(), &quot;router&quot;, &quot;controllers.Assets&quot;, &quot;versioned&quot;, collection.this.Seq.apply[Class[_ &gt;: controllers.Assets.Asset with String &lt;: java.io.Serializable]](classOf[java.lang.String], classOf[controllers.Assets$$Asset]), &quot;GET&quot;, &quot; Map static resources from the /public folder to the /assets URL path&quot;, this.prefix.+(&quot;assets/&quot;).+(&quot;$&quot;).+(&quot;file&lt;.+&gt;&quot;)))(play.core.routing.HandlerInvokerFactory.passThrough[play.api.mvc.Handler])
+        </td>
+      </tr><tr>
+        <td>
+          116
+        </td>
+        <td>
+          1039
+        </td>
+        <td>
+          4359
+          -
+          4359
+        </td>
+        <td>
+          TypeApply
+        </td>
+        <td>
+          play.core.routing.HandlerInvokerFactory.passThrough
+        </td>
+        <td style="background: #F0ADAD">
+          play.core.routing.HandlerInvokerFactory.passThrough[play.api.mvc.Handler]
+        </td>
+      </tr><tr>
+        <td>
+          117
+        </td>
+        <td>
+          1028
+        </td>
+        <td>
+          4403
+          -
+          4419
+        </td>
+        <td>
+          TypeApply
+        </td>
+        <td>
+          play.core.routing.GeneratedRouter.fakeValue
+        </td>
+        <td style="background: #F0ADAD">
+          Routes.this.fakeValue[controllers.Assets.Asset]
+        </td>
+      </tr><tr>
+        <td>
+          117
+        </td>
+        <td>
+          1027
+        </td>
+        <td>
+          4384
+          -
+          4401
+        </td>
+        <td>
+          TypeApply
+        </td>
+        <td>
+          play.core.routing.GeneratedRouter.fakeValue
+        </td>
+        <td style="background: #F0ADAD">
+          Routes.this.fakeValue[String]
+        </td>
+      </tr><tr>
+        <td>
+          117
+        </td>
+        <td>
+          1029
+        </td>
+        <td>
+          4365
+          -
+          4420
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          controllers.AssetsBuilder.versioned
+        </td>
+        <td style="background: #F0ADAD">
+          Routes.this.Assets_1.versioned(Routes.this.fakeValue[String], Routes.this.fakeValue[controllers.Assets.Asset])
+        </td>
+      </tr><tr>
+        <td>
+          118
+        </td>
+        <td>
+          1030
+        </td>
+        <td>
+          4437
+          -
+          4465
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.Class.getClassLoader
+        </td>
+        <td style="background: #F0ADAD">
+          this.getClass().getClassLoader()
+        </td>
+      </tr><tr>
+        <td>
+          118
+        </td>
+        <td>
+          1038
+        </td>
+        <td>
+          4426
+          -
+          4732
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.core.routing.HandlerDef.apply
+        </td>
+        <td style="background: #F0ADAD">
+          play.core.routing.HandlerDef.apply(this.getClass().getClassLoader(), &quot;router&quot;, &quot;controllers.Assets&quot;, &quot;versioned&quot;, collection.this.Seq.apply[Class[_ &gt;: controllers.Assets.Asset with String &lt;: java.io.Serializable]](classOf[java.lang.String], classOf[controllers.Assets$$Asset]), &quot;GET&quot;, &quot; Map static resources from the /public folder to the /assets URL path&quot;, this.prefix.+(&quot;assets/&quot;).+(&quot;$&quot;).+(&quot;file&lt;.+&gt;&quot;))
+        </td>
+      </tr><tr>
+        <td>
+          119
+        </td>
+        <td>
+          1031
+        </td>
+        <td>
+          4473
+          -
+          4481
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;router&quot;
+        </td>
+      </tr><tr>
+        <td>
           120
         </td>
         <td>
-          998
+          1032
         </td>
         <td>
-          4151
+          4489
           -
-          4226
+          4509
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;controllers.Assets&quot;
+        </td>
+      </tr><tr>
+        <td>
+          121
+        </td>
+        <td>
+          1033
+        </td>
+        <td>
+          4517
+          -
+          4528
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;versioned&quot;
+        </td>
+      </tr><tr>
+        <td>
+          122
+        </td>
+        <td>
+          1034
+        </td>
+        <td>
+          4536
+          -
+          4572
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.generic.GenericCompanion.apply
+        </td>
+        <td style="background: #F0ADAD">
+          collection.this.Seq.apply[Class[_ &gt;: controllers.Assets.Asset with String &lt;: java.io.Serializable]](classOf[java.lang.String], classOf[controllers.Assets$$Asset])
+        </td>
+      </tr><tr>
+        <td>
+          123
+        </td>
+        <td>
+          1035
+        </td>
+        <td>
+          4580
+          -
+          4585
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;GET&quot;
+        </td>
+      </tr><tr>
+        <td>
+          124
+        </td>
+        <td>
+          1036
+        </td>
+        <td>
+          4593
+          -
+          4668
         </td>
         <td>
           Literal
@@ -2821,15 +2909,15 @@ else
         </td>
       </tr><tr>
         <td>
-          121
+          125
         </td>
         <td>
-          999
+          1037
         </td>
         <td>
-          4234
+          4676
           -
-          4284
+          4726
         </td>
         <td>
           Apply
@@ -2842,15 +2930,15 @@ else
         </td>
       </tr><tr>
         <td>
-          126
+          130
         </td>
         <td>
-          1030
+          1085
         </td>
         <td>
-          4353
+          4795
           -
-          4353
+          4795
         </td>
         <td>
           Apply
@@ -2863,15 +2951,15 @@ else
         </td>
       </tr><tr>
         <td>
-          130
+          134
         </td>
         <td>
-          1005
+          1043
         </td>
         <td>
-          4440
+          4881
           -
-          4536
+          4975
         </td>
         <td>
           Apply
@@ -2880,19 +2968,19 @@ else
           play.core.routing.GeneratedRouter.call
         </td>
         <td style="background: #F0ADAD">
-          Routes.this.call(Routes.this.controllers_QueryController_index0_invoker.call(Routes.this.QueryController_1.index))
+          Routes.this.call(Routes.this.controllers_MainController_index0_invoker.call(Routes.this.MainController_0.index))
         </td>
       </tr><tr>
         <td>
-          131
+          135
         </td>
         <td>
-          1004
+          1042
         </td>
         <td>
-          4456
+          4897
           -
-          4528
+          4967
         </td>
         <td>
           Apply
@@ -2901,250 +2989,40 @@ else
           play.core.routing.HandlerInvoker.call
         </td>
         <td style="background: #F0ADAD">
-          Routes.this.controllers_QueryController_index0_invoker.call(Routes.this.QueryController_1.index)
+          Routes.this.controllers_MainController_index0_invoker.call(Routes.this.MainController_0.index)
         </td>
       </tr><tr>
         <td>
-          131
+          135
         </td>
         <td>
-          1003
+          1041
         </td>
         <td>
-          4504
+          4944
           -
-          4527
+          4966
         </td>
         <td>
           Select
         </td>
         <td>
-          controllers.QueryController.index
+          controllers.MainController.index
         </td>
         <td style="background: #F0ADAD">
-          Routes.this.QueryController_1.index
+          Routes.this.MainController_0.index
         </td>
       </tr><tr>
         <td>
-          136
+          140
         </td>
         <td>
-          1007
+          1046
         </td>
         <td>
-          4651
+          5090
           -
-          4660
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.util.Right.apply
-        </td>
-        <td style="background: #F0ADAD">
-          scala.`package`.Right.apply[Nothing, String](&quot;&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          136
-        </td>
-        <td>
-          1006
-        </td>
-        <td>
-          4642
-          -
-          4649
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;query&quot;
-        </td>
-      </tr><tr>
-        <td>
-          136
-        </td>
-        <td>
-          1008
-        </td>
-        <td>
-          4628
-          -
-          4661
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          play.core.routing.Param.apply
-        </td>
-        <td style="background: #F0ADAD">
-          play.core.routing.Param.apply[String](&quot;query&quot;, scala.`package`.Right.apply[Nothing, String](&quot;&quot;))
-        </td>
-      </tr><tr>
-        <td>
-          136
-        </td>
-        <td>
-          1011
-        </td>
-        <td>
-          4623
-          -
-          4771
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          play.core.routing.GeneratedRouter.call
-        </td>
-        <td style="background: #F0ADAD">
-          Routes.this.call[String](play.core.routing.Param.apply[String](&quot;query&quot;, scala.`package`.Right.apply[Nothing, String](&quot;&quot;)))(((query: String) =&gt; Routes.this.controllers_QueryController_query1_invoker.call(Routes.this.QueryController_1.query(query))))
-        </td>
-      </tr><tr>
-        <td>
-          137
-        </td>
-        <td>
-          1010
-        </td>
-        <td>
-          4684
-          -
-          4763
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          play.core.routing.HandlerInvoker.call
-        </td>
-        <td style="background: #F0ADAD">
-          Routes.this.controllers_QueryController_query1_invoker.call(Routes.this.QueryController_1.query(query))
-        </td>
-      </tr><tr>
-        <td>
-          137
-        </td>
-        <td>
-          1009
-        </td>
-        <td>
-          4732
-          -
-          4762
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          controllers.QueryController.query
-        </td>
-        <td style="background: #F0ADAD">
-          Routes.this.QueryController_1.query(query)
-        </td>
-      </tr><tr>
-        <td>
-          142
-        </td>
-        <td>
-          1013
-        </td>
-        <td>
-          4896
-          -
-          4900
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          scala.None
-        </td>
-        <td style="background: #F0ADAD">
-          scala.None
-        </td>
-      </tr><tr>
-        <td>
-          142
-        </td>
-        <td>
-          1015
-        </td>
-        <td>
-          4863
-          -
-          4901
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          play.core.routing.RouteParams.fromPath
-        </td>
-        <td style="background: #F0ADAD">
-          params.fromPath[String](&quot;query&quot;, scala.None)(mvc.this.PathBindable.bindableString)
-        </td>
-      </tr><tr>
-        <td>
-          142
-        </td>
-        <td>
-          1018
-        </td>
-        <td>
-          4858
-          -
-          5011
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          play.core.routing.GeneratedRouter.call
-        </td>
-        <td style="background: #F0ADAD">
-          Routes.this.call[String](params.fromPath[String](&quot;query&quot;, scala.None)(mvc.this.PathBindable.bindableString))(((query: String) =&gt; Routes.this.controllers_QueryController_query2_invoker.call(Routes.this.QueryController_1.query(query))))
-        </td>
-      </tr><tr>
-        <td>
-          142
-        </td>
-        <td>
-          1012
-        </td>
-        <td>
-          4887
-          -
-          4894
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;query&quot;
-        </td>
-      </tr><tr>
-        <td>
-          142
-        </td>
-        <td>
-          1014
-        </td>
-        <td>
-          4886
-          -
-          4886
+          5090
         </td>
         <td>
           Select
@@ -3157,57 +3035,78 @@ else
         </td>
       </tr><tr>
         <td>
-          143
+          140
         </td>
         <td>
-          1016
+          1045
         </td>
         <td>
-          4972
+          5099
           -
-          5002
+          5103
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.None
+        </td>
+        <td style="background: #F0ADAD">
+          scala.None
+        </td>
+      </tr><tr>
+        <td>
+          140
+        </td>
+        <td>
+          1047
+        </td>
+        <td>
+          5067
+          -
+          5104
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.core.routing.RouteParams.fromPath
+        </td>
+        <td style="background: #F0ADAD">
+          params.fromPath[String](&quot;path&quot;, scala.None)(mvc.this.PathBindable.bindableString)
+        </td>
+      </tr><tr>
+        <td>
+          140
+        </td>
+        <td>
+          1050
+        </td>
+        <td>
+          5062
+          -
+          5214
         </td>
         <td>
           Apply
         </td>
         <td>
-          controllers.QueryController.query
+          play.core.routing.GeneratedRouter.call
         </td>
         <td style="background: #F0ADAD">
-          Routes.this.QueryController_1.query(query)
+          Routes.this.call[String](params.fromPath[String](&quot;path&quot;, scala.None)(mvc.this.PathBindable.bindableString))(((path: String) =&gt; Routes.this.controllers_MainController_untrail1_invoker.call(Routes.this.MainController_0.untrail(path))))
         </td>
       </tr><tr>
         <td>
-          143
+          140
         </td>
         <td>
-          1017
+          1044
         </td>
         <td>
-          4924
+          5091
           -
-          5003
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          play.core.routing.HandlerInvoker.call
-        </td>
-        <td style="background: #F0ADAD">
-          Routes.this.controllers_QueryController_query2_invoker.call(Routes.this.QueryController_1.query(query))
-        </td>
-      </tr><tr>
-        <td>
-          148
-        </td>
-        <td>
-          1019
-        </td>
-        <td>
-          5112
-          -
-          5118
+          5097
         </td>
         <td>
           Literal
@@ -3220,15 +3119,57 @@ else
         </td>
       </tr><tr>
         <td>
-          148
+          141
         </td>
         <td>
-          1022
+          1049
         </td>
         <td>
-          5162
+          5126
           -
-          5168
+          5206
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.core.routing.HandlerInvoker.call
+        </td>
+        <td style="background: #F0ADAD">
+          Routes.this.controllers_MainController_untrail1_invoker.call(Routes.this.MainController_0.untrail(path))
+        </td>
+      </tr><tr>
+        <td>
+          141
+        </td>
+        <td>
+          1048
+        </td>
+        <td>
+          5175
+          -
+          5205
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          controllers.MainController.untrail
+        </td>
+        <td style="background: #F0ADAD">
+          Routes.this.MainController_0.untrail(path)
+        </td>
+      </tr><tr>
+        <td>
+          146
+        </td>
+        <td>
+          1061
+        </td>
+        <td>
+          5436
+          -
+          5446
         </td>
         <td>
           Literal
@@ -3237,40 +3178,481 @@ else
           &lt;nosymbol&gt;
         </td>
         <td style="background: #F0ADAD">
-          &quot;file&quot;
+          &quot;fromDate&quot;
         </td>
       </tr><tr>
         <td>
-          148
+          146
         </td>
         <td>
-          1025
+          1070
         </td>
         <td>
-          5161
+          5455
           -
-          5161
+          5503
         </td>
         <td>
           ApplyToImplicitArgs
         </td>
         <td>
-          controllers.Assets.Asset.assetPathBindable
+          play.core.routing.RouteParams.fromQuery
         </td>
         <td style="background: #F0ADAD">
-          Assets.this.Asset.assetPathBindable(play.core.routing.ReverseRouteContext.empty)
+          params.fromQuery[Option[String]](&quot;toDate&quot;, scala.None)(mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString))
         </td>
       </tr><tr>
         <td>
-          148
+          146
         </td>
         <td>
-          1024
+          1052
         </td>
         <td>
-          5161
+          5348
           -
-          5161
+          5352
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.None
+        </td>
+        <td style="background: #F0ADAD">
+          scala.None
+        </td>
+      </tr><tr>
+        <td>
+          146
+        </td>
+        <td>
+          1064
+        </td>
+        <td>
+          5435
+          -
+          5435
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.api.mvc.QueryStringBindable.bindableOption
+        </td>
+        <td style="background: #F0ADAD">
+          mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)
+        </td>
+      </tr><tr>
+        <td>
+          146
+        </td>
+        <td>
+          1073
+        </td>
+        <td>
+          5301
+          -
+          5661
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.core.routing.GeneratedRouter.call
+        </td>
+        <td style="background: #F0ADAD">
+          Routes.this.call[Option[String], Option[String], Option[String], Option[String]](params.fromQuery[Option[String]](&quot;query&quot;, scala.None)(mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)), params.fromQuery[Option[String]](&quot;bbox&quot;, scala.None)(mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)), params.fromQuery[Option[String]](&quot;fromDate&quot;, scala.None)(mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)), params.fromQuery[Option[String]](&quot;toDate&quot;, scala.None)(mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)))(((query: Option[String], bbox: Option[String], fromDate: Option[String], toDate: Option[String]) =&gt; Routes.this.controllers_QueryController_query2_invoker.call(Routes.this.QueryController_2.query(query, bbox, fromDate, toDate))))
+        </td>
+      </tr><tr>
+        <td>
+          146
+        </td>
+        <td>
+          1055
+        </td>
+        <td>
+          5306
+          -
+          5353
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.core.routing.RouteParams.fromQuery
+        </td>
+        <td style="background: #F0ADAD">
+          params.fromQuery[Option[String]](&quot;query&quot;, scala.None)(mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString))
+        </td>
+      </tr><tr>
+        <td>
+          146
+        </td>
+        <td>
+          1058
+        </td>
+        <td>
+          5387
+          -
+          5387
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          play.api.mvc.QueryStringBindable.bindableString
+        </td>
+        <td style="background: #F0ADAD">
+          mvc.this.QueryStringBindable.bindableString
+        </td>
+      </tr><tr>
+        <td>
+          146
+        </td>
+        <td>
+          1067
+        </td>
+        <td>
+          5498
+          -
+          5502
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.None
+        </td>
+        <td style="background: #F0ADAD">
+          scala.None
+        </td>
+      </tr><tr>
+        <td>
+          146
+        </td>
+        <td>
+          1066
+        </td>
+        <td>
+          5488
+          -
+          5496
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;toDate&quot;
+        </td>
+      </tr><tr>
+        <td>
+          146
+        </td>
+        <td>
+          1057
+        </td>
+        <td>
+          5396
+          -
+          5400
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.None
+        </td>
+        <td style="background: #F0ADAD">
+          scala.None
+        </td>
+      </tr><tr>
+        <td>
+          146
+        </td>
+        <td>
+          1069
+        </td>
+        <td>
+          5487
+          -
+          5487
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.api.mvc.QueryStringBindable.bindableOption
+        </td>
+        <td style="background: #F0ADAD">
+          mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)
+        </td>
+      </tr><tr>
+        <td>
+          146
+        </td>
+        <td>
+          1051
+        </td>
+        <td>
+          5339
+          -
+          5346
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;query&quot;
+        </td>
+      </tr><tr>
+        <td>
+          146
+        </td>
+        <td>
+          1060
+        </td>
+        <td>
+          5355
+          -
+          5401
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.core.routing.RouteParams.fromQuery
+        </td>
+        <td style="background: #F0ADAD">
+          params.fromQuery[Option[String]](&quot;bbox&quot;, scala.None)(mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString))
+        </td>
+      </tr><tr>
+        <td>
+          146
+        </td>
+        <td>
+          1054
+        </td>
+        <td>
+          5338
+          -
+          5338
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.api.mvc.QueryStringBindable.bindableOption
+        </td>
+        <td style="background: #F0ADAD">
+          mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)
+        </td>
+      </tr><tr>
+        <td>
+          146
+        </td>
+        <td>
+          1063
+        </td>
+        <td>
+          5435
+          -
+          5435
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          play.api.mvc.QueryStringBindable.bindableString
+        </td>
+        <td style="background: #F0ADAD">
+          mvc.this.QueryStringBindable.bindableString
+        </td>
+      </tr><tr>
+        <td>
+          146
+        </td>
+        <td>
+          1065
+        </td>
+        <td>
+          5403
+          -
+          5453
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.core.routing.RouteParams.fromQuery
+        </td>
+        <td style="background: #F0ADAD">
+          params.fromQuery[Option[String]](&quot;fromDate&quot;, scala.None)(mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString))
+        </td>
+      </tr><tr>
+        <td>
+          146
+        </td>
+        <td>
+          1056
+        </td>
+        <td>
+          5388
+          -
+          5394
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;bbox&quot;
+        </td>
+      </tr><tr>
+        <td>
+          146
+        </td>
+        <td>
+          1059
+        </td>
+        <td>
+          5387
+          -
+          5387
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.api.mvc.QueryStringBindable.bindableOption
+        </td>
+        <td style="background: #F0ADAD">
+          mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)
+        </td>
+      </tr><tr>
+        <td>
+          146
+        </td>
+        <td>
+          1068
+        </td>
+        <td>
+          5487
+          -
+          5487
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          play.api.mvc.QueryStringBindable.bindableString
+        </td>
+        <td style="background: #F0ADAD">
+          mvc.this.QueryStringBindable.bindableString
+        </td>
+      </tr><tr>
+        <td>
+          146
+        </td>
+        <td>
+          1053
+        </td>
+        <td>
+          5338
+          -
+          5338
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          play.api.mvc.QueryStringBindable.bindableString
+        </td>
+        <td style="background: #F0ADAD">
+          mvc.this.QueryStringBindable.bindableString
+        </td>
+      </tr><tr>
+        <td>
+          146
+        </td>
+        <td>
+          1062
+        </td>
+        <td>
+          5448
+          -
+          5452
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.None
+        </td>
+        <td style="background: #F0ADAD">
+          scala.None
+        </td>
+      </tr><tr>
+        <td>
+          147
+        </td>
+        <td>
+          1072
+        </td>
+        <td>
+          5550
+          -
+          5653
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.core.routing.HandlerInvoker.call
+        </td>
+        <td style="background: #F0ADAD">
+          Routes.this.controllers_QueryController_query2_invoker.call(Routes.this.QueryController_2.query(query, bbox, fromDate, toDate))
+        </td>
+      </tr><tr>
+        <td>
+          147
+        </td>
+        <td>
+          1071
+        </td>
+        <td>
+          5598
+          -
+          5652
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          controllers.QueryController.query
+        </td>
+        <td style="background: #F0ADAD">
+          Routes.this.QueryController_2.query(query, bbox, fromDate, toDate)
+        </td>
+      </tr><tr>
+        <td>
+          152
+        </td>
+        <td>
+          1079
+        </td>
+        <td>
+          5811
+          -
+          5811
         </td>
         <td>
           Select
@@ -3283,15 +3665,15 @@ else
         </td>
       </tr><tr>
         <td>
-          148
+          152
         </td>
         <td>
-          1021
+          1076
         </td>
         <td>
-          5098
+          5748
           -
-          5137
+          5787
         </td>
         <td>
           Apply
@@ -3304,15 +3686,15 @@ else
         </td>
       </tr><tr>
         <td>
-          148
+          152
         </td>
         <td>
-          1020
+          1075
         </td>
         <td>
-          5120
+          5770
           -
-          5136
+          5786
         </td>
         <td>
           Apply
@@ -3325,15 +3707,15 @@ else
         </td>
       </tr><tr>
         <td>
-          148
+          152
         </td>
         <td>
-          1029
+          1084
         </td>
         <td>
-          5093
+          5743
           -
-          5285
+          5935
         </td>
         <td>
           Apply
@@ -3342,19 +3724,19 @@ else
           play.core.routing.GeneratedRouter.call
         </td>
         <td style="background: #F0ADAD">
-          Routes.this.call[String, controllers.Assets.Asset](play.core.routing.Param.apply[String](&quot;path&quot;, scala.`package`.Right.apply[Nothing, String](&quot;/public&quot;)), params.fromPath[controllers.Assets.Asset](&quot;file&quot;, scala.None)(Assets.this.Asset.assetPathBindable(play.core.routing.ReverseRouteContext.empty)))(((path: String, file: controllers.Assets.Asset) =&gt; Routes.this.controllers_Assets_versioned3_invoker.call(Routes.this.Assets_0.versioned(path, file))))
+          Routes.this.call[String, controllers.Assets.Asset](play.core.routing.Param.apply[String](&quot;path&quot;, scala.`package`.Right.apply[Nothing, String](&quot;/public&quot;)), params.fromPath[controllers.Assets.Asset](&quot;file&quot;, scala.None)(Assets.this.Asset.assetPathBindable(play.core.routing.ReverseRouteContext.empty)))(((path: String, file: controllers.Assets.Asset) =&gt; Routes.this.controllers_Assets_versioned3_invoker.call(Routes.this.Assets_1.versioned(path, file))))
         </td>
       </tr><tr>
         <td>
-          148
+          152
         </td>
         <td>
-          1023
+          1078
         </td>
         <td>
-          5170
+          5820
           -
-          5174
+          5824
         </td>
         <td>
           Select
@@ -3367,15 +3749,15 @@ else
         </td>
       </tr><tr>
         <td>
-          148
+          152
         </td>
         <td>
-          1026
+          1081
         </td>
         <td>
-          5139
+          5789
           -
-          5175
+          5825
         </td>
         <td>
           ApplyToImplicitArgs
@@ -3388,36 +3770,78 @@ else
         </td>
       </tr><tr>
         <td>
-          149
+          152
         </td>
         <td>
-          1028
+          1080
         </td>
         <td>
-          5203
+          5811
           -
-          5277
+          5811
         </td>
         <td>
-          Apply
+          ApplyToImplicitArgs
         </td>
         <td>
-          play.core.routing.HandlerInvoker.call
+          controllers.Assets.Asset.assetPathBindable
         </td>
         <td style="background: #F0ADAD">
-          Routes.this.controllers_Assets_versioned3_invoker.call(Routes.this.Assets_0.versioned(path, file))
+          Assets.this.Asset.assetPathBindable(play.core.routing.ReverseRouteContext.empty)
         </td>
       </tr><tr>
         <td>
-          149
+          152
         </td>
         <td>
-          1027
+          1074
         </td>
         <td>
-          5246
+          5762
           -
-          5276
+          5768
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;path&quot;
+        </td>
+      </tr><tr>
+        <td>
+          152
+        </td>
+        <td>
+          1077
+        </td>
+        <td>
+          5812
+          -
+          5818
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;file&quot;
+        </td>
+      </tr><tr>
+        <td>
+          153
+        </td>
+        <td>
+          1082
+        </td>
+        <td>
+          5896
+          -
+          5926
         </td>
         <td>
           Apply
@@ -3426,7 +3850,28 @@ else
           controllers.AssetsBuilder.versioned
         </td>
         <td style="background: #F0ADAD">
-          Routes.this.Assets_0.versioned(path, file)
+          Routes.this.Assets_1.versioned(path, file)
+        </td>
+      </tr><tr>
+        <td>
+          153
+        </td>
+        <td>
+          1083
+        </td>
+        <td>
+          5853
+          -
+          5927
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.core.routing.HandlerInvoker.call
+        </td>
+        <td style="background: #F0ADAD">
+          Routes.this.controllers_Assets_versioned3_invoker.call(Routes.this.Assets_1.versioned(path, file))
         </td>
       </tr>
     </table>
