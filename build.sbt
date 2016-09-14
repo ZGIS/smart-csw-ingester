@@ -145,6 +145,6 @@ dockerBaseImage := "java:8-jre"
 javaOptions in Universal ++= Seq(
   // others will be added as app parameters
  // "-DapplyEvolutions.default=true",
-  "-Dconfig.resource=application.conf"
+  "-Dconfig.resource=application.dev.conf"
   //"-Dapplication.base_url=http://test.smart-project.info/"
 )
