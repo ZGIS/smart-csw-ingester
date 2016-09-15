@@ -480,6 +480,7 @@ object MdMetadataSet extends ClassnameLogger {
       logger.warn(f"${(nodeSeq \\ "fileIdentifier" \ "CharacterString").text} has no BBOX")
       bboxFromCoords(minLon, maxLon, minLat, maxLat)
     }
+//    bboxFromCoords(165, 360 - 175, -53.1, -28.8)
   }
 }
 

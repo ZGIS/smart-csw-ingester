@@ -22,15 +22,14 @@ import java.time.LocalDate
 import com.typesafe.config.ConfigFactory
 import models.gmd.GeoJSONFeatureCollectionWriter
 import org.scalatestplus.play._
-import play.api.{Configuration, Logger, Mode}
 import play.api.inject.DefaultApplicationLifecycle
 import play.api.libs.json.Json
 import play.api.mvc._
 import play.api.routing.sird._
 import play.api.test._
+import play.api.{Configuration, Mode}
 import play.core.server.{Server, ServerConfig}
 import services.LuceneService
-import services.IndexService
 
 import scala.concurrent.Await
 import scala.concurrent.duration._

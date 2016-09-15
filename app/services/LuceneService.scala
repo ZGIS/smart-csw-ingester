@@ -109,8 +109,8 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
       }
     }.toList)
 
-    //FIXME SR 5 minutes seem quite arbitraty... what is a good timeout here?
-    val gmdElemSets = Await.result(gmdElemSetsFutures, 5.minutes).flatten
+    //FIXME SR 15 minutes seem quite arbitraty... what is a good timeout here?
+    val gmdElemSets = Await.result(gmdElemSetsFutures, 15.minutes).flatten
     logger.info(f"Loaded ${gmdElemSets.size} documents from CSW.")
 
     val analyzer = new StandardAnalyzer()
@@ -245,10 +245,13 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
     * @return
     */
   private def parseBboxQuery(bboxWkt: String) = {
+    logger.debug(s"create query for $bboxWkt")
+
     val ctx = SpatialContext.GEO
     val shpReader = ctx.getFormats().getReader(ShapeIO.WKT)
     val shape = shpReader.read(bboxWkt)
 
+    logger.error(s"parsed shape is ${shape.toString}")
     val bboxStrategy: BBoxStrategy = BBoxStrategy.newInstance(ctx, "bbox")
     bboxStrategy.makeQuery(new SpatialArgs(SpatialOperation.IsWithin, shape))
   }
