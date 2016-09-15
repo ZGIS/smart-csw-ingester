@@ -133,8 +133,8 @@
 </span>109 <span style=''></span><span style='background: #AEF1AE'>      }
 </span>110 <span style=''></span><span style='background: #AEF1AE'>    }.toList)</span><span style=''>
 </span>111 <span style=''>
-</span>112 <span style=''>    //FIXME SR 5 minutes seem quite arbitraty... what is a good timeout here?
-</span>113 <span style=''>    val gmdElemSets = </span><span style='background: #AEF1AE'>Await.result(gmdElemSetsFutures, 5.minutes).flatten</span><span style=''>
+</span>112 <span style=''>    //FIXME SR 15 minutes seem quite arbitraty... what is a good timeout here?
+</span>113 <span style=''>    val gmdElemSets = </span><span style='background: #AEF1AE'>Await.result(gmdElemSetsFutures, 15.minutes).flatten</span><span style=''>
 </span>114 <span style=''>    </span><span style='background: #AEF1AE'>logger.info(f"Loaded ${gmdElemSets.size} documents from CSW.")</span><span style=''>
 </span>115 <span style=''>
 </span>116 <span style=''>    val analyzer = </span><span style='background: #AEF1AE'>new StandardAnalyzer()</span><span style=''>
@@ -269,61 +269,64 @@
 </span>245 <span style=''>    * @return
 </span>246 <span style=''>    */
 </span>247 <span style=''>  private def parseBboxQuery(bboxWkt: String) = {
-</span>248 <span style=''>    val ctx = </span><span style='background: #AEF1AE'>SpatialContext.GEO</span><span style=''>
-</span>249 <span style=''>    val shpReader = </span><span style='background: #AEF1AE'>ctx.getFormats().getReader(ShapeIO.WKT)</span><span style=''>
-</span>250 <span style=''>    val shape = </span><span style='background: #AEF1AE'>shpReader.read(bboxWkt)</span><span style=''>
-</span>251 <span style=''>
-</span>252 <span style=''>    val bboxStrategy: BBoxStrategy = </span><span style='background: #AEF1AE'>BBoxStrategy.newInstance(ctx, "bbox")</span><span style=''>
-</span>253 <span style=''>    </span><span style='background: #AEF1AE'>bboxStrategy.makeQuery(new SpatialArgs(SpatialOperation.IsWithin, shape))</span><span style=''>
-</span>254 <span style=''>  }
-</span>255 <span style=''>
-</span>256 <span style=''>  /**
-</span>257 <span style=''>    * Queries the Search Index
-</span>258 <span style=''>    *
-</span>259 <span style=''>    * @param query
-</span>260 <span style=''>    * @return
-</span>261 <span style=''>    */
-</span>262 <span style=''>  def query(query: String,
-</span>263 <span style=''>            bboxWtk: Option[String] = None,
-</span>264 <span style=''>            fromDate: Option[LocalDate] = None,
-</span>265 <span style=''>            toDate: Option[LocalDate] = None): List[MdMetadataSet] = {
-</span>266 <span style=''>
-</span>267 <span style=''>    val textQuery = </span><span style='background: #AEF1AE'>parseQueryString(query)</span><span style=''>
-</span>268 <span style=''>
-</span>269 <span style=''>    val dateQuery = </span><span style='background: #AEF1AE'>LongPoint.newRangeQuery("dateStamp",
-</span>270 <span style=''></span><span style='background: #AEF1AE'>      fromDate.getOrElse(LocalDate.ofEpochDay(0)).toEpochDay(),
-</span>271 <span style=''></span><span style='background: #AEF1AE'>      toDate.getOrElse(LocalDate.now()).toEpochDay())</span><span style=''>
-</span>272 <span style=''>
-</span>273 <span style=''>    val bboxQuery = </span><span style='background: #AEF1AE'>parseBboxQuery(bboxWtk.filterNot(_.isEmpty).getOrElse(WORLD_WKT))</span><span style=''>
-</span>274 <span style=''>
-</span>275 <span style=''>    //FIXME SR when index empty, the next call will fail
-</span>276 <span style=''>    val searcherManager = </span><span style='background: #AEF1AE'>new SearcherManager(directory, null)</span><span style=''>
-</span>277 <span style=''>    </span><span style='background: #AEF1AE'>searcherManager.maybeRefreshBlocking()</span><span style=''>
-</span>278 <span style=''>    val isearcher = </span><span style='background: #AEF1AE'>searcherManager.acquire()</span><span style=''>
-</span>279 <span style=''>
-</span>280 <span style=''>    // TODO TBD AK The way you built it, could omit dates or BBOX query constraint in this
-</span>281 <span style=''>    // this builder if not provided through query params (but particularly date should NOT be limited to 1970 to now?)
-</span>282 <span style=''>    val booleanQueryBuilder = </span><span style='background: #AEF1AE'>new BooleanQuery.Builder()</span><span style=''>
-</span>283 <span style=''>    </span><span style='background: #AEF1AE'>booleanQueryBuilder.add(textQuery, BooleanClause.Occur.MUST)</span><span style=''>
-</span>284 <span style=''>    </span><span style='background: #AEF1AE'>booleanQueryBuilder.add(dateQuery, BooleanClause.Occur.MUST)</span><span style=''>
-</span>285 <span style=''>    </span><span style='background: #AEF1AE'>booleanQueryBuilder.add(bboxQuery, BooleanClause.Occur.MUST)</span><span style=''>
-</span>286 <span style=''>    val luceneQuery = </span><span style='background: #AEF1AE'>booleanQueryBuilder.build()</span><span style=''>
-</span>287 <span style=''>
-</span>288 <span style=''>    val search = </span><span style='background: #AEF1AE'>isearcher.search(luceneQuery, isearcher.getIndexReader.numDocs())</span><span style=''>
-</span>289 <span style=''>    val scoreDocs = </span><span style='background: #AEF1AE'>search.scoreDocs</span><span style=''>
+</span>248 <span style=''>    </span><span style='background: #AEF1AE'>logger.debug(s"create query for $bboxWkt")</span><span style=''>
+</span>249 <span style=''>
+</span>250 <span style=''>    val ctx = </span><span style='background: #AEF1AE'>SpatialContext.GEO</span><span style=''>
+</span>251 <span style=''>    val shpReader = </span><span style='background: #AEF1AE'>ctx.getFormats().getReader(ShapeIO.WKT)</span><span style=''>
+</span>252 <span style=''>    val shape = </span><span style='background: #AEF1AE'>shpReader.read(bboxWkt)</span><span style=''>
+</span>253 <span style=''>
+</span>254 <span style=''>    </span><span style='background: #AEF1AE'>logger.error(s"parsed shape is ${shape.toString}")</span><span style=''>
+</span>255 <span style=''>    val bboxStrategy: BBoxStrategy = </span><span style='background: #AEF1AE'>BBoxStrategy.newInstance(ctx, "bbox")</span><span style=''>
+</span>256 <span style=''>    </span><span style='background: #AEF1AE'>bboxStrategy.makeQuery(new SpatialArgs(SpatialOperation.IsWithin, shape))</span><span style=''>
+</span>257 <span style=''>  }
+</span>258 <span style=''>
+</span>259 <span style=''>  /**
+</span>260 <span style=''>    * Queries the Search Index
+</span>261 <span style=''>    *
+</span>262 <span style=''>    * @param query
+</span>263 <span style=''>    * @return
+</span>264 <span style=''>    */
+</span>265 <span style=''>  def query(query: String,
+</span>266 <span style=''>            bboxWtk: Option[String] = None,
+</span>267 <span style=''>            fromDate: Option[LocalDate] = None,
+</span>268 <span style=''>            toDate: Option[LocalDate] = None): List[MdMetadataSet] = {
+</span>269 <span style=''>
+</span>270 <span style=''>    val textQuery = </span><span style='background: #AEF1AE'>parseQueryString(query)</span><span style=''>
+</span>271 <span style=''>
+</span>272 <span style=''>    val dateQuery = </span><span style='background: #AEF1AE'>LongPoint.newRangeQuery("dateStamp",
+</span>273 <span style=''></span><span style='background: #AEF1AE'>      fromDate.getOrElse(LocalDate.ofEpochDay(0)).toEpochDay(),
+</span>274 <span style=''></span><span style='background: #AEF1AE'>      toDate.getOrElse(LocalDate.now()).toEpochDay())</span><span style=''>
+</span>275 <span style=''>
+</span>276 <span style=''>    val bboxQuery = </span><span style='background: #AEF1AE'>parseBboxQuery(bboxWtk.filterNot(_.isEmpty).getOrElse(WORLD_WKT))</span><span style=''>
+</span>277 <span style=''>
+</span>278 <span style=''>    //FIXME SR when index empty, the next call will fail
+</span>279 <span style=''>    val searcherManager = </span><span style='background: #AEF1AE'>new SearcherManager(directory, null)</span><span style=''>
+</span>280 <span style=''>    </span><span style='background: #AEF1AE'>searcherManager.maybeRefreshBlocking()</span><span style=''>
+</span>281 <span style=''>    val isearcher = </span><span style='background: #AEF1AE'>searcherManager.acquire()</span><span style=''>
+</span>282 <span style=''>
+</span>283 <span style=''>    // TODO TBD AK The way you built it, could omit dates or BBOX query constraint in this
+</span>284 <span style=''>    // this builder if not provided through query params (but particularly date should NOT be limited to 1970 to now?)
+</span>285 <span style=''>    val booleanQueryBuilder = </span><span style='background: #AEF1AE'>new BooleanQuery.Builder()</span><span style=''>
+</span>286 <span style=''>    </span><span style='background: #AEF1AE'>booleanQueryBuilder.add(textQuery, BooleanClause.Occur.MUST)</span><span style=''>
+</span>287 <span style=''>    </span><span style='background: #AEF1AE'>booleanQueryBuilder.add(dateQuery, BooleanClause.Occur.MUST)</span><span style=''>
+</span>288 <span style=''>    </span><span style='background: #AEF1AE'>booleanQueryBuilder.add(bboxQuery, BooleanClause.Occur.MUST)</span><span style=''>
+</span>289 <span style=''>    val luceneQuery = </span><span style='background: #AEF1AE'>booleanQueryBuilder.build()</span><span style=''>
 </span>290 <span style=''>
-</span>291 <span style=''>    val results = </span><span style='background: #AEF1AE'>scoreDocs.map(scoreDoc => {
-</span>292 <span style=''></span><span style='background: #AEF1AE'>      val doc = isearcher.doc(scoreDoc.doc)
-</span>293 <span style=''></span><span style='background: #AEF1AE'>      MdMetadataSet.fromLuceneDoc(doc)
-</span>294 <span style=''></span><span style='background: #AEF1AE'>    }).toList</span><span style=''>
-</span>295 <span style=''>
-</span>296 <span style=''>    //FIXME SR use ARM --> possible mem leak
-</span>297 <span style=''>    </span><span style='background: #AEF1AE'>searcherManager.release(isearcher)</span><span style=''>
+</span>291 <span style=''>    val search = </span><span style='background: #AEF1AE'>isearcher.search(luceneQuery, isearcher.getIndexReader.numDocs())</span><span style=''>
+</span>292 <span style=''>    val scoreDocs = </span><span style='background: #AEF1AE'>search.scoreDocs</span><span style=''>
+</span>293 <span style=''>
+</span>294 <span style=''>    val results = </span><span style='background: #AEF1AE'>scoreDocs.map(scoreDoc => {
+</span>295 <span style=''></span><span style='background: #AEF1AE'>      val doc = isearcher.doc(scoreDoc.doc)
+</span>296 <span style=''></span><span style='background: #AEF1AE'>      MdMetadataSet.fromLuceneDoc(doc)
+</span>297 <span style=''></span><span style='background: #AEF1AE'>    }).toList</span><span style=''>
 </span>298 <span style=''>
-</span>299 <span style=''>    results
-</span>300 <span style=''>
-</span>301 <span style=''>  }
-</span>302 <span style=''>}
+</span>299 <span style=''>    //FIXME SR use ARM --> possible mem leak
+</span>300 <span style=''>    </span><span style='background: #AEF1AE'>searcherManager.release(isearcher)</span><span style=''>
+</span>301 <span style=''>
+</span>302 <span style=''>    results
+</span>303 <span style=''>
+</span>304 <span style=''>  }
+</span>305 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -1067,9 +1070,9 @@
           699
         </td>
         <td>
-          4238
+          4239
           -
-          4247
+          4249
         </td>
         <td>
           Select
@@ -1078,7 +1081,7 @@
           scala.concurrent.duration.DurationConversions.minutes
         </td>
         <td style="background: #AEF1AE">
-          scala.concurrent.duration.`package`.DurationInt(5).minutes
+          scala.concurrent.duration.`package`.DurationInt(15).minutes
         </td>
       </tr><tr>
         <td>
@@ -1088,9 +1091,9 @@
           701
         </td>
         <td>
-          4205
+          4206
           -
-          4256
+          4258
         </td>
         <td>
           ApplyToImplicitArgs
@@ -1099,7 +1102,7 @@
           scala.collection.generic.GenericTraversableTemplate.flatten
         </td>
         <td style="background: #AEF1AE">
-          scala.concurrent.Await.result[List[List[models.gmd.MdMetadataSet]]](gmdElemSetsFutures, scala.concurrent.duration.`package`.DurationInt(5).minutes).flatten[models.gmd.MdMetadataSet](scala.this.Predef.$conforms[List[models.gmd.MdMetadataSet]])
+          scala.concurrent.Await.result[List[List[models.gmd.MdMetadataSet]]](gmdElemSetsFutures, scala.concurrent.duration.`package`.DurationInt(15).minutes).flatten[models.gmd.MdMetadataSet](scala.this.Predef.$conforms[List[models.gmd.MdMetadataSet]])
         </td>
       </tr><tr>
         <td>
@@ -1109,9 +1112,9 @@
           698
         </td>
         <td>
-          4238
-          -
           4239
+          -
+          4241
         </td>
         <td>
           Literal
@@ -1120,7 +1123,7 @@
           &lt;nosymbol&gt;
         </td>
         <td style="background: #AEF1AE">
-          5
+          15
         </td>
       </tr><tr>
         <td>
@@ -1130,9 +1133,9 @@
           700
         </td>
         <td>
-          4249
+          4251
           -
-          4249
+          4251
         </td>
         <td>
           TypeApply
@@ -1151,9 +1154,9 @@
           702
         </td>
         <td>
-          4261
+          4263
           -
-          4323
+          4325
         </td>
         <td>
           Apply
@@ -1175,9 +1178,9 @@
           703
         </td>
         <td>
-          4344
+          4346
           -
-          4366
+          4368
         </td>
         <td>
           Apply
@@ -1196,9 +1199,9 @@
           704
         </td>
         <td>
-          4384
+          4386
           -
-          4415
+          4417
         </td>
         <td>
           Apply
@@ -1217,9 +1220,9 @@
           705
         </td>
         <td>
-          4420
+          4422
           -
-          4449
+          4451
         </td>
         <td>
           Apply
@@ -1238,9 +1241,9 @@
           707
         </td>
         <td>
-          4530
+          4532
           -
-          4564
+          4566
         </td>
         <td>
           Apply
@@ -1259,9 +1262,9 @@
           706
         </td>
         <td>
-          4546
+          4548
           -
-          4555
+          4557
         </td>
         <td>
           Select
@@ -1280,9 +1283,9 @@
           715
         </td>
         <td>
-          4581
+          4583
           -
-          4780
+          4782
         </td>
         <td>
           Block
@@ -1307,9 +1310,9 @@
           708
         </td>
         <td>
-          4581
+          4583
           -
-          4600
+          4602
         </td>
         <td>
           Apply
@@ -1328,9 +1331,9 @@
           709
         </td>
         <td>
-          4607
+          4609
           -
-          4623
+          4625
         </td>
         <td>
           Apply
@@ -1349,9 +1352,9 @@
           711
         </td>
         <td>
-          4668
+          4670
           -
-          4722
+          4724
         </td>
         <td>
           Apply
@@ -1370,9 +1373,9 @@
           710
         </td>
         <td>
-          4688
+          4690
           -
-          4721
+          4723
         </td>
         <td>
           Apply
@@ -1391,9 +1394,9 @@
           712
         </td>
         <td>
-          4630
+          4632
           -
-          4723
+          4725
         </td>
         <td>
           Apply
@@ -1412,9 +1415,9 @@
           713
         </td>
         <td>
-          4731
+          4733
           -
-          4747
+          4749
         </td>
         <td>
           Apply
@@ -1433,9 +1436,9 @@
           714
         </td>
         <td>
-          4754
+          4756
           -
-          4780
+          4782
         </td>
         <td>
           Apply
@@ -1454,9 +1457,9 @@
           717
         </td>
         <td>
-          4807
+          4809
           -
-          4822
+          4824
         </td>
         <td>
           Block
@@ -1475,9 +1478,9 @@
           716
         </td>
         <td>
-          4807
+          4809
           -
-          4822
+          4824
         </td>
         <td>
           Apply
@@ -1496,9 +1499,9 @@
           718
         </td>
         <td>
-          5512
+          5514
           -
-          5562
+          5564
         </td>
         <td>
           Apply
@@ -1520,9 +1523,9 @@
           719
         </td>
         <td>
-          5692
+          5694
           -
-          5727
+          5729
         </td>
         <td>
           Apply
@@ -1541,9 +1544,9 @@
           720
         </td>
         <td>
-          5743
+          5745
           -
-          5792
+          5794
         </td>
         <td>
           Apply
@@ -1562,9 +1565,9 @@
           723
         </td>
         <td>
-          5603
+          5605
           -
-          5793
+          5795
         </td>
         <td>
           ApplyToImplicitArgs
@@ -1583,9 +1586,9 @@
           722
         </td>
         <td>
-          5742
+          5744
           -
-          5742
+          5744
         </td>
         <td>
           ApplyToImplicitArgs
@@ -1604,9 +1607,9 @@
           721
         </td>
         <td>
-          5742
+          5744
           -
-          5742
+          5744
         </td>
         <td>
           Select
@@ -1625,9 +1628,9 @@
           758
         </td>
         <td>
-          5868
+          5870
           -
-          5868
+          5870
         </td>
         <td>
           Select
@@ -1646,9 +1649,9 @@
           724
         </td>
         <td>
-          5896
+          5898
           -
-          5995
+          5997
         </td>
         <td>
           Apply
@@ -1672,9 +1675,9 @@
           725
         </td>
         <td>
-          6002
+          6004
           -
-          6025
+          6027
         </td>
         <td>
           Select
@@ -1693,9 +1696,9 @@
           726
         </td>
         <td>
-          6072
+          6074
           -
-          6179
+          6181
         </td>
         <td>
           Apply
@@ -1717,9 +1720,9 @@
           727
         </td>
         <td>
-          6190
+          6192
           -
-          6255
+          6257
         </td>
         <td>
           Apply
@@ -1741,9 +1744,9 @@
           728
         </td>
         <td>
-          6266
+          6268
           -
-          6331
+          6333
         </td>
         <td>
           Apply
@@ -1765,9 +1768,9 @@
           729
         </td>
         <td>
-          6342
+          6344
           -
-          6368
+          6370
         </td>
         <td>
           Select
@@ -1786,9 +1789,9 @@
           730
         </td>
         <td>
-          6431
+          6433
           -
-          6556
+          6558
         </td>
         <td>
           Apply
@@ -1810,9 +1813,9 @@
           732
         </td>
         <td>
-          6571
+          6573
           -
-          6596
+          6598
         </td>
         <td>
           Apply
@@ -1831,9 +1834,9 @@
           731
         </td>
         <td>
-          6589
+          6591
           -
-          6595
+          6597
         </td>
         <td>
           Select
@@ -1852,9 +1855,9 @@
           734
         </td>
         <td>
-          6688
+          6690
           -
-          6731
+          6733
         </td>
         <td>
           Apply
@@ -1873,9 +1876,9 @@
           733
         </td>
         <td>
-          6710
+          6712
           -
-          6730
+          6732
         </td>
         <td>
           Select
@@ -1894,9 +1897,9 @@
           735
         </td>
         <td>
-          6746
+          6748
           -
-          6871
+          6873
         </td>
         <td>
           Apply
@@ -1919,9 +1922,9 @@
           738
         </td>
         <td>
-          6890
+          6892
           -
-          7006
+          7008
         </td>
         <td>
           Apply
@@ -1940,9 +1943,9 @@
           736
         </td>
         <td>
-          6918
+          6920
           -
-          6954
+          6956
         </td>
         <td>
           Select
@@ -1961,9 +1964,9 @@
           737
         </td>
         <td>
-          6976
+          6978
           -
-          7005
+          7007
         </td>
         <td>
           Apply
@@ -1982,9 +1985,9 @@
           741
         </td>
         <td>
-          7035
+          7037
           -
-          7035
+          7037
         </td>
         <td>
           Select
@@ -2003,9 +2006,9 @@
           743
         </td>
         <td>
-          7026
+          7028
           -
-          7117
+          7119
         </td>
         <td>
           Block
@@ -2027,9 +2030,9 @@
           742
         </td>
         <td>
-          7026
+          7028
           -
-          7117
+          7119
         </td>
         <td>
           ApplyToImplicitArgs
@@ -2051,9 +2054,9 @@
           740
         </td>
         <td>
-          7061
+          7063
           -
-          7098
+          7100
         </td>
         <td>
           Apply
@@ -2075,9 +2078,9 @@
           739
         </td>
         <td>
-          7093
+          7095
           -
-          7097
+          7099
         </td>
         <td>
           Apply
@@ -2096,9 +2099,9 @@
           750
         </td>
         <td>
-          7171
+          7173
           -
-          7350
+          7352
         </td>
         <td>
           Block
@@ -2120,9 +2123,9 @@
           749
         </td>
         <td>
-          7171
+          7173
           -
-          7350
+          7352
         </td>
         <td>
           ApplyToImplicitArgs
@@ -2144,9 +2147,9 @@
           748
         </td>
         <td>
-          7180
+          7182
           -
-          7180
+          7182
         </td>
         <td>
           Select
@@ -2165,9 +2168,9 @@
           747
         </td>
         <td>
-          7206
+          7208
           -
-          7331
+          7333
         </td>
         <td>
           Apply
@@ -2189,9 +2192,9 @@
           744
         </td>
         <td>
-          7233
+          7235
           -
-          7257
+          7259
         </td>
         <td>
           Select
@@ -2210,9 +2213,9 @@
           746
         </td>
         <td>
-          7293
+          7295
           -
-          7330
+          7332
         </td>
         <td>
           Apply
@@ -2234,9 +2237,9 @@
           745
         </td>
         <td>
-          7325
+          7327
           -
-          7329
+          7331
         </td>
         <td>
           Apply
@@ -2255,9 +2258,9 @@
           751
         </td>
         <td>
-          7419
+          7421
           -
-          7499
+          7501
         </td>
         <td>
           Apply
@@ -2279,9 +2282,9 @@
           753
         </td>
         <td>
-          7514
+          7516
           -
-          7539
+          7541
         </td>
         <td>
           Apply
@@ -2300,9 +2303,9 @@
           752
         </td>
         <td>
-          7532
+          7534
           -
-          7538
+          7540
         </td>
         <td>
           Select
@@ -2321,9 +2324,9 @@
           754
         </td>
         <td>
-          7606
+          7608
           -
-          7654
+          7656
         </td>
         <td>
           Apply
@@ -2342,9 +2345,9 @@
           755
         </td>
         <td>
-          7665
+          7667
           -
-          7721
+          7723
         </td>
         <td>
           Apply
@@ -2366,9 +2369,9 @@
           756
         </td>
         <td>
-          7750
+          7752
           -
-          7756
+          7758
         </td>
         <td>
           Select
@@ -2387,9 +2390,9 @@
           757
         </td>
         <td>
-          7732
+          7734
           -
-          7757
+          7759
         </td>
         <td>
           Apply
@@ -2408,9 +2411,9 @@
           762
         </td>
         <td>
-          7782
+          7784
           -
-          7782
+          7784
         </td>
         <td>
           Select
@@ -2429,9 +2432,9 @@
           761
         </td>
         <td>
-          7790
+          7792
           -
-          7790
+          7792
         </td>
         <td>
           Apply
@@ -2450,9 +2453,9 @@
           763
         </td>
         <td>
-          5837
+          5839
           -
-          7883
+          7885
         </td>
         <td>
           ApplyToImplicitArgs
@@ -2558,9 +2561,9 @@
           759
         </td>
         <td>
-          7818
+          7820
           -
-          7854
+          7856
         </td>
         <td>
           Apply
@@ -2582,9 +2585,9 @@
           760
         </td>
         <td>
-          7863
+          7865
           -
-          7869
+          7871
         </td>
         <td>
           Select
@@ -2603,9 +2606,9 @@
           765
         </td>
         <td>
-          8157
+          8159
           -
-          8172
+          8174
         </td>
         <td>
           Select
@@ -2624,9 +2627,9 @@
           768
         </td>
         <td>
-          8127
+          8129
           -
-          8197
+          8199
         </td>
         <td>
           Apply
@@ -2645,9 +2648,9 @@
           764
         </td>
         <td>
-          8154
+          8156
           -
-          8155
+          8157
         </td>
         <td>
           Literal
@@ -2666,9 +2669,9 @@
           767
         </td>
         <td>
-          8174
+          8176
           -
-          8196
+          8198
         </td>
         <td>
           Apply
@@ -2687,9 +2690,9 @@
           766
         </td>
         <td>
-          8192
+          8194
           -
-          8195
+          8197
         </td>
         <td>
           Select
@@ -2708,9 +2711,9 @@
           782
         </td>
         <td>
-          8226
+          8228
           -
-          8753
+          8755
         </td>
         <td>
           ApplyToImplicitArgs
@@ -2737,9 +2740,9 @@
           781
         </td>
         <td>
-          8246
+          8248
           -
-          8246
+          8248
         </td>
         <td>
           Select
@@ -2758,9 +2761,9 @@
           776
         </td>
         <td>
-          8311
+          8313
           -
-          8311
+          8313
         </td>
         <td>
           TypeApply
@@ -2779,9 +2782,9 @@
           774
         </td>
         <td>
-          8395
+          8397
           -
-          8395
+          8397
         </td>
         <td>
           TypeApply
@@ -2800,9 +2803,9 @@
           775
         </td>
         <td>
-          8348
+          8350
           -
-          8655
+          8657
         </td>
         <td>
           ApplyToImplicitArgs
@@ -2829,9 +2832,9 @@
           769
         </td>
         <td>
-          8377
+          8379
           -
-          8390
+          8392
         </td>
         <td>
           Literal
@@ -2850,9 +2853,9 @@
           770
         </td>
         <td>
-          8426
+          8428
           -
-          8533
+          8535
         </td>
         <td>
           Apply
@@ -2875,9 +2878,9 @@
           771
         </td>
         <td>
-          8557
+          8559
           -
-          8580
+          8582
         </td>
         <td>
           Apply
@@ -2896,9 +2899,9 @@
           772
         </td>
         <td>
-          8544
+          8546
           -
-          8581
+          8583
         </td>
         <td>
           Apply
@@ -2917,9 +2920,9 @@
           773
         </td>
         <td>
-          8592
+          8594
           -
-          8644
+          8646
         </td>
         <td>
           Apply
@@ -2938,9 +2941,9 @@
           777
         </td>
         <td>
-          8680
+          8682
           -
-          8694
+          8696
         </td>
         <td>
           Select
@@ -2959,9 +2962,9 @@
           779
         </td>
         <td>
-          8699
+          8701
           -
-          8699
+          8701
         </td>
         <td>
           TypeApply
@@ -2980,9 +2983,9 @@
           778
         </td>
         <td>
-          8708
+          8710
           -
-          8716
+          8718
         </td>
         <td>
           Select
@@ -3001,9 +3004,9 @@
           780
         </td>
         <td>
-          8281
+          8283
           -
-          8717
+          8719
         </td>
         <td>
           ApplyToImplicitArgs
@@ -3030,9 +3033,9 @@
           783
         </td>
         <td>
-          8927
+          8929
           -
-          8945
+          8947
         </td>
         <td>
           Apply
@@ -3051,9 +3054,9 @@
           784
         </td>
         <td>
-          8971
+          8973
           -
-          8994
+          8996
         </td>
         <td>
           Apply
@@ -3072,9 +3075,9 @@
           786
         </td>
         <td>
-          9063
+          9065
           -
-          9085
+          9087
         </td>
         <td>
           Apply
@@ -3093,9 +3096,9 @@
           785
         </td>
         <td>
-          9050
+          9052
           -
-          9061
+          9063
         </td>
         <td>
           Literal
@@ -3114,9 +3117,9 @@
           787
         </td>
         <td>
-          9034
+          9036
           -
-          9086
+          9088
         </td>
         <td>
           Apply
@@ -3135,9 +3138,9 @@
           788
         </td>
         <td>
-          9125
+          9127
           -
-          9150
+          9152
         </td>
         <td>
           Apply
@@ -3153,12 +3156,54 @@
           248
         </td>
         <td>
+          790
+        </td>
+        <td>
+          9343
+          -
+          9385
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.LoggerLike.debug
+        </td>
+        <td style="background: #AEF1AE">
+          LuceneService.this.logger.debug(scala.StringContext.apply(&quot;create query for &quot;, &quot;&quot;).s(bboxWkt))
+        </td>
+      </tr><tr>
+        <td>
+          248
+        </td>
+        <td>
           789
         </td>
         <td>
-          9351
+          9356
           -
-          9369
+          9384
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.StringContext.s
+        </td>
+        <td style="background: #AEF1AE">
+          scala.StringContext.apply(&quot;create query for &quot;, &quot;&quot;).s(bboxWkt)
+        </td>
+      </tr><tr>
+        <td>
+          250
+        </td>
+        <td>
+          791
+        </td>
+        <td>
+          9401
+          -
+          9419
         </td>
         <td>
           Select
@@ -3171,15 +3216,15 @@
         </td>
       </tr><tr>
         <td>
-          249
+          251
         </td>
         <td>
-          790
+          792
         </td>
         <td>
-          9390
+          9440
           -
-          9429
+          9479
         </td>
         <td>
           Apply
@@ -3192,15 +3237,15 @@
         </td>
       </tr><tr>
         <td>
-          250
+          252
         </td>
         <td>
-          791
+          793
         </td>
         <td>
-          9446
+          9496
           -
-          9469
+          9519
         </td>
         <td>
           Apply
@@ -3213,15 +3258,120 @@
         </td>
       </tr><tr>
         <td>
-          252
+          254
         </td>
         <td>
-          792
+          795
         </td>
         <td>
-          9508
+          9573
           -
-          9545
+          9574
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;&quot;
+        </td>
+      </tr><tr>
+        <td>
+          254
+        </td>
+        <td>
+          797
+        </td>
+        <td>
+          9538
+          -
+          9574
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.StringContext.s
+        </td>
+        <td style="background: #AEF1AE">
+          scala.StringContext.apply(&quot;parsed shape is &quot;, &quot;&quot;).s(shape.toString())
+        </td>
+      </tr><tr>
+        <td>
+          254
+        </td>
+        <td>
+          794
+        </td>
+        <td>
+          9540
+          -
+          9557
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;parsed shape is &quot;
+        </td>
+      </tr><tr>
+        <td>
+          254
+        </td>
+        <td>
+          796
+        </td>
+        <td>
+          9558
+          -
+          9572
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.Object.toString
+        </td>
+        <td style="background: #AEF1AE">
+          shape.toString()
+        </td>
+      </tr><tr>
+        <td>
+          254
+        </td>
+        <td>
+          798
+        </td>
+        <td>
+          9525
+          -
+          9575
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.LoggerLike.error
+        </td>
+        <td style="background: #AEF1AE">
+          LuceneService.this.logger.error(scala.StringContext.apply(&quot;parsed shape is &quot;, &quot;&quot;).s(shape.toString()))
+        </td>
+      </tr><tr>
+        <td>
+          255
+        </td>
+        <td>
+          799
+        </td>
+        <td>
+          9613
+          -
+          9650
         </td>
         <td>
           Apply
@@ -3234,36 +3384,15 @@
         </td>
       </tr><tr>
         <td>
-          253
+          256
         </td>
         <td>
-          795
+          801
         </td>
         <td>
-          9550
+          9678
           -
-          9623
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          org.apache.lucene.spatial.bbox.BBoxStrategy.makeQuery
-        </td>
-        <td style="background: #AEF1AE">
-          bboxStrategy.makeQuery(new org.apache.lucene.spatial.query.SpatialArgs(org.apache.lucene.spatial.query.SpatialOperation.IsWithin, shape))
-        </td>
-      </tr><tr>
-        <td>
-          253
-        </td>
-        <td>
-          794
-        </td>
-        <td>
-          9573
-          -
-          9622
+          9727
         </td>
         <td>
           Apply
@@ -3276,15 +3405,15 @@
         </td>
       </tr><tr>
         <td>
-          253
+          256
         </td>
         <td>
-          793
+          800
         </td>
         <td>
-          9589
+          9694
           -
-          9614
+          9719
         </td>
         <td>
           Select
@@ -3297,15 +3426,36 @@
         </td>
       </tr><tr>
         <td>
-          267
+          256
         </td>
         <td>
-          796
+          802
         </td>
         <td>
-          9923
+          9655
           -
-          9946
+          9728
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          org.apache.lucene.spatial.bbox.BBoxStrategy.makeQuery
+        </td>
+        <td style="background: #AEF1AE">
+          bboxStrategy.makeQuery(new org.apache.lucene.spatial.query.SpatialArgs(org.apache.lucene.spatial.query.SpatialOperation.IsWithin, shape))
+        </td>
+      </tr><tr>
+        <td>
+          270
+        </td>
+        <td>
+          803
+        </td>
+        <td>
+          10028
+          -
+          10051
         </td>
         <td>
           Apply
@@ -3318,15 +3468,15 @@
         </td>
       </tr><tr>
         <td>
-          269
+          272
         </td>
         <td>
-          797
+          804
         </td>
         <td>
-          9992
+          10097
           -
-          10003
+          10108
         </td>
         <td>
           Literal
@@ -3339,15 +3489,15 @@
         </td>
       </tr><tr>
         <td>
-          269
+          272
         </td>
         <td>
-          800
+          807
         </td>
         <td>
-          9968
+          10073
           -
-          10122
+          10227
         </td>
         <td>
           Apply
@@ -3360,15 +3510,15 @@
         </td>
       </tr><tr>
         <td>
-          270
+          273
         </td>
         <td>
-          798
+          805
         </td>
         <td>
-          10011
+          10116
           -
-          10067
+          10172
         </td>
         <td>
           Apply
@@ -3381,15 +3531,15 @@
         </td>
       </tr><tr>
         <td>
-          271
+          274
         </td>
         <td>
-          799
+          806
         </td>
         <td>
-          10075
+          10180
           -
-          10121
+          10226
         </td>
         <td>
           Apply
@@ -3402,36 +3552,15 @@
         </td>
       </tr><tr>
         <td>
-          273
+          276
         </td>
         <td>
-          801
+          810
         </td>
         <td>
-          10177
+          10249
           -
-          10186
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          java.lang.String.isEmpty
-        </td>
-        <td style="background: #AEF1AE">
-          x$3.isEmpty()
-        </td>
-      </tr><tr>
-        <td>
-          273
-        </td>
-        <td>
-          803
-        </td>
-        <td>
-          10144
-          -
-          10209
+          10314
         </td>
         <td>
           Apply
@@ -3444,15 +3573,15 @@
         </td>
       </tr><tr>
         <td>
-          273
+          276
         </td>
         <td>
-          802
+          809
         </td>
         <td>
-          10159
+          10264
           -
-          10208
+          10313
         </td>
         <td>
           Apply
@@ -3468,33 +3597,33 @@
           276
         </td>
         <td>
-          804
+          808
         </td>
         <td>
-          10314
+          10282
           -
-          10323
+          10291
         </td>
         <td>
-          Select
+          Apply
         </td>
         <td>
-          services.LuceneService.directory
+          java.lang.String.isEmpty
         </td>
         <td style="background: #AEF1AE">
-          LuceneService.this.directory
+          x$3.isEmpty()
         </td>
       </tr><tr>
         <td>
-          276
+          279
         </td>
         <td>
-          806
+          813
         </td>
         <td>
-          10294
+          10399
           -
-          10330
+          10435
         </td>
         <td>
           Apply
@@ -3507,15 +3636,15 @@
         </td>
       </tr><tr>
         <td>
-          276
+          279
         </td>
         <td>
-          805
+          812
         </td>
         <td>
-          10325
+          10430
           -
-          10329
+          10434
         </td>
         <td>
           Literal
@@ -3528,15 +3657,36 @@
         </td>
       </tr><tr>
         <td>
-          277
+          279
         </td>
         <td>
-          807
+          811
         </td>
         <td>
-          10335
+          10419
           -
-          10373
+          10428
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          services.LuceneService.directory
+        </td>
+        <td style="background: #AEF1AE">
+          LuceneService.this.directory
+        </td>
+      </tr><tr>
+        <td>
+          280
+        </td>
+        <td>
+          814
+        </td>
+        <td>
+          10440
+          -
+          10478
         </td>
         <td>
           Apply
@@ -3549,15 +3699,15 @@
         </td>
       </tr><tr>
         <td>
-          278
+          281
         </td>
         <td>
-          808
+          815
         </td>
         <td>
-          10394
+          10499
           -
-          10419
+          10524
         </td>
         <td>
           Apply
@@ -3570,15 +3720,15 @@
         </td>
       </tr><tr>
         <td>
-          282
+          285
         </td>
         <td>
-          809
+          816
         </td>
         <td>
-          10661
+          10766
           -
-          10687
+          10792
         </td>
         <td>
           Apply
@@ -3591,15 +3741,15 @@
         </td>
       </tr><tr>
         <td>
-          283
+          286
         </td>
         <td>
-          810
+          817
         </td>
         <td>
-          10692
+          10797
           -
-          10752
+          10857
         </td>
         <td>
           Apply
@@ -3612,15 +3762,15 @@
         </td>
       </tr><tr>
         <td>
-          284
+          287
         </td>
         <td>
-          811
+          818
         </td>
         <td>
-          10757
+          10862
           -
-          10817
+          10922
         </td>
         <td>
           Apply
@@ -3633,15 +3783,15 @@
         </td>
       </tr><tr>
         <td>
-          285
+          288
         </td>
         <td>
-          812
+          819
         </td>
         <td>
-          10822
+          10927
           -
-          10882
+          10987
         </td>
         <td>
           Apply
@@ -3654,15 +3804,15 @@
         </td>
       </tr><tr>
         <td>
-          286
+          289
         </td>
         <td>
-          813
+          820
         </td>
         <td>
-          10905
+          11010
           -
-          10932
+          11037
         </td>
         <td>
           Apply
@@ -3675,15 +3825,15 @@
         </td>
       </tr><tr>
         <td>
-          288
+          291
         </td>
         <td>
-          815
+          822
         </td>
         <td>
-          10951
+          11056
           -
-          11016
+          11121
         </td>
         <td>
           Apply
@@ -3696,15 +3846,15 @@
         </td>
       </tr><tr>
         <td>
-          288
+          291
         </td>
         <td>
-          814
+          821
         </td>
         <td>
-          10981
+          11086
           -
-          11015
+          11120
         </td>
         <td>
           Apply
@@ -3717,15 +3867,15 @@
         </td>
       </tr><tr>
         <td>
-          289
+          292
         </td>
         <td>
-          816
+          823
         </td>
         <td>
-          11037
+          11142
           -
-          11053
+          11158
         </td>
         <td>
           Select
@@ -3738,15 +3888,15 @@
         </td>
       </tr><tr>
         <td>
-          291
+          294
         </td>
         <td>
-          821
+          828
         </td>
         <td>
-          11073
+          11178
           -
-          11190
+          11295
         </td>
         <td>
           ApplyToImplicitArgs
@@ -3762,15 +3912,15 @@
         </td>
       </tr><tr>
         <td>
-          291
+          294
         </td>
         <td>
-          820
+          827
         </td>
         <td>
-          11086
+          11191
           -
-          11086
+          11191
         </td>
         <td>
           ApplyToImplicitArgs
@@ -3783,36 +3933,15 @@
         </td>
       </tr><tr>
         <td>
-          292
+          295
         </td>
         <td>
-          818
+          824
         </td>
         <td>
-          11117
+          11236
           -
-          11144
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          org.apache.lucene.search.IndexSearcher.doc
-        </td>
-        <td style="background: #AEF1AE">
-          isearcher.doc(scoreDoc.doc)
-        </td>
-      </tr><tr>
-        <td>
-          292
-        </td>
-        <td>
-          817
-        </td>
-        <td>
-          11131
-          -
-          11143
+          11248
         </td>
         <td>
           Select
@@ -3825,15 +3954,36 @@
         </td>
       </tr><tr>
         <td>
-          293
+          295
         </td>
         <td>
-          819
+          825
         </td>
         <td>
-          11151
+          11222
           -
-          11183
+          11249
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          org.apache.lucene.search.IndexSearcher.doc
+        </td>
+        <td style="background: #AEF1AE">
+          isearcher.doc(scoreDoc.doc)
+        </td>
+      </tr><tr>
+        <td>
+          296
+        </td>
+        <td>
+          826
+        </td>
+        <td>
+          11256
+          -
+          11288
         </td>
         <td>
           Apply
@@ -3846,15 +3996,15 @@
         </td>
       </tr><tr>
         <td>
-          294
+          297
         </td>
         <td>
-          822
+          829
         </td>
         <td>
-          11073
+          11178
           -
-          11197
+          11302
         </td>
         <td>
           Select
@@ -3870,15 +4020,15 @@
         </td>
       </tr><tr>
         <td>
-          297
+          300
         </td>
         <td>
-          823
+          830
         </td>
         <td>
-          11248
+          11353
           -
-          11282
+          11387
         </td>
         <td>
           Apply
