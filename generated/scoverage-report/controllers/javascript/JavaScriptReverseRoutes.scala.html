@@ -25,7 +25,7 @@
             <pre style='font-size: 12pt; font-family: courier;'>1 <span style=''>
 </span>2 <span style=''>// @GENERATOR:play-routes-compiler
 </span>3 <span style=''>// @SOURCE:/home/travis/build/ZGIS/smart-csw-ingester/conf/routes
-</span>4 <span style=''>// @DATE:Thu Sep 15 22:36:53 UTC 2016
+</span>4 <span style=''>// @DATE:Thu Oct 06 03:17:41 UTC 2016
 </span>5 <span style=''>
 </span>6 <span style=''>import play.api.routing.JavaScriptReverseRoute
 </span>7 <span style=''>import play.api.mvc.{ QueryStringBindable, PathBindable, Call, JavascriptLiteral }
@@ -51,65 +51,69 @@
 </span>27 <span style=''></span><span style='background: #F0ADAD'>      "controllers.QueryController.query",
 </span>28 <span style=''></span><span style='background: #F0ADAD'>      """
 </span>29 <span style=''></span><span style='background: #F0ADAD'>        function(query0,bbox1,fromDate2,toDate3) {
-</span>30 <span style=''></span><span style='background: #F0ADAD'>          return _wA({method:"GET", url:"""" + _prefix + { _defaultPrefix } + """" + "query" + _qS([(""" + implicitly[QueryStringBindable[Option[String]]].javascriptUnbind + """)("query", query0), (""" + implicitly[QueryStringBindable[Option[String]]].javascriptUnbind + """)("bbox", bbox1), (""" + implicitly[QueryStringBindable[Option[String]]].javascriptUnbind + """)("fromDate", fromDate2), (""" + implicitly[QueryStringBindable[Option[String]]].javascriptUnbind + """)("toDate", toDate3)])})
-</span>31 <span style=''></span><span style='background: #F0ADAD'>        }
-</span>32 <span style=''></span><span style='background: #F0ADAD'>      """
-</span>33 <span style=''></span><span style='background: #F0ADAD'>    )</span><span style=''>
-</span>34 <span style=''>  
-</span>35 <span style=''>  }
-</span>36 <span style=''>
-</span>37 <span style=''>  // @LINE:6
-</span>38 <span style=''>  class ReverseMainController(_prefix: => String) {
-</span>39 <span style=''>
-</span>40 <span style=''>    def _defaultPrefix: String = {
-</span>41 <span style=''>      if (</span><span style='background: #F0ADAD'>_prefix.endsWith("/")</span><span style=''>) </span><span style='background: #F0ADAD'>""</span><span style=''> else </span><span style='background: #F0ADAD'>"/"</span><span style=''>
-</span>42 <span style=''>    }
+</span>30 <span style=''></span><span style='background: #F0ADAD'>        
+</span>31 <span style=''></span><span style='background: #F0ADAD'>          if (true) {
+</span>32 <span style=''></span><span style='background: #F0ADAD'>            return _wA({method:"GET", url:"""" + _prefix + { _defaultPrefix } + """" + "query" + _qS([(""" + implicitly[QueryStringBindable[Option[String]]].javascriptUnbind + """)("query", query0), (""" + implicitly[QueryStringBindable[Option[String]]].javascriptUnbind + """)("bbox", bbox1), (""" + implicitly[QueryStringBindable[Option[String]]].javascriptUnbind + """)("fromDate", fromDate2), (""" + implicitly[QueryStringBindable[Option[String]]].javascriptUnbind + """)("toDate", toDate3)])})
+</span>33 <span style=''></span><span style='background: #F0ADAD'>          }
+</span>34 <span style=''></span><span style='background: #F0ADAD'>        
+</span>35 <span style=''></span><span style='background: #F0ADAD'>        }
+</span>36 <span style=''></span><span style='background: #F0ADAD'>      """
+</span>37 <span style=''></span><span style='background: #F0ADAD'>    )</span><span style=''>
+</span>38 <span style=''>  
+</span>39 <span style=''>  }
+</span>40 <span style=''>
+</span>41 <span style=''>  // @LINE:6
+</span>42 <span style=''>  class ReverseMainController(_prefix: => String) {
 </span>43 <span style=''>
-</span>44 <span style=''>  
-</span>45 <span style=''>    // @LINE:6
-</span>46 <span style=''>    def index: JavaScriptReverseRoute = </span><span style='background: #F0ADAD'>JavaScriptReverseRoute(
-</span>47 <span style=''></span><span style='background: #F0ADAD'>      "controllers.MainController.index",
-</span>48 <span style=''></span><span style='background: #F0ADAD'>      """
-</span>49 <span style=''></span><span style='background: #F0ADAD'>        function() {
-</span>50 <span style=''></span><span style='background: #F0ADAD'>          return _wA({method:"GET", url:"""" + _prefix + """"})
-</span>51 <span style=''></span><span style='background: #F0ADAD'>        }
+</span>44 <span style=''>    def _defaultPrefix: String = {
+</span>45 <span style=''>      if (</span><span style='background: #F0ADAD'>_prefix.endsWith("/")</span><span style=''>) </span><span style='background: #F0ADAD'>""</span><span style=''> else </span><span style='background: #F0ADAD'>"/"</span><span style=''>
+</span>46 <span style=''>    }
+</span>47 <span style=''>
+</span>48 <span style=''>  
+</span>49 <span style=''>    // @LINE:6
+</span>50 <span style=''>    def index: JavaScriptReverseRoute = </span><span style='background: #F0ADAD'>JavaScriptReverseRoute(
+</span>51 <span style=''></span><span style='background: #F0ADAD'>      "controllers.MainController.index",
 </span>52 <span style=''></span><span style='background: #F0ADAD'>      """
-</span>53 <span style=''></span><span style='background: #F0ADAD'>    )</span><span style=''>
-</span>54 <span style=''>  
-</span>55 <span style=''>    // @LINE:7
-</span>56 <span style=''>    def untrail: JavaScriptReverseRoute = </span><span style='background: #F0ADAD'>JavaScriptReverseRoute(
-</span>57 <span style=''></span><span style='background: #F0ADAD'>      "controllers.MainController.untrail",
-</span>58 <span style=''></span><span style='background: #F0ADAD'>      """
-</span>59 <span style=''></span><span style='background: #F0ADAD'>        function(path0) {
-</span>60 <span style=''></span><span style='background: #F0ADAD'>          return _wA({method:"GET", url:"""" + _prefix + { _defaultPrefix } + """" + (""" + implicitly[PathBindable[String]].javascriptUnbind + """)("path", path0) + "/"})
-</span>61 <span style=''></span><span style='background: #F0ADAD'>        }
+</span>53 <span style=''></span><span style='background: #F0ADAD'>        function() {
+</span>54 <span style=''></span><span style='background: #F0ADAD'>          return _wA({method:"GET", url:"""" + _prefix + """"})
+</span>55 <span style=''></span><span style='background: #F0ADAD'>        }
+</span>56 <span style=''></span><span style='background: #F0ADAD'>      """
+</span>57 <span style=''></span><span style='background: #F0ADAD'>    )</span><span style=''>
+</span>58 <span style=''>  
+</span>59 <span style=''>    // @LINE:7
+</span>60 <span style=''>    def untrail: JavaScriptReverseRoute = </span><span style='background: #F0ADAD'>JavaScriptReverseRoute(
+</span>61 <span style=''></span><span style='background: #F0ADAD'>      "controllers.MainController.untrail",
 </span>62 <span style=''></span><span style='background: #F0ADAD'>      """
-</span>63 <span style=''></span><span style='background: #F0ADAD'>    )</span><span style=''>
-</span>64 <span style=''>  
-</span>65 <span style=''>  }
-</span>66 <span style=''>
-</span>67 <span style=''>  // @LINE:17
-</span>68 <span style=''>  class ReverseAssets(_prefix: => String) {
-</span>69 <span style=''>
-</span>70 <span style=''>    def _defaultPrefix: String = {
-</span>71 <span style=''>      if (</span><span style='background: #F0ADAD'>_prefix.endsWith("/")</span><span style=''>) </span><span style='background: #F0ADAD'>""</span><span style=''> else </span><span style='background: #F0ADAD'>"/"</span><span style=''>
-</span>72 <span style=''>    }
+</span>63 <span style=''></span><span style='background: #F0ADAD'>        function(path0) {
+</span>64 <span style=''></span><span style='background: #F0ADAD'>          return _wA({method:"GET", url:"""" + _prefix + { _defaultPrefix } + """" + (""" + implicitly[PathBindable[String]].javascriptUnbind + """)("path", path0) + "/"})
+</span>65 <span style=''></span><span style='background: #F0ADAD'>        }
+</span>66 <span style=''></span><span style='background: #F0ADAD'>      """
+</span>67 <span style=''></span><span style='background: #F0ADAD'>    )</span><span style=''>
+</span>68 <span style=''>  
+</span>69 <span style=''>  }
+</span>70 <span style=''>
+</span>71 <span style=''>  // @LINE:18
+</span>72 <span style=''>  class ReverseAssets(_prefix: => String) {
 </span>73 <span style=''>
-</span>74 <span style=''>  
-</span>75 <span style=''>    // @LINE:17
-</span>76 <span style=''>    def versioned: JavaScriptReverseRoute = </span><span style='background: #F0ADAD'>JavaScriptReverseRoute(
-</span>77 <span style=''></span><span style='background: #F0ADAD'>      "controllers.Assets.versioned",
-</span>78 <span style=''></span><span style='background: #F0ADAD'>      """
-</span>79 <span style=''></span><span style='background: #F0ADAD'>        function(file1) {
-</span>80 <span style=''></span><span style='background: #F0ADAD'>          return _wA({method:"GET", url:"""" + _prefix + { _defaultPrefix } + """" + "assets/" + (""" + implicitly[PathBindable[Asset]].javascriptUnbind + """)("file", file1)})
-</span>81 <span style=''></span><span style='background: #F0ADAD'>        }
+</span>74 <span style=''>    def _defaultPrefix: String = {
+</span>75 <span style=''>      if (</span><span style='background: #F0ADAD'>_prefix.endsWith("/")</span><span style=''>) </span><span style='background: #F0ADAD'>""</span><span style=''> else </span><span style='background: #F0ADAD'>"/"</span><span style=''>
+</span>76 <span style=''>    }
+</span>77 <span style=''>
+</span>78 <span style=''>  
+</span>79 <span style=''>    // @LINE:18
+</span>80 <span style=''>    def versioned: JavaScriptReverseRoute = </span><span style='background: #F0ADAD'>JavaScriptReverseRoute(
+</span>81 <span style=''></span><span style='background: #F0ADAD'>      "controllers.Assets.versioned",
 </span>82 <span style=''></span><span style='background: #F0ADAD'>      """
-</span>83 <span style=''></span><span style='background: #F0ADAD'>    )</span><span style=''>
-</span>84 <span style=''>  
-</span>85 <span style=''>  }
-</span>86 <span style=''>
-</span>87 <span style=''>
-</span>88 <span style=''>}
+</span>83 <span style=''></span><span style='background: #F0ADAD'>        function(file1) {
+</span>84 <span style=''></span><span style='background: #F0ADAD'>          return _wA({method:"GET", url:"""" + _prefix + { _defaultPrefix } + """" + "assets/" + (""" + implicitly[PathBindable[Asset]].javascriptUnbind + """)("file", file1)})
+</span>85 <span style=''></span><span style='background: #F0ADAD'>        }
+</span>86 <span style=''></span><span style='background: #F0ADAD'>      """
+</span>87 <span style=''></span><span style='background: #F0ADAD'>    )</span><span style=''>
+</span>88 <span style=''>  
+</span>89 <span style=''>  }
+</span>90 <span style=''>
+</span>91 <span style=''>
+</span>92 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -236,7 +240,7 @@
         <td>
           696
           -
-          1346
+          1400
         </td>
         <td>
           Apply
@@ -245,7 +249,7 @@
           play.api.routing.JavaScriptReverseRoute.apply
         </td>
         <td style="background: #F0ADAD">
-          play.api.routing.JavaScriptReverseRoute.apply(&quot;controllers.QueryController.query&quot;, &quot;\n        function(query0,bbox1,fromDate2,toDate3) {\n          return _wA({method:\&quot;GET\&quot;, url:\&quot;&quot;.+(ReverseQueryController.this._prefix).+(ReverseQueryController.this._defaultPrefix).+(&quot;\&quot; + \&quot;query\&quot; + _qS([(&quot;).+(scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).javascriptUnbind).+(&quot;)(\&quot;query\&quot;, query0), (&quot;).+(scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).javascriptUnbind).+(&quot;)(\&quot;bbox\&quot;, bbox1), (&quot;).+(scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).javascriptUnbind).+(&quot;)(\&quot;fromDate\&quot;, fromDate2), (&quot;).+(scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).javascriptUnbind).+(&quot;)(\&quot;toDate\&quot;, toDate3)])})\n        }\n      &quot;))
+          play.api.routing.JavaScriptReverseRoute.apply(&quot;controllers.QueryController.query&quot;, &quot;\n        function(query0,bbox1,fromDate2,toDate3) {\n        \n          if (true) {\n            return _wA({method:\&quot;GET\&quot;, url:\&quot;&quot;.+(ReverseQueryController.this._prefix).+(ReverseQueryController.this._defaultPrefix).+(&quot;\&quot; + \&quot;query\&quot; + _qS([(&quot;).+(scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).javascriptUnbind).+(&quot;)(\&quot;query\&quot;, query0), (&quot;).+(scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).javascriptUnbind).+(&quot;)(\&quot;bbox\&quot;, bbox1), (&quot;).+(scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).javascriptUnbind).+(&quot;)(\&quot;fromDate\&quot;, fromDate2), (&quot;).+(scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).javascriptUnbind).+(&quot;)(\&quot;toDate\&quot;, toDate3)])})\n          }\n        \n        }\n      &quot;))
         </td>
       </tr><tr>
         <td>
@@ -270,7 +274,7 @@
         </td>
       </tr><tr>
         <td>
-          30
+          32
         </td>
         <td>
           891
@@ -278,7 +282,7 @@
         <td>
           769
           -
-          1340
+          1394
         </td>
         <td>
           Apply
@@ -287,19 +291,19 @@
           java.lang.String.+
         </td>
         <td style="background: #F0ADAD">
-          &quot;\n        function(query0,bbox1,fromDate2,toDate3) {\n          return _wA({method:\&quot;GET\&quot;, url:\&quot;&quot;.+(ReverseQueryController.this._prefix).+(ReverseQueryController.this._defaultPrefix).+(&quot;\&quot; + \&quot;query\&quot; + _qS([(&quot;).+(scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).javascriptUnbind).+(&quot;)(\&quot;query\&quot;, query0), (&quot;).+(scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).javascriptUnbind).+(&quot;)(\&quot;bbox\&quot;, bbox1), (&quot;).+(scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).javascriptUnbind).+(&quot;)(\&quot;fromDate\&quot;, fromDate2), (&quot;).+(scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).javascriptUnbind).+(&quot;)(\&quot;toDate\&quot;, toDate3)])})\n        }\n      &quot;)
+          &quot;\n        function(query0,bbox1,fromDate2,toDate3) {\n        \n          if (true) {\n            return _wA({method:\&quot;GET\&quot;, url:\&quot;&quot;.+(ReverseQueryController.this._prefix).+(ReverseQueryController.this._defaultPrefix).+(&quot;\&quot; + \&quot;query\&quot; + _qS([(&quot;).+(scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).javascriptUnbind).+(&quot;)(\&quot;query\&quot;, query0), (&quot;).+(scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).javascriptUnbind).+(&quot;)(\&quot;bbox\&quot;, bbox1), (&quot;).+(scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).javascriptUnbind).+(&quot;)(\&quot;fromDate\&quot;, fromDate2), (&quot;).+(scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).javascriptUnbind).+(&quot;)(\&quot;toDate\&quot;, toDate3)])})\n          }\n        \n        }\n      &quot;)
         </td>
       </tr><tr>
         <td>
-          41
+          45
         </td>
         <td>
           893
         </td>
         <td>
-          1466
+          1520
           -
-          1487
+          1541
         </td>
         <td>
           Apply
@@ -312,15 +316,15 @@
         </td>
       </tr><tr>
         <td>
-          41
+          45
         </td>
         <td>
           896
         </td>
         <td>
-          1497
+          1551
           -
-          1500
+          1554
         </td>
         <td>
           Literal
@@ -333,15 +337,15 @@
         </td>
       </tr><tr>
         <td>
-          41
+          45
         </td>
         <td>
           895
         </td>
         <td>
-          1489
+          1543
           -
-          1491
+          1545
         </td>
         <td>
           Block
@@ -354,15 +358,15 @@
         </td>
       </tr><tr>
         <td>
-          41
+          45
         </td>
         <td>
           894
         </td>
         <td>
-          1489
+          1543
           -
-          1491
+          1545
         </td>
         <td>
           Literal
@@ -375,15 +379,15 @@
         </td>
       </tr><tr>
         <td>
-          41
+          45
         </td>
         <td>
           897
         </td>
         <td>
-          1497
+          1551
           -
-          1500
+          1554
         </td>
         <td>
           Block
@@ -396,15 +400,15 @@
         </td>
       </tr><tr>
         <td>
-          46
+          50
         </td>
         <td>
           900
         </td>
         <td>
-          1566
+          1620
           -
-          1752
+          1806
         </td>
         <td>
           Apply
@@ -417,15 +421,15 @@
         </td>
       </tr><tr>
         <td>
-          47
+          51
         </td>
         <td>
           898
         </td>
         <td>
-          1596
+          1650
           -
-          1630
+          1684
         </td>
         <td>
           Literal
@@ -438,15 +442,15 @@
         </td>
       </tr><tr>
         <td>
-          50
+          54
         </td>
         <td>
           899
         </td>
         <td>
-          1638
+          1692
           -
-          1746
+          1800
         </td>
         <td>
           Apply
@@ -459,15 +463,15 @@
         </td>
       </tr><tr>
         <td>
-          56
+          60
         </td>
         <td>
           903
         </td>
         <td>
-          1813
+          1867
           -
-          2114
+          2168
         </td>
         <td>
           Apply
@@ -480,15 +484,15 @@
         </td>
       </tr><tr>
         <td>
-          57
+          61
         </td>
         <td>
           901
         </td>
         <td>
-          1843
+          1897
           -
-          1879
+          1933
         </td>
         <td>
           Literal
@@ -501,15 +505,15 @@
         </td>
       </tr><tr>
         <td>
-          60
+          64
         </td>
         <td>
           902
         </td>
         <td>
-          1887
+          1941
           -
-          2108
+          2162
         </td>
         <td>
           Apply
@@ -522,15 +526,15 @@
         </td>
       </tr><tr>
         <td>
-          71
+          75
         </td>
         <td>
           908
         </td>
         <td>
-          2258
+          2312
           -
-          2261
+          2315
         </td>
         <td>
           Block
@@ -543,15 +547,15 @@
         </td>
       </tr><tr>
         <td>
-          71
+          75
         </td>
         <td>
           905
         </td>
         <td>
-          2250
+          2304
           -
-          2252
+          2306
         </td>
         <td>
           Literal
@@ -564,15 +568,15 @@
         </td>
       </tr><tr>
         <td>
-          71
+          75
         </td>
         <td>
           904
         </td>
         <td>
-          2227
+          2281
           -
-          2248
+          2302
         </td>
         <td>
           Apply
@@ -585,15 +589,15 @@
         </td>
       </tr><tr>
         <td>
-          71
+          75
         </td>
         <td>
           907
         </td>
         <td>
-          2258
+          2312
           -
-          2261
+          2315
         </td>
         <td>
           Literal
@@ -606,15 +610,15 @@
         </td>
       </tr><tr>
         <td>
-          71
+          75
         </td>
         <td>
           906
         </td>
         <td>
-          2250
+          2304
           -
-          2252
+          2306
         </td>
         <td>
           Block
@@ -627,15 +631,15 @@
         </td>
       </tr><tr>
         <td>
-          76
+          80
         </td>
         <td>
           911
         </td>
         <td>
-          2332
+          2386
           -
-          2632
+          2686
         </td>
         <td>
           Apply
@@ -648,15 +652,15 @@
         </td>
       </tr><tr>
         <td>
-          77
+          81
         </td>
         <td>
           909
         </td>
         <td>
-          2362
+          2416
           -
-          2392
+          2446
         </td>
         <td>
           Literal
@@ -669,15 +673,15 @@
         </td>
       </tr><tr>
         <td>
-          80
+          84
         </td>
         <td>
           910
         </td>
         <td>
-          2400
+          2454
           -
-          2626
+          2680
         </td>
         <td>
           Apply

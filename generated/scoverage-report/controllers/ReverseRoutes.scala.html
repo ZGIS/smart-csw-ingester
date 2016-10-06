@@ -25,7 +25,7 @@
             <pre style='font-size: 12pt; font-family: courier;'>1 <span style=''>
 </span>2 <span style=''>// @GENERATOR:play-routes-compiler
 </span>3 <span style=''>// @SOURCE:/home/travis/build/ZGIS/smart-csw-ingester/conf/routes
-</span>4 <span style=''>// @DATE:Thu Sep 15 22:36:53 UTC 2016
+</span>4 <span style=''>// @DATE:Thu Oct 06 03:17:41 UTC 2016
 </span>5 <span style=''>
 </span>6 <span style=''>import play.api.mvc.{ QueryStringBindable, PathBindable, Call, JavascriptLiteral }
 </span>7 <span style=''>import play.core.routing.{ HandlerDef, ReverseRouteContext, queryString, dynamicString }
@@ -45,50 +45,58 @@
 </span>21 <span style=''>  
 </span>22 <span style=''>    // @LINE:11
 </span>23 <span style=''>    def query(query:Option[String], bbox:Option[String], fromDate:Option[String], toDate:Option[String]): Call = {
-</span>24 <span style=''>      import ReverseRouteContext.empty
-</span>25 <span style=''>      </span><span style='background: #F0ADAD'>Call("GET", _prefix + { _defaultPrefix } + "query" + queryString(List(Some(implicitly[QueryStringBindable[Option[String]]].unbind("query", query)), Some(implicitly[QueryStringBindable[Option[String]]].unbind("bbox", bbox)), Some(implicitly[QueryStringBindable[Option[String]]].unbind("fromDate", fromDate)), Some(implicitly[QueryStringBindable[Option[String]]].unbind("toDate", toDate)))))</span><span style=''>
-</span>26 <span style=''>    }
-</span>27 <span style=''>  
-</span>28 <span style=''>  }
-</span>29 <span style=''>
-</span>30 <span style=''>  // @LINE:6
-</span>31 <span style=''>  class ReverseMainController(_prefix: => String) {
-</span>32 <span style=''>    def _defaultPrefix: String = {
-</span>33 <span style=''>      if (</span><span style='background: #F0ADAD'>_prefix.endsWith("/")</span><span style=''>) </span><span style='background: #F0ADAD'>""</span><span style=''> else </span><span style='background: #F0ADAD'>"/"</span><span style=''>
+</span>24 <span style=''>    
+</span>25 <span style=''>      (query: @unchecked, bbox: @unchecked, fromDate: @unchecked, toDate: @unchecked) match {
+</span>26 <span style=''>      
+</span>27 <span style=''>        // @LINE:11
+</span>28 <span style=''>        case (query, bbox, fromDate, toDate)  =>
+</span>29 <span style=''>          import ReverseRouteContext.empty
+</span>30 <span style=''>          </span><span style='background: #F0ADAD'>Call("GET", _prefix + { _defaultPrefix } + "query" + queryString(List(Some(implicitly[QueryStringBindable[Option[String]]].unbind("query", query)), Some(implicitly[QueryStringBindable[Option[String]]].unbind("bbox", bbox)), Some(implicitly[QueryStringBindable[Option[String]]].unbind("fromDate", fromDate)), Some(implicitly[QueryStringBindable[Option[String]]].unbind("toDate", toDate)))))</span><span style=''>
+</span>31 <span style=''>      
+</span>32 <span style=''>      }
+</span>33 <span style=''>    
 </span>34 <span style=''>    }
-</span>35 <span style=''>
-</span>36 <span style=''>  
-</span>37 <span style=''>    // @LINE:6
-</span>38 <span style=''>    def index(): Call = {
-</span>39 <span style=''>      import ReverseRouteContext.empty
-</span>40 <span style=''>      </span><span style='background: #F0ADAD'>Call("GET", _prefix)</span><span style=''>
-</span>41 <span style=''>    }
-</span>42 <span style=''>  
-</span>43 <span style=''>    // @LINE:7
-</span>44 <span style=''>    def untrail(path:String): Call = {
-</span>45 <span style=''>      import ReverseRouteContext.empty
-</span>46 <span style=''>      </span><span style='background: #F0ADAD'>Call("GET", _prefix + { _defaultPrefix } + implicitly[PathBindable[String]].unbind("path", path) + "/")</span><span style=''>
-</span>47 <span style=''>    }
-</span>48 <span style=''>  
-</span>49 <span style=''>  }
-</span>50 <span style=''>
-</span>51 <span style=''>  // @LINE:17
-</span>52 <span style=''>  class ReverseAssets(_prefix: => String) {
-</span>53 <span style=''>    def _defaultPrefix: String = {
-</span>54 <span style=''>      if (</span><span style='background: #F0ADAD'>_prefix.endsWith("/")</span><span style=''>) </span><span style='background: #F0ADAD'>""</span><span style=''> else </span><span style='background: #F0ADAD'>"/"</span><span style=''>
+</span>35 <span style=''>  
+</span>36 <span style=''>  }
+</span>37 <span style=''>
+</span>38 <span style=''>  // @LINE:6
+</span>39 <span style=''>  class ReverseMainController(_prefix: => String) {
+</span>40 <span style=''>    def _defaultPrefix: String = {
+</span>41 <span style=''>      if (</span><span style='background: #F0ADAD'>_prefix.endsWith("/")</span><span style=''>) </span><span style='background: #F0ADAD'>""</span><span style=''> else </span><span style='background: #F0ADAD'>"/"</span><span style=''>
+</span>42 <span style=''>    }
+</span>43 <span style=''>
+</span>44 <span style=''>  
+</span>45 <span style=''>    // @LINE:6
+</span>46 <span style=''>    def index(): Call = {
+</span>47 <span style=''>      import ReverseRouteContext.empty
+</span>48 <span style=''>      </span><span style='background: #F0ADAD'>Call("GET", _prefix)</span><span style=''>
+</span>49 <span style=''>    }
+</span>50 <span style=''>  
+</span>51 <span style=''>    // @LINE:7
+</span>52 <span style=''>    def untrail(path:String): Call = {
+</span>53 <span style=''>      import ReverseRouteContext.empty
+</span>54 <span style=''>      </span><span style='background: #F0ADAD'>Call("GET", _prefix + { _defaultPrefix } + implicitly[PathBindable[String]].unbind("path", path) + "/")</span><span style=''>
 </span>55 <span style=''>    }
-</span>56 <span style=''>
-</span>57 <span style=''>  
-</span>58 <span style=''>    // @LINE:17
-</span>59 <span style=''>    def versioned(file:Asset): Call = {
-</span>60 <span style=''>      implicit val _rrc = </span><span style='background: #F0ADAD'>new ReverseRouteContext(Map(("path", "/public")))</span><span style=''>
-</span>61 <span style=''>      </span><span style='background: #F0ADAD'>Call("GET", _prefix + { _defaultPrefix } + "assets/" + implicitly[PathBindable[Asset]].unbind("file", file))</span><span style=''>
-</span>62 <span style=''>    }
-</span>63 <span style=''>  
-</span>64 <span style=''>  }
-</span>65 <span style=''>
-</span>66 <span style=''>
-</span>67 <span style=''>}
+</span>56 <span style=''>  
+</span>57 <span style=''>  }
+</span>58 <span style=''>
+</span>59 <span style=''>  // @LINE:18
+</span>60 <span style=''>  class ReverseAssets(_prefix: => String) {
+</span>61 <span style=''>    def _defaultPrefix: String = {
+</span>62 <span style=''>      if (</span><span style='background: #F0ADAD'>_prefix.endsWith("/")</span><span style=''>) </span><span style='background: #F0ADAD'>""</span><span style=''> else </span><span style='background: #F0ADAD'>"/"</span><span style=''>
+</span>63 <span style=''>    }
+</span>64 <span style=''>
+</span>65 <span style=''>  
+</span>66 <span style=''>    // @LINE:18
+</span>67 <span style=''>    def versioned(file:Asset): Call = {
+</span>68 <span style=''>      implicit val _rrc = </span><span style='background: #F0ADAD'>new ReverseRouteContext(Map(("path", "/public")))</span><span style=''>
+</span>69 <span style=''>      </span><span style='background: #F0ADAD'>Call("GET", _prefix + { _defaultPrefix } + "assets/" + implicitly[PathBindable[Asset]].unbind("file", file))</span><span style=''>
+</span>70 <span style=''>    }
+</span>71 <span style=''>  
+</span>72 <span style=''>  }
+</span>73 <span style=''>
+</span>74 <span style=''>
+</span>75 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -207,15 +215,15 @@
         </td>
       </tr><tr>
         <td>
-          25
+          30
         </td>
         <td>
           846
         </td>
         <td>
-          875
+          1058
           -
-          943
+          1126
         </td>
         <td>
           Apply
@@ -228,15 +236,15 @@
         </td>
       </tr><tr>
         <td>
-          25
+          30
         </td>
         <td>
           855
         </td>
         <td>
-          722
+          905
           -
-          722
+          905
         </td>
         <td>
           Select
@@ -249,15 +257,15 @@
         </td>
       </tr><tr>
         <td>
-          25
+          30
         </td>
         <td>
           848
         </td>
         <td>
-          951
+          1134
           -
-          1027
+          1210
         </td>
         <td>
           Apply
@@ -270,15 +278,15 @@
         </td>
       </tr><tr>
         <td>
-          25
+          30
         </td>
         <td>
           851
         </td>
         <td>
-          1030
+          1213
           -
-          1108
+          1291
         </td>
         <td>
           Apply
@@ -291,15 +299,15 @@
         </td>
       </tr><tr>
         <td>
-          25
+          30
         </td>
         <td>
           842
         </td>
         <td>
-          746
+          929
           -
-          760
+          943
         </td>
         <td>
           Select
@@ -312,15 +320,15 @@
         </td>
       </tr><tr>
         <td>
-          25
+          30
         </td>
         <td>
           854
         </td>
         <td>
-          734
+          917
           -
-          1110
+          1293
         </td>
         <td>
           Apply
@@ -333,15 +341,15 @@
         </td>
       </tr><tr>
         <td>
-          25
+          30
         </td>
         <td>
           845
         </td>
         <td>
-          792
+          975
           -
-          868
+          1051
         </td>
         <td>
           Apply
@@ -354,15 +362,15 @@
         </td>
       </tr><tr>
         <td>
-          25
+          30
         </td>
         <td>
           853
         </td>
         <td>
-          775
+          958
           -
-          1110
+          1293
         </td>
         <td>
           Apply
@@ -375,15 +383,15 @@
         </td>
       </tr><tr>
         <td>
-          25
+          30
         </td>
         <td>
           844
         </td>
         <td>
-          797
+          980
           -
-          867
+          1050
         </td>
         <td>
           Apply
@@ -396,15 +404,15 @@
         </td>
       </tr><tr>
         <td>
-          25
+          30
         </td>
         <td>
           847
         </td>
         <td>
-          870
+          1053
           -
-          944
+          1127
         </td>
         <td>
           Apply
@@ -417,15 +425,15 @@
         </td>
       </tr><tr>
         <td>
-          25
+          30
         </td>
         <td>
           856
         </td>
         <td>
-          722
+          905
           -
-          1111
+          1294
         </td>
         <td>
           Apply
@@ -438,15 +446,15 @@
         </td>
       </tr><tr>
         <td>
-          25
+          30
         </td>
         <td>
           850
         </td>
         <td>
-          1035
+          1218
           -
-          1107
+          1290
         </td>
         <td>
           Apply
@@ -459,15 +467,15 @@
         </td>
       </tr><tr>
         <td>
-          25
+          30
         </td>
         <td>
           841
         </td>
         <td>
-          727
+          910
           -
-          732
+          915
         </td>
         <td>
           Literal
@@ -480,15 +488,15 @@
         </td>
       </tr><tr>
         <td>
-          25
+          30
         </td>
         <td>
           849
         </td>
         <td>
-          946
+          1129
           -
-          1028
+          1211
         </td>
         <td>
           Apply
@@ -501,15 +509,15 @@
         </td>
       </tr><tr>
         <td>
-          25
+          30
         </td>
         <td>
           852
         </td>
         <td>
-          787
+          970
           -
-          1109
+          1292
         </td>
         <td>
           Apply
@@ -522,15 +530,15 @@
         </td>
       </tr><tr>
         <td>
-          25
+          30
         </td>
         <td>
           843
         </td>
         <td>
-          765
+          948
           -
-          772
+          955
         </td>
         <td>
           Literal
@@ -543,15 +551,15 @@
         </td>
       </tr><tr>
         <td>
-          33
+          41
         </td>
         <td>
           857
         </td>
         <td>
-          1236
+          1439
           -
-          1257
+          1460
         </td>
         <td>
           Apply
@@ -564,15 +572,15 @@
         </td>
       </tr><tr>
         <td>
-          33
+          41
         </td>
         <td>
           860
         </td>
         <td>
-          1267
+          1470
           -
-          1270
+          1473
         </td>
         <td>
           Literal
@@ -585,15 +593,15 @@
         </td>
       </tr><tr>
         <td>
-          33
+          41
         </td>
         <td>
           859
         </td>
         <td>
-          1259
+          1462
           -
-          1261
+          1464
         </td>
         <td>
           Block
@@ -606,15 +614,15 @@
         </td>
       </tr><tr>
         <td>
-          33
+          41
         </td>
         <td>
           858
         </td>
         <td>
-          1259
+          1462
           -
-          1261
+          1464
         </td>
         <td>
           Literal
@@ -627,15 +635,15 @@
         </td>
       </tr><tr>
         <td>
-          33
+          41
         </td>
         <td>
           861
         </td>
         <td>
-          1267
+          1470
           -
-          1270
+          1473
         </td>
         <td>
           Block
@@ -648,15 +656,15 @@
         </td>
       </tr><tr>
         <td>
-          40
+          48
         </td>
         <td>
           864
         </td>
         <td>
-          1367
+          1570
           -
-          1367
+          1570
         </td>
         <td>
           Select
@@ -669,15 +677,15 @@
         </td>
       </tr><tr>
         <td>
-          40
+          48
         </td>
         <td>
           863
         </td>
         <td>
-          1379
+          1582
           -
-          1386
+          1589
         </td>
         <td>
           Select
@@ -690,15 +698,15 @@
         </td>
       </tr><tr>
         <td>
-          40
+          48
         </td>
         <td>
           862
         </td>
         <td>
-          1372
+          1575
           -
-          1377
+          1580
         </td>
         <td>
           Literal
@@ -711,15 +719,15 @@
         </td>
       </tr><tr>
         <td>
-          40
+          48
         </td>
         <td>
           865
         </td>
         <td>
-          1367
+          1570
           -
-          1387
+          1590
         </td>
         <td>
           Apply
@@ -732,15 +740,15 @@
         </td>
       </tr><tr>
         <td>
-          46
+          54
         </td>
         <td>
           866
         </td>
         <td>
-          1501
+          1704
           -
-          1506
+          1709
         </td>
         <td>
           Literal
@@ -753,15 +761,15 @@
         </td>
       </tr><tr>
         <td>
-          46
+          54
         </td>
         <td>
           869
         </td>
         <td>
-          1496
+          1699
           -
-          1599
+          1802
         </td>
         <td>
           Apply
@@ -774,15 +782,15 @@
         </td>
       </tr><tr>
         <td>
-          46
+          54
         </td>
         <td>
           868
         </td>
         <td>
-          1496
+          1699
           -
-          1496
+          1699
         </td>
         <td>
           Select
@@ -795,15 +803,15 @@
         </td>
       </tr><tr>
         <td>
-          46
+          54
         </td>
         <td>
           867
         </td>
         <td>
-          1508
+          1711
           -
-          1598
+          1801
         </td>
         <td>
           Apply
@@ -816,15 +824,15 @@
         </td>
       </tr><tr>
         <td>
-          54
+          62
         </td>
         <td>
           873
         </td>
         <td>
-          1748
+          1951
           -
-          1751
+          1954
         </td>
         <td>
           Literal
@@ -837,15 +845,15 @@
         </td>
       </tr><tr>
         <td>
-          54
+          62
         </td>
         <td>
           872
         </td>
         <td>
-          1740
+          1943
           -
-          1742
+          1945
         </td>
         <td>
           Block
@@ -858,15 +866,15 @@
         </td>
       </tr><tr>
         <td>
-          54
+          62
         </td>
         <td>
           871
         </td>
         <td>
-          1740
+          1943
           -
-          1742
+          1945
         </td>
         <td>
           Literal
@@ -879,15 +887,15 @@
         </td>
       </tr><tr>
         <td>
-          54
+          62
         </td>
         <td>
           874
         </td>
         <td>
-          1748
+          1951
           -
-          1751
+          1954
         </td>
         <td>
           Block
@@ -900,15 +908,15 @@
         </td>
       </tr><tr>
         <td>
-          54
+          62
         </td>
         <td>
           870
         </td>
         <td>
-          1717
+          1920
           -
-          1738
+          1941
         </td>
         <td>
           Apply
@@ -921,15 +929,15 @@
         </td>
       </tr><tr>
         <td>
-          60
+          68
         </td>
         <td>
           875
         </td>
         <td>
-          1872
+          2075
           -
-          1891
+          2094
         </td>
         <td>
           Apply
@@ -942,15 +950,15 @@
         </td>
       </tr><tr>
         <td>
-          60
+          68
         </td>
         <td>
           877
         </td>
         <td>
-          1844
+          2047
           -
-          1893
+          2096
         </td>
         <td>
           Apply
@@ -963,15 +971,15 @@
         </td>
       </tr><tr>
         <td>
-          60
+          68
         </td>
         <td>
           876
         </td>
         <td>
-          1868
+          2071
           -
-          1892
+          2095
         </td>
         <td>
           Apply
@@ -984,15 +992,15 @@
         </td>
       </tr><tr>
         <td>
-          61
+          69
         </td>
         <td>
           882
         </td>
         <td>
-          1912
+          2115
           -
-          2007
+          2210
         </td>
         <td>
           Apply
@@ -1005,15 +1013,15 @@
         </td>
       </tr><tr>
         <td>
-          61
+          69
         </td>
         <td>
           881
         </td>
         <td>
-          1955
+          2158
           -
-          2007
+          2210
         </td>
         <td>
           Apply
@@ -1026,15 +1034,15 @@
         </td>
       </tr><tr>
         <td>
-          61
+          69
         </td>
         <td>
           884
         </td>
         <td>
-          1900
+          2103
           -
-          2008
+          2211
         </td>
         <td>
           Apply
@@ -1047,15 +1055,15 @@
         </td>
       </tr><tr>
         <td>
-          61
+          69
         </td>
         <td>
           878
         </td>
         <td>
-          1905
+          2108
           -
-          1910
+          2113
         </td>
         <td>
           Literal
@@ -1068,15 +1076,15 @@
         </td>
       </tr><tr>
         <td>
-          61
+          69
         </td>
         <td>
           880
         </td>
         <td>
-          1943
+          2146
           -
-          1952
+          2155
         </td>
         <td>
           Literal
@@ -1089,15 +1097,15 @@
         </td>
       </tr><tr>
         <td>
-          61
+          69
         </td>
         <td>
           883
         </td>
         <td>
-          1900
+          2103
           -
-          1900
+          2103
         </td>
         <td>
           Select
@@ -1110,15 +1118,15 @@
         </td>
       </tr><tr>
         <td>
-          61
+          69
         </td>
         <td>
           879
         </td>
         <td>
-          1924
+          2127
           -
-          1938
+          2141
         </td>
         <td>
           Select
