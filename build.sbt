@@ -31,7 +31,9 @@ version := "1.0-SNAPSHOT"
 // new sbt-site 1.0.0 config SiteScaladocPlugin incompatible with activator sbt-site bundle 0.8.1
 lazy val root = (project in file(".")).enablePlugins(PlayScala, SiteScaladocPlugin, JavaAppPackaging, DockerPlugin)
 
-scalaVersion := "2.11.7"
+scalaVersion := "2.11.8"
+
+val akkaVersion = "2.4.11"
 
 val luceneVersion = "6.2.1"
 
@@ -41,15 +43,22 @@ libraryDependencies ++= Seq(
   ws,
   filters,
 
-//  "com.gilt" % "lib-lucene-sugar_2.11" % "0.2.3",
+  // "com.gilt" % "lib-lucene-sugar_2.11" % "0.2.3",
 
   "org.apache.lucene" % "lucene-core" % luceneVersion,
   "org.apache.lucene" % "lucene-analyzers-common" % luceneVersion,
   "org.apache.lucene" % "lucene-queryparser" % luceneVersion,
   "org.apache.lucene" % "lucene-spatial" % luceneVersion,
   "org.apache.lucene" % "lucene-spatial-extras" % luceneVersion,
-//  "com.vividsolutions" % "jts" 	% "1.14",
+  // "com.vividsolutions" % "jts" 	% "1.14",
   "org.locationtech.spatial4j" % "spatial4j" % "0.6",
+
+  "com.typesafe.akka" %% "akka-http-core" % akkaVersion,
+  // "com.typesafe.akka" %% "akka-http-experimental" % akkaVersion,
+  "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
+
+  "com.typesafe.akka" %% "akka-testkit" % akkaVersion % Test,
+  "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion % Test,
 
   "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test,
   specs2 % Test

@@ -18,6 +18,7 @@
  */
 
 import java.time.LocalDate
+import javax.inject.Inject
 
 import com.typesafe.config.ConfigFactory
 import models.gmd.GeoJSONFeatureCollectionWriter
@@ -33,8 +34,9 @@ import services.LuceneService
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
-
-
+import akka.actor._
+import actors._
+import akka.testkit.{TestActorRef, TestKit}
 /**
   * this does some magic :-)
   * https://www.playframework.com/documentation/2.5.x/ScalaTestingWebServiceClients
@@ -49,8 +51,8 @@ trait WithLuceneService {
       WsTestClient.withClient({ client =>
         val configResource = getClass.getResource("catalogues.test.conf")
         val config = Configuration(ConfigFactory.parseURL(configResource))
-
         val appLifeCycle = new DefaultApplicationLifecycle()
+
         val service = new LuceneService(appLifeCycle, client, config)
         val result = block(service)
         Await.result(appLifeCycle.stop(), 10.seconds)

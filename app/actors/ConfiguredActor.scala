@@ -17,32 +17,26 @@
  * limitations under the License.
  */
 
-import com.google.inject.AbstractModule
-import play.api.libs.concurrent.AkkaGuiceSupport
+package actors
 
-import actors.ConfiguredActor
+import akka.actor._
+import javax.inject._
+import play.api.Configuration
 
-import services.LuceneService
+import scala.collection.JavaConverters._
 
-/**
- * This class is a Guice module that tells Guice how to bind several
- * different types. This Guice module is created when the Play
- * application starts.
+// test from https://www.playframework.com/documentation/2.5.x/ScalaAkka
+object ConfiguredActor {
+  case object GetConfig
+}
 
- * Play will automatically use any class called `Module` that is in
- * the root package. You can create modules in other locations by
- * adding `play.modules.enabled` settings to the `application.conf`
- * configuration file.
- */
-class Module extends AbstractModule with AkkaGuiceSupport {
+class ConfiguredActor @Inject() (configuration: Configuration) extends Actor {
+  import ConfiguredActor._
 
-  override def configure() : Unit = {
+  private val cataloguesConfig = configuration.getConfigList("csw.catalogues").get.asScala.toList
 
-    //Start our LuceneService with the Application
-    bind(classOf[LuceneService]).asEagerSingleton()
-
-    // get actors
-    bindActor[ConfiguredActor]("configured-actor")
+  def receive = {
+    case GetConfig =>
+      sender() ! cataloguesConfig
   }
-
 }

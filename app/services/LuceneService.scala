@@ -20,8 +20,12 @@
 package services
 
 import java.time.LocalDate
-import javax.inject.{Inject, Singleton}
+import javax.inject.{Inject, Singleton, _}
 
+import actors.ConfiguredActor._
+import akka.actor._
+import akka.pattern.ask
+import akka.util.Timeout
 import models.csw.{CswGetRecordsRequest, CswGetRecordsResponse}
 import models.gmd.MdMetadataSet
 import org.apache.lucene.analysis.standard.StandardAnalyzer
@@ -76,6 +80,7 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
 
   logger.debug("Reading configuration: csw.catalogues ")
   private val cataloguesConfig = configuration.getConfigList("csw.catalogues").get.asScala.toList
+
   val catalogues = cataloguesConfig.map { item => item.getString("name").get -> item.getString("url").get }.toMap
 
   logger.debug("Reading configuration: csw.maxDocs ")
