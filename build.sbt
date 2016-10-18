@@ -33,7 +33,7 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala, SiteScaladocPlug
 
 scalaVersion := "2.11.7"
 
-val luceneVersion = "6.2.0"
+val luceneVersion = "6.2.1"
 
 libraryDependencies ++= Seq(
   jdbc,
