@@ -20,7 +20,7 @@
 import com.google.inject.AbstractModule
 import play.api.libs.concurrent.AkkaGuiceSupport
 
-import actors.ConfiguredActor
+import actors.IndexActor
 
 import services.LuceneService
 
@@ -42,7 +42,7 @@ class Module extends AbstractModule with AkkaGuiceSupport {
     bind(classOf[LuceneService]).asEagerSingleton()
 
     // get actors
-    bindActor[ConfiguredActor]("configured-actor")
+    bindActor[IndexActor]("index-actor")
   }
 
 }

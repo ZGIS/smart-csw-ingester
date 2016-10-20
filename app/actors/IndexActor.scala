@@ -19,24 +19,27 @@
 
 package actors
 
-import akka.actor._
 import javax.inject._
+
+import akka.actor._
+import akka.event.Logging
 import play.api.Configuration
 
-import scala.collection.JavaConverters._
-
 // test from https://www.playframework.com/documentation/2.5.x/ScalaAkka
-object ConfiguredActor {
-  case object GetConfig
+object IndexActor {
+
+  case class GetConfig(configuration: Configuration)
+  case object RefreshIndex
+
 }
 
-class ConfiguredActor @Inject() (configuration: Configuration) extends Actor {
-  import ConfiguredActor._
+class IndexActor @Inject()() extends Actor {
+  import IndexActor.GetConfig
 
-  private val cataloguesConfig = configuration.getConfigList("csw.catalogues").get.asScala.toList
+  val log = Logging(context.system, this)
 
   def receive = {
     case GetConfig =>
-      sender() ! cataloguesConfig
+      sender() ! "will initialise"
   }
 }

@@ -20,12 +20,8 @@
 package services
 
 import java.time.LocalDate
-import javax.inject.{Inject, Singleton, _}
+import javax.inject.{Inject, Singleton}
 
-import actors.ConfiguredActor._
-import akka.actor._
-import akka.pattern.ask
-import akka.util.Timeout
 import models.csw.{CswGetRecordsRequest, CswGetRecordsResponse}
 import models.gmd.MdMetadataSet
 import org.apache.lucene.analysis.standard.StandardAnalyzer
