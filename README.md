@@ -11,6 +11,8 @@
 
 [Site Docs](https://zgis.github.io/smart-csw-ingester/)
 
+[Issue Tracker](https://github.com/ZGIS/smart-csw-ingester/issues)
+
 ## Licenses
 
 This software is distributed under the Apache Software License 2.0.
