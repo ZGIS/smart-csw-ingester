@@ -31,7 +31,7 @@ version := "1.0-SNAPSHOT"
 // new sbt-site 1.0.0 config SiteScaladocPlugin incompatible with activator sbt-site bundle 0.8.1
 lazy val root = (project in file(".")).enablePlugins(PlayScala, SiteScaladocPlugin, JavaAppPackaging, DockerPlugin)
 
-scalaVersion := "2.11.7"
+scalaVersion := "2.11.8"
 
 val luceneVersion = "6.2.1"
 
