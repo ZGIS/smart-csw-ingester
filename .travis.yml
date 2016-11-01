@@ -14,6 +14,7 @@ before_install:
 after_success:
 - chmod 600 ghpages_ecdsa && eval `ssh-agent -s` && ssh-add ghpages_ecdsa
 - test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "master" && sbt ghpagesPushSite
+- test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "master" && pwd && sh -c $TRAVIS_BUILD_DIR/docker-preps.sh
 deploy:
   provider: gcs
   access_key_id: GOOGZDYY4PCU7QXHJ5GS
