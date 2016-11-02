@@ -111,31 +111,31 @@ class MdMetadataSetSpec extends PlaySpec {
     }
   }
 
-  "Wrong BBoxes" must {
+  "Parsing BBoxes" must {
     lazy val xmlResource = this.getClass().getResource("MD_Metadata_NO_BBOX.xml")
     lazy val xml = scala.xml.XML.load(xmlResource)
     lazy val parsedElement = MdMetadataSet.fromXml(xml, "linz")
     lazy val world = ctx.getShapeFactory().rect(-180.0, 180.0, -90.0, 90.0)
 
-    "MD_Metadata_NO_BBOX.xml parse without errors" in {
-      parsedElement mustBe defined
-    }
-
-    //TODO SR check all other values too?
-    "MD_Metadata_NO_BBOX.xml must have WORLD bounding box" in {
-      parsedElement.get.bbox mustEqual world
-    }
-
-    // east: Double, west: Double, south: Double, north: Double
-    "cut too large coordinates into WORLD bounding box" in {
-      MdMetadataSet.bboxFromCoords(-190.0, 180.0, -90.0, 90.0) mustEqual world
-      MdMetadataSet.bboxFromCoords(-180.0, 190.0, -90.0, 90.0) mustEqual world
-      MdMetadataSet.bboxFromCoords(-180.0, 180.0, -95.0, 90.0) mustEqual world
-      MdMetadataSet.bboxFromCoords(-180.0, 180.0, -90.0, 95.0) mustEqual world
+    "cut off invalid north / south values " in {
+      val (south, north) = MdMetadataSet.pruneLatitudeValues(-123, 123)
+      north mustEqual 90
+      south mustEqual -90
+      MdMetadataSet.bboxFromCoords(-180.0, 180.0, 123.0, -123.0) mustEqual world
     }
 
     "switch north / south to correct order " in {
-      MdMetadataSet.bboxFromCoords(-180.0, 180.0, 90.0, -90.0) mustEqual world
+      val (south, north) = MdMetadataSet.pruneLatitudeValues(80, -70)
+      north mustEqual 80
+      south mustEqual -70
+
+      val (south2, north2) = MdMetadataSet.pruneLatitudeValues(123, -123)
+      north2 mustEqual 90
+      south2 mustEqual -90
+
+      val northSouthSwitch= ctx.getShapeFactory().rect(-180, 180, -70.0, 80.0)
+      MdMetadataSet.bboxFromCoords(-180.0, 180.0, 80.0, -70.0) mustEqual northSouthSwitch
+      MdMetadataSet.bboxFromCoords(-180.0, 180.0, 123.0, -123.0) mustEqual world
     }
 
     "handle zero width longitude edge cases" in {
@@ -148,86 +148,46 @@ class MdMetadataSetSpec extends PlaySpec {
       MdMetadataSet.bboxFromCoords(180, -180, -90.0, 90.0) mustEqual mirrorWorld
     }
 
-    "handle reversed / date line wrap longitude cases" in {
-
-      val (prunedWest, prunedEast) = MdMetadataSet.pruneLongitudeValues(166.6899599, -176.176448433)
-      prunedWest mustEqual 166.6899599
-      prunedEast mustEqual -176.176448433
-
-      val dateWrapped = ctx.getShapeFactory().rect(166.6899599, -176.176448433, -90.0, 90.0)
-
-      MdMetadataSet.bboxFromCoords(166.6899599, -176.176448433, -90.0, 90.0) mustEqual dateWrapped
-    }
-  }
-
-  "JSON writer" should {
-    implicit val mdMetadataSetWrite = MdMetadataSetWriter
-    implicit val geoJSONFeatureCollectionWrite = GeoJSONFeatureCollectionWriter
-
-    lazy val xmlResource1 = this.getClass().getResource("csw_getrecordbyid-md_metadata.xml")
-    lazy val xmlResource2 = this.getClass().getResource("sac_rs_ewt_metadata.xml")
-    lazy val xml1 = scala.xml.XML.load(xmlResource1)
-    lazy val xml2 = scala.xml.XML.load(xmlResource2)
-    lazy val parsedElement1 = MdMetadataSet.fromXml(xml1, "linz")
-    lazy val parsedElement2 = MdMetadataSet.fromXml(xml2, "smart")
-
-    "parse without errors" in {
-      parsedElement1 mustBe defined
-      parsedElement2 mustBe defined
-
-      Json.toJson(parsedElement1.get).toString() must include ("linz")
-      Json.toJson(parsedElement2.get).toString() must include ("smart")
+    "cut to large east -> west into world" in {
+      MdMetadataSet.bboxFromCoords(-190.0, 180.0, -90.0, 90.0) mustEqual world
+      MdMetadataSet.bboxFromCoords(-180.0, 190.0, -90.0, 90.0) mustEqual world
+      MdMetadataSet.bboxFromCoords(-360.0, 10.0, -90.0, 90.0) mustEqual world
+      MdMetadataSet.bboxFromCoords(-10.0, 360.0, -90.0, 90.0) mustEqual world
     }
 
-    "build JsArrList of GeoJSON Features from List of MdMetadataSet" in {
-      val gmdList = List(parsedElement1.get, parsedElement2.get)
-      val listOfGeoJsonFeatures = Json.toJson(gmdList)
-      (listOfGeoJsonFeatures \\ "fileIdentifier").size mustBe 2
-    }
+    "handle date line wrap longitude cases" should {
+      //small box over dateline
+      val dateWrapped = ctx.getShapeFactory().rect(170, -170, -90.0, 90.0)
+      "transform (170,-170) -> (170,-170)" in {
+        MdMetadataSet.bboxFromCoords(170, -170, -90.0, 90.0) mustEqual dateWrapped
+        MdMetadataSet.bboxFromCoords(170, -170, -90.0, 90.0).getCrossesDateLine mustEqual true
+      }
 
-    "provide GeoJSON Feature for one MdMetadaset" in {
-      val jsResource = this.getClass().getResource("linzFeatureTest.json")
-      val jsonTestFeature = scala.io.Source.fromURL(jsResource).getLines.mkString
-      Json.toJson(parsedElement1.get) mustEqual Json.parse(jsonTestFeature)
-    }
+      //same box but with coordinate >180
+      "transform (170,190) -> (170,-170)" in {
+        MdMetadataSet.bboxFromCoords(170, 190, -90.0, 90.0) mustEqual dateWrapped
+        MdMetadataSet.bboxFromCoords(170, 190, -90.0, 90.0).getCrossesDateLine mustEqual true
+      }
 
-    "provide List of GeoJSON as FeatureCollection for list of MdMetadaset" in {
-      val gmdList = List(parsedElement1.get, parsedElement2.get)
-
-      val geoJsonFeatureCollection = Json.toJson(gmdList)
-
-      val jsResource = this.getClass().getResource("featureCollectionTest.json")
-      val jsonTestFeatureCollection = scala.io.Source.fromURL(jsResource).getLines.mkString
-      geoJsonFeatureCollection mustEqual Json.parse(jsonTestFeatureCollection)
+      //same box but with coordinate <-180
+      "transform (-190,-170) -> (170,-170)" in {
+        MdMetadataSet.bboxFromCoords(-190, -170, -90.0, 90.0) mustEqual dateWrapped
+        MdMetadataSet.bboxFromCoords(-190, -170, -90.0, 90.0).getCrossesDateLine mustEqual true
+      }
 
     }
 
-    "survive empty result list with FeatureCollection and feature count 0" in {
-      val gmdList = List[MdMetadataSet]()
-      val listOfGeoJsonFeatures = Json.toJson(gmdList)
-      (listOfGeoJsonFeatures \\ "type").map(_.as[String]).filter(str => str.equalsIgnoreCase("FeatureCollection")).size mustBe 1
-
-      val count = listOfGeoJsonFeatures \\ "count"
-      count.size mustBe 1
-      count.headOption.getOrElse(JsNumber(666)) mustEqual JsNumber(0)
+    "MD_Metadata_NO_BBOX.xml parse without errors" in {
+      parsedElement mustBe defined
     }
 
-    "cannot yet insert an additional key/value pair in the featurecollection header" in {
-
-      import play.api.libs.json._ // JSON library
-      import play.api.libs.json.Reads._ // Custom validation helpers
-      import play.api.libs.functional.syntax._ // Combinator syntax
-
-      val jsResource = this.getClass().getResource("featureCollectionTest.json")
-      val jsonTestFeatureCollection = scala.io.Source.fromURL(jsResource).getLines.mkString
-      val geoJsonFeatureCollection = Json.parse(jsonTestFeatureCollection)
-
-      // should use a JsonTransformer
-
+    "MD_Metadata_NO_BBOX.xml must have WORLD bounding box" in {
+      parsedElement.get.bbox mustEqual world
     }
 
   }
 
+  //TODO SR delete this. its a leftover from ancient times
   @Ignore def `test: Parsing Notes for Alex describe should`: Unit = {
 
     val xmlResource = this.getClass().getResource("csw_getrecordbyid-md_metadata.xml")
