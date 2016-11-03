@@ -245,13 +245,19 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
     * @return
     */
   private def parseBboxQuery(bboxWkt: String) = {
-    logger.debug(s"create query for $bboxWkt")
+    logger.error(s"create query for $bboxWkt")
 
-    val ctx = SpatialContext.GEO
-    val shpReader = ctx.getFormats().getReader(ShapeIO.WKT)
-    val shape = shpReader.read(bboxWkt)
+    val envelopeWkt = "ENVELOPE\\(([-+]?[0-9]*\\.?[0-9]+),([-+]?[0-9]*\\.?[0-9]+),([-+]?[0-9]*\\.?[0-9]+),([-+]?[0-9]*\\.?[0-9]+)\\)".r
+
+    val shape = bboxWkt.replaceAll("\\s", "") match {
+      case envelopeWkt(minX, maxX, minY, maxY) => {
+        MdMetadataSet.bboxFromCoords(minX.toFloat, maxX.toFloat, minY.toFloat, maxY.toFloat)
+      }
+    }
+
 
     logger.error(s"parsed shape is ${shape.toString}")
+    val ctx = SpatialContext.GEO
     val bboxStrategy: BBoxStrategy = BBoxStrategy.newInstance(ctx, "bbox")
     bboxStrategy.makeQuery(new SpatialArgs(SpatialOperation.IsWithin, shape))
   }
