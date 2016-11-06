@@ -28,7 +28,7 @@ EXPOSE 9000
 # We need envs for
 # ${?APPLICATION_SECRET}
 
-CMD [ "/smart-portal-backend-1.0-SNAPSHOT/bin/smart-csw-ingester", \
+CMD [ "/smart-csw-ingester-1.0-SNAPSHOT/bin/smart-csw-ingester", \
     "-Dconfig.resource=application.conf", \
     "-Dhttp.address=0.0.0.0", \
     "-Dhttp.port=9000", \
