@@ -47,8 +47,8 @@ import scala.concurrent.{Await, Future}
 
 trait IndexService {
   //FIXME SR find a good place for this
-  //THE ARGUMENT ORDER IS ENVELOPE(minX, maxX, maxY(!!!WTF?), minY)
-  lazy val WORLD_WKT = "ENVELOPE(-180, 180, 90, -90)"
+  lazy val SPATIAL_CONTEXT = SpatialContext.GEO
+  lazy val WORLD_WKT = SPATIAL_CONTEXT.getFormats().getWriter(ShapeIO.WKT).toString(SpatialContext.GEO.getWorldBounds)
 
   def buildIndex(): Unit
 
@@ -245,7 +245,7 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
     * @return
     */
   private def parseBboxQuery(bboxWkt: String) = {
-    logger.error(s"create query for $bboxWkt")
+    logger.debug(s"create query for $bboxWkt")
 
     val envelopeWkt = "ENVELOPE\\(([-+]?[0-9]*\\.?[0-9]+),([-+]?[0-9]*\\.?[0-9]+),([-+]?[0-9]*\\.?[0-9]+),([-+]?[0-9]*\\.?[0-9]+)\\)".r
 
@@ -255,10 +255,8 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
       }
     }
 
-
-    logger.error(s"parsed shape is ${shape.toString}")
-    val ctx = SpatialContext.GEO
-    val bboxStrategy: BBoxStrategy = BBoxStrategy.newInstance(ctx, "bbox")
+    logger.debug(s"parsed shape is ${shape.toString}")
+    val bboxStrategy: BBoxStrategy = BBoxStrategy.newInstance(SPATIAL_CONTEXT, "bbox")
     bboxStrategy.makeQuery(new SpatialArgs(SpatialOperation.IsWithin, shape))
   }
 

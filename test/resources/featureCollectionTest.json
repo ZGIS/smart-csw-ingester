@@ -8,9 +8,9 @@
   },
   "bbox": [
     160,
-    -176.176448433,
-    -30.95,
-    -52.51
+    -52.51,
+    183.823551567,
+    -30.95
   ],
   "count": 2,
   "features": [
@@ -58,12 +58,12 @@
         "contactName": "omit, Omit",
         "contactOrg": "LINZ - Land Information New Zealand, LINZ - Land Information New Zealand, ANZLIC the Spatial Information Council",
         "contactEmail": "info@linz.govt.nz, info@linz.govt.nz",
-        "license": "Crown copyright reserved, Released under Creative Commons By with: Following Disclaimers..., Crown copyright reserved, Released under CreativeCommons By",
+        "license": "Crown copyright reserved, Released under Creative Commons By with: Following Disclaimers..., Crown copyright reserved, Released under Creative Commons By",
         "bbox": [
           166.6899599,
+          -47.1549297167,
           183.823551567,
-          -34.4322590833,
-          -47.1549297167
+          -34.4322590833
         ],
         "origin": "linz"
       }
@@ -116,9 +116,9 @@
         "license": ", ",
         "bbox": [
           160,
+          -52.51,
           179.14,
-          -30.95,
-          -52.51
+          -30.95
         ],
         "origin": "smart"
       }

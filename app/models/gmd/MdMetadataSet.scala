@@ -500,7 +500,36 @@ object MdMetadataSetWriter extends Writes[MdMetadataSet] with ClassnameLogger {
     */
   def getJsGeom(gmd: MdMetadataSet): JsValue = {
     val geometry = jsWriter.toString(gmd.bbox)
-    Json.parse(geometry)
+
+    if (gmd.bbox.getCrossesDateLine) {
+      val newCoordinates = Json.arr(Json.arr(
+        Json.arr(gmd.bbox.getMinX, gmd.bbox.getMinY), //SW
+        Json.arr(gmd.bbox.getMinX, gmd.bbox.getMaxY), //NW
+        Json.arr(gmd.bbox.getMaxX+360, gmd.bbox.getMaxY), //NE
+        Json.arr(gmd.bbox.getMaxX+360, gmd.bbox.getMinY), //NW
+        Json.arr(gmd.bbox.getMinX, gmd.bbox.getMinY)  //SW
+      ))
+      Json.obj("type" -> "Polygon", "coordinates" -> newCoordinates)
+    }
+    else {
+      Json.parse(geometry)
+    }
+  }
+
+  /**
+    * if bbox crosses dateline (east < west) then correct this for OL3
+    * @param bbox
+    * @return
+    */
+  def correctBbox(bbox: JsArray): JsArray = {
+    val west = bbox(0).asOpt[Double].get
+    val east = if (bbox(0).asOpt[Double].get > bbox(2).asOpt[Double].get) {
+                 bbox(2).asOpt[Double].get + 360
+               }
+               else {
+                 bbox(2).asOpt[Double].get
+               }
+    Json.arr(west, bbox(1).get, east, bbox(3).get)
   }
 
   /**
@@ -520,11 +549,11 @@ object MdMetadataSetWriter extends Writes[MdMetadataSet] with ClassnameLogger {
       "contactEmail" -> gmd.contactEmail,
       "license" -> gmd.license,
       // extent is an array [10, 10, 40, 40] minX, maxX, maxY, minY
-      "bbox" -> Json.arr(
+      "bbox" -> correctBbox(Json.arr(
         JsNumber(gmd.bbox.getMinX()),
+        JsNumber(gmd.bbox.getMinY()),
         JsNumber(gmd.bbox.getMaxX()),
-        JsNumber(gmd.bbox.getMaxY()),
-        JsNumber(gmd.bbox.getMinY())
+        JsNumber(gmd.bbox.getMaxY()))
       ),
       "origin" -> gmd.origin
     )
@@ -547,7 +576,7 @@ object GeoJSONFeatureCollectionWriter extends Writes[List[MdMetadataSet]] with C
   private lazy val ctx = SpatialContext.GEO
   private lazy val jsWriter = ctx.getFormats().getWriter(ShapeIO.GeoJSON)
   implicit val gmdElementSetWrite = MdMetadataSetWriter
-  lazy val WORLD = ctx.getShapeFactory().rect(-180, 180, -90, 90)
+  lazy val WORLD = ctx.getWorldBounds
 
   /**
     * builds a JsArray from single MdMetadataSet GeoJSON features
@@ -557,39 +586,7 @@ object GeoJSONFeatureCollectionWriter extends Writes[List[MdMetadataSet]] with C
     */
   def getArrayOfFeatures(gmdList: List[MdMetadataSet]): JsValue = {
     val jsList = gmdList.map(gmd => {
-      //TODO SR ok, this sucks balls! We need to find a better way, to unravel the coordinates so that OL3 can read them
-      val json = Json.toJson(gmd)
-
-      //extract east/west values and if west > east, add 180 to east
-      val bbox = (json \ "properties" \ "bbox").get
-      val west = bbox(0).asOpt[Double].get
-      val east = if (bbox(0).asOpt[Double].get > bbox(1).asOpt[Double].get) {
-                   bbox(1).asOpt[Double].get + 360
-                 }
-                 else {
-                   bbox(1).asOpt[Double].get
-                 }
-      val newBbox = Json.arr(west, east, bbox(2).get, bbox(3).get)
-
-      val resultJson = if (!bbox.equals(newBbox)) {
-                        logger.error("changed JSON bbox from " + bbox.toString + " -> " + newBbox.toString)
-                        val jsonProp = (json \ "properties").as[JsObject] ++ Json.obj("bbox" -> newBbox)
-                        //coordinates SW,NW,NE,NW,SW
-                        val newCoordinates = Json.arr(Json.arr(
-                          Json.arr(newBbox(0).get,newBbox(3).get), //NW
-                          Json.arr(newBbox(0).get,newBbox(2).get), //SW
-                          Json.arr(newBbox(1).get,newBbox(2).get), //SE
-                          Json.arr(newBbox(1).get,newBbox(3).get), //NE
-                          Json.arr(newBbox(0).get,newBbox(3).get) //NW
-                        ))
-                        val jsonGeom = Json.obj("geometry" -> Json.obj("type" -> "Polygon", "coordinates" -> newCoordinates))
-                        val result = json.as[JsObject] ++ jsonGeom ++ Json.obj("properties" -> jsonProp)
-                        result
-                      }
-                      else {
-                        json
-                      }
-      resultJson
+      Json.toJson(gmd)
     })
     Json.toJson(jsList)
   }
@@ -629,9 +626,9 @@ object GeoJSONFeatureCollectionWriter extends Writes[List[MdMetadataSet]] with C
 
     Json.arr(
       JsNumber(envelope.getMinX),
+      JsNumber(envelope.getMinY),
       JsNumber(envelope.getMaxX),
-      JsNumber(envelope.getMaxY),
-      JsNumber(envelope.getMinY)
+      JsNumber(envelope.getMaxY)
     )
   }
 
@@ -647,7 +644,7 @@ object GeoJSONFeatureCollectionWriter extends Writes[List[MdMetadataSet]] with C
             "name" -> "urn:ogc:def:crs:OGC:1.3:CRS84"
           )
         ),
-        "bbox" -> getBoundingBox(gmdList),
+        "bbox" -> MdMetadataSetWriter.correctBbox(getBoundingBox(gmdList).as[JsArray]),
         "count" -> gmdList.size,
         "features" -> getArrayOfFeatures(gmdList)
       )

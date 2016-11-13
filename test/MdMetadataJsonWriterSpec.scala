@@ -61,14 +61,12 @@ class MdMetadataJsonWriterSpec extends PlaySpec {
     }
 
     "provide GeoJSON Feature for one MdMetadaset" in {
-      val jsResource = this.getClass().getResource("linzFeatureTest.json")
-      val jsonTestFeature = scala.io.Source.fromURL(jsResource).getLines.mkString
-      Json.toJson(parsedElement1.get) mustEqual Json.parse(jsonTestFeature)
+      val linzFeatureJsonResource = this.getClass().getResource("linzFeatureTest.json")
+      val linzFeatureJsonString = scala.io.Source.fromURL(linzFeatureJsonResource).getLines.mkString
+      Json.toJson(parsedElement1.get) mustEqual Json.parse(linzFeatureJsonString)
     }
 
-    //FIXME JSON output seems completely identical, yet it fails ?!?
-    @Ignore def `test: provide List of GeoJSON as FeatureCollection for list of MdMetadaset`: Unit = {
-    // "provide List of GeoJSON as FeatureCollection for list of MdMetadaset" in {
+    "provide List of GeoJSON as FeatureCollection for list of MdMetadaset" in {
       val gmdList = List(parsedElement1.get, parsedElement2.get)
 
       val geoJsonFeatureCollection = Json.toJson(gmdList)
