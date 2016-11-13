@@ -42,7 +42,7 @@ import scala.xml.NodeSeq
   * @param title          title of the record
   * @param abstrakt       abstract of the record
   * @param keywords       list of keywords for the record
-  * @param topicCategory  list of ISO/ANZLIC topic categories of the record
+  * @param topicCategories  list of ISO/ANZLIC topic categories of the record
   * @param contactName    contact name for the record or dataset
   * @param contactOrg     cantact organisation for the record or dataset
   * @param contactEmail   contact email for the record or dataset
@@ -55,7 +55,7 @@ case class MdMetadataSet(fileIdentifier: String,
                          title: String,
                          abstrakt: String,
                          keywords: List[String],
-                         topicCategory: List[String],
+                         topicCategories: List[String],
                          contactName: String,
                          contactOrg: String,
                          contactEmail: String,
@@ -71,7 +71,7 @@ case class MdMetadataSet(fileIdentifier: String,
         |${title},
         |${abstrakt},
         |keywords(${keywords.mkString(", ")}),
-        |topicCategory(${topicCategory.mkString(", ")}),
+        |topicCategory(${topicCategories.mkString(", ")}),
         |${contactName},
         |${contactOrg},
         |${contactEmail},
@@ -121,8 +121,8 @@ case class MdMetadataSet(fileIdentifier: String,
       doc.add(new TextField("keywords", keyword, Field.Store.YES))
     })
 
-    topicCategory.foreach(topicCategor => {
-      doc.add(new TextField("topicCategory", topicCategor, Field.Store.YES))
+    topicCategories.foreach(topicCategory => {
+      doc.add(new TextField("topicCategory", topicCategory, Field.Store.YES))
     })
 
     doc.add(new TextField("contactName", contactName, Field.Store.YES))
@@ -146,7 +146,7 @@ case class MdMetadataSet(fileIdentifier: String,
     keywords.foreach(keyword => {
       doc.add(new TextField("catch_all", keyword, Field.Store.YES))
     })
-    topicCategory.foreach(topicCategor => {
+    topicCategories.foreach(topicCategor => {
       doc.add(new TextField("catch_all", topicCategor, Field.Store.YES))
     })
     doc.add(new TextField("catch_all", contactName, Field.Store.YES))
@@ -229,7 +229,7 @@ object MdMetadataSet extends ClassnameLogger {
       title = doc.get("title"),
       abstrakt = doc.get("abstrakt"),
       keywords = doc.get("keywords").split(",").toList,
-      topicCategory = doc.get("topicCategory").split(",").toList,
+      topicCategories = doc.get("topicCategory").split(",").toList,
       contactName = doc.get("contactName"),
       contactOrg = doc.get("contactOrg"),
       contactEmail = doc.get("contactEmail"),
@@ -526,6 +526,7 @@ object MdMetadataSetWriter extends Writes[MdMetadataSet] with ClassnameLogger {
 
   /**
     * if bbox crosses dateline (east < west) then correct this for OL3
+ *
     * @param bbox
     * @return
     */
@@ -551,7 +552,7 @@ object MdMetadataSetWriter extends Writes[MdMetadataSet] with ClassnameLogger {
       "title" -> gmd.title,
       "abstrakt" -> gmd.abstrakt,
       "keywords" -> gmd.keywords,
-      "topicCategory" -> gmd.topicCategory,
+      "topicCategories" -> gmd.topicCategories,
       "contactName" -> gmd.contactName,
       "contactOrg" -> gmd.contactOrg,
       "contactEmail" -> gmd.contactEmail,

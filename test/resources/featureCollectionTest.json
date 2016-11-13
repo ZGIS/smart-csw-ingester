@@ -51,7 +51,7 @@
         "keywords": [
           "New Zealand"
         ],
-        "topicCategory": [
+        "topicCategories": [
           "boundaries",
           "planningCadastre"
         ],
@@ -107,7 +107,7 @@
           "GeoTIFF",
           "ewt_nzprj_new"
         ],
-        "topicCategory": [
+        "topicCategories": [
           "climatologyMeteorologyAtmosphere"
         ],
         "contactName": "Rogier Westerhoff",

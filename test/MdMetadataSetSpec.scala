@@ -100,7 +100,7 @@ class MdMetadataSetSpec extends PlaySpec {
       parsedElement.title mustEqual ("NZ Beacon Points (Topo, 1:250k)")
       parsedElement.abstrakt.length mustEqual (599) //dont wanna copy&paste the whole abstract
       parsedElement.keywords mustEqual (List("New Zealand"))
-      parsedElement.topicCategory mustEqual (List("imageryBaseMapsEarthCover"))
+      parsedElement.topicCategories mustEqual (List("imageryBaseMapsEarthCover"))
       parsedElement.contactName mustEqual ("omit, Omit")
       parsedElement.contactOrg mustEqual ("LINZ - Land Information New Zealand, LINZ - Land Information New Zealand, ANZLIC the Spatial Information Council")
       parsedElement.contactEmail mustEqual ("info@linz.govt.nz, info@linz.govt.nz")
