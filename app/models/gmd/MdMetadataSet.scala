@@ -117,9 +117,13 @@ case class MdMetadataSet(fileIdentifier: String,
     val longDate = dateStamp.toEpochDay
     doc.add(new LongPoint("dateStamp", longDate))
 
-    //TODO SR normally one would store this as multiple values on the same fieldname
-    doc.add(new TextField("keywords", keywords.mkString(" "), Field.Store.YES))
-    doc.add(new TextField("topicCategory", topicCategory.mkString(" "), Field.Store.YES))
+    keywords.foreach(keyword => {
+      doc.add(new TextField("keywords", keyword, Field.Store.YES))
+    })
+
+    topicCategory.foreach(topicCategor => {
+      doc.add(new TextField("topicCategory", topicCategor, Field.Store.YES))
+    })
 
     doc.add(new TextField("contactName", contactName, Field.Store.YES))
     doc.add(new TextField("contactOrg", contactOrg, Field.Store.YES))
@@ -139,8 +143,12 @@ case class MdMetadataSet(fileIdentifier: String,
     doc.add(new TextField("catch_all", fileIdentifier, Field.Store.YES))
     doc.add(new TextField("catch_all", title, Field.Store.YES))
     doc.add(new TextField("catch_all", abstrakt, Field.Store.YES))
-    doc.add(new TextField("catch_all", keywords.mkString(" "), Field.Store.YES))
-    doc.add(new TextField("catch_all", topicCategory.mkString(" "), Field.Store.YES))
+    keywords.foreach(keyword => {
+      doc.add(new TextField("catch_all", keyword, Field.Store.YES))
+    })
+    topicCategory.foreach(topicCategor => {
+      doc.add(new TextField("catch_all", topicCategor, Field.Store.YES))
+    })
     doc.add(new TextField("catch_all", contactName, Field.Store.YES))
     doc.add(new TextField("catch_all", contactOrg, Field.Store.YES))
     doc.add(new TextField("catch_all", contactEmail, Field.Store.YES))
