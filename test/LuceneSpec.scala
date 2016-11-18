@@ -73,10 +73,10 @@ class LuceneSpec extends PlaySpec with WithLuceneService {
         // result.header.query mustBe "*:*"
       }
     }
-    "find 4 documents for *:* query" in {
+    "find 5 documents for *:* query" in {
       withLuceneService { service =>
         val result = service.query("*:*")
-        result.size mustBe 4
+        result.size mustBe 5
       }
     }
     /* SR hier jetzt schön queries testen :-)
@@ -163,18 +163,18 @@ class LuceneSpec extends PlaySpec with WithLuceneService {
         result.size mustBe 4
       }
     }
-    "find 4 documents in origin:test1" in {
+    "find 5 documents in origin:test1" in {
       withLuceneService { service =>
         val result = service.query("origin:test1")
-        result.size mustBe 4
+        result.size mustBe 5
       }
     }
 
     "find correct entries for BBOX" should {
-      "find 4 documents for [-180,180,90,-90]" in {
+      "find 5 documents for [-180,180,90,-90] (WORLD)" in {
         withLuceneService { service =>
           val result = service.query("*:*", Some("ENVELOPE(-180, 180, 90,-90)"))
-          result.size mustBe 4
+          result.size mustBe 5
         }
       }
 
@@ -219,12 +219,13 @@ class LuceneSpec extends PlaySpec with WithLuceneService {
         }
       }
 
-      "find 1 document for None to 2012-12-20" in {
+      "find 2 documents for None to 2012-12-20" in {
         withLuceneService { service =>
           val toDate = LocalDate.of(2012, 12, 20)
           val result = service.query("*:*", None, None, Some(toDate))
-          result.size mustBe 1
+          result.size mustBe 2
           result.head.fileIdentifier mustBe "23bdd7a3-fd21-daf1-7825-0d3bdc256f9d"
+          result.tail.head.fileIdentifier mustBe "https://data.mfe.govt.nz/table/2508-water-quality-parameters-in-coastal-and-estuarine-environments-2013/"
         }
       }
 
@@ -234,6 +235,16 @@ class LuceneSpec extends PlaySpec with WithLuceneService {
           val result = service.query("*:*", None, Some(fromDate), None)
           result.size mustBe 1
           result.head.fileIdentifier mustBe "294f127b-addb-24d8-0df1-f014032dcd02"
+        }
+      }
+
+      "correctly retrieve document with empty topicCategory" in {
+        // this tests for the BUG from https://github.com/ZGIS/smart-csw-ingester/issues/20
+        withLuceneService { service =>
+          val result = service.query("fileIdentifier:\"https\\://data.mfe.govt.nz/table/2508\\-water\\-quality\\-parameters\\-in\\-coastal\\-and\\-estuarine\\-environments\\-2013/\"", None, None, None)
+          result.size mustBe 1
+          result.head.fileIdentifier mustBe("https://data.mfe.govt.nz/table/2508-water-quality-parameters-in-coastal-and-estuarine-environments-2013/")
+          result.head.topicCategories mustBe List()
         }
       }
     }

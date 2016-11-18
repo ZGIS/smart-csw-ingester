@@ -84,37 +84,7 @@ class MdMetadataSetSpec extends PlaySpec {
     }
   }
 
-  "MD_Metadata_COMPLETE.xml" must {
-    lazy val xmlResource = this.getClass().getResource("MD_Metadata_COMPLETE.xml")
-    lazy val xml = scala.xml.XML.load(xmlResource)
-    lazy val parsedElementOption = MdMetadataSet.fromXml(xml, "linz")
-
-    "parse without errors" in {
-      parsedElementOption mustBe defined
-    }
-
-    "have correctly parsed values" in {
-      val parsedElement = parsedElementOption.get
-      parsedElement.fileIdentifier mustEqual ("294f127b-addb-24d8-0df1-f014032dcd02")
-      parsedElement.dateStampAsIsoString mustEqual ("2015-04-08")
-      parsedElement.title mustEqual ("NZ Beacon Points (Topo, 1:250k)")
-      parsedElement.abstrakt.length mustEqual (599) //dont wanna copy&paste the whole abstract
-      parsedElement.keywords mustEqual (List("New Zealand"))
-      parsedElement.topicCategories mustEqual (List("imageryBaseMapsEarthCover"))
-      parsedElement.contactName mustEqual ("omit, Omit")
-      parsedElement.contactOrg mustEqual ("LINZ - Land Information New Zealand, LINZ - Land Information New Zealand, ANZLIC the Spatial Information Council")
-      parsedElement.contactEmail mustEqual ("info@linz.govt.nz, info@linz.govt.nz")
-      parsedElement.license must endWith ("Released under Creative Commons By")
-      parsedElement.bbox mustEqual (ctx.getShapeFactory.rect(168.360399911, 178.548442791, -46.6603664299,
-        -34.1537940929))
-      parsedElement.origin mustEqual "linz"
-    }
-  }
-
   "Parsing BBoxes" must {
-    lazy val xmlResource = this.getClass().getResource("MD_Metadata_NO_BBOX.xml")
-    lazy val xml = scala.xml.XML.load(xmlResource)
-    lazy val parsedElement = MdMetadataSet.fromXml(xml, "linz")
     lazy val world = ctx.getShapeFactory().rect(-180.0, 180.0, -90.0, 90.0)
 
     "cut off invalid north / south values " in {
@@ -174,19 +144,66 @@ class MdMetadataSetSpec extends PlaySpec {
         MdMetadataSet.bboxFromCoords(-190, -170, -90.0, 90.0) mustEqual dateWrapped
         MdMetadataSet.bboxFromCoords(-190, -170, -90.0, 90.0).getCrossesDateLine mustEqual true
       }
-
     }
-
-    "MD_Metadata_NO_BBOX.xml parse without errors" in {
-      parsedElement mustBe defined
-    }
-
-    "MD_Metadata_NO_BBOX.xml must have WORLD bounding box" in {
-      parsedElement.get.bbox mustEqual world
-    }
-
   }
 
+  "MD_Metadata_COMPLETE.xml" must {
+    lazy val xmlResource = this.getClass().getResource("MD_Metadata_COMPLETE.xml")
+    lazy val xml = scala.xml.XML.load(xmlResource)
+    lazy val parsedElementOption = MdMetadataSet.fromXml(xml, "linz")
+
+    "parse without errors" in {
+      parsedElementOption mustBe defined
+    }
+
+    "have correctly parsed values" in {
+      val parsedElement = parsedElementOption.get
+      parsedElement.fileIdentifier mustEqual ("294f127b-addb-24d8-0df1-f014032dcd02")
+      parsedElement.dateStampAsIsoString mustEqual ("2015-04-08")
+      parsedElement.title mustEqual ("NZ Beacon Points (Topo, 1:250k)")
+      parsedElement.abstrakt.length mustEqual (599) //dont wanna copy&paste the whole abstract
+      parsedElement.keywords mustEqual (List("New Zealand"))
+      parsedElement.topicCategories mustEqual (List("imageryBaseMapsEarthCover"))
+      parsedElement.contactName mustEqual ("omit, Omit")
+      parsedElement.contactOrg mustEqual ("LINZ - Land Information New Zealand, LINZ - Land Information New Zealand, ANZLIC the Spatial Information Council")
+      parsedElement.contactEmail mustEqual ("info@linz.govt.nz, info@linz.govt.nz")
+      parsedElement.license must endWith ("Released under Creative Commons By")
+      parsedElement.bbox mustEqual (ctx.getShapeFactory.rect(168.360399911, 178.548442791, -46.6603664299,
+        -34.1537940929))
+      parsedElement.origin mustEqual "linz"
+    }
+  }
+
+  "MD_Metadata_NO_BBOX.xml" must {
+    lazy val xmlResource = this.getClass().getResource("MD_Metadata_NO_BBOX.xml")
+    lazy val xml = scala.xml.XML.load(xmlResource)
+    lazy val parsedElementOption = MdMetadataSet.fromXml(xml, "linz")
+    lazy val world = ctx.getShapeFactory().rect(-180.0, 180.0, -90.0, 90.0)
+
+    "parse without errors" in {
+      parsedElementOption mustBe defined
+    }
+
+    "must have WORLD bounding box" in {
+      val parsedElement = parsedElementOption.get
+      parsedElement.bbox mustEqual world
+    }
+  }
+
+  "MD_Metadata_NO_TOPICCAT.xml" must {
+    lazy val xmlResource = this.getClass().getResource("MD_Metadata_NO_TOPICCAT.xml")
+    lazy val xml = scala.xml.XML.load(xmlResource)
+    lazy val parsedElementOption = MdMetadataSet.fromXml(xml, "mfe")
+
+    "parse without errors" in {
+      parsedElementOption mustBe defined
+    }
+
+    "have empty topicCategory list" in {
+      val parsedElement = parsedElementOption.get
+      parsedElement.topicCategories mustEqual (List())
+    }
+  }
   //TODO SR delete this. its a leftover from ancient times
   @Ignore def `test: Parsing Notes for Alex describe should`: Unit = {
 
