@@ -65,6 +65,7 @@
           183.823551567,
           -34.4322590833
         ],
+        "linkage":["https://data.linz.govt.nz/layer/796-nz-primary-road-parcels/"],
         "origin": "linz"
       }
     },
@@ -120,6 +121,7 @@
           179.14,
           -30.95
         ],
+        "linkage":["http://portal.smart-project.info/geoserver/horowhenua_ws/wcs"],
         "origin": "smart"
       }
     }

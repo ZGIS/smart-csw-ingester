@@ -29,6 +29,7 @@
     "contactEmail": "info@linz.govt.nz, info@linz.govt.nz",
     "license": "Crown copyright reserved, Released under Creative Commons By with: Following Disclaimers..., Crown copyright reserved, Released under Creative Commons By",
     "bbox": [166.6899599,-47.1549297167,183.823551567,-34.4322590833],
+    "linkage":["https://data.linz.govt.nz/layer/796-nz-primary-road-parcels/"],
     "origin": "linz"
   }
 }
