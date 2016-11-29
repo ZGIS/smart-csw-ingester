@@ -160,7 +160,7 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
           wsClientResponse.xml.label match {
             case "ExceptionReport" => {
               logger.warn(
-                f"Got Exception Response. Text: ${(wsClientResponse.xml \ "Exception" \ "ExceptionText").text}")
+                f"Got XML Exception Response. Text: ${(wsClientResponse.xml \ "Exception" \ "ExceptionText").text}")
               Future.successful(List())
             }
             case "GetRecordsResponse" => {
@@ -247,11 +247,16 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
   private def parseBboxQuery(bboxWkt: String) = {
     logger.debug(s"create query for $bboxWkt")
 
-    val envelopeWkt = "ENVELOPE\\(([-+]?[0-9]*\\.?[0-9]+),([-+]?[0-9]*\\.?[0-9]+),([-+]?[0-9]*\\.?[0-9]+),([-+]?[0-9]*\\.?[0-9]+)\\)".r
+    val envelopeWktRegex =
+      "ENVELOPE\\(([-+]?[0-9]*\\.?[0-9]+),([-+]?[0-9]*\\.?[0-9]+),([-+]?[0-9]*\\.?[0-9]+),([-+]?[0-9]*\\.?[0-9]+)\\)".r
 
     val shape = bboxWkt.replaceAll("\\s", "") match {
-      case envelopeWkt(minX, maxX, minY, maxY) => {
+      case envelopeWktRegex(minX, maxX, minY, maxY) => {
         MdMetadataSet.bboxFromCoords(minX.toFloat, maxX.toFloat, minY.toFloat, maxY.toFloat)
+      }
+      case _ => {
+        logger.warn(s"Could not parse WKT '$bboxWkt'. Using WORLD as query BBOX.");
+        MdMetadataSet.bboxFromCoords(-180, 180, -90, 90);
       }
     }
 

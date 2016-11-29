@@ -193,6 +193,13 @@ class LuceneSpec extends PlaySpec with WithLuceneService {
           result.head.fileIdentifier mustBe "23bdd7a3-fd21-daf1-7825-0d3bdc256f9d"
         }
       }
+
+      "correctly sanatize bogus BBOX in query to WORLD (find 5 results)" in {
+        withLuceneService { service =>
+          val result = service.query("*:*", Some("BOGUSBOX"))
+          result.size mustBe 5
+        }
+      }
     }
 
     "find correct entries for date ranges" should {
