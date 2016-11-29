@@ -46,51 +46,52 @@
 </span>22 <span style=''>import java.time.LocalDate
 </span>23 <span style=''>import javax.inject._
 </span>24 <span style=''>
-</span>25 <span style=''>import models.gmd.{MdMetadataSet, GeoJSONFeatureCollectionWriter}
+</span>25 <span style=''>import models.gmd.{GeoJSONFeatureCollectionWriter, MdMetadataSet}
 </span>26 <span style=''>import play.api.libs.json.Json
 </span>27 <span style=''>import play.api.mvc._
 </span>28 <span style=''>import services.LuceneService
-</span>29 <span style=''>
-</span>30 <span style=''>/**
-</span>31 <span style=''>  * Controller that serves results from Lucene Index
-</span>32 <span style=''>  */
-</span>33 <span style=''>class QueryController @Inject()(luceneService: LuceneService) extends Controller {
-</span>34 <span style=''>
-</span>35 <span style=''>  implicit val geoJSONFeatureCollectionWrite = </span><span style='background: #F0ADAD'>GeoJSONFeatureCollectionWriter</span><span style=''>
-</span>36 <span style=''>  private lazy val DEFAULT_QUERY = </span><span style='background: #F0ADAD'>"*:*"</span><span style=''>
-</span>37 <span style=''>
-</span>38 <span style=''>  /**
-</span>39 <span style=''>    * Action that passes the query from URL to the [[services.LuceneService]].
-</span>40 <span style=''>    *
-</span>41 <span style=''>    * @param query
-</span>42 <span style=''>    * @return
-</span>43 <span style=''>    * @see services.LuceneService
-</span>44 <span style=''>    */
-</span>45 <span style=''>  def query(query: Option[String],
-</span>46 <span style=''>            bboxWkt: Option[String],
-</span>47 <span style=''>            fromDateStr: Option[String],
-</span>48 <span style=''>            toDateStr: Option[String]): Action[AnyContent] = </span><span style='background: #F0ADAD'>Action {
-</span>49 <span style=''></span><span style='background: #F0ADAD'>
-</span>50 <span style=''></span><span style='background: #F0ADAD'>    //TODO SR make tuple expression out of this
-</span>51 <span style=''></span><span style='background: #F0ADAD'>    val fromDate = fromDateStr match {
-</span>52 <span style=''></span><span style='background: #F0ADAD'>      case None => Some(LocalDate.ofEpochDay(0))
-</span>53 <span style=''></span><span style='background: #F0ADAD'>      case _ => Some(MdMetadataSet.dateFromStrings(List(fromDateStr.get)))
-</span>54 <span style=''></span><span style='background: #F0ADAD'>    }
-</span>55 <span style=''></span><span style='background: #F0ADAD'>
-</span>56 <span style=''></span><span style='background: #F0ADAD'>    val toDate = toDateStr match {
-</span>57 <span style=''></span><span style='background: #F0ADAD'>      case None => Some(LocalDate.now())
-</span>58 <span style=''></span><span style='background: #F0ADAD'>      case _ => Some(MdMetadataSet.dateFromStrings(List(toDateStr.get)))
-</span>59 <span style=''></span><span style='background: #F0ADAD'>    }
-</span>60 <span style=''></span><span style='background: #F0ADAD'>
-</span>61 <span style=''></span><span style='background: #F0ADAD'>    //FIXME SR error handling
-</span>62 <span style=''></span><span style='background: #F0ADAD'>    val featureCollection = luceneService.query(query.getOrElse(DEFAULT_QUERY), bboxWkt, fromDate, toDate)
-</span>63 <span style=''></span><span style='background: #F0ADAD'>
-</span>64 <span style=''></span><span style='background: #F0ADAD'>    // TODO AK here we could insert the query string again if needed
-</span>65 <span style=''></span><span style='background: #F0ADAD'>    val resultJson = Json.toJson(featureCollection)
-</span>66 <span style=''></span><span style='background: #F0ADAD'>
-</span>67 <span style=''></span><span style='background: #F0ADAD'>    Ok(resultJson).as(JSON)
-</span>68 <span style=''></span><span style='background: #F0ADAD'>  }</span><span style=''>
-</span>69 <span style=''>}
+</span>29 <span style=''>import utils.ClassnameLogger
+</span>30 <span style=''>
+</span>31 <span style=''>/**
+</span>32 <span style=''>  * Controller that serves results from Lucene Index
+</span>33 <span style=''>  */
+</span>34 <span style=''>class QueryController @Inject()(luceneService: LuceneService) extends Controller with ClassnameLogger {
+</span>35 <span style=''>
+</span>36 <span style=''>  implicit val geoJSONFeatureCollectionWrite = </span><span style='background: #F0ADAD'>GeoJSONFeatureCollectionWriter</span><span style=''>
+</span>37 <span style=''>  private lazy val DEFAULT_QUERY = </span><span style='background: #F0ADAD'>"*:*"</span><span style=''>
+</span>38 <span style=''>
+</span>39 <span style=''>  /**
+</span>40 <span style=''>    * Action that passes the query from URL to the [[services.LuceneService]].
+</span>41 <span style=''>    *
+</span>42 <span style=''>    * @param query
+</span>43 <span style=''>    * @return
+</span>44 <span style=''>    * @see services.LuceneService
+</span>45 <span style=''>    */
+</span>46 <span style=''>  def query(query: Option[String],
+</span>47 <span style=''>            bboxWkt: Option[String],
+</span>48 <span style=''>            fromDateStr: Option[String],
+</span>49 <span style=''>            toDateStr: Option[String]): Action[AnyContent] = </span><span style='background: #F0ADAD'>Action {
+</span>50 <span style=''></span><span style='background: #F0ADAD'>    logger.info(s"Query CSW: ${query.getOrElse("NONE")}")
+</span>51 <span style=''></span><span style='background: #F0ADAD'>    //TODO SR make tuple expression out of this
+</span>52 <span style=''></span><span style='background: #F0ADAD'>    val fromDate = fromDateStr match {
+</span>53 <span style=''></span><span style='background: #F0ADAD'>      case None => Some(LocalDate.ofEpochDay(0))
+</span>54 <span style=''></span><span style='background: #F0ADAD'>      case _ => Some(MdMetadataSet.dateFromStrings(List(fromDateStr.get)))
+</span>55 <span style=''></span><span style='background: #F0ADAD'>    }
+</span>56 <span style=''></span><span style='background: #F0ADAD'>
+</span>57 <span style=''></span><span style='background: #F0ADAD'>    val toDate = toDateStr match {
+</span>58 <span style=''></span><span style='background: #F0ADAD'>      case None => Some(LocalDate.now())
+</span>59 <span style=''></span><span style='background: #F0ADAD'>      case _ => Some(MdMetadataSet.dateFromStrings(List(toDateStr.get)))
+</span>60 <span style=''></span><span style='background: #F0ADAD'>    }
+</span>61 <span style=''></span><span style='background: #F0ADAD'>
+</span>62 <span style=''></span><span style='background: #F0ADAD'>    //FIXME SR error handling
+</span>63 <span style=''></span><span style='background: #F0ADAD'>    val featureCollection = luceneService.query(query.getOrElse(DEFAULT_QUERY), bboxWkt, fromDate, toDate)
+</span>64 <span style=''></span><span style='background: #F0ADAD'>
+</span>65 <span style=''></span><span style='background: #F0ADAD'>    // TODO AK here we could insert the query string again if needed
+</span>66 <span style=''></span><span style='background: #F0ADAD'>    val resultJson = Json.toJson(featureCollection)
+</span>67 <span style=''></span><span style='background: #F0ADAD'>
+</span>68 <span style=''></span><span style='background: #F0ADAD'>    Ok(resultJson).as(JSON)
+</span>69 <span style=''></span><span style='background: #F0ADAD'>  }</span><span style=''>
+</span>70 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -104,15 +105,15 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          35
+          36
         </td>
         <td>
           12
         </td>
         <td>
-          1293
+          1343
           -
-          1323
+          1373
         </td>
         <td>
           Select
@@ -125,15 +126,15 @@
         </td>
       </tr><tr>
         <td>
-          36
+          37
         </td>
         <td>
           13
         </td>
         <td>
-          1359
+          1409
           -
-          1364
+          1414
         </td>
         <td>
           Literal
@@ -146,15 +147,15 @@
         </td>
       </tr><tr>
         <td>
-          48
+          49
         </td>
         <td>
-          34
+          39
         </td>
         <td>
-          1705
+          1755
           -
-          2380
+          2487
         </td>
         <td>
           Apply
@@ -164,6 +165,7 @@
         </td>
         <td style="background: #F0ADAD">
           play.api.mvc.Action.apply({
+  QueryController.this.logger.info(scala.StringContext.apply(&quot;Query CSW: &quot;, &quot;&quot;).s(query.getOrElse[String](&quot;NONE&quot;)));
   val fromDate: Some[java.time.LocalDate] = fromDateStr match {
     case scala.None =&gt; scala.Some.apply[java.time.LocalDate](java.time.LocalDate.ofEpochDay(0L))
     case _ =&gt; scala.Some.apply[java.time.LocalDate](models.gmd.MdMetadataSet.dateFromStrings(immutable.this.List.apply[String](fromDateStr.get)))
@@ -179,36 +181,120 @@
         </td>
       </tr><tr>
         <td>
-          52
+          50
         </td>
         <td>
-          14
+          17
         </td>
         <td>
-          1826
+          1780
           -
-          1849
+          1820
         </td>
         <td>
           Apply
         </td>
         <td>
-          java.time.LocalDate.ofEpochDay
+          scala.StringContext.s
         </td>
         <td style="background: #F0ADAD">
-          java.time.LocalDate.ofEpochDay(0L)
+          scala.StringContext.apply(&quot;Query CSW: &quot;, &quot;&quot;).s(query.getOrElse[String](&quot;NONE&quot;))
         </td>
       </tr><tr>
         <td>
-          52
+          50
+        </td>
+        <td>
+          14
+        </td>
+        <td>
+          1782
+          -
+          1794
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;Query CSW: &quot;
+        </td>
+      </tr><tr>
+        <td>
+          50
+        </td>
+        <td>
+          16
+        </td>
+        <td>
+          1795
+          -
+          1818
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Option.getOrElse
+        </td>
+        <td style="background: #F0ADAD">
+          query.getOrElse[String](&quot;NONE&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          50
+        </td>
+        <td>
+          18
+        </td>
+        <td>
+          1768
+          -
+          1821
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.LoggerLike.info
+        </td>
+        <td style="background: #F0ADAD">
+          QueryController.this.logger.info(scala.StringContext.apply(&quot;Query CSW: &quot;, &quot;&quot;).s(query.getOrElse[String](&quot;NONE&quot;)))
+        </td>
+      </tr><tr>
+        <td>
+          50
         </td>
         <td>
           15
         </td>
         <td>
-          1821
+          1819
           -
-          1850
+          1820
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;&quot;
+        </td>
+      </tr><tr>
+        <td>
+          53
+        </td>
+        <td>
+          20
+        </td>
+        <td>
+          1928
+          -
+          1957
         </td>
         <td>
           Apply
@@ -224,75 +310,33 @@
           53
         </td>
         <td>
-          17
-        </td>
-        <td>
-          1902
-          -
-          1923
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.collection.immutable.List.apply
-        </td>
-        <td style="background: #F0ADAD">
-          immutable.this.List.apply[String](fromDateStr.get)
-        </td>
-      </tr><tr>
-        <td>
-          53
-        </td>
-        <td>
-          16
-        </td>
-        <td>
-          1907
-          -
-          1922
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          scala.Option.get
-        </td>
-        <td style="background: #F0ADAD">
-          fromDateStr.get
-        </td>
-      </tr><tr>
-        <td>
-          53
-        </td>
-        <td>
           19
         </td>
         <td>
-          1867
+          1933
           -
-          1925
+          1956
         </td>
         <td>
           Apply
         </td>
         <td>
-          scala.Some.apply
+          java.time.LocalDate.ofEpochDay
         </td>
         <td style="background: #F0ADAD">
-          scala.Some.apply[java.time.LocalDate](models.gmd.MdMetadataSet.dateFromStrings(immutable.this.List.apply[String](fromDateStr.get)))
+          java.time.LocalDate.ofEpochDay(0L)
         </td>
       </tr><tr>
         <td>
-          53
+          54
         </td>
         <td>
-          18
+          23
         </td>
         <td>
-          1872
+          1979
           -
-          1924
+          2031
         </td>
         <td>
           Apply
@@ -305,36 +349,78 @@
         </td>
       </tr><tr>
         <td>
-          57
+          54
         </td>
         <td>
-          20
+          22
         </td>
         <td>
-          1992
+          2009
           -
-          2007
+          2030
         </td>
         <td>
           Apply
         </td>
         <td>
-          java.time.LocalDate.now
+          scala.collection.immutable.List.apply
         </td>
         <td style="background: #F0ADAD">
-          java.time.LocalDate.now()
+          immutable.this.List.apply[String](fromDateStr.get)
         </td>
       </tr><tr>
         <td>
-          57
+          54
         </td>
         <td>
           21
         </td>
         <td>
-          1987
+          2014
           -
-          2008
+          2029
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.Option.get
+        </td>
+        <td style="background: #F0ADAD">
+          fromDateStr.get
+        </td>
+      </tr><tr>
+        <td>
+          54
+        </td>
+        <td>
+          24
+        </td>
+        <td>
+          1974
+          -
+          2032
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Some.apply
+        </td>
+        <td style="background: #F0ADAD">
+          scala.Some.apply[java.time.LocalDate](models.gmd.MdMetadataSet.dateFromStrings(immutable.this.List.apply[String](fromDateStr.get)))
+        </td>
+      </tr><tr>
+        <td>
+          58
+        </td>
+        <td>
+          26
+        </td>
+        <td>
+          2094
+          -
+          2115
         </td>
         <td>
           Apply
@@ -350,75 +436,33 @@
           58
         </td>
         <td>
-          23
-        </td>
-        <td>
-          2060
-          -
-          2079
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.collection.immutable.List.apply
-        </td>
-        <td style="background: #F0ADAD">
-          immutable.this.List.apply[String](toDateStr.get)
-        </td>
-      </tr><tr>
-        <td>
-          58
-        </td>
-        <td>
-          22
-        </td>
-        <td>
-          2065
-          -
-          2078
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          scala.Option.get
-        </td>
-        <td style="background: #F0ADAD">
-          toDateStr.get
-        </td>
-      </tr><tr>
-        <td>
-          58
-        </td>
-        <td>
           25
         </td>
         <td>
-          2025
+          2099
           -
-          2081
+          2114
         </td>
         <td>
           Apply
         </td>
         <td>
-          scala.Some.apply
+          java.time.LocalDate.now
         </td>
         <td style="background: #F0ADAD">
-          scala.Some.apply[java.time.LocalDate](models.gmd.MdMetadataSet.dateFromStrings(immutable.this.List.apply[String](toDateStr.get)))
+          java.time.LocalDate.now()
         </td>
       </tr><tr>
         <td>
-          58
+          59
         </td>
         <td>
-          24
+          29
         </td>
         <td>
-          2030
+          2137
           -
-          2080
+          2187
         </td>
         <td>
           Apply
@@ -431,36 +475,78 @@
         </td>
       </tr><tr>
         <td>
-          62
+          59
         </td>
         <td>
-          26
+          28
         </td>
         <td>
           2167
           -
-          2197
+          2186
         </td>
         <td>
           Apply
         </td>
         <td>
-          scala.Option.getOrElse
+          scala.collection.immutable.List.apply
         </td>
         <td style="background: #F0ADAD">
-          query.getOrElse[String](QueryController.this.DEFAULT_QUERY)
+          immutable.this.List.apply[String](toDateStr.get)
         </td>
       </tr><tr>
         <td>
-          62
+          59
         </td>
         <td>
           27
         </td>
         <td>
-          2147
+          2172
           -
-          2225
+          2185
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.Option.get
+        </td>
+        <td style="background: #F0ADAD">
+          toDateStr.get
+        </td>
+      </tr><tr>
+        <td>
+          59
+        </td>
+        <td>
+          30
+        </td>
+        <td>
+          2132
+          -
+          2188
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Some.apply
+        </td>
+        <td style="background: #F0ADAD">
+          scala.Some.apply[java.time.LocalDate](models.gmd.MdMetadataSet.dateFromStrings(immutable.this.List.apply[String](toDateStr.get)))
+        </td>
+      </tr><tr>
+        <td>
+          63
+        </td>
+        <td>
+          32
+        </td>
+        <td>
+          2254
+          -
+          2332
         </td>
         <td>
           Apply
@@ -473,15 +559,36 @@
         </td>
       </tr><tr>
         <td>
-          65
+          63
         </td>
         <td>
-          29
+          31
         </td>
         <td>
-          2317
+          2274
           -
-          2347
+          2304
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Option.getOrElse
+        </td>
+        <td style="background: #F0ADAD">
+          query.getOrElse[String](QueryController.this.DEFAULT_QUERY)
+        </td>
+      </tr><tr>
+        <td>
+          66
+        </td>
+        <td>
+          34
+        </td>
+        <td>
+          2424
+          -
+          2454
         </td>
         <td>
           ApplyToImplicitArgs
@@ -494,15 +601,15 @@
         </td>
       </tr><tr>
         <td>
-          65
+          66
         </td>
         <td>
-          28
+          33
         </td>
         <td>
-          2328
+          2435
           -
-          2328
+          2435
         </td>
         <td>
           Select
@@ -515,57 +622,15 @@
         </td>
       </tr><tr>
         <td>
-          67
+          68
         </td>
         <td>
-          32
+          35
         </td>
         <td>
-          2371
+          2462
           -
-          2375
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          play.api.http.ContentTypes.JSON
-        </td>
-        <td style="background: #F0ADAD">
-          QueryController.this.JSON
-        </td>
-      </tr><tr>
-        <td>
-          67
-        </td>
-        <td>
-          31
-        </td>
-        <td>
-          2355
-          -
-          2355
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          play.api.http.DefaultWriteables.writeableOf_JsValue
-        </td>
-        <td style="background: #F0ADAD">
-          http.this.Writeable.writeableOf_JsValue(mvc.this.Codec.utf_8)
-        </td>
-      </tr><tr>
-        <td>
-          67
-        </td>
-        <td>
-          30
-        </td>
-        <td>
-          2355
-          -
-          2355
+          2462
         </td>
         <td>
           Select
@@ -578,15 +643,15 @@
         </td>
       </tr><tr>
         <td>
-          67
+          68
         </td>
         <td>
-          33
+          38
         </td>
         <td>
-          2353
+          2460
           -
-          2376
+          2483
         </td>
         <td>
           Apply
@@ -596,6 +661,48 @@
         </td>
         <td style="background: #F0ADAD">
           QueryController.this.Ok.apply[play.api.libs.json.JsValue](resultJson)(http.this.Writeable.writeableOf_JsValue(mvc.this.Codec.utf_8)).as(QueryController.this.JSON)
+        </td>
+      </tr><tr>
+        <td>
+          68
+        </td>
+        <td>
+          37
+        </td>
+        <td>
+          2478
+          -
+          2482
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          play.api.http.ContentTypes.JSON
+        </td>
+        <td style="background: #F0ADAD">
+          QueryController.this.JSON
+        </td>
+      </tr><tr>
+        <td>
+          68
+        </td>
+        <td>
+          36
+        </td>
+        <td>
+          2462
+          -
+          2462
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.api.http.DefaultWriteables.writeableOf_JsValue
+        </td>
+        <td style="background: #F0ADAD">
+          http.this.Writeable.writeableOf_JsValue(mvc.this.Codec.utf_8)
         </td>
       </tr>
     </table>
