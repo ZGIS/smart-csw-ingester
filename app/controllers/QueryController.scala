@@ -22,15 +22,16 @@ package controllers
 import java.time.LocalDate
 import javax.inject._
 
-import models.gmd.{MdMetadataSet, GeoJSONFeatureCollectionWriter}
+import models.gmd.{GeoJSONFeatureCollectionWriter, MdMetadataSet}
 import play.api.libs.json.Json
 import play.api.mvc._
 import services.LuceneService
+import utils.ClassnameLogger
 
 /**
   * Controller that serves results from Lucene Index
   */
-class QueryController @Inject()(luceneService: LuceneService) extends Controller {
+class QueryController @Inject()(luceneService: LuceneService) extends Controller with ClassnameLogger {
 
   implicit val geoJSONFeatureCollectionWrite = GeoJSONFeatureCollectionWriter
   private lazy val DEFAULT_QUERY = "*:*"
@@ -46,7 +47,7 @@ class QueryController @Inject()(luceneService: LuceneService) extends Controller
             bboxWkt: Option[String],
             fromDateStr: Option[String],
             toDateStr: Option[String]): Action[AnyContent] = Action {
-
+    logger.info(s"Query CSW: ${query.getOrElse("NONE")}")
     //TODO SR make tuple expression out of this
     val fromDate = fromDateStr match {
       case None => Some(LocalDate.ofEpochDay(0))

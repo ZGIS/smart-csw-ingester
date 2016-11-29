@@ -61,6 +61,7 @@ case class MdMetadataSet(fileIdentifier: String,
                          contactEmail: String,
                          license: String,
                          bbox: Rectangle,
+                         linkage: List[String],
                          origin: String) extends ClassnameLogger {
   require(!fileIdentifier.trim.isEmpty, "FileIdentifier was empty")
 
@@ -77,6 +78,7 @@ case class MdMetadataSet(fileIdentifier: String,
         |${contactEmail},
         |${license},
         |${bboxAsWkt},
+        |${linkage},
         |${origin})
      """.stripMargin.replaceAll("\n", " ")
   }
@@ -129,8 +131,10 @@ case class MdMetadataSet(fileIdentifier: String,
     doc.add(new TextField("contactOrg", contactOrg, Field.Store.YES))
     doc.add(new TextField("contactEmail", contactEmail, Field.Store.YES))
     doc.add(new TextField("license", license, Field.Store.YES))
-
     doc.add(new TextField("bboxText", bboxAsWkt, Field.Store.YES))
+    linkage.foreach(link => {
+      doc.add(new TextField("linkage", link, Field.Store.YES))
+    })
 
     val ctx = SpatialContext.GEO
     val bboxStrategy: BBoxStrategy = BBoxStrategy.newInstance(ctx, "bbox")
@@ -203,6 +207,7 @@ object MdMetadataSet extends ClassnameLogger {
             contactEmailFromXml(nodeSeq),
             licenseFromXml(nodeSeq),
             bboxFromXml(nodeSeq),
+            linkageFromXml(nodeSeq),
             origin
           ))
         case _ =>
@@ -235,6 +240,7 @@ object MdMetadataSet extends ClassnameLogger {
       contactEmail = doc.get("contactEmail"),
       license = doc.get("license"),
       bbox = MdMetadataSet.bboxFromWkt(doc.get("bboxText")),
+      linkage = doc.getValues("linkage").toList,
       origin = doc.get("origin")
     )
   }
@@ -377,6 +383,16 @@ object MdMetadataSet extends ClassnameLogger {
     List(resConstraints, metaConstraints).mkString(", ")
   }
 
+  def linkageFromXml(nodeSeq: NodeSeq): List[String] = {
+    (nodeSeq \\ "MD_Metadata" \\ "distributionInfo" \\ "MD_Distribution" \\ "transferOptions"
+      \\ "MD_DigitalTransferOptions" \\ "onLine" \\ "CI_OnlineResource").map(
+      elem => {
+        logger.debug((elem \\ "linkage" \\ "URL").text.trim);
+        (elem \\ "linkage" \\ "URL").text.trim
+      }
+    ).toList
+  }
+
   /**
     * tries to naively prune the provided coordinates into good shape for WSG84
     * TODO DATE Line Wraps :-( ?
@@ -442,7 +458,7 @@ object MdMetadataSet extends ClassnameLogger {
     val (prunedSouth, prunedNorth) = pruneLatitudeValues(south, north)
 
     val rect = ctx.getShapeFactory().rect(prunedWest, prunedEast, prunedSouth, prunedNorth)
-    logger.debug("PARSED RECT: " + rect.toString)
+    logger.debug(s"parsed rect ${rect.toString}")
     rect
   }
 
@@ -479,6 +495,7 @@ object MdMetadataSet extends ClassnameLogger {
       val south = southText.toDoubleWithDefault(minLat)
       val north = northText.toDoubleWithDefault(maxLat)
       // Rectangle rect(double minX, double maxX, double minY, double maxY);
+      logger.debug(s"parsed bbox (${west}, ${east}, ${south}, ${north})")
       bboxFromCoords(west, east, south, north)
     }
     else {
@@ -564,6 +581,7 @@ object MdMetadataSetWriter extends Writes[MdMetadataSet] with ClassnameLogger {
         JsNumber(gmd.bbox.getMaxX()),
         JsNumber(gmd.bbox.getMaxY()))
       ),
+      "linkage" -> gmd.linkage,
       "origin" -> gmd.origin
     )
 
