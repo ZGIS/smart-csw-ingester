@@ -1,68 +1,129 @@
 {
-    "type": "FeatureCollection",
-    "crs": {
-        "type": "name",
-        "properties": {
-            "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
-        }
+  "type": "FeatureCollection",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "bbox": [
+    160,
+    -52.51,
+    183.823551567,
+    -30.95
+  ],
+  "count": 2,
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              166.6899599,
+              -47.1549297167
+            ],
+            [
+              166.6899599,
+              -34.4322590833
+            ],
+            [
+              183.823551567,
+              -34.4322590833
+            ],
+            [
+              183.823551567,
+              -47.1549297167
+            ],
+            [
+              166.6899599,
+              -47.1549297167
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "fileIdentifier": "23bdd7a3-fd21-daf1-7825-0d3bdc256f9d",
+        "dateStamp": "2012-12-20",
+        "title": "NZ Primary Road Parcels",
+        "abstrakt": "This layer provides the **current** road parcel polygons with ...",
+        "keywords": [
+          "New Zealand"
+        ],
+        "topicCategories": [
+          "boundaries",
+          "planningCadastre"
+        ],
+        "contactName": "omit, Omit",
+        "contactOrg": "LINZ - Land Information New Zealand, LINZ - Land Information New Zealand, ANZLIC the Spatial Information Council",
+        "contactEmail": "info@linz.govt.nz, info@linz.govt.nz",
+        "license": "Crown copyright reserved, Released under Creative Commons By with: Following Disclaimers..., Crown copyright reserved, Released under Creative Commons By",
+        "bbox": [
+          166.6899599,
+          -47.1549297167,
+          183.823551567,
+          -34.4322590833
+        ],
+        "linkage":["https://data.linz.govt.nz/layer/796-nz-primary-road-parcels/"],
+        "origin": "linz"
+      }
     },
-    "bbox": [160,-176.176448433,-30.95,-52.51],
-    "count" : 2,
-    "features": [{
-        "type": "Feature",
-        "geometry": {
-            "type": "Polygon",
-            "coordinates": [
-                [
-                    [166.68996, -47.15493],
-                    [166.68996,-34.432259],
-                    [-176.176448,-34.432259],
-                    [-176.176448,-47.15493],
-                    [166.68996,-47.15493]
-                ]
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              160,
+              -52.51
+            ],
+            [
+              160,
+              -30.95
+            ],
+            [
+              179.14,
+              -30.95
+            ],
+            [
+              179.14,
+              -52.51
+            ],
+            [
+              160,
+              -52.51
             ]
-        },
-        "properties": {
-            "fileIdentifier": "23bdd7a3-fd21-daf1-7825-0d3bdc256f9d",
-            "dateStamp": "2012-12-20",
-            "title": "NZ Primary Road Parcels",
-            "abstrakt": "This layer provides the **current** road parcel polygons with ...",
-            "keywords": ["New Zealand"],
-            "topicCategory": ["boundaries", "planningCadastre"],
-            "contactName": "omit, Omit",
-            "contactOrg": "LINZ - Land Information New Zealand, LINZ - Land Information New Zealand, ANZLIC the Spatial Information Council",
-            "contactEmail": "info@linz.govt.nz, info@linz.govt.nz",
-            "license": "Crown copyright reserved, Released under Creative Commons By with: Following Disclaimers..., Crown copyright reserved, Released under Creative Commons By",
-            "bbox": [166.6899599,-176.176448433,-34.4322590833,-47.1549297167],
-            "origin": "linz"
-        }
-    }, {
-        "type": "Feature",
-        "geometry": {
-            "type": "Polygon",
-            "coordinates": [
-                [
-                    [160,-52.51],
-                    [160,-30.95],
-                    [179.14,-30.95],
-                    [179.14,-52.51],
-                    [160,-52.51]
-                ]
-            ]
-        },
-        "properties": {
-            "fileIdentifier": "urn:uuid:2c5f1309-d721-4299-88bf-e462c577b99a-horowhenua_ws:ewt_nzprj_new",
-            "dateStamp": "2016-05-17",
-            "title": "ewt_nzprj_new",
-            "abstrakt": "Generated from GeoTIFF",
-            "keywords": ["WCS", "GeoTIFF", "ewt_nzprj_new"],
-            "topicCategory": ["climatologyMeteorologyAtmosphere"],
-            "contactName": "Rogier Westerhoff",
-            "contactOrg": "GNS Science",
-            "contactEmail": "r.westerhoff@gns.cri.nz",
-            "license": ", ",
-            "bbox": [160,179.14,-30.95,-52.51],
-            "origin": "smart"
-        }
-    }]
+          ]
+        ]
+      },
+      "properties": {
+        "fileIdentifier": "urn:uuid:2c5f1309-d721-4299-88bf-e462c577b99a-horowhenua_ws:ewt_nzprj_new",
+        "dateStamp": "2016-05-17",
+        "title": "ewt_nzprj_new",
+        "abstrakt": "Generated from GeoTIFF",
+        "keywords": [
+          "WCS",
+          "GeoTIFF",
+          "ewt_nzprj_new"
+        ],
+        "topicCategories": [
+          "climatologyMeteorologyAtmosphere"
+        ],
+        "contactName": "Rogier Westerhoff",
+        "contactOrg": "GNS Science",
+        "contactEmail": "r.westerhoff@gns.cri.nz",
+        "license": ", ",
+        "bbox": [
+          160,
+          -52.51,
+          179.14,
+          -30.95
+        ],
+        "linkage":["http://portal.smart-project.info/geoserver/horowhenua_ws/wcs"],
+        "origin": "smart"
+      }
+    }
+  ]
 }

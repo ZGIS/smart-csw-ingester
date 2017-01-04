@@ -47,8 +47,8 @@ import scala.concurrent.{Await, Future}
 
 trait IndexService {
   //FIXME SR find a good place for this
-  //THE ARGUMENT ORDER IS ENVELOPE(minX, maxX, maxY(!!!WTF?), minY)
-  lazy val WORLD_WKT = "ENVELOPE(-180, 180, 90, -90)"
+  lazy val SPATIAL_CONTEXT = SpatialContext.GEO
+  lazy val WORLD_WKT = SPATIAL_CONTEXT.getFormats().getWriter(ShapeIO.WKT).toString(SpatialContext.GEO.getWorldBounds)
 
   def buildIndex(): Unit
 
@@ -161,7 +161,7 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
           wsClientResponse.xml.label match {
             case "ExceptionReport" => {
               logger.warn(
-                f"Got Exception Response. Text: ${(wsClientResponse.xml \ "Exception" \ "ExceptionText").text}")
+                f"Got XML Exception Response. Text: ${(wsClientResponse.xml \ "Exception" \ "ExceptionText").text}")
               Future.successful(List())
             }
             case "GetRecordsResponse" => {
@@ -248,12 +248,21 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
   private def parseBboxQuery(bboxWkt: String) = {
     logger.debug(s"create query for $bboxWkt")
 
-    val ctx = SpatialContext.GEO
-    val shpReader = ctx.getFormats().getReader(ShapeIO.WKT)
-    val shape = shpReader.read(bboxWkt)
+    val envelopeWktRegex =
+      "ENVELOPE\\(([-+]?[0-9]*\\.?[0-9]+),([-+]?[0-9]*\\.?[0-9]+),([-+]?[0-9]*\\.?[0-9]+),([-+]?[0-9]*\\.?[0-9]+)\\)".r
 
-    logger.error(s"parsed shape is ${shape.toString}")
-    val bboxStrategy: BBoxStrategy = BBoxStrategy.newInstance(ctx, "bbox")
+    val shape = bboxWkt.replaceAll("\\s", "") match {
+      case envelopeWktRegex(minX, maxX, minY, maxY) => {
+        MdMetadataSet.bboxFromCoords(minX.toFloat, maxX.toFloat, minY.toFloat, maxY.toFloat)
+      }
+      case _ => {
+        logger.warn(s"Could not parse WKT '$bboxWkt'. Using WORLD as query BBOX.");
+        MdMetadataSet.bboxFromCoords(-180, 180, -90, 90);
+      }
+    }
+
+    logger.debug(s"parsed shape is ${shape.toString}")
+    val bboxStrategy: BBoxStrategy = BBoxStrategy.newInstance(SPATIAL_CONTEXT, "bbox")
     bboxStrategy.makeQuery(new SpatialArgs(SpatialOperation.IsWithin, shape))
   }
 

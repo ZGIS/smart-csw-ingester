@@ -42,7 +42,7 @@ import scala.xml.NodeSeq
   * @param title          title of the record
   * @param abstrakt       abstract of the record
   * @param keywords       list of keywords for the record
-  * @param topicCategory  list of ISO/ANZLIC topic categories of the record
+  * @param topicCategories  list of ISO/ANZLIC topic categories of the record
   * @param contactName    contact name for the record or dataset
   * @param contactOrg     cantact organisation for the record or dataset
   * @param contactEmail   contact email for the record or dataset
@@ -55,12 +55,13 @@ case class MdMetadataSet(fileIdentifier: String,
                          title: String,
                          abstrakt: String,
                          keywords: List[String],
-                         topicCategory: List[String],
+                         topicCategories: List[String],
                          contactName: String,
                          contactOrg: String,
                          contactEmail: String,
                          license: String,
                          bbox: Rectangle,
+                         linkage: List[String],
                          origin: String) extends ClassnameLogger {
   require(!fileIdentifier.trim.isEmpty, "FileIdentifier was empty")
 
@@ -71,12 +72,13 @@ case class MdMetadataSet(fileIdentifier: String,
         |${title},
         |${abstrakt},
         |keywords(${keywords.mkString(", ")}),
-        |topicCategory(${topicCategory.mkString(", ")}),
+        |topicCategory(${topicCategories.mkString(", ")}),
         |${contactName},
         |${contactOrg},
         |${contactEmail},
         |${license},
         |${bboxAsWkt},
+        |${linkage},
         |${origin})
      """.stripMargin.replaceAll("\n", " ")
   }
@@ -117,16 +119,22 @@ case class MdMetadataSet(fileIdentifier: String,
     val longDate = dateStamp.toEpochDay
     doc.add(new LongPoint("dateStamp", longDate))
 
-    //TODO SR normally one would store this as multiple values on the same fieldname
-    doc.add(new TextField("keywords", keywords.mkString(" "), Field.Store.YES))
-    doc.add(new TextField("topicCategory", topicCategory.mkString(" "), Field.Store.YES))
+    keywords.foreach(keyword => {
+      doc.add(new TextField("keywords", keyword, Field.Store.YES))
+    })
+
+    topicCategories.foreach(topicCategory => {
+      doc.add(new TextField("topicCategory", topicCategory, Field.Store.YES))
+    })
 
     doc.add(new TextField("contactName", contactName, Field.Store.YES))
     doc.add(new TextField("contactOrg", contactOrg, Field.Store.YES))
     doc.add(new TextField("contactEmail", contactEmail, Field.Store.YES))
     doc.add(new TextField("license", license, Field.Store.YES))
-
     doc.add(new TextField("bboxText", bboxAsWkt, Field.Store.YES))
+    linkage.foreach(link => {
+      doc.add(new TextField("linkage", link, Field.Store.YES))
+    })
 
     val ctx = SpatialContext.GEO
     val bboxStrategy: BBoxStrategy = BBoxStrategy.newInstance(ctx, "bbox")
@@ -139,8 +147,12 @@ case class MdMetadataSet(fileIdentifier: String,
     doc.add(new TextField("catch_all", fileIdentifier, Field.Store.YES))
     doc.add(new TextField("catch_all", title, Field.Store.YES))
     doc.add(new TextField("catch_all", abstrakt, Field.Store.YES))
-    doc.add(new TextField("catch_all", keywords.mkString(" "), Field.Store.YES))
-    doc.add(new TextField("catch_all", topicCategory.mkString(" "), Field.Store.YES))
+    keywords.foreach(keyword => {
+      doc.add(new TextField("catch_all", keyword, Field.Store.YES))
+    })
+    topicCategories.foreach(topicCategor => {
+      doc.add(new TextField("catch_all", topicCategor, Field.Store.YES))
+    })
     doc.add(new TextField("catch_all", contactName, Field.Store.YES))
     doc.add(new TextField("catch_all", contactOrg, Field.Store.YES))
     doc.add(new TextField("catch_all", contactEmail, Field.Store.YES))
@@ -156,11 +168,11 @@ case class MdMetadataSet(fileIdentifier: String,
   */
 object MdMetadataSet extends ClassnameLogger {
   private lazy val ctx = SpatialContext.GEO
-  private lazy val shpReader = ctx.getFormats().getReader(ShapeIO.WKT)
-  val minLon = -180.0
-  val maxLon = 180.0
-  val minLat = -90.0
-  val maxLat = 90.0
+  private lazy val wktReader = ctx.getFormats().getReader(ShapeIO.WKT)
+  private lazy val minLon = ctx.getWorldBounds.getMinX
+  private lazy val maxLon = ctx.getWorldBounds.getMaxX
+  private lazy val minLat = ctx.getWorldBounds.getMinY
+  private lazy val maxLat = ctx.getWorldBounds.getMaxY
 
   /**
     * Creates [[MdMetadataSet]] from MD_Medatada XML
@@ -195,6 +207,7 @@ object MdMetadataSet extends ClassnameLogger {
             contactEmailFromXml(nodeSeq),
             licenseFromXml(nodeSeq),
             bboxFromXml(nodeSeq),
+            linkageFromXml(nodeSeq),
             origin
           ))
         case _ =>
@@ -220,13 +233,14 @@ object MdMetadataSet extends ClassnameLogger {
       dateStamp = MdMetadataSet.dateFromStrings(List(doc.get("dateStampText"))),
       title = doc.get("title"),
       abstrakt = doc.get("abstrakt"),
-      keywords = doc.get("keywords").split(",").toList,
-      topicCategory = doc.get("topicCategory").split(",").toList,
+      keywords = doc.getValues("keywords").toList,
+      topicCategories = doc.getValues("topicCategory").toList,
       contactName = doc.get("contactName"),
       contactOrg = doc.get("contactOrg"),
       contactEmail = doc.get("contactEmail"),
       license = doc.get("license"),
       bbox = MdMetadataSet.bboxFromWkt(doc.get("bboxText")),
+      linkage = doc.getValues("linkage").toList,
       origin = doc.get("origin")
     )
   }
@@ -252,7 +266,8 @@ object MdMetadataSet extends ClassnameLogger {
       DateTimeFormatter.BASIC_ISO_DATE, //20111203
       DateTimeFormatter.ISO_OFFSET_DATE, //2011-12-03+01:00
       DateTimeFormatter.ISO_OFFSET_DATE_TIME //2011-12-03T10:15:30+01:00
-      // DateTimeFormatter.ISO_INSTANT //2011-12-03T10:15:30Z - this cannot be parsed into LocalDate but only LocalDateTime?
+      //TODO SR DateTimeFormatter.ISO_INSTANT cannot be parsed into LocalDate but only LocalDateTime?
+      // DateTimeFormatter.ISO_INSTANT //2011-12-03T10:15:30Z
     )
 
     val datesList = dateStrings.filter(!_.trim.isEmpty).flatMap(//iterate over parameter list
@@ -368,6 +383,16 @@ object MdMetadataSet extends ClassnameLogger {
     List(resConstraints, metaConstraints).mkString(", ")
   }
 
+  def linkageFromXml(nodeSeq: NodeSeq): List[String] = {
+    (nodeSeq \\ "MD_Metadata" \\ "distributionInfo" \\ "MD_Distribution" \\ "transferOptions"
+      \\ "MD_DigitalTransferOptions" \\ "onLine" \\ "CI_OnlineResource").map(
+      elem => {
+        logger.debug((elem \\ "linkage" \\ "URL").text.trim);
+        (elem \\ "linkage" \\ "URL").text.trim
+      }
+    ).toList
+  }
+
   /**
     * tries to naively prune the provided coordinates into good shape for WSG84
     * TODO DATE Line Wraps :-( ?
@@ -379,46 +404,42 @@ object MdMetadataSet extends ClassnameLogger {
     * @return tuple of viable coordinates in WSG84
     */
   def pruneLongitudeValues(west: Double, east: Double): (Double, Double) = {
-    val result = List(west, east).map({ (value: Double) =>
-      value match {
-        case n if (math.abs(n) - 180) > 0 => {
-          //if val > 180 (outside geo box)
-          val result = math.signum(n) * 180 //cut it down to +/-180
-          logger.warn(f"cutting value: $n to $result")
-          result
+    if (math.abs(west - east) > math.abs(minLon - maxLon)) {
+      (minLon, maxLon) //in case the rectangle spans more than 360 deg make it world
+    }
+    else {
+      val result = List(west, east).map({ (value: Double) =>
+        value match {
+          case n if value >= minLon && value <= maxLon => n
+          case n if math.abs(value % math.abs(minLon - maxLon)) < maxLon => {
+            val result = value % maxLon
+            logger.warn(f"changing longitude value $n to $result")
+            result
+          }
+          case _ => {
+            val result = math.signum(value) * minLon + (value % maxLon)
+            logger.warn(f"changing longitude value $value to $result")
+            result
+          }
         }
-        case _ => value
-      }
-    })
-    (result(0), result(1))
+      })
+      (result(0), result(1))
+    }
+
+
   }
 
   /**
-    * tries to naively prune the provided coordinates into good shape for WSG84
+    * Cuts off latitudes outside of minLax / maxLat and swaps if south > north
     *
     * @param south most southern value / minY
     * @param north most northern value / maxY
-    * @return tuple of viable coordinates in WSG84
+    * @return tuple of viable coordinates
     */
   def pruneLatitudeValues(south: Double, north: Double): (Double, Double) = {
-    val result = List(south, north).map({ (value: Double) =>
-      value match {
-        case n if (math.abs(n) - 90) > 0 => {
-          //if val > 90 (outside geo box)
-          val result = math.signum(n) * 90 //cut it down to +/-90
-          logger.warn(f"cutting value: $n to $result")
-          result
-        }
-        case _ => value
-      }
-    })
-    if (result(0) > result(1)) {
-      logger.warn(s"South ${result(0)} was bigger than North(${result(1)}). Swapping.")
-      (result(1), result(0))
-    }
-    else {
-      (result(0), result(1))
-    }
+    //min/max in tuples swaps north/south if necessary,
+    (Math.max(minLat, Math.min(south, north)),
+      Math.min(maxLat, Math.max(south, north)))
   }
 
   /**
@@ -437,7 +458,7 @@ object MdMetadataSet extends ClassnameLogger {
     val (prunedSouth, prunedNorth) = pruneLatitudeValues(south, north)
 
     val rect = ctx.getShapeFactory().rect(prunedWest, prunedEast, prunedSouth, prunedNorth)
-    logger.debug("PARSED RECT: " + rect.toString)
+    logger.debug(s"parsed rect ${rect.toString}")
     rect
   }
 
@@ -450,9 +471,9 @@ object MdMetadataSet extends ClassnameLogger {
   //TODO SR move to StringUtils?
   def bboxFromWkt(envelope: String): Rectangle = {
     // https://github.com/locationtech/spatial4j/blob/master/FORMATS.md beware, typo?
-    // Rectangle ENVELOPE(1, 2, 4, 3) minX, maxX, maxY, minY)
+    // Rectangle ENVELOPE(1, 2, 4, 3) (minX, maxX, maxY, minY)
     // https://github.com/locationtech/spatial4j/blob/master/src/main/java/org/locationtech/spatial4j/io/WKTReader.java#L245
-    shpReader.read(envelope).asInstanceOf[Rectangle]
+    wktReader.read(envelope).asInstanceOf[Rectangle]
   }
 
   /**
@@ -474,6 +495,7 @@ object MdMetadataSet extends ClassnameLogger {
       val south = southText.toDoubleWithDefault(minLat)
       val north = northText.toDoubleWithDefault(maxLat)
       // Rectangle rect(double minX, double maxX, double minY, double maxY);
+      logger.debug(s"parsed bbox (${west}, ${east}, ${south}, ${north})")
       bboxFromCoords(west, east, south, north)
     }
     else {
@@ -503,7 +525,37 @@ object MdMetadataSetWriter extends Writes[MdMetadataSet] with ClassnameLogger {
     */
   def getJsGeom(gmd: MdMetadataSet): JsValue = {
     val geometry = jsWriter.toString(gmd.bbox)
-    Json.parse(geometry)
+
+    if (gmd.bbox.getCrossesDateLine) {
+      val newCoordinates = Json.arr(Json.arr(
+        Json.arr(gmd.bbox.getMinX, gmd.bbox.getMinY), //SW
+        Json.arr(gmd.bbox.getMinX, gmd.bbox.getMaxY), //NW
+        Json.arr(gmd.bbox.getMaxX+360, gmd.bbox.getMaxY), //NE
+        Json.arr(gmd.bbox.getMaxX+360, gmd.bbox.getMinY), //NW
+        Json.arr(gmd.bbox.getMinX, gmd.bbox.getMinY)  //SW
+      ))
+      Json.obj("type" -> "Polygon", "coordinates" -> newCoordinates)
+    }
+    else {
+      Json.parse(geometry)
+    }
+  }
+
+  /**
+    * if bbox crosses dateline (east < west) then correct this for OL3
+ *
+    * @param bbox
+    * @return
+    */
+  def correctBbox(bbox: JsArray): JsArray = {
+    val west = bbox(0).asOpt[Double].get
+    val east = if (bbox(0).asOpt[Double].get > bbox(2).asOpt[Double].get) {
+                 bbox(2).asOpt[Double].get + 360
+               }
+               else {
+                 bbox(2).asOpt[Double].get
+               }
+    Json.arr(west, bbox(1).get, east, bbox(3).get)
   }
 
   /**
@@ -517,18 +569,19 @@ object MdMetadataSetWriter extends Writes[MdMetadataSet] with ClassnameLogger {
       "title" -> gmd.title,
       "abstrakt" -> gmd.abstrakt,
       "keywords" -> gmd.keywords,
-      "topicCategory" -> gmd.topicCategory,
+      "topicCategories" -> gmd.topicCategories,
       "contactName" -> gmd.contactName,
       "contactOrg" -> gmd.contactOrg,
       "contactEmail" -> gmd.contactEmail,
       "license" -> gmd.license,
       // extent is an array [10, 10, 40, 40] minX, maxX, maxY, minY
-      "bbox" -> Json.arr(
+      "bbox" -> correctBbox(Json.arr(
         JsNumber(gmd.bbox.getMinX()),
+        JsNumber(gmd.bbox.getMinY()),
         JsNumber(gmd.bbox.getMaxX()),
-        JsNumber(gmd.bbox.getMaxY()),
-        JsNumber(gmd.bbox.getMinY())
+        JsNumber(gmd.bbox.getMaxY()))
       ),
+      "linkage" -> gmd.linkage,
       "origin" -> gmd.origin
     )
 
@@ -550,7 +603,7 @@ object GeoJSONFeatureCollectionWriter extends Writes[List[MdMetadataSet]] with C
   private lazy val ctx = SpatialContext.GEO
   private lazy val jsWriter = ctx.getFormats().getWriter(ShapeIO.GeoJSON)
   implicit val gmdElementSetWrite = MdMetadataSetWriter
-  lazy val WORLD = ctx.getShapeFactory().rect(-180, 180, -90, 90)
+  lazy val WORLD = ctx.getWorldBounds
 
   /**
     * builds a JsArray from single MdMetadataSet GeoJSON features
@@ -559,7 +612,9 @@ object GeoJSONFeatureCollectionWriter extends Writes[List[MdMetadataSet]] with C
     * @return JsArray MdMetadataSet
     */
   def getArrayOfFeatures(gmdList: List[MdMetadataSet]): JsValue = {
-    val jsList = gmdList.map(gmd => Json.toJson(gmd))
+    val jsList = gmdList.map(gmd => {
+      Json.toJson(gmd)
+    })
     Json.toJson(jsList)
   }
 
@@ -598,9 +653,9 @@ object GeoJSONFeatureCollectionWriter extends Writes[List[MdMetadataSet]] with C
 
     Json.arr(
       JsNumber(envelope.getMinX),
+      JsNumber(envelope.getMinY),
       JsNumber(envelope.getMaxX),
-      JsNumber(envelope.getMaxY),
-      JsNumber(envelope.getMinY)
+      JsNumber(envelope.getMaxY)
     )
   }
 
@@ -616,7 +671,7 @@ object GeoJSONFeatureCollectionWriter extends Writes[List[MdMetadataSet]] with C
             "name" -> "urn:ogc:def:crs:OGC:1.3:CRS84"
           )
         ),
-        "bbox" -> getBoundingBox(gmdList),
+        "bbox" -> MdMetadataSetWriter.correctBbox(getBoundingBox(gmdList).as[JsArray]),
         "count" -> gmdList.size,
         "features" -> getArrayOfFeatures(gmdList)
       )
