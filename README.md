@@ -1,4 +1,4 @@
-# SMART CSW Metadata Ingester [![Build Status](https://travis-ci.org/ZGIS/smart-csw-ingester.svg)](https://travis-ci.org/ZGIS/smart-csw-ingester)
+# SMART CSW Metadata Ingester [![OpenHUB](https://www.openhub.net/p/smart-csw-ingester/widgets/project_thin_badge.gif)](https://www.openhub.net/p/smart-csw-ingester)
 
 - ingest metadata records from CSW servers into lucene index
 - provides fast lucene query JSON API for websites
@@ -7,7 +7,7 @@
 
 <p><a href="https://api.travis-ci.org/repos/ZGIS/smart-csw-ingester/builds.atom"><img src="https://upload.wikimedia.org/wikipedia/en/4/43/Feed-icon.svg" align="left" height="32" width="32" alt="Builds Feed"></a></p>
 
-[Travis CI Build](https://travis-ci.org/ZGIS/smart-csw-ingester)
+[Travis CI Build](https://travis-ci.org/ZGIS/smart-csw-ingester) [![Build Status](https://travis-ci.org/ZGIS/smart-csw-ingester.svg)](https://travis-ci.org/ZGIS/smart-csw-ingester)
 
 [Site Docs](https://zgis.github.io/smart-csw-ingester/)
 
