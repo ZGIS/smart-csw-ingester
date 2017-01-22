@@ -18,8 +18,8 @@
  */
 
 import com.google.inject.AbstractModule
-
-import services.LuceneService
+import services.{LuceneIndexBuilderActor, LuceneIndexBuilderMasterActor, LuceneService}
+import play.api.libs.concurrent.AkkaGuiceSupport
 
 /**
  * This class is a Guice module that tells Guice how to bind several
@@ -31,9 +31,12 @@ import services.LuceneService
  * adding `play.modules.enabled` settings to the `application.conf`
  * configuration file.
  */
-class Module extends AbstractModule {
+class Module extends AbstractModule with AkkaGuiceSupport {
 
   override def configure() : Unit = {
+
+    bindActor[LuceneIndexBuilderMasterActor]("indexBuilderMaster")
+    bindActorFactory[LuceneIndexBuilderActor, LuceneIndexBuilderActor.Factory]
 
     //Start our LuceneService with the Application
     bind(classOf[LuceneService]).asEagerSingleton()

@@ -20,30 +20,34 @@
 package services
 
 import java.time.LocalDate
-import javax.inject.{Inject, Singleton}
+import javax.inject.{Inject, Named, Singleton}
 
-import models.csw.{CswGetRecordsRequest, CswGetRecordsResponse}
+import akka.actor.{ActorRef, ActorSystem, _}
+import akka.pattern.ask
 import models.gmd.MdMetadataSet
 import org.apache.lucene.analysis.standard.StandardAnalyzer
-import org.apache.lucene.document.LongPoint
+import org.apache.lucene.document.{Document, LongPoint}
 import org.apache.lucene.index.{IndexWriter, IndexWriterConfig}
 import org.apache.lucene.queryparser.classic.QueryParser
 import org.apache.lucene.search._
 import org.apache.lucene.spatial.bbox.BBoxStrategy
 import org.apache.lucene.spatial.query.{SpatialArgs, SpatialOperation}
-import org.apache.lucene.store.RAMDirectory
+import org.apache.lucene.store.{Directory, RAMDirectory}
 import org.locationtech.spatial4j.context.SpatialContext
 import org.locationtech.spatial4j.io.ShapeIO
 import play.api.Configuration
-import play.api.http.Status
 import play.api.inject.ApplicationLifecycle
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import play.api.libs.concurrent.InjectedActorSupport
 import play.api.libs.ws.WSClient
+import services.LuceneIndexBuilderActor.IndexCatalogue
+import services.LuceneIndexBuilderMasterActor.GetSpecificIndexBuilder
 import utils.ClassnameLogger
 
 import scala.collection.JavaConverters._
+import scala.concurrent.Future
 import scala.concurrent.duration._
-import scala.concurrent.{Await, Future}
+import scala.util.{Failure, Success}
 
 trait IndexService {
   //FIXME SR find a good place for this
@@ -69,62 +73,69 @@ trait IndexService {
 @Singleton
 class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
                               wsClient: WSClient,
-                              configuration: Configuration)
-  extends IndexService with ClassnameLogger {
+                              configuration: Configuration,
+                              system: ActorSystem,
+                              @Named("indexBuilderMaster") indexBuilderMaster: ActorRef)
+  extends IndexService with ClassnameLogger with InjectedActorSupport {
 
   logger.info("Starting Lucene Service")
 
   logger.debug("Reading configuration: csw.catalogues ")
   private val cataloguesConfig = configuration.getConfigList("csw.catalogues").get.asScala.toList
-  val catalogues = cataloguesConfig.map { item => item.getString("name").get -> item.getString("url").get }.toMap
-
-  logger.debug("Reading configuration: csw.maxDocs ")
-  val CSW_MAX_RECORDS = 500
-  val maxDocsPerFetch = configuration.getInt("csw.maxDocs").getOrElse(CSW_MAX_RECORDS)
+  private val catalogues = cataloguesConfig.map({ item => item.getString("name").get -> item.getString("url").get }).toMap
+  private val catalogueIndexes: scala.collection.mutable.Map[String, Directory] = scala.collection.mutable.Map[String, Directory]()
 
   //stores the search index in RAM
-  val directory = new RAMDirectory()
+  private val indexRamDirectory = new RAMDirectory()
+  private val searcherManager = new SearcherManager(prepareEmptyIndex(indexRamDirectory), null)
 
   buildIndex()
-  //FIXME SR without an index we can't create the searcherManager. How to deal with that?
-  //val searcherManager = new SearcherManager(directory, null)
 
   appLifecycle.addStopHook { () =>
     Future.successful(() => {
       logger.info("Stopping Lucene Service")
-      directory.close()
+      indexRamDirectory.close()
     })
   }
 
-  /**
-    * Builds the Search index
-    */
-  //FIXME SR use something like lib-lucene-sugar. Lib unfortunately seems very old/outdated? https://github.com/gilt/lib-lucene-sugar
   def buildIndex(): Unit = {
-    logger.info("Building Lucene Index")
+    catalogues.map({
+      case (catalogueName, catalogueUrl) =>
+        system.scheduler.schedule(1.second, 24.hours){
+          buildIndex(catalogueName)
+        }
+    })
+  }
 
-    val gmdElemSetsFutures = Future.sequence(catalogues.map {
-      case (catName, url) => {
-        queryCatalogue(catName, url)
-      }
-    }.toList)
+  /** Builds index for catalogue
+    *
+    */
+  def buildIndex(catalogueName: String): Unit = {
+    logger.info(s"Building Lucene Index (AKKA VERSION) for $catalogueName")
+    val catalogueUrl = catalogues(catalogueName)
+    implicit val timeout: akka.util.Timeout = 5.seconds
+    val indexBuilder = (indexBuilderMaster ? GetSpecificIndexBuilder(catalogueName)).mapTo[ActorRef]
+    indexBuilder.onComplete({
+      case Success(indexBuilder) => indexBuilder ! IndexCatalogue(catalogueName, catalogueUrl)
+      case Failure(ex) => logger.warn(s"Exception during index build ${ex.getMessage}", ex)
+    })
+  }
 
-    //FIXME SR 15 minutes seem quite arbitraty... what is a good timeout here?
-    val gmdElemSets = Await.result(gmdElemSetsFutures, 15.minutes).flatten
-    logger.info(f"Loaded ${gmdElemSets.size} documents from CSW.")
+  def mergeIndex(directory: Directory, catalogueName: String): Unit = {
+    catalogueIndexes += (catalogueName -> directory)
 
-    val analyzer = new StandardAnalyzer()
-    val config = new IndexWriterConfig(analyzer)
+    val config = new IndexWriterConfig()
     config.setCommitOnClose(true)
-    //FIXME SR use SCALA_ARM (automated resource management)?
-    val iwriter = new IndexWriter(directory, config)
+
+    val iwriter = new IndexWriter(indexRamDirectory, config)
     try {
+      logger.info(s"Merging ${catalogueIndexes.keys} into master index")
       iwriter.deleteAll()
       iwriter.commit()
-      gmdElemSets.foreach(searchDocument => iwriter.addDocument(searchDocument.asLuceneDocument()))
-
+      iwriter.addIndexes(catalogueIndexes.values.toArray : _*)
       iwriter.commit()
-      logger.info("Index ready")
+      iwriter.forceMerge(1, true)
+      logger.info("Merged Index ready")
     }
     finally {
       iwriter.close()
@@ -132,93 +143,47 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
   }
 
   /**
-    * Sends a GetRecords POST request to a catalogue and returns the response as a future.
+    * Queries the Search Index
     *
-    * @param url           String containing URL to catalogue
-    * @param startPosition Int with the first element to grab (pagination)
-    * @param maxDocuments  Int with the max number of documents to return
-    */
-  //TODO SR maybe we should also return the exception object to give more meaningful error messages in the GUI?
-  private def postGetRecordsRequest(url: String, startPosition: Int,
-                                    maxDocuments: Int,
-                                    f: Future[List[CswGetRecordsResponse]]): Future[List[CswGetRecordsResponse]] = {
-    logger.info(f"Sending GetRecords request to $url")
-
-    val wsClientResponseFuture =
-      wsClient.url(url)
-        //        .withRequestTimeout(20.seconds)
-        .withHeaders("Content-Type" -> "application/xml")
-        .post(CswGetRecordsRequest(startPosition, maxDocuments))
-
-    val cswGetRecordsResponseListFuture = wsClientResponseFuture.flatMap { wsClientResponse =>
-      logger.info(f"Response status: ${wsClientResponse.status} - ${wsClientResponse.statusText} ($url)")
-      wsClientResponse.status match {
-        case Status.OK => {
-          logger.debug(f"Response Content Type: ${wsClientResponse.allHeaders.getOrElse("Content-Type", "Unknown")}")
-          logger.debug(f"Response-Length: ${wsClientResponse.body.length}")
-          logger.trace(f"Response-Body: ${wsClientResponse.body.toString}")
-          wsClientResponse.xml.label match {
-            case "ExceptionReport" => {
-              logger.warn(
-                f"Got XML Exception Response. Text: ${(wsClientResponse.xml \ "Exception" \ "ExceptionText").text}")
-              Future.successful(List())
-            }
-            case "GetRecordsResponse" => {
-              val cswGetRecResp = CswGetRecordsResponse(wsClientResponse.xml)
-              logger.info(
-                f"nextRecord: ${cswGetRecResp.nextRecord}, numberOfRec ${cswGetRecResp.numberOfRecordsMatched}")
-              if ((cswGetRecResp.nextRecord > cswGetRecResp.numberOfRecordsMatched) ||
-                (cswGetRecResp.nextRecord == 0)) {
-                f.flatMap(l => {
-                  Future.successful(cswGetRecResp :: l)
-                })
-              }
-              else {
-                f.flatMap(l => {
-                  postGetRecordsRequest(url, cswGetRecResp.nextRecord, maxDocuments,
-                    Future.successful(cswGetRecResp :: l))
-                })
-              }
-            }
-            case _ => {
-              logger.warn(f"Unknown response content. Body: ${wsClientResponse.xml.toString}")
-              Future.successful(List())
-            }
-          }
-        }
-        case _ => {
-          logger.warn(f"Error while executing CSW query.")
-          logger.debug(f"Response body: ${wsClientResponse.body}")
-          Future.successful(List())
-        }
-      }
-    } recover {
-      case e => {
-        logger.warn(f"Exception on $url", e)
-        List()
-      }
-    }
-    cswGetRecordsResponseListFuture
-  }
-
-  /**
-    *
-    * @param catalogueName
-    * @param url
+    * @param query
     * @return
     */
-  private def queryCatalogue(catalogueName: String, url: String): Future[List[MdMetadataSet]] = {
-    val getRecordsFuture = postGetRecordsRequest(url, 1, maxDocsPerFetch, Future.successful(Nil))
-    val gmdElementsFuture = getRecordsFuture.map(cswGetRecordsResponses => {
-      cswGetRecordsResponses.flatMap(cswGetRecordsResponse => {
-        (cswGetRecordsResponse.xml \\ "MD_Metadata").map(mdMetadataNode => {
-          logger.debug(f"Preparing($catalogueName): ${(mdMetadataNode \ "fileIdentifier" \ "CharacterString").text}")
-          logger.trace(mdMetadataNode.toString)
-          MdMetadataSet.fromXml(mdMetadataNode, catalogueName)
-        })
-      }).filter(item => item.isDefined).map(item => item.get) //filter out all None values
-    })
-    gmdElementsFuture
+  def query(query: String,
+            bboxWtk: Option[String] = None,
+            fromDate: Option[LocalDate] = None,
+            toDate: Option[LocalDate] = None): List[MdMetadataSet] = {
+
+    val textQuery = parseQueryString(query)
+
+    val dateQuery = LongPoint.newRangeQuery("dateStamp",
+      fromDate.getOrElse(LocalDate.ofEpochDay(0)).toEpochDay(),
+      toDate.getOrElse(LocalDate.now()).toEpochDay())
+
+    val bboxQuery = parseBboxQuery(bboxWtk.filterNot(_.isEmpty).getOrElse(WORLD_WKT))
+
+    searcherManager.maybeRefreshBlocking()
+    val isearcher = searcherManager.acquire()
+
+    // TODO TBD AK The way you built it, could omit dates or BBOX query constraint in this
+    // this builder if not provided through query params (but particularly date should NOT be limited to 1970 to now?)
+    val booleanQueryBuilder = new BooleanQuery.Builder()
+    booleanQueryBuilder.add(textQuery, BooleanClause.Occur.MUST)
+    booleanQueryBuilder.add(dateQuery, BooleanClause.Occur.MUST)
+    booleanQueryBuilder.add(bboxQuery, BooleanClause.Occur.MUST)
+    val luceneQuery = booleanQueryBuilder.build()
+
+    val search = isearcher.search(luceneQuery, isearcher.getIndexReader.numDocs())
+    val scoreDocs = search.scoreDocs
+
+    val results = scoreDocs.map(scoreDoc => {
+      val doc = isearcher.doc(scoreDoc.doc)
+      MdMetadataSet.fromLuceneDoc(doc)
+    }).toList
+
+    //FIXME SR use ARM --> possible mem leak
+    searcherManager.release(isearcher)
+
+    results
   }
 
   /**
@@ -266,49 +231,25 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
   }
 
   /**
-    * Queries the Search Index
+    * creates an empty index to make searches not crash before real documents are in the index.
     *
-    * @param query
-    * @return
+    * @param directory
     */
-  def query(query: String,
-            bboxWtk: Option[String] = None,
-            fromDate: Option[LocalDate] = None,
-            toDate: Option[LocalDate] = None): List[MdMetadataSet] = {
-
-    val textQuery = parseQueryString(query)
-
-    val dateQuery = LongPoint.newRangeQuery("dateStamp",
-      fromDate.getOrElse(LocalDate.ofEpochDay(0)).toEpochDay(),
-      toDate.getOrElse(LocalDate.now()).toEpochDay())
-
-    val bboxQuery = parseBboxQuery(bboxWtk.filterNot(_.isEmpty).getOrElse(WORLD_WKT))
-
-    //FIXME SR when index empty, the next call will fail
-    val searcherManager = new SearcherManager(directory, null)
-    searcherManager.maybeRefreshBlocking()
-    val isearcher = searcherManager.acquire()
-
-    // TODO TBD AK The way you built it, could omit dates or BBOX query constraint in this
-    // this builder if not provided through query params (but particularly date should NOT be limited to 1970 to now?)
-    val booleanQueryBuilder = new BooleanQuery.Builder()
-    booleanQueryBuilder.add(textQuery, BooleanClause.Occur.MUST)
-    booleanQueryBuilder.add(dateQuery, BooleanClause.Occur.MUST)
-    booleanQueryBuilder.add(bboxQuery, BooleanClause.Occur.MUST)
-    val luceneQuery = booleanQueryBuilder.build()
-
-    val search = isearcher.search(luceneQuery, isearcher.getIndexReader.numDocs())
-    val scoreDocs = search.scoreDocs
-
-    val results = scoreDocs.map(scoreDoc => {
-      val doc = isearcher.doc(scoreDoc.doc)
-      MdMetadataSet.fromLuceneDoc(doc)
-    }).toList
-
-    //FIXME SR use ARM --> possible mem leak
-    searcherManager.release(isearcher)
-
-    results
-
+  private def prepareEmptyIndex(directory: Directory): Directory = {
+    val analyzer = new StandardAnalyzer()
+    val config = new IndexWriterConfig(analyzer)
+    config.setCommitOnClose(true)
+    //FIXME SR use SCALA_ARM (automated resource management)?
+    val iwriter = new IndexWriter(directory, config)
+    try {
+      iwriter.deleteAll()
+      iwriter.addDocument(new Document)
+      iwriter.commit()
+      logger.info("Empty Index ready")
+    }
+    finally {
+      iwriter.close()
+    }
+    directory
   }
 }

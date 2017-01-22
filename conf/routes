@@ -10,6 +10,7 @@ GET        /*path/                         controllers.MainController.untrail(pa
 # FIXME SR is there a way to get Option[String] for the URL path binder?
 GET        /query                          controllers.QueryController.query(query: Option[String],bbox: Option[String], fromDate: Option[String], toDate: Option[String])
 GET        /cswi-api/query                 controllers.QueryController.query(query: Option[String],bbox: Option[String], fromDate: Option[String], toDate: Option[String])
+GET        /cswi-api/buildIndex/:catalogueName controllers.QueryController.buildIndexFor(catalogueName: String)
 #GET        /bbox/:bbox                     controllers.QueryController.query(query = "", bbox: String, fromDate = "", toDate = "")
 #GET        /query/:query                   controllers.QueryController.query(query: String, bbox = "", fromDate = "", toDate = "")
 #GET        /query/:query/bbox/:bbox        controllers.QueryController.query(query: String, bbox: String, fromDate = "", toDate = "")

@@ -31,6 +31,7 @@ import utils.ClassnameLogger
 /**
   * Controller that serves results from Lucene Index
   */
+//TODO SR rename to "IndexController" or something similar
 class QueryController @Inject()(luceneService: LuceneService) extends Controller with ClassnameLogger {
 
   implicit val geoJSONFeatureCollectionWrite = GeoJSONFeatureCollectionWriter
@@ -66,5 +67,11 @@ class QueryController @Inject()(luceneService: LuceneService) extends Controller
     val resultJson = Json.toJson(featureCollection)
 
     Ok(resultJson).as(JSON)
+  }
+
+  def buildIndexFor(catalogueName: String): Action[AnyContent] = Action {
+    logger.info(s"Request for building index for $catalogueName")
+    val result = luceneService.buildIndex(catalogueName)
+    Ok(s"building index for $catalogueName")
   }
 }
