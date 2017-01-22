@@ -2,7 +2,7 @@
       <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
         <title id="title">
-          Module.scala.html
+          services/LuceneIndexBuilderMasterActor.scala.html
         </title>
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="http://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
         $(document).ready(function() {$(".tablesorter").tablesorter();});
@@ -41,31 +41,31 @@
 </span>17 <span style=''> * limitations under the License.
 </span>18 <span style=''> */
 </span>19 <span style=''>
-</span>20 <span style=''>import com.google.inject.AbstractModule
-</span>21 <span style=''>import services.{LuceneIndexBuilderActor, LuceneIndexBuilderMasterActor, LuceneService}
-</span>22 <span style=''>import play.api.libs.concurrent.AkkaGuiceSupport
+</span>20 <span style=''>package services
+</span>21 <span style=''>
+</span>22 <span style=''>import javax.inject.Inject
 </span>23 <span style=''>
-</span>24 <span style=''>/**
-</span>25 <span style=''> * This class is a Guice module that tells Guice how to bind several
-</span>26 <span style=''> * different types. This Guice module is created when the Play
-</span>27 <span style=''> * application starts.
-</span>28 <span style=''>
-</span>29 <span style=''> * Play will automatically use any class called `Module` that is in
-</span>30 <span style=''> * the root package. You can create modules in other locations by
-</span>31 <span style=''> * adding `play.modules.enabled` settings to the `application.conf`
-</span>32 <span style=''> * configuration file.
-</span>33 <span style=''> */
-</span>34 <span style=''>class Module extends AbstractModule with AkkaGuiceSupport {
-</span>35 <span style=''>
-</span>36 <span style=''>  override def configure() : Unit = {
-</span>37 <span style=''>
-</span>38 <span style=''>    </span><span style='background: #F0ADAD'>bindActor[LuceneIndexBuilderMasterActor]("indexBuilderMaster")</span><span style=''>
-</span>39 <span style=''>    </span><span style='background: #F0ADAD'>bindActorFactory[LuceneIndexBuilderActor, LuceneIndexBuilderActor.Factory]</span><span style=''>
-</span>40 <span style=''>
-</span>41 <span style=''>    //Start our LuceneService with the Application
-</span>42 <span style=''>    </span><span style='background: #F0ADAD'>bind(classOf[LuceneService]).asEagerSingleton()</span><span style=''>
-</span>43 <span style=''>  }
-</span>44 <span style=''>
+</span>24 <span style=''>import akka.actor.{Actor, ActorRef}
+</span>25 <span style=''>import play.api.libs.concurrent.InjectedActorSupport
+</span>26 <span style=''>import services.LuceneIndexBuilderMasterActor.GetSpecificIndexBuilder
+</span>27 <span style=''>
+</span>28 <span style=''>object LuceneIndexBuilderMasterActor {
+</span>29 <span style=''>
+</span>30 <span style=''>  case class GetSpecificIndexBuilder(catalogueName: String)
+</span>31 <span style=''>
+</span>32 <span style=''>}
+</span>33 <span style=''>
+</span>34 <span style=''>/** at that point just a vehicle to get an injected child actor
+</span>35 <span style=''>  * TODO put a "create index" here
+</span>36 <span style=''>  */
+</span>37 <span style=''>class LuceneIndexBuilderMasterActor @Inject()(luceneIndexBuilderActorFactory: LuceneIndexBuilderActor.Factory) extends Actor with
+</span>38 <span style=''>  InjectedActorSupport {
+</span>39 <span style=''>  override def receive: Receive = {
+</span>40 <span style=''>    case GetSpecificIndexBuilder(catalogueName) => {
+</span>41 <span style=''>      val indexBuilderActor: ActorRef = </span><span style='background: #F0ADAD'>injectedChild(luceneIndexBuilderActorFactory(), s"indexBuilder-$catalogueName")</span><span style=''>
+</span>42 <span style=''>      </span><span style='background: #F0ADAD'>sender() ! indexBuilderActor</span><span style=''>
+</span>43 <span style=''>    }
+</span>44 <span style=''>  }
 </span>45 <span style=''>}
 </span></pre>
           </div>
@@ -80,76 +80,160 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          38
+          39
         </td>
         <td>
-          2
+          926
         </td>
         <td>
-          1559
+          1482
           -
-          1559
+          1482
         </td>
         <td>
-          TypeApply
+          Apply
         </td>
         <td>
-          play.api.libs.concurrent.AkkaGuiceSupport.bindActor$default$2
+          services.LuceneIndexBuilderMasterActor.$anonfun.&lt;init&gt;
         </td>
         <td style="background: #F0ADAD">
-          Module.this.bindActor$default$2[services.LuceneIndexBuilderMasterActor]
+          new $anonfun()
         </td>
       </tr><tr>
         <td>
-          38
+          41
         </td>
         <td>
-          1
+          920
         </td>
         <td>
-          1591
+          1577
           -
-          1611
+          1577
         </td>
         <td>
-          Literal
+          Select
         </td>
         <td>
-          &lt;nosymbol&gt;
+          play.api.libs.concurrent.InjectedActorSupport.injectedChild$default$3
         </td>
         <td style="background: #F0ADAD">
-          &quot;indexBuilderMaster&quot;
+          LuceneIndexBuilderMasterActor.this.injectedChild$default$3
         </td>
       </tr><tr>
         <td>
-          38
+          41
         </td>
         <td>
-          3
+          922
         </td>
         <td>
-          1550
+          1577
           -
-          1612
+          1656
         </td>
         <td>
           ApplyToImplicitArgs
         </td>
         <td>
-          play.api.libs.concurrent.AkkaGuiceSupport.bindActor
+          play.api.libs.concurrent.InjectedActorSupport.injectedChild
         </td>
         <td style="background: #F0ADAD">
-          Module.this.bindActor[services.LuceneIndexBuilderMasterActor](&quot;indexBuilderMaster&quot;, Module.this.bindActor$default$2[services.LuceneIndexBuilderMasterActor])((ClassTag.apply[services.LuceneIndexBuilderMasterActor](classOf[services.LuceneIndexBuilderMasterActor]): scala.reflect.ClassTag[services.LuceneIndexBuilderMasterActor]))
+          LuceneIndexBuilderMasterActor.this.injectedChild(LuceneIndexBuilderMasterActor.this.luceneIndexBuilderActorFactory.apply(), scala.StringContext.apply(&quot;indexBuilder-&quot;, &quot;&quot;).s(catalogueName), LuceneIndexBuilderMasterActor.this.injectedChild$default$3)(LuceneIndexBuilderMasterActor.this.context)
         </td>
       </tr><tr>
         <td>
-          39
+          41
         </td>
         <td>
-          4
+          919
         </td>
         <td>
-          1617
+          1625
+          -
+          1655
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.StringContext.s
+        </td>
+        <td style="background: #F0ADAD">
+          scala.StringContext.apply(&quot;indexBuilder-&quot;, &quot;&quot;).s(catalogueName)
+        </td>
+      </tr><tr>
+        <td>
+          41
+        </td>
+        <td>
+          918
+        </td>
+        <td>
+          1591
+          -
+          1623
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          services.LuceneIndexBuilderActor.Factory.apply
+        </td>
+        <td style="background: #F0ADAD">
+          LuceneIndexBuilderMasterActor.this.luceneIndexBuilderActorFactory.apply()
+        </td>
+      </tr><tr>
+        <td>
+          41
+        </td>
+        <td>
+          921
+        </td>
+        <td>
+          1590
+          -
+          1590
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          akka.actor.Actor.context
+        </td>
+        <td style="background: #F0ADAD">
+          LuceneIndexBuilderMasterActor.this.context
+        </td>
+      </tr><tr>
+        <td>
+          42
+        </td>
+        <td>
+          923
+        </td>
+        <td>
+          1663
+          -
+          1671
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          akka.actor.Actor.sender
+        </td>
+        <td style="background: #F0ADAD">
+          LuceneIndexBuilderMasterActor.this.sender()
+        </td>
+      </tr><tr>
+        <td>
+          42
+        </td>
+        <td>
+          925
+        </td>
+        <td>
+          1663
           -
           1691
         </td>
@@ -157,31 +241,31 @@
           ApplyToImplicitArgs
         </td>
         <td>
-          play.api.libs.concurrent.AkkaGuiceSupport.bindActorFactory
+          akka.actor.ScalaActorRef.!
         </td>
         <td style="background: #F0ADAD">
-          Module.this.bindActorFactory[services.LuceneIndexBuilderActor, services.LuceneIndexBuilderActor.Factory]((ClassTag.apply[services.LuceneIndexBuilderActor](classOf[services.LuceneIndexBuilderActor]): scala.reflect.ClassTag[services.LuceneIndexBuilderActor]), (ClassTag.apply[services.LuceneIndexBuilderActor.Factory](classOf[services.LuceneIndexBuilderActor$$Factory]): scala.reflect.ClassTag[services.LuceneIndexBuilderActor.Factory]))
+          akka.this.actor.`package`.actorRef2Scala(LuceneIndexBuilderMasterActor.this.sender()).!(indexBuilderActor)(LuceneIndexBuilderMasterActor.this.self)
         </td>
       </tr><tr>
         <td>
           42
         </td>
         <td>
-          5
+          924
         </td>
         <td>
-          1748
+          1672
           -
-          1795
+          1672
         </td>
         <td>
-          Apply
+          Select
         </td>
         <td>
-          com.google.inject.binder.ScopedBindingBuilder.asEagerSingleton
+          akka.actor.Actor.self
         </td>
         <td style="background: #F0ADAD">
-          Module.this.bind[services.LuceneService](classOf[services.LuceneService]).asEagerSingleton()
+          LuceneIndexBuilderMasterActor.this.self
         </td>
       </tr>
     </table>
