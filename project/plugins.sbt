@@ -11,7 +11,7 @@ resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
 resolvers += "jgit-repo" at "http://download.eclipse.org/jgit/maven"
 
 // The Play plugin
-addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.5.9")
+addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.5.12")
 
 // for autoplugins
 addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.1.1")
