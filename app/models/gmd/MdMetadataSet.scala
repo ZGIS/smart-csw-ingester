@@ -55,6 +55,7 @@ case class MdMetadataSet(fileIdentifier: String,
                          title: String,
                          abstrakt: String,
                          keywords: List[String],
+                         smartCategory: List[String],
                          topicCategories: List[String],
                          contactName: String,
                          contactOrg: String,
@@ -72,6 +73,7 @@ case class MdMetadataSet(fileIdentifier: String,
         |${title},
         |${abstrakt},
         |keywords(${keywords.mkString(", ")}),
+        |smartCategory(${smartCategory.mkString(", ")}),
         |topicCategory(${topicCategories.mkString(", ")}),
         |${contactName},
         |${contactOrg},
@@ -123,6 +125,10 @@ case class MdMetadataSet(fileIdentifier: String,
       doc.add(new TextField("keywords", keyword, Field.Store.YES))
     })
 
+    smartCategory.foreach(smartCategory => {
+      doc.add(new TextField("smartCategory", smartCategory, Field.Store.YES))
+    })
+
     topicCategories.foreach(topicCategory => {
       doc.add(new TextField("topicCategory", topicCategory, Field.Store.YES))
     })
@@ -149,6 +155,9 @@ case class MdMetadataSet(fileIdentifier: String,
     doc.add(new TextField("catch_all", abstrakt, Field.Store.YES))
     keywords.foreach(keyword => {
       doc.add(new TextField("catch_all", keyword, Field.Store.YES))
+    })
+    smartCategory.foreach(smartCategory => {
+      doc.add(new TextField("catch_all", smartCategory, Field.Store.YES))
     })
     topicCategories.foreach(topicCategor => {
       doc.add(new TextField("catch_all", topicCategor, Field.Store.YES))
@@ -201,6 +210,7 @@ object MdMetadataSet extends ClassnameLogger {
             (nodeSeq \\ "identificationInfo" \ "MD_DataIdentification" \ "citation" \ "CI_Citation" \ "title" \ "CharacterString").text,
             (nodeSeq \\ "identificationInfo" \ "MD_DataIdentification" \ "abstract" \ "CharacterString").text,
             keywordsFromXml(nodeSeq),
+            smartCategoryFromXml(nodeSeq),
             topicCategoriesFromXml(nodeSeq),
             contactNameFromXml(nodeSeq),
             contactOrgFromXml(nodeSeq),
@@ -234,6 +244,7 @@ object MdMetadataSet extends ClassnameLogger {
       title = doc.get("title"),
       abstrakt = doc.get("abstrakt"),
       keywords = doc.getValues("keywords").toList,
+      smartCategory = doc.getValues("smartCategory").toList,
       topicCategories = doc.getValues("topicCategory").toList,
       contactName = doc.get("contactName"),
       contactOrg = doc.get("contactOrg"),
@@ -321,8 +332,28 @@ object MdMetadataSet extends ClassnameLogger {
     * @return a List(String) of extracted fields
     */
   def keywordsFromXml(nodeSeq: NodeSeq): List[String] = {
-    (nodeSeq \\ "identificationInfo" \ "MD_DataIdentification" \ "descriptiveKeywords" \ "MD_Keywords" \ "keyword" \ "CharacterString").map(
-      elem => elem.text.trim).toList
+    val kwNode = (nodeSeq \\ "identificationInfo" \ "MD_DataIdentification" \ "descriptiveKeywords" ).filter( p => {
+      ((p \ "MD_Keywords" \ "type" \ "MD_KeywordTypeCode" \ "@codeListValue").text.equals("theme"))
+    })
+
+    val resultList = (kwNode \ "MD_Keywords" \ "keyword" \ "CharacterString").map(elem => elem.text.trim).toList
+    logger.warn(s"found keywords: $resultList");
+    resultList;
+  }
+
+  /**
+    * extracts smartCategory fields from the provided XML
+    *
+    * @param nodeSeq the provided xml
+    * @return a List(String) of extracted fields
+    */
+  def smartCategoryFromXml(nodeSeq: NodeSeq): List[String] = {
+    val kwNode = (nodeSeq \\ "identificationInfo" \ "MD_DataIdentification" \ "descriptiveKeywords" ).filter( p => {
+      ((p \ "MD_Keywords" \ "type" \ "MD_KeywordTypeCode" \ "@codeListValue").text.equals("SMART"))
+    })
+    val resultList = (kwNode \ "MD_Keywords" \ "keyword" \ "CharacterString").map(elem => elem.text.trim).toList
+    logger.warn(s"found smartCategory: $resultList");
+    resultList;
   }
 
   /**
@@ -562,13 +593,13 @@ object MdMetadataSetWriter extends Writes[MdMetadataSet] with ClassnameLogger {
     * Converts [[MdMetadataSet]] object into [[JsObject]] as GeoJSON
     */
   def writes(gmd: MdMetadataSet): JsObject = {
-
     val properties = Json.obj(
       "fileIdentifier" -> gmd.fileIdentifier,
       "dateStamp" -> gmd.dateStampAsIsoString,
       "title" -> gmd.title,
       "abstrakt" -> gmd.abstrakt,
       "keywords" -> gmd.keywords,
+      "smartCategory" -> gmd.smartCategory,
       "topicCategories" -> gmd.topicCategories,
       "contactName" -> gmd.contactName,
       "contactOrg" -> gmd.contactOrg,
