@@ -333,7 +333,8 @@ object MdMetadataSet extends ClassnameLogger {
     */
   def keywordsFromXml(nodeSeq: NodeSeq): List[String] = {
     val kwNode = (nodeSeq \\ "identificationInfo" \ "MD_DataIdentification" \ "descriptiveKeywords" ).filter( p => {
-      ((p \ "MD_Keywords" \ "type" \ "MD_KeywordTypeCode" \ "@codeListValue").text.equals("theme"))
+      //TODO SR internally for smart csw we you "theme" as codelistValue. What are we going to do about that here?
+      !((p \ "MD_Keywords" \ "type" \ "MD_KeywordTypeCode" \ "@codeListValue").text.equals("SMART"))
     })
 
     val resultList = (kwNode \ "MD_Keywords" \ "keyword" \ "CharacterString").map(elem => elem.text.trim).toList
