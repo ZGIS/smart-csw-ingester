@@ -59,7 +59,30 @@ trait IndexService {
   def query(query: String,
             bboxWkt: Option[String],
             fromDate: Option[LocalDate],
-            toDate: Option[LocalDate]): List[MdMetadataSet]
+            toDate: Option[LocalDate],
+            maxNumberOfResults: Option[Int]
+           ): SearchResult
+}
+
+/**
+  * generic serach result
+  */
+trait SearchResult {
+  /**
+    * the parsed query
+    */
+  val luceneQuery: Query;
+
+  /**
+    * number of documents in the index, that match the query. THIS IS NOT THE NUMBER OF RETURNED DOCUMENTS!
+    */
+  val numberOfMatchingDocuments: Int;
+
+  /**
+    * the documents returned by the query. This might be less than the matching number, depending on wether
+    * the user choose to get a maximum count.
+    */
+  val documents: List[MdMetadataSet];
 }
 
 
@@ -84,6 +107,7 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
   private val cataloguesConfig = configuration.getConfigList("csw.catalogues").get.asScala.toList
   private val catalogues = cataloguesConfig.map({ item => item.getString("name").get -> item.getString("url").get }).toMap
   private val catalogueIndexes: scala.collection.mutable.Map[String, Directory] = scala.collection.mutable.Map[String, Directory]()
+  private val defaultMaxDocuments: Int = configuration.getInt("searcher.defaultMaxDocuments").getOrElse(100);
 
   //stores the search index in RAM
   private val indexRamDirectory = new RAMDirectory()
@@ -151,7 +175,8 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
   def query(query: String,
             bboxWtk: Option[String] = None,
             fromDate: Option[LocalDate] = None,
-            toDate: Option[LocalDate] = None): List[MdMetadataSet] = {
+            toDate: Option[LocalDate] = None,
+            maxNumberOfResults: Option[Int]): SearchResult = {
 
     val textQuery = parseQueryString(query)
 
@@ -172,7 +197,14 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
     booleanQueryBuilder.add(bboxQuery, BooleanClause.Occur.MUST)
     val luceneQuery = booleanQueryBuilder.build()
 
-    val search = isearcher.search(luceneQuery, isearcher.getIndexReader.numDocs())
+    val numOfMatchingDocuments = isearcher.count(luceneQuery);
+
+    // TODO SR is "all" a good default, when queried for 0 or less documents?
+    val maxDocuments = maxNumberOfResults match {
+      case Some(x) if maxNumberOfResults.get <= 0 => numOfMatchingDocuments + 1 //+1 just in case 0 docs match
+      case _ => maxNumberOfResults.getOrElse(defaultMaxDocuments)
+    }
+    val search = isearcher.search(luceneQuery, maxDocuments);
     val scoreDocs = search.scoreDocs
 
     val results = scoreDocs.map(scoreDoc => {
@@ -183,7 +215,11 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
     //FIXME SR use ARM --> possible mem leak
     searcherManager.release(isearcher)
 
-    results
+    new SearchResult {
+      override val luceneQuery: Query = luceneQuery
+      override val numberOfMatchingDocuments: Int = numOfMatchingDocuments
+      override val documents: List[MdMetadataSet] = results
+    }
   }
 
   /**

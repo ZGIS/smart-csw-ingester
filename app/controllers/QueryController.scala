@@ -21,9 +21,9 @@ package controllers
 
 import java.time.LocalDate
 import javax.inject._
+import play.api.libs.json._
 
 import models.gmd.{GeoJSONFeatureCollectionWriter, MdMetadataSet}
-import play.api.libs.json.Json
 import play.api.mvc._
 import services.LuceneService
 import utils.ClassnameLogger
@@ -31,7 +31,7 @@ import utils.ClassnameLogger
 /**
   * Controller that serves results from Lucene Index
   */
-//TODO SR rename to "IndexController" or something similar
+// TODO SR rename to "IndexController" or something similar
 class QueryController @Inject()(luceneService: LuceneService) extends Controller with ClassnameLogger {
 
   implicit val geoJSONFeatureCollectionWrite = GeoJSONFeatureCollectionWriter
@@ -47,9 +47,10 @@ class QueryController @Inject()(luceneService: LuceneService) extends Controller
   def query(query: Option[String],
             bboxWkt: Option[String],
             fromDateStr: Option[String],
-            toDateStr: Option[String]): Action[AnyContent] = Action {
+            toDateStr: Option[String],
+            maxNumberOfResults: Option[Int]): Action[AnyContent] = Action {
     logger.info(s"Query CSW: ${query.getOrElse("NONE")}")
-    //TODO SR make tuple expression out of this
+    // TODO SR make tuple expression out of this
     val fromDate = fromDateStr match {
       case None => Some(LocalDate.ofEpochDay(0))
       case _ => Some(MdMetadataSet.dateFromStrings(List(fromDateStr.get)))
@@ -60,18 +61,22 @@ class QueryController @Inject()(luceneService: LuceneService) extends Controller
       case _ => Some(MdMetadataSet.dateFromStrings(List(toDateStr.get)))
     }
 
-    //FIXME SR error handling
-    val featureCollection = luceneService.query(query.getOrElse(DEFAULT_QUERY), bboxWkt, fromDate, toDate)
+    // FIXME SR error handling
+    val searchResult = luceneService.query(query.getOrElse(DEFAULT_QUERY), bboxWkt, fromDate, toDate,
+      maxNumberOfResults)
+    val featureCollection = searchResult.documents
 
     // TODO AK here we could insert the query string again if needed
-    val resultJson = Json.toJson(featureCollection)
+    val jsonTransformer = __.json.update(
+      (__ \ 'countMatched).json.put(JsNumber(searchResult.numberOfMatchingDocuments)))
+    val resultJson: JsValue = Json.toJson(featureCollection)
 
-    Ok(resultJson).as(JSON)
+    Ok(resultJson.transform(jsonTransformer).get).as(JSON)
   }
 
   def buildIndexFor(catalogueName: String): Action[AnyContent] = Action {
     logger.info(s"Request for building index for $catalogueName")
-    val result = luceneService.buildIndex(catalogueName)
+    luceneService.buildIndex(catalogueName)
     Ok(s"building index for $catalogueName")
   }
 }

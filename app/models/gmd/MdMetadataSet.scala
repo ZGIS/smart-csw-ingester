@@ -333,12 +333,12 @@ object MdMetadataSet extends ClassnameLogger {
     */
   def keywordsFromXml(nodeSeq: NodeSeq): List[String] = {
     val kwNode = (nodeSeq \\ "identificationInfo" \ "MD_DataIdentification" \ "descriptiveKeywords" ).filter( p => {
-      //TODO SR internally for smart csw we you "theme" as codelistValue. What are we going to do about that here?
+      //TODO SR internally for smart csw we use "theme" as codelistValue. What are we going to do about that here?
       !((p \ "MD_Keywords" \ "type" \ "MD_KeywordTypeCode" \ "@codeListValue").text.equals("SMART"))
     })
 
     val resultList = (kwNode \ "MD_Keywords" \ "keyword" \ "CharacterString").map(elem => elem.text.trim).toList
-    logger.warn(s"found keywords: $resultList");
+    logger.debug(s"found keywords: $resultList");
     resultList;
   }
 
@@ -353,7 +353,7 @@ object MdMetadataSet extends ClassnameLogger {
       ((p \ "MD_Keywords" \ "type" \ "MD_KeywordTypeCode" \ "@codeListValue").text.equals("SMART"))
     })
     val resultList = (kwNode \ "MD_Keywords" \ "keyword" \ "CharacterString").map(elem => elem.text.trim).toList
-    logger.warn(s"found smartCategory: $resultList");
+    logger.debug(s"found smartCategory: $resultList");
     resultList;
   }
 
@@ -633,7 +633,7 @@ object MdMetadataSetWriter extends Writes[MdMetadataSet] with ClassnameLogger {
 object GeoJSONFeatureCollectionWriter extends Writes[List[MdMetadataSet]] with ClassnameLogger {
 
   private lazy val ctx = SpatialContext.GEO
-  private lazy val jsWriter = ctx.getFormats().getWriter(ShapeIO.GeoJSON)
+//  private lazy val jsWriter = ctx.getFormats().getWriter(ShapeIO.GeoJSON)
   implicit val gmdElementSetWrite = MdMetadataSetWriter
   lazy val WORLD = ctx.getWorldBounds
 
