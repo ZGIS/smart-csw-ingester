@@ -25,7 +25,7 @@
             <pre style='font-size: 12pt; font-family: courier;'>1 <span style=''>
 </span>2 <span style=''>// @GENERATOR:play-routes-compiler
 </span>3 <span style=''>// @SOURCE:/home/travis/build/ZGIS/smart-csw-ingester/conf/routes
-</span>4 <span style=''>// @DATE:Thu Feb 09 01:43:36 UTC 2017
+</span>4 <span style=''>// @DATE:Fri Feb 10 01:34:42 UTC 2017
 </span>5 <span style=''>
 </span>6 <span style=''>import play.api.routing.JavaScriptReverseRoute
 </span>7 <span style=''>import play.api.mvc.{ QueryStringBindable, PathBindable, Call, JavascriptLiteral }
@@ -60,10 +60,10 @@
 </span>36 <span style=''>    def query: JavaScriptReverseRoute = </span><span style='background: #F0ADAD'>JavaScriptReverseRoute(
 </span>37 <span style=''></span><span style='background: #F0ADAD'>      "controllers.QueryController.query",
 </span>38 <span style=''></span><span style='background: #F0ADAD'>      """
-</span>39 <span style=''></span><span style='background: #F0ADAD'>        function(query0,bbox1,fromDate2,toDate3) {
+</span>39 <span style=''></span><span style='background: #F0ADAD'>        function(query0,bbox1,fromDate2,toDate3,maxNumberOfResults4) {
 </span>40 <span style=''></span><span style='background: #F0ADAD'>        
 </span>41 <span style=''></span><span style='background: #F0ADAD'>          if (true) {
-</span>42 <span style=''></span><span style='background: #F0ADAD'>            return _wA({method:"GET", url:"""" + _prefix + { _defaultPrefix } + """" + "query" + _qS([(""" + implicitly[QueryStringBindable[Option[String]]].javascriptUnbind + """)("query", query0), (""" + implicitly[QueryStringBindable[Option[String]]].javascriptUnbind + """)("bbox", bbox1), (""" + implicitly[QueryStringBindable[Option[String]]].javascriptUnbind + """)("fromDate", fromDate2), (""" + implicitly[QueryStringBindable[Option[String]]].javascriptUnbind + """)("toDate", toDate3)])})
+</span>42 <span style=''></span><span style='background: #F0ADAD'>            return _wA({method:"GET", url:"""" + _prefix + { _defaultPrefix } + """" + "query" + _qS([(""" + implicitly[QueryStringBindable[Option[String]]].javascriptUnbind + """)("query", query0), (""" + implicitly[QueryStringBindable[Option[String]]].javascriptUnbind + """)("bbox", bbox1), (""" + implicitly[QueryStringBindable[Option[String]]].javascriptUnbind + """)("fromDate", fromDate2), (""" + implicitly[QueryStringBindable[Option[String]]].javascriptUnbind + """)("toDate", toDate3), (""" + implicitly[QueryStringBindable[Option[Int]]].javascriptUnbind + """)("maxNumberOfResults", maxNumberOfResults4)])})
 </span>43 <span style=''></span><span style='background: #F0ADAD'>          }
 </span>44 <span style=''></span><span style='background: #F0ADAD'>        
 </span>45 <span style=''></span><span style='background: #F0ADAD'>        }
@@ -102,7 +102,7 @@
 </span>78 <span style=''>  
 </span>79 <span style=''>  }
 </span>80 <span style=''>
-</span>81 <span style=''>  // @LINE:19
+</span>81 <span style=''>  // @LINE:16
 </span>82 <span style=''>  class ReverseAssets(_prefix: => String) {
 </span>83 <span style=''>
 </span>84 <span style=''>    def _defaultPrefix: String = {
@@ -110,7 +110,7 @@
 </span>86 <span style=''>    }
 </span>87 <span style=''>
 </span>88 <span style=''>  
-</span>89 <span style=''>    // @LINE:19
+</span>89 <span style=''>    // @LINE:16
 </span>90 <span style=''>    def versioned: JavaScriptReverseRoute = </span><span style='background: #F0ADAD'>JavaScriptReverseRoute(
 </span>91 <span style=''></span><span style='background: #F0ADAD'>      "controllers.Assets.versioned",
 </span>92 <span style=''></span><span style='background: #F0ADAD'>      """
@@ -140,7 +140,70 @@
           21
         </td>
         <td>
-          1178
+          1196
+        </td>
+        <td>
+          618
+          -
+          620
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;&quot;
+        </td>
+      </tr><tr>
+        <td>
+          21
+        </td>
+        <td>
+          1195
+        </td>
+        <td>
+          618
+          -
+          620
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;&quot;
+        </td>
+      </tr><tr>
+        <td>
+          21
+        </td>
+        <td>
+          1198
+        </td>
+        <td>
+          626
+          -
+          629
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;/&quot;
+        </td>
+      </tr><tr>
+        <td>
+          21
+        </td>
+        <td>
+          1194
         </td>
         <td>
           595
@@ -161,70 +224,7 @@
           21
         </td>
         <td>
-          1180
-        </td>
-        <td>
-          618
-          -
-          620
-        </td>
-        <td>
-          Block
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;&quot;
-        </td>
-      </tr><tr>
-        <td>
-          21
-        </td>
-        <td>
-          1179
-        </td>
-        <td>
-          618
-          -
-          620
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;&quot;
-        </td>
-      </tr><tr>
-        <td>
-          21
-        </td>
-        <td>
-          1182
-        </td>
-        <td>
-          626
-          -
-          629
-        </td>
-        <td>
-          Block
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;/&quot;
-        </td>
-      </tr><tr>
-        <td>
-          21
-        </td>
-        <td>
-          1181
+          1197
         </td>
         <td>
           626
@@ -245,7 +245,7 @@
           26
         </td>
         <td>
-          1185
+          1201
         </td>
         <td>
           704
@@ -266,7 +266,7 @@
           27
         </td>
         <td>
-          1183
+          1199
         </td>
         <td>
           734
@@ -287,7 +287,7 @@
           30
         </td>
         <td>
-          1184
+          1200
         </td>
         <td>
           785
@@ -308,12 +308,12 @@
           36
         </td>
         <td>
-          1188
+          1204
         </td>
         <td>
           1138
           -
-          1842
+          1982
         </td>
         <td>
           Apply
@@ -322,14 +322,14 @@
           play.api.routing.JavaScriptReverseRoute.apply
         </td>
         <td style="background: #F0ADAD">
-          play.api.routing.JavaScriptReverseRoute.apply(&quot;controllers.QueryController.query&quot;, &quot;\n        function(query0,bbox1,fromDate2,toDate3) {\n        \n          if (true) {\n            return _wA({method:\&quot;GET\&quot;, url:\&quot;&quot;.+(ReverseQueryController.this._prefix).+(ReverseQueryController.this._defaultPrefix).+(&quot;\&quot; + \&quot;query\&quot; + _qS([(&quot;).+(scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).javascriptUnbind).+(&quot;)(\&quot;query\&quot;, query0), (&quot;).+(scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).javascriptUnbind).+(&quot;)(\&quot;bbox\&quot;, bbox1), (&quot;).+(scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).javascriptUnbind).+(&quot;)(\&quot;fromDate\&quot;, fromDate2), (&quot;).+(scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).javascriptUnbind).+(&quot;)(\&quot;toDate\&quot;, toDate3)])})\n          }\n        \n        }\n      &quot;))
+          play.api.routing.JavaScriptReverseRoute.apply(&quot;controllers.QueryController.query&quot;, &quot;\n        function(query0,bbox1,fromDate2,toDate3,maxNumberOfResults4) {\n        \n          if (true) {\n            return _wA({method:\&quot;GET\&quot;, url:\&quot;&quot;.+(ReverseQueryController.this._prefix).+(ReverseQueryController.this._defaultPrefix).+(&quot;\&quot; + \&quot;query\&quot; + _qS([(&quot;).+(scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).javascriptUnbind).+(&quot;)(\&quot;query\&quot;, query0), (&quot;).+(scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).javascriptUnbind).+(&quot;)(\&quot;bbox\&quot;, bbox1), (&quot;).+(scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).javascriptUnbind).+(&quot;)(\&quot;fromDate\&quot;, fromDate2), (&quot;).+(scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).javascriptUnbind).+(&quot;)(\&quot;toDate\&quot;, toDate3), (&quot;).+(scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[Int]]](mvc.this.QueryStringBindable.bindableOption[Int](mvc.this.QueryStringBindable.bindableInt)).javascriptUnbind).+(&quot;)(\&quot;maxNumberOfResults\&quot;, maxNumberOfResults4)])})\n          }\n        \n        }\n      &quot;))
         </td>
       </tr><tr>
         <td>
           37
         </td>
         <td>
-          1186
+          1202
         </td>
         <td>
           1168
@@ -350,12 +350,12 @@
           42
         </td>
         <td>
-          1187
+          1203
         </td>
         <td>
           1211
           -
-          1836
+          1976
         </td>
         <td>
           Apply
@@ -364,19 +364,19 @@
           java.lang.String.+
         </td>
         <td style="background: #F0ADAD">
-          &quot;\n        function(query0,bbox1,fromDate2,toDate3) {\n        \n          if (true) {\n            return _wA({method:\&quot;GET\&quot;, url:\&quot;&quot;.+(ReverseQueryController.this._prefix).+(ReverseQueryController.this._defaultPrefix).+(&quot;\&quot; + \&quot;query\&quot; + _qS([(&quot;).+(scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).javascriptUnbind).+(&quot;)(\&quot;query\&quot;, query0), (&quot;).+(scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).javascriptUnbind).+(&quot;)(\&quot;bbox\&quot;, bbox1), (&quot;).+(scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).javascriptUnbind).+(&quot;)(\&quot;fromDate\&quot;, fromDate2), (&quot;).+(scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).javascriptUnbind).+(&quot;)(\&quot;toDate\&quot;, toDate3)])})\n          }\n        \n        }\n      &quot;)
+          &quot;\n        function(query0,bbox1,fromDate2,toDate3,maxNumberOfResults4) {\n        \n          if (true) {\n            return _wA({method:\&quot;GET\&quot;, url:\&quot;&quot;.+(ReverseQueryController.this._prefix).+(ReverseQueryController.this._defaultPrefix).+(&quot;\&quot; + \&quot;query\&quot; + _qS([(&quot;).+(scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).javascriptUnbind).+(&quot;)(\&quot;query\&quot;, query0), (&quot;).+(scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).javascriptUnbind).+(&quot;)(\&quot;bbox\&quot;, bbox1), (&quot;).+(scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).javascriptUnbind).+(&quot;)(\&quot;fromDate\&quot;, fromDate2), (&quot;).+(scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).javascriptUnbind).+(&quot;)(\&quot;toDate\&quot;, toDate3), (&quot;).+(scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[Int]]](mvc.this.QueryStringBindable.bindableOption[Int](mvc.this.QueryStringBindable.bindableInt)).javascriptUnbind).+(&quot;)(\&quot;maxNumberOfResults\&quot;, maxNumberOfResults4)])})\n          }\n        \n        }\n      &quot;)
         </td>
       </tr><tr>
         <td>
           55
         </td>
         <td>
-          1189
+          1205
         </td>
         <td>
-          1962
+          2102
           -
-          1983
+          2123
         </td>
         <td>
           Apply
@@ -392,15 +392,36 @@
           55
         </td>
         <td>
-          1192
+          1207
         </td>
         <td>
-          1993
+          2125
           -
-          1996
+          2127
         </td>
         <td>
-          Literal
+          Block
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;&quot;
+        </td>
+      </tr><tr>
+        <td>
+          55
+        </td>
+        <td>
+          1209
+        </td>
+        <td>
+          2133
+          -
+          2136
+        </td>
+        <td>
+          Block
         </td>
         <td>
           &lt;nosymbol&gt;
@@ -413,33 +434,12 @@
           55
         </td>
         <td>
-          1191
+          1206
         </td>
         <td>
-          1985
+          2125
           -
-          1987
-        </td>
-        <td>
-          Block
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;&quot;
-        </td>
-      </tr><tr>
-        <td>
-          55
-        </td>
-        <td>
-          1190
-        </td>
-        <td>
-          1985
-          -
-          1987
+          2127
         </td>
         <td>
           Literal
@@ -455,15 +455,15 @@
           55
         </td>
         <td>
-          1193
+          1208
         </td>
         <td>
-          1993
+          2133
           -
-          1996
+          2136
         </td>
         <td>
-          Block
+          Literal
         </td>
         <td>
           &lt;nosymbol&gt;
@@ -476,12 +476,12 @@
           60
         </td>
         <td>
-          1196
+          1212
         </td>
         <td>
-          2062
+          2202
           -
-          2248
+          2388
         </td>
         <td>
           Apply
@@ -497,12 +497,12 @@
           61
         </td>
         <td>
-          1194
+          1210
         </td>
         <td>
-          2092
+          2232
           -
-          2126
+          2266
         </td>
         <td>
           Literal
@@ -518,12 +518,12 @@
           64
         </td>
         <td>
-          1195
+          1211
         </td>
         <td>
-          2134
+          2274
           -
-          2242
+          2382
         </td>
         <td>
           Apply
@@ -539,12 +539,12 @@
           70
         </td>
         <td>
-          1199
+          1215
         </td>
         <td>
-          2309
+          2449
           -
-          2610
+          2750
         </td>
         <td>
           Apply
@@ -560,12 +560,12 @@
           71
         </td>
         <td>
-          1197
+          1213
         </td>
         <td>
-          2339
+          2479
           -
-          2375
+          2515
         </td>
         <td>
           Literal
@@ -581,12 +581,12 @@
           74
         </td>
         <td>
-          1198
+          1214
         </td>
         <td>
-          2383
+          2523
           -
-          2604
+          2744
         </td>
         <td>
           Apply
@@ -602,54 +602,12 @@
           85
         </td>
         <td>
-          1204
+          1216
         </td>
         <td>
-          2754
+          2863
           -
-          2757
-        </td>
-        <td>
-          Block
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;/&quot;
-        </td>
-      </tr><tr>
-        <td>
-          85
-        </td>
-        <td>
-          1201
-        </td>
-        <td>
-          2746
-          -
-          2748
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;&quot;
-        </td>
-      </tr><tr>
-        <td>
-          85
-        </td>
-        <td>
-          1200
-        </td>
-        <td>
-          2723
-          -
-          2744
+          2884
         </td>
         <td>
           Apply
@@ -665,12 +623,12 @@
           85
         </td>
         <td>
-          1203
+          1219
         </td>
         <td>
-          2754
+          2894
           -
-          2757
+          2897
         </td>
         <td>
           Literal
@@ -686,12 +644,12 @@
           85
         </td>
         <td>
-          1202
+          1218
         </td>
         <td>
-          2746
+          2886
           -
-          2748
+          2888
         </td>
         <td>
           Block
@@ -704,15 +662,57 @@
         </td>
       </tr><tr>
         <td>
+          85
+        </td>
+        <td>
+          1217
+        </td>
+        <td>
+          2886
+          -
+          2888
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;&quot;
+        </td>
+      </tr><tr>
+        <td>
+          85
+        </td>
+        <td>
+          1220
+        </td>
+        <td>
+          2894
+          -
+          2897
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;/&quot;
+        </td>
+      </tr><tr>
+        <td>
           90
         </td>
         <td>
-          1207
+          1223
         </td>
         <td>
-          2828
+          2968
           -
-          3128
+          3268
         </td>
         <td>
           Apply
@@ -728,12 +728,12 @@
           91
         </td>
         <td>
-          1205
+          1221
         </td>
         <td>
-          2858
+          2998
           -
-          2888
+          3028
         </td>
         <td>
           Literal
@@ -749,12 +749,12 @@
           94
         </td>
         <td>
-          1206
+          1222
         </td>
         <td>
-          2896
+          3036
           -
-          3122
+          3262
         </td>
         <td>
           Apply

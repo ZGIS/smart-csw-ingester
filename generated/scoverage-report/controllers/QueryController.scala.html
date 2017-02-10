@@ -45,9 +45,9 @@
 </span>21 <span style=''>
 </span>22 <span style=''>import java.time.LocalDate
 </span>23 <span style=''>import javax.inject._
-</span>24 <span style=''>
-</span>25 <span style=''>import models.gmd.{GeoJSONFeatureCollectionWriter, MdMetadataSet}
-</span>26 <span style=''>import play.api.libs.json.Json
+</span>24 <span style=''>import play.api.libs.json._
+</span>25 <span style=''>
+</span>26 <span style=''>import models.gmd.{GeoJSONFeatureCollectionWriter, MdMetadataSet}
 </span>27 <span style=''>import play.api.mvc._
 </span>28 <span style=''>import services.LuceneService
 </span>29 <span style=''>import utils.ClassnameLogger
@@ -55,7 +55,7 @@
 </span>31 <span style=''>/**
 </span>32 <span style=''>  * Controller that serves results from Lucene Index
 </span>33 <span style=''>  */
-</span>34 <span style=''>//TODO SR rename to "IndexController" or something similar
+</span>34 <span style=''>// TODO SR rename to "IndexController" or something similar
 </span>35 <span style=''>class QueryController @Inject()(luceneService: LuceneService) extends Controller with ClassnameLogger {
 </span>36 <span style=''>
 </span>37 <span style=''>  implicit val geoJSONFeatureCollectionWrite = </span><span style='background: #F0ADAD'>GeoJSONFeatureCollectionWriter</span><span style=''>
@@ -71,34 +71,39 @@
 </span>47 <span style=''>  def query(query: Option[String],
 </span>48 <span style=''>            bboxWkt: Option[String],
 </span>49 <span style=''>            fromDateStr: Option[String],
-</span>50 <span style=''>            toDateStr: Option[String]): Action[AnyContent] = </span><span style='background: #F0ADAD'>Action {
-</span>51 <span style=''></span><span style='background: #F0ADAD'>    logger.info(s"Query CSW: ${query.getOrElse("NONE")}")
-</span>52 <span style=''></span><span style='background: #F0ADAD'>    //TODO SR make tuple expression out of this
-</span>53 <span style=''></span><span style='background: #F0ADAD'>    val fromDate = fromDateStr match {
-</span>54 <span style=''></span><span style='background: #F0ADAD'>      case None => Some(LocalDate.ofEpochDay(0))
-</span>55 <span style=''></span><span style='background: #F0ADAD'>      case _ => Some(MdMetadataSet.dateFromStrings(List(fromDateStr.get)))
-</span>56 <span style=''></span><span style='background: #F0ADAD'>    }
-</span>57 <span style=''></span><span style='background: #F0ADAD'>
-</span>58 <span style=''></span><span style='background: #F0ADAD'>    val toDate = toDateStr match {
-</span>59 <span style=''></span><span style='background: #F0ADAD'>      case None => Some(LocalDate.now())
-</span>60 <span style=''></span><span style='background: #F0ADAD'>      case _ => Some(MdMetadataSet.dateFromStrings(List(toDateStr.get)))
-</span>61 <span style=''></span><span style='background: #F0ADAD'>    }
-</span>62 <span style=''></span><span style='background: #F0ADAD'>
-</span>63 <span style=''></span><span style='background: #F0ADAD'>    //FIXME SR error handling
-</span>64 <span style=''></span><span style='background: #F0ADAD'>    val featureCollection = luceneService.query(query.getOrElse(DEFAULT_QUERY), bboxWkt, fromDate, toDate)
-</span>65 <span style=''></span><span style='background: #F0ADAD'>
-</span>66 <span style=''></span><span style='background: #F0ADAD'>    // TODO AK here we could insert the query string again if needed
-</span>67 <span style=''></span><span style='background: #F0ADAD'>    val resultJson = Json.toJson(featureCollection)
+</span>50 <span style=''>            toDateStr: Option[String],
+</span>51 <span style=''>            maxNumberOfResults: Option[Int]): Action[AnyContent] = </span><span style='background: #F0ADAD'>Action {
+</span>52 <span style=''></span><span style='background: #F0ADAD'>    logger.info(s"Query CSW: ${query.getOrElse("NONE")}")
+</span>53 <span style=''></span><span style='background: #F0ADAD'>    // TODO SR make tuple expression out of this
+</span>54 <span style=''></span><span style='background: #F0ADAD'>    val fromDate = fromDateStr match {
+</span>55 <span style=''></span><span style='background: #F0ADAD'>      case None => Some(LocalDate.ofEpochDay(0))
+</span>56 <span style=''></span><span style='background: #F0ADAD'>      case _ => Some(MdMetadataSet.dateFromStrings(List(fromDateStr.get)))
+</span>57 <span style=''></span><span style='background: #F0ADAD'>    }
+</span>58 <span style=''></span><span style='background: #F0ADAD'>
+</span>59 <span style=''></span><span style='background: #F0ADAD'>    val toDate = toDateStr match {
+</span>60 <span style=''></span><span style='background: #F0ADAD'>      case None => Some(LocalDate.now())
+</span>61 <span style=''></span><span style='background: #F0ADAD'>      case _ => Some(MdMetadataSet.dateFromStrings(List(toDateStr.get)))
+</span>62 <span style=''></span><span style='background: #F0ADAD'>    }
+</span>63 <span style=''></span><span style='background: #F0ADAD'>
+</span>64 <span style=''></span><span style='background: #F0ADAD'>    // FIXME SR error handling
+</span>65 <span style=''></span><span style='background: #F0ADAD'>    val searchResult = luceneService.query(query.getOrElse(DEFAULT_QUERY), bboxWkt, fromDate, toDate,
+</span>66 <span style=''></span><span style='background: #F0ADAD'>      maxNumberOfResults)
+</span>67 <span style=''></span><span style='background: #F0ADAD'>    val featureCollection = searchResult.documents
 </span>68 <span style=''></span><span style='background: #F0ADAD'>
-</span>69 <span style=''></span><span style='background: #F0ADAD'>    Ok(resultJson).as(JSON)
-</span>70 <span style=''></span><span style='background: #F0ADAD'>  }</span><span style=''>
-</span>71 <span style=''>
-</span>72 <span style=''>  def buildIndexFor(catalogueName: String): Action[AnyContent] = </span><span style='background: #F0ADAD'>Action {
-</span>73 <span style=''></span><span style='background: #F0ADAD'>    logger.info(s"Request for building index for $catalogueName")
-</span>74 <span style=''></span><span style='background: #F0ADAD'>    val result = luceneService.buildIndex(catalogueName)
-</span>75 <span style=''></span><span style='background: #F0ADAD'>    Ok(s"building index for $catalogueName")
-</span>76 <span style=''></span><span style='background: #F0ADAD'>  }</span><span style=''>
-</span>77 <span style=''>}
+</span>69 <span style=''></span><span style='background: #F0ADAD'>    // TODO AK here we could insert the query string again if needed
+</span>70 <span style=''></span><span style='background: #F0ADAD'>    val jsonTransformer = __.json.update(
+</span>71 <span style=''></span><span style='background: #F0ADAD'>      (__ \ 'countMatched).json.put(JsNumber(searchResult.numberOfMatchingDocuments)))
+</span>72 <span style=''></span><span style='background: #F0ADAD'>    val resultJson: JsValue = Json.toJson(featureCollection)
+</span>73 <span style=''></span><span style='background: #F0ADAD'>
+</span>74 <span style=''></span><span style='background: #F0ADAD'>    Ok(resultJson.transform(jsonTransformer).get).as(JSON)
+</span>75 <span style=''></span><span style='background: #F0ADAD'>  }</span><span style=''>
+</span>76 <span style=''>
+</span>77 <span style=''>  def buildIndexFor(catalogueName: String): Action[AnyContent] = </span><span style='background: #F0ADAD'>Action {
+</span>78 <span style=''></span><span style='background: #F0ADAD'>    logger.info(s"Request for building index for $catalogueName")
+</span>79 <span style=''></span><span style='background: #F0ADAD'>    luceneService.buildIndex(catalogueName)
+</span>80 <span style=''></span><span style='background: #F0ADAD'>    Ok(s"building index for $catalogueName")
+</span>81 <span style=''></span><span style='background: #F0ADAD'>  }</span><span style=''>
+</span>82 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -118,9 +123,9 @@
           16
         </td>
         <td>
-          1402
+          1400
           -
-          1432
+          1430
         </td>
         <td>
           Select
@@ -139,9 +144,9 @@
           17
         </td>
         <td>
-          1468
+          1466
           -
-          1473
+          1471
         </td>
         <td>
           Literal
@@ -154,15 +159,15 @@
         </td>
       </tr><tr>
         <td>
-          50
+          51
         </td>
         <td>
-          43
+          51
         </td>
         <td>
-          1814
+          1857
           -
-          2546
+          2832
         </td>
         <td>
           Apply
@@ -181,22 +186,24 @@
     case scala.None =&gt; scala.Some.apply[java.time.LocalDate](java.time.LocalDate.now())
     case _ =&gt; scala.Some.apply[java.time.LocalDate](models.gmd.MdMetadataSet.dateFromStrings(immutable.this.List.apply[String](toDateStr.get)))
   };
-  val featureCollection: List[models.gmd.MdMetadataSet] = QueryController.this.luceneService.query(query.getOrElse[String](QueryController.this.DEFAULT_QUERY), bboxWkt, fromDate, toDate);
+  val searchResult: services.SearchResult = QueryController.this.luceneService.query(query.getOrElse[String](QueryController.this.DEFAULT_QUERY), bboxWkt, fromDate, toDate, maxNumberOfResults);
+  val featureCollection: List[models.gmd.MdMetadataSet] = searchResult.documents;
+  val jsonTransformer: play.api.libs.json.Reads[play.api.libs.json.JsObject] = play.api.libs.json.`package`.__.json.update[play.api.libs.json.JsObject](play.api.libs.json.`package`.__.\(scala.Symbol.apply(&quot;countMatched&quot;)).json.put(play.api.libs.json.JsNumber.apply(math.this.BigDecimal.int2bigDecimal(searchResult.numberOfMatchingDocuments))));
   val resultJson: play.api.libs.json.JsValue = play.api.libs.json.Json.toJson[List[models.gmd.MdMetadataSet]](featureCollection)(QueryController.this.geoJSONFeatureCollectionWrite);
-  QueryController.this.Ok.apply[play.api.libs.json.JsValue](resultJson)(http.this.Writeable.writeableOf_JsValue(mvc.this.Codec.utf_8)).as(QueryController.this.JSON)
+  QueryController.this.Ok.apply[play.api.libs.json.JsObject](resultJson.transform[play.api.libs.json.JsObject](jsonTransformer).get)(http.this.Writeable.writeableOf_JsValue(mvc.this.Codec.utf_8)).as(QueryController.this.JSON)
 })
         </td>
       </tr><tr>
         <td>
-          51
+          52
         </td>
         <td>
           20
         </td>
         <td>
-          1854
+          1897
           -
-          1877
+          1920
         </td>
         <td>
           Apply
@@ -209,15 +216,15 @@
         </td>
       </tr><tr>
         <td>
-          51
+          52
         </td>
         <td>
           22
         </td>
         <td>
-          1827
+          1870
           -
-          1880
+          1923
         </td>
         <td>
           Apply
@@ -230,15 +237,15 @@
         </td>
       </tr><tr>
         <td>
-          51
+          52
         </td>
         <td>
           19
         </td>
         <td>
-          1878
+          1921
           -
-          1879
+          1922
         </td>
         <td>
           Literal
@@ -251,15 +258,15 @@
         </td>
       </tr><tr>
         <td>
-          51
+          52
         </td>
         <td>
           18
         </td>
         <td>
-          1841
+          1884
           -
-          1853
+          1896
         </td>
         <td>
           Literal
@@ -272,15 +279,15 @@
         </td>
       </tr><tr>
         <td>
-          51
+          52
         </td>
         <td>
           21
         </td>
         <td>
-          1839
+          1882
           -
-          1879
+          1922
         </td>
         <td>
           Apply
@@ -293,15 +300,15 @@
         </td>
       </tr><tr>
         <td>
-          54
+          55
         </td>
         <td>
           23
         </td>
         <td>
-          1992
+          2036
           -
-          2015
+          2059
         </td>
         <td>
           Apply
@@ -314,15 +321,15 @@
         </td>
       </tr><tr>
         <td>
-          54
+          55
         </td>
         <td>
           24
         </td>
         <td>
-          1987
+          2031
           -
-          2016
+          2060
         </td>
         <td>
           Apply
@@ -335,15 +342,15 @@
         </td>
       </tr><tr>
         <td>
-          55
+          56
         </td>
         <td>
           26
         </td>
         <td>
-          2068
+          2112
           -
-          2089
+          2133
         </td>
         <td>
           Apply
@@ -356,15 +363,15 @@
         </td>
       </tr><tr>
         <td>
-          55
+          56
         </td>
         <td>
           25
         </td>
         <td>
-          2073
+          2117
           -
-          2088
+          2132
         </td>
         <td>
           Select
@@ -377,15 +384,15 @@
         </td>
       </tr><tr>
         <td>
-          55
+          56
         </td>
         <td>
           28
         </td>
         <td>
-          2033
+          2077
           -
-          2091
+          2135
         </td>
         <td>
           Apply
@@ -398,15 +405,15 @@
         </td>
       </tr><tr>
         <td>
-          55
+          56
         </td>
         <td>
           27
         </td>
         <td>
-          2038
+          2082
           -
-          2090
+          2134
         </td>
         <td>
           Apply
@@ -419,15 +426,15 @@
         </td>
       </tr><tr>
         <td>
-          59
+          60
         </td>
         <td>
           29
         </td>
         <td>
-          2158
+          2202
           -
-          2173
+          2217
         </td>
         <td>
           Apply
@@ -440,15 +447,15 @@
         </td>
       </tr><tr>
         <td>
-          59
+          60
         </td>
         <td>
           30
         </td>
         <td>
-          2153
+          2197
           -
-          2174
+          2218
         </td>
         <td>
           Apply
@@ -461,15 +468,15 @@
         </td>
       </tr><tr>
         <td>
-          60
+          61
         </td>
         <td>
           32
         </td>
         <td>
-          2226
+          2270
           -
-          2245
+          2289
         </td>
         <td>
           Apply
@@ -482,15 +489,15 @@
         </td>
       </tr><tr>
         <td>
-          60
+          61
         </td>
         <td>
           31
         </td>
         <td>
-          2231
+          2275
           -
-          2244
+          2288
         </td>
         <td>
           Select
@@ -503,15 +510,15 @@
         </td>
       </tr><tr>
         <td>
-          60
+          61
         </td>
         <td>
           34
         </td>
         <td>
-          2191
+          2235
           -
-          2247
+          2291
         </td>
         <td>
           Apply
@@ -524,15 +531,15 @@
         </td>
       </tr><tr>
         <td>
-          60
+          61
         </td>
         <td>
           33
         </td>
         <td>
-          2196
+          2240
           -
-          2246
+          2290
         </td>
         <td>
           Apply
@@ -545,15 +552,15 @@
         </td>
       </tr><tr>
         <td>
-          64
+          65
         </td>
         <td>
           35
         </td>
         <td>
-          2333
+          2373
           -
-          2363
+          2403
         </td>
         <td>
           Apply
@@ -566,15 +573,15 @@
         </td>
       </tr><tr>
         <td>
-          64
+          65
         </td>
         <td>
           36
         </td>
         <td>
-          2313
+          2353
           -
-          2391
+          2457
         </td>
         <td>
           Apply
@@ -583,28 +590,7 @@
           services.LuceneService.query
         </td>
         <td style="background: #F0ADAD">
-          QueryController.this.luceneService.query(query.getOrElse[String](QueryController.this.DEFAULT_QUERY), bboxWkt, fromDate, toDate)
-        </td>
-      </tr><tr>
-        <td>
-          67
-        </td>
-        <td>
-          38
-        </td>
-        <td>
-          2483
-          -
-          2513
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          play.api.libs.json.Json.toJson
-        </td>
-        <td style="background: #F0ADAD">
-          play.api.libs.json.Json.toJson[List[models.gmd.MdMetadataSet]](featureCollection)(QueryController.this.geoJSONFeatureCollectionWrite)
+          QueryController.this.luceneService.query(query.getOrElse[String](QueryController.this.DEFAULT_QUERY), bboxWkt, fromDate, toDate, maxNumberOfResults)
         </td>
       </tr><tr>
         <td>
@@ -614,9 +600,156 @@
           37
         </td>
         <td>
-          2494
+          2486
           -
-          2494
+          2508
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          services.SearchResult.documents
+        </td>
+        <td style="background: #F0ADAD">
+          searchResult.documents
+        </td>
+      </tr><tr>
+        <td>
+          70
+        </td>
+        <td>
+          43
+        </td>
+        <td>
+          2605
+          -
+          2707
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.libs.json.JsPath.json.update
+        </td>
+        <td style="background: #F0ADAD">
+          play.api.libs.json.`package`.__.json.update[play.api.libs.json.JsObject](play.api.libs.json.`package`.__.\(scala.Symbol.apply(&quot;countMatched&quot;)).json.put(play.api.libs.json.JsNumber.apply(math.this.BigDecimal.int2bigDecimal(searchResult.numberOfMatchingDocuments))))
+        </td>
+      </tr><tr>
+        <td>
+          71
+        </td>
+        <td>
+          41
+        </td>
+        <td>
+          2657
+          -
+          2705
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.libs.json.JsNumber.apply
+        </td>
+        <td style="background: #F0ADAD">
+          play.api.libs.json.JsNumber.apply(math.this.BigDecimal.int2bigDecimal(searchResult.numberOfMatchingDocuments))
+        </td>
+      </tr><tr>
+        <td>
+          71
+        </td>
+        <td>
+          38
+        </td>
+        <td>
+          2633
+          -
+          2646
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Symbol.apply
+        </td>
+        <td style="background: #F0ADAD">
+          scala.Symbol.apply(&quot;countMatched&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          71
+        </td>
+        <td>
+          40
+        </td>
+        <td>
+          2666
+          -
+          2704
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          scala.math.BigDecimal.int2bigDecimal
+        </td>
+        <td style="background: #F0ADAD">
+          math.this.BigDecimal.int2bigDecimal(searchResult.numberOfMatchingDocuments)
+        </td>
+      </tr><tr>
+        <td>
+          71
+        </td>
+        <td>
+          39
+        </td>
+        <td>
+          2666
+          -
+          2704
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          services.SearchResult.numberOfMatchingDocuments
+        </td>
+        <td style="background: #F0ADAD">
+          searchResult.numberOfMatchingDocuments
+        </td>
+      </tr><tr>
+        <td>
+          71
+        </td>
+        <td>
+          42
+        </td>
+        <td>
+          2628
+          -
+          2706
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.libs.json.JsPath.json.put
+        </td>
+        <td style="background: #F0ADAD">
+          play.api.libs.json.`package`.__.\(scala.Symbol.apply(&quot;countMatched&quot;)).json.put(play.api.libs.json.JsNumber.apply(math.this.BigDecimal.int2bigDecimal(searchResult.numberOfMatchingDocuments)))
+        </td>
+      </tr><tr>
+        <td>
+          72
+        </td>
+        <td>
+          44
+        </td>
+        <td>
+          2749
+          -
+          2749
         </td>
         <td>
           Select
@@ -629,15 +762,99 @@
         </td>
       </tr><tr>
         <td>
-          69
+          72
         </td>
         <td>
-          41
+          45
         </td>
         <td>
-          2537
+          2738
           -
-          2541
+          2768
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.api.libs.json.Json.toJson
+        </td>
+        <td style="background: #F0ADAD">
+          play.api.libs.json.Json.toJson[List[models.gmd.MdMetadataSet]](featureCollection)(QueryController.this.geoJSONFeatureCollectionWrite)
+        </td>
+      </tr><tr>
+        <td>
+          74
+        </td>
+        <td>
+          50
+        </td>
+        <td>
+          2774
+          -
+          2828
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.mvc.Result.as
+        </td>
+        <td style="background: #F0ADAD">
+          QueryController.this.Ok.apply[play.api.libs.json.JsObject](resultJson.transform[play.api.libs.json.JsObject](jsonTransformer).get)(http.this.Writeable.writeableOf_JsValue(mvc.this.Codec.utf_8)).as(QueryController.this.JSON)
+        </td>
+      </tr><tr>
+        <td>
+          74
+        </td>
+        <td>
+          47
+        </td>
+        <td>
+          2776
+          -
+          2776
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          play.api.mvc.Codec.utf_8
+        </td>
+        <td style="background: #F0ADAD">
+          mvc.this.Codec.utf_8
+        </td>
+      </tr><tr>
+        <td>
+          74
+        </td>
+        <td>
+          46
+        </td>
+        <td>
+          2777
+          -
+          2818
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          play.api.libs.json.JsResult.get
+        </td>
+        <td style="background: #F0ADAD">
+          resultJson.transform[play.api.libs.json.JsObject](jsonTransformer).get
+        </td>
+      </tr><tr>
+        <td>
+          74
+        </td>
+        <td>
+          49
+        </td>
+        <td>
+          2823
+          -
+          2827
         </td>
         <td>
           Select
@@ -650,15 +867,15 @@
         </td>
       </tr><tr>
         <td>
-          69
+          74
         </td>
         <td>
-          40
+          48
         </td>
         <td>
-          2521
+          2776
           -
-          2521
+          2776
         </td>
         <td>
           ApplyToImplicitArgs
@@ -671,57 +888,15 @@
         </td>
       </tr><tr>
         <td>
-          69
+          77
         </td>
         <td>
-          39
+          59
         </td>
         <td>
-          2521
+          2899
           -
-          2521
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          play.api.mvc.Codec.utf_8
-        </td>
-        <td style="background: #F0ADAD">
-          mvc.this.Codec.utf_8
-        </td>
-      </tr><tr>
-        <td>
-          69
-        </td>
-        <td>
-          42
-        </td>
-        <td>
-          2519
-          -
-          2542
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          play.api.mvc.Result.as
-        </td>
-        <td style="background: #F0ADAD">
-          QueryController.this.Ok.apply[play.api.libs.json.JsValue](resultJson)(http.this.Writeable.writeableOf_JsValue(mvc.this.Codec.utf_8)).as(QueryController.this.JSON)
-        </td>
-      </tr><tr>
-        <td>
-          72
-        </td>
-        <td>
-          51
-        </td>
-        <td>
-          2613
-          -
-          2793
+          3066
         </td>
         <td>
           Apply
@@ -732,42 +907,21 @@
         <td style="background: #F0ADAD">
           play.api.mvc.Action.apply({
   QueryController.this.logger.info(scala.StringContext.apply(&quot;Request for building index for &quot;, &quot;&quot;).s(catalogueName));
-  val result: Unit = QueryController.this.luceneService.buildIndex(catalogueName);
+  QueryController.this.luceneService.buildIndex(catalogueName);
   QueryController.this.Ok.apply[String](scala.StringContext.apply(&quot;building index for &quot;, &quot;&quot;).s(catalogueName))(http.this.Writeable.wString(mvc.this.Codec.utf_8))
 })
         </td>
       </tr><tr>
         <td>
-          73
+          78
         </td>
         <td>
-          44
+          53
         </td>
         <td>
-          2638
+          2912
           -
-          2686
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.StringContext.s
-        </td>
-        <td style="background: #F0ADAD">
-          scala.StringContext.apply(&quot;Request for building index for &quot;, &quot;&quot;).s(catalogueName)
-        </td>
-      </tr><tr>
-        <td>
-          73
-        </td>
-        <td>
-          45
-        </td>
-        <td>
-          2626
-          -
-          2687
+          2973
         </td>
         <td>
           Apply
@@ -780,15 +934,36 @@
         </td>
       </tr><tr>
         <td>
-          74
+          78
         </td>
         <td>
-          46
+          52
         </td>
         <td>
-          2705
+          2924
           -
-          2744
+          2972
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.StringContext.s
+        </td>
+        <td style="background: #F0ADAD">
+          scala.StringContext.apply(&quot;Request for building index for &quot;, &quot;&quot;).s(catalogueName)
+        </td>
+      </tr><tr>
+        <td>
+          79
+        </td>
+        <td>
+          54
+        </td>
+        <td>
+          2978
+          -
+          3017
         </td>
         <td>
           Apply
@@ -801,36 +976,36 @@
         </td>
       </tr><tr>
         <td>
-          75
+          80
         </td>
         <td>
-          50
+          56
         </td>
         <td>
-          2749
+          3024
           -
-          2789
+          3024
         </td>
         <td>
-          ApplyToImplicitArgs
+          Select
         </td>
         <td>
-          play.api.mvc.Results.Status.apply
+          play.api.mvc.Codec.utf_8
         </td>
         <td style="background: #F0ADAD">
-          QueryController.this.Ok.apply[String](scala.StringContext.apply(&quot;building index for &quot;, &quot;&quot;).s(catalogueName))(http.this.Writeable.wString(mvc.this.Codec.utf_8))
+          mvc.this.Codec.utf_8
         </td>
       </tr><tr>
         <td>
-          75
+          80
         </td>
         <td>
-          47
+          55
         </td>
         <td>
-          2752
+          3025
           -
-          2788
+          3061
         </td>
         <td>
           Apply
@@ -843,15 +1018,36 @@
         </td>
       </tr><tr>
         <td>
-          75
+          80
         </td>
         <td>
-          49
+          58
         </td>
         <td>
-          2751
+          3022
           -
-          2751
+          3062
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.api.mvc.Results.Status.apply
+        </td>
+        <td style="background: #F0ADAD">
+          QueryController.this.Ok.apply[String](scala.StringContext.apply(&quot;building index for &quot;, &quot;&quot;).s(catalogueName))(http.this.Writeable.wString(mvc.this.Codec.utf_8))
+        </td>
+      </tr><tr>
+        <td>
+          80
+        </td>
+        <td>
+          57
+        </td>
+        <td>
+          3024
+          -
+          3024
         </td>
         <td>
           ApplyToImplicitArgs
@@ -861,27 +1057,6 @@
         </td>
         <td style="background: #F0ADAD">
           http.this.Writeable.wString(mvc.this.Codec.utf_8)
-        </td>
-      </tr><tr>
-        <td>
-          75
-        </td>
-        <td>
-          48
-        </td>
-        <td>
-          2751
-          -
-          2751
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          play.api.mvc.Codec.utf_8
-        </td>
-        <td style="background: #F0ADAD">
-          mvc.this.Codec.utf_8
         </td>
       </tr>
     </table>
