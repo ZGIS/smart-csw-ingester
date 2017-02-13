@@ -1,13 +1,24 @@
-# SMART CSW Metadata Ingester [![OpenHUB](https://www.openhub.net/p/smart-csw-ingester/widgets/project_thin_badge.gif)](https://www.openhub.net/p/smart-csw-ingester)
+# SMART CSW Metadata Ingester 
 
 - ingest metadata records from CSW servers into lucene index
 - provides fast lucene query JSON API for websites
 
 ## Build
 
-<p><a href="https://api.travis-ci.org/repos/ZGIS/smart-csw-ingester/builds.atom"><img src="https://upload.wikimedia.org/wikipedia/en/4/43/Feed-icon.svg" align="left" height="32" width="32" alt="Builds Feed"></a></p>
+[![Build Status][build-status-badge]][build-status-url]
+[![Issues][issues-badge]][issues-url]
 
-[Travis CI Build](https://travis-ci.org/ZGIS/smart-csw-ingester) [![Build Status](https://travis-ci.org/ZGIS/smart-csw-ingester.svg)](https://travis-ci.org/ZGIS/smart-csw-ingester)
+[![License][license-badge]][license-url]
+[![OpenHUB](https://www.openhub.net/p/smart-csw-ingester/widgets/project_thin_badge.gif)](https://www.openhub.net/p/smart-csw-ingester)
+ 
+[build-status-badge]: https://img.shields.io/travis/ZGIS/smart-csw-ingester.svg?style=flat-square
+[build-status-url]: https://travis-ci.org/ZGIS/smart-csw-ingester
+[issues-badge]: https://img.shields.io/github/issues/ZGIS/smart-csw-ingester.svg?style=flat-square
+[issues-url]: https://github.com/ZGIS/smart-csw-ingester/issues
+[license-badge]: https://img.shields.io/badge/License-Apache%202-blue.svg?style=flat-square
+[license-url]: LICENSE
+
+<p><a href="https://api.travis-ci.org/repos/ZGIS/smart-csw-ingester/builds.atom"><img src="https://upload.wikimedia.org/wikipedia/en/4/43/Feed-icon.svg" align="left" height="32" width="32" alt="Builds Feed"></a></p>
 
 [Site Docs](https://zgis.github.io/smart-csw-ingester/)
 
