@@ -176,7 +176,7 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
             bboxWtk: Option[String] = None,
             fromDate: Option[LocalDate] = None,
             toDate: Option[LocalDate] = None,
-            maxNumberOfResults: Option[Int]): SearchResult = {
+            maxNumberOfResults: Option[Int] = None): SearchResult = {
 
     val textQuery = parseQueryString(query)
 
@@ -195,16 +195,16 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
     booleanQueryBuilder.add(textQuery, BooleanClause.Occur.MUST)
     booleanQueryBuilder.add(dateQuery, BooleanClause.Occur.MUST)
     booleanQueryBuilder.add(bboxQuery, BooleanClause.Occur.MUST)
-    val luceneQuery = booleanQueryBuilder.build()
+    val finalLuceneQuery = booleanQueryBuilder.build()
 
-    val numOfMatchingDocuments = isearcher.count(luceneQuery);
+    val numOfMatchingDocuments = isearcher.count(finalLuceneQuery);
 
     // TODO SR is "all" a good default, when queried for 0 or less documents?
     val maxDocuments = maxNumberOfResults match {
       case Some(x) if maxNumberOfResults.get <= 0 => numOfMatchingDocuments + 1 //+1 just in case 0 docs match
       case _ => maxNumberOfResults.getOrElse(defaultMaxDocuments)
     }
-    val search = isearcher.search(luceneQuery, maxDocuments);
+    val search = isearcher.search(finalLuceneQuery, maxDocuments);
     val scoreDocs = search.scoreDocs
 
     val results = scoreDocs.map(scoreDoc => {
@@ -216,7 +216,7 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
     searcherManager.release(isearcher)
 
     new SearchResult {
-      override val luceneQuery: Query = luceneQuery
+      override val luceneQuery: Query = finalLuceneQuery
       override val numberOfMatchingDocuments: Int = numOfMatchingDocuments
       override val documents: List[MdMetadataSet] = results
     }

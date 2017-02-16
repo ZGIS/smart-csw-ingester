@@ -21,9 +21,11 @@ package controllers
 
 import java.time.LocalDate
 import javax.inject._
-import play.api.libs.json._
 
+import models.ErrorResult
+import play.api.libs.json._
 import models.gmd.{GeoJSONFeatureCollectionWriter, MdMetadataSet}
+import org.apache.lucene.queryparser.classic.ParseException
 import play.api.mvc._
 import services.LuceneService
 import utils.ClassnameLogger
@@ -61,17 +63,25 @@ class QueryController @Inject()(luceneService: LuceneService) extends Controller
       case _ => Some(MdMetadataSet.dateFromStrings(List(toDateStr.get)))
     }
 
-    // FIXME SR error handling
-    val searchResult = luceneService.query(query.getOrElse(DEFAULT_QUERY), bboxWkt, fromDate, toDate,
-      maxNumberOfResults)
-    val featureCollection = searchResult.documents
+    try {
+      val searchResult = luceneService.query(query.getOrElse(DEFAULT_QUERY), bboxWkt, fromDate, toDate,
+        maxNumberOfResults)
+      val featureCollection = searchResult.documents
 
-    // TODO AK here we could insert the query string again if needed
-    val jsonTransformer = __.json.update(
-      (__ \ 'countMatched).json.put(JsNumber(searchResult.numberOfMatchingDocuments)))
-    val resultJson: JsValue = Json.toJson(featureCollection)
+      // TODO AK here we could insert the query string again if needed
+      val jsonTransformer = __.json.update(
+        (__ \ 'countMatched).json.put(JsNumber(searchResult.numberOfMatchingDocuments)))
+      val resultJson: JsValue = Json.toJson(featureCollection)
 
-    Ok(resultJson.transform(jsonTransformer).get).as(JSON)
+      Ok(resultJson.transform(jsonTransformer).get).as(JSON)
+    }
+    catch {
+      case e: ParseException => { // TODO SR generally catch Exception is BAD(tm) but can we live with that here?
+        logger.error("Exception parsing query: " + e.getMessage, e);
+        val error: ErrorResult = ErrorResult(s"Could not parse query '${query.get}' ", Some(e.getMessage))
+        InternalServerError(Json.toJson(error)).as(JSON)
+      }
+    }
   }
 
   def buildIndexFor(catalogueName: String): Action[AnyContent] = Action {
