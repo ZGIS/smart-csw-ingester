@@ -62,8 +62,8 @@
 </span>38 <span style=''>  InjectedActorSupport {
 </span>39 <span style=''>  override def receive: Receive = {
 </span>40 <span style=''>    case GetSpecificIndexBuilder(catalogueName) => {
-</span>41 <span style=''>      val indexBuilderActor: ActorRef = </span><span style='background: #F0ADAD'>injectedChild(luceneIndexBuilderActorFactory(), s"indexBuilder-$catalogueName")</span><span style=''>
-</span>42 <span style=''>      </span><span style='background: #F0ADAD'>sender() ! indexBuilderActor</span><span style=''>
+</span>41 <span style=''>      val indexBuilderActor: ActorRef = </span><span style='background: #AEF1AE'>injectedChild(luceneIndexBuilderActorFactory(), s"indexBuilder-$catalogueName")</span><span style=''>
+</span>42 <span style=''>      </span><span style='background: #AEF1AE'>sender() ! indexBuilderActor</span><span style=''>
 </span>43 <span style=''>    }
 </span>44 <span style=''>  }
 </span>45 <span style=''>}
@@ -83,7 +83,7 @@
           39
         </td>
         <td>
-          970
+          1016
         </td>
         <td>
           1482
@@ -96,7 +96,7 @@
         <td>
           services.LuceneIndexBuilderMasterActor.$anonfun.&lt;init&gt;
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           new $anonfun()
         </td>
       </tr><tr>
@@ -104,49 +104,7 @@
           41
         </td>
         <td>
-          962
-        </td>
-        <td>
-          1591
-          -
-          1623
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          services.LuceneIndexBuilderActor.Factory.apply
-        </td>
-        <td style="background: #F0ADAD">
-          LuceneIndexBuilderMasterActor.this.luceneIndexBuilderActorFactory.apply()
-        </td>
-      </tr><tr>
-        <td>
-          41
-        </td>
-        <td>
-          965
-        </td>
-        <td>
-          1590
-          -
-          1590
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          akka.actor.Actor.context
-        </td>
-        <td style="background: #F0ADAD">
-          LuceneIndexBuilderMasterActor.this.context
-        </td>
-      </tr><tr>
-        <td>
-          41
-        </td>
-        <td>
-          964
+          1010
         </td>
         <td>
           1577
@@ -159,7 +117,7 @@
         <td>
           play.api.libs.concurrent.InjectedActorSupport.injectedChild$default$3
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           LuceneIndexBuilderMasterActor.this.injectedChild$default$3
         </td>
       </tr><tr>
@@ -167,7 +125,7 @@
           41
         </td>
         <td>
-          963
+          1009
         </td>
         <td>
           1625
@@ -180,7 +138,7 @@
         <td>
           scala.StringContext.s
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           scala.StringContext.apply(&quot;indexBuilder-&quot;, &quot;&quot;).s(catalogueName)
         </td>
       </tr><tr>
@@ -188,7 +146,7 @@
           41
         </td>
         <td>
-          966
+          1012
         </td>
         <td>
           1577
@@ -201,36 +159,57 @@
         <td>
           play.api.libs.concurrent.InjectedActorSupport.injectedChild
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           LuceneIndexBuilderMasterActor.this.injectedChild(LuceneIndexBuilderMasterActor.this.luceneIndexBuilderActorFactory.apply(), scala.StringContext.apply(&quot;indexBuilder-&quot;, &quot;&quot;).s(catalogueName), LuceneIndexBuilderMasterActor.this.injectedChild$default$3)(LuceneIndexBuilderMasterActor.this.context)
         </td>
       </tr><tr>
         <td>
-          42
+          41
         </td>
         <td>
-          968
+          1008
         </td>
         <td>
-          1672
+          1591
           -
-          1672
+          1623
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          services.LuceneIndexBuilderActor.Factory.apply
+        </td>
+        <td style="background: #AEF1AE">
+          LuceneIndexBuilderMasterActor.this.luceneIndexBuilderActorFactory.apply()
+        </td>
+      </tr><tr>
+        <td>
+          41
+        </td>
+        <td>
+          1011
+        </td>
+        <td>
+          1590
+          -
+          1590
         </td>
         <td>
           Select
         </td>
         <td>
-          akka.actor.Actor.self
+          akka.actor.Actor.context
         </td>
-        <td style="background: #F0ADAD">
-          LuceneIndexBuilderMasterActor.this.self
+        <td style="background: #AEF1AE">
+          LuceneIndexBuilderMasterActor.this.context
         </td>
       </tr><tr>
         <td>
           42
         </td>
         <td>
-          967
+          1013
         </td>
         <td>
           1663
@@ -243,7 +222,7 @@
         <td>
           akka.actor.Actor.sender
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           LuceneIndexBuilderMasterActor.this.sender()
         </td>
       </tr><tr>
@@ -251,7 +230,7 @@
           42
         </td>
         <td>
-          969
+          1015
         </td>
         <td>
           1663
@@ -264,8 +243,29 @@
         <td>
           akka.actor.ScalaActorRef.!
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           akka.this.actor.`package`.actorRef2Scala(LuceneIndexBuilderMasterActor.this.sender()).!(indexBuilderActor)(LuceneIndexBuilderMasterActor.this.self)
+        </td>
+      </tr><tr>
+        <td>
+          42
+        </td>
+        <td>
+          1014
+        </td>
+        <td>
+          1672
+          -
+          1672
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          akka.actor.Actor.self
+        </td>
+        <td style="background: #AEF1AE">
+          LuceneIndexBuilderMasterActor.this.self
         </td>
       </tr>
     </table>

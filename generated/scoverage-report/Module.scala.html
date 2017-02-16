@@ -59,11 +59,11 @@
 </span>35 <span style=''>
 </span>36 <span style=''>  override def configure() : Unit = {
 </span>37 <span style=''>
-</span>38 <span style=''>    </span><span style='background: #F0ADAD'>bindActor[LuceneIndexBuilderMasterActor]("indexBuilderMaster")</span><span style=''>
-</span>39 <span style=''>    </span><span style='background: #F0ADAD'>bindActorFactory[LuceneIndexBuilderActor, LuceneIndexBuilderActor.Factory]</span><span style=''>
+</span>38 <span style=''>    </span><span style='background: #AEF1AE'>bindActor[LuceneIndexBuilderMasterActor]("indexBuilderMaster")</span><span style=''>
+</span>39 <span style=''>    </span><span style='background: #AEF1AE'>bindActorFactory[LuceneIndexBuilderActor, LuceneIndexBuilderActor.Factory]</span><span style=''>
 </span>40 <span style=''>
 </span>41 <span style=''>    //Start our LuceneService with the Application
-</span>42 <span style=''>    </span><span style='background: #F0ADAD'>bind(classOf[LuceneService]).asEagerSingleton()</span><span style=''>
+</span>42 <span style=''>    </span><span style='background: #AEF1AE'>bind(classOf[LuceneService]).asEagerSingleton()</span><span style=''>
 </span>43 <span style=''>  }
 </span>44 <span style=''>
 </span>45 <span style=''>}
@@ -96,7 +96,7 @@
         <td>
           play.api.libs.concurrent.AkkaGuiceSupport.bindActor$default$2
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           Module.this.bindActor$default$2[services.LuceneIndexBuilderMasterActor]
         </td>
       </tr><tr>
@@ -117,7 +117,7 @@
         <td>
           &lt;nosymbol&gt;
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           &quot;indexBuilderMaster&quot;
         </td>
       </tr><tr>
@@ -138,7 +138,7 @@
         <td>
           play.api.libs.concurrent.AkkaGuiceSupport.bindActor
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           Module.this.bindActor[services.LuceneIndexBuilderMasterActor](&quot;indexBuilderMaster&quot;, Module.this.bindActor$default$2[services.LuceneIndexBuilderMasterActor])((ClassTag.apply[services.LuceneIndexBuilderMasterActor](classOf[services.LuceneIndexBuilderMasterActor]): scala.reflect.ClassTag[services.LuceneIndexBuilderMasterActor]))
         </td>
       </tr><tr>
@@ -159,7 +159,7 @@
         <td>
           play.api.libs.concurrent.AkkaGuiceSupport.bindActorFactory
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           Module.this.bindActorFactory[services.LuceneIndexBuilderActor, services.LuceneIndexBuilderActor.Factory]((ClassTag.apply[services.LuceneIndexBuilderActor](classOf[services.LuceneIndexBuilderActor]): scala.reflect.ClassTag[services.LuceneIndexBuilderActor]), (ClassTag.apply[services.LuceneIndexBuilderActor.Factory](classOf[services.LuceneIndexBuilderActor$$Factory]): scala.reflect.ClassTag[services.LuceneIndexBuilderActor.Factory]))
         </td>
       </tr><tr>
@@ -180,7 +180,7 @@
         <td>
           com.google.inject.binder.ScopedBindingBuilder.asEagerSingleton
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           Module.this.bind[services.LuceneService](classOf[services.LuceneService]).asEagerSingleton()
         </td>
       </tr>

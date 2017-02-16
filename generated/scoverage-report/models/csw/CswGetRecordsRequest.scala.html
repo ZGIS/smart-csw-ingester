@@ -52,22 +52,22 @@
 </span>28 <span style=''>object CswGetRecordsRequest extends ClassnameLogger {
 </span>29 <span style=''>  def apply(startPosition: Int, maxDocuments: Int): String = {
 </span>30 <span style=''>    val result =
-</span>31 <span style=''>      </span><span style='background: #F0ADAD'>f"""
-</span>32 <span style=''></span><span style='background: #F0ADAD'>         |<csw:GetRecords xmlns:csw="http://www.opengis.net/cat/csw/2.0.2"
-</span>33 <span style=''></span><span style='background: #F0ADAD'>         |                xmlns:ogc="http://www.opengis.net/ogc"
-</span>34 <span style=''></span><span style='background: #F0ADAD'>         |                xmlns:gmd="http://www.isotc211.org/2005/gmd"
-</span>35 <span style=''></span><span style='background: #F0ADAD'>         |                service="CSW" version="2.0.2"
-</span>36 <span style=''></span><span style='background: #F0ADAD'>         |                resultType="results" startPosition="${startPosition}" maxRecords="${maxDocuments}"
-</span>37 <span style=''></span><span style='background: #F0ADAD'>         |                outputFormat="application/xml" outputSchema="http://www.isotc211.org/2005/gmd"
-</span>38 <span style=''></span><span style='background: #F0ADAD'>         |                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-</span>39 <span style=''></span><span style='background: #F0ADAD'>         |                xsi:schemaLocation="http://www.opengis.net/cat/csw/2.0.2
-</span>40 <span style=''></span><span style='background: #F0ADAD'>         |                                    http://schemas.opengis.net/csw/2.0.2/CSW-discovery.xsd">
-</span>41 <span style=''></span><span style='background: #F0ADAD'>         |  <csw:Query typeNames="gmd:MD_Metadata">
-</span>42 <span style=''></span><span style='background: #F0ADAD'>         |    <csw:ElementSetName>full</csw:ElementSetName>
-</span>43 <span style=''></span><span style='background: #F0ADAD'>         |  </csw:Query>
-</span>44 <span style=''></span><span style='background: #F0ADAD'>         |</csw:GetRecords>
-</span>45 <span style=''></span><span style='background: #F0ADAD'>      """.stripMargin</span><span style=''>
-</span>46 <span style=''>    </span><span style='background: #F0ADAD'>logger.debug(f"GetRecords Request: ${result}")</span><span style=''>
+</span>31 <span style=''>      </span><span style='background: #AEF1AE'>f"""
+</span>32 <span style=''></span><span style='background: #AEF1AE'>         |<csw:GetRecords xmlns:csw="http://www.opengis.net/cat/csw/2.0.2"
+</span>33 <span style=''></span><span style='background: #AEF1AE'>         |                xmlns:ogc="http://www.opengis.net/ogc"
+</span>34 <span style=''></span><span style='background: #AEF1AE'>         |                xmlns:gmd="http://www.isotc211.org/2005/gmd"
+</span>35 <span style=''></span><span style='background: #AEF1AE'>         |                service="CSW" version="2.0.2"
+</span>36 <span style=''></span><span style='background: #AEF1AE'>         |                resultType="results" startPosition="${startPosition}" maxRecords="${maxDocuments}"
+</span>37 <span style=''></span><span style='background: #AEF1AE'>         |                outputFormat="application/xml" outputSchema="http://www.isotc211.org/2005/gmd"
+</span>38 <span style=''></span><span style='background: #AEF1AE'>         |                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+</span>39 <span style=''></span><span style='background: #AEF1AE'>         |                xsi:schemaLocation="http://www.opengis.net/cat/csw/2.0.2
+</span>40 <span style=''></span><span style='background: #AEF1AE'>         |                                    http://schemas.opengis.net/csw/2.0.2/CSW-discovery.xsd">
+</span>41 <span style=''></span><span style='background: #AEF1AE'>         |  <csw:Query typeNames="gmd:MD_Metadata">
+</span>42 <span style=''></span><span style='background: #AEF1AE'>         |    <csw:ElementSetName>full</csw:ElementSetName>
+</span>43 <span style=''></span><span style='background: #AEF1AE'>         |  </csw:Query>
+</span>44 <span style=''></span><span style='background: #AEF1AE'>         |</csw:GetRecords>
+</span>45 <span style=''></span><span style='background: #AEF1AE'>      """.stripMargin</span><span style=''>
+</span>46 <span style=''>    </span><span style='background: #AEF1AE'>logger.debug(f"GetRecords Request: ${result}")</span><span style=''>
 </span>47 <span style=''>    result
 </span>48 <span style=''>  }
 </span>49 <span style=''>}
@@ -87,7 +87,7 @@
           45
         </td>
         <td>
-          60
+          106
         </td>
         <td>
           1130
@@ -100,7 +100,7 @@
         <td>
           scala.collection.immutable.StringLike.stripMargin
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           scala.this.Predef.augmentString(({
   val arg$macro$1: Any = startPosition;
   val arg$macro$2: Any = maxDocuments;
@@ -112,7 +112,7 @@
           46
         </td>
         <td>
-          61
+          107
         </td>
         <td>
           2073
@@ -125,7 +125,7 @@
         <td>
           play.api.LoggerLike.debug
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           CswGetRecordsRequest.this.logger.debug(({
   val arg$macro$3: Any = result;
   new scala.collection.immutable.StringOps(&quot;GetRecords Request: %s&quot;).format(arg$macro$3)

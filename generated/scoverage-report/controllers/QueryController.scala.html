@@ -45,65 +45,75 @@
 </span>21 <span style=''>
 </span>22 <span style=''>import java.time.LocalDate
 </span>23 <span style=''>import javax.inject._
-</span>24 <span style=''>import play.api.libs.json._
-</span>25 <span style=''>
-</span>26 <span style=''>import models.gmd.{GeoJSONFeatureCollectionWriter, MdMetadataSet}
-</span>27 <span style=''>import play.api.mvc._
-</span>28 <span style=''>import services.LuceneService
-</span>29 <span style=''>import utils.ClassnameLogger
-</span>30 <span style=''>
-</span>31 <span style=''>/**
-</span>32 <span style=''>  * Controller that serves results from Lucene Index
-</span>33 <span style=''>  */
-</span>34 <span style=''>// TODO SR rename to "IndexController" or something similar
-</span>35 <span style=''>class QueryController @Inject()(luceneService: LuceneService) extends Controller with ClassnameLogger {
-</span>36 <span style=''>
-</span>37 <span style=''>  implicit val geoJSONFeatureCollectionWrite = </span><span style='background: #F0ADAD'>GeoJSONFeatureCollectionWriter</span><span style=''>
-</span>38 <span style=''>  private lazy val DEFAULT_QUERY = </span><span style='background: #F0ADAD'>"*:*"</span><span style=''>
-</span>39 <span style=''>
-</span>40 <span style=''>  /**
-</span>41 <span style=''>    * Action that passes the query from URL to the [[services.LuceneService]].
-</span>42 <span style=''>    *
-</span>43 <span style=''>    * @param query
-</span>44 <span style=''>    * @return
-</span>45 <span style=''>    * @see services.LuceneService
-</span>46 <span style=''>    */
-</span>47 <span style=''>  def query(query: Option[String],
-</span>48 <span style=''>            bboxWkt: Option[String],
-</span>49 <span style=''>            fromDateStr: Option[String],
-</span>50 <span style=''>            toDateStr: Option[String],
-</span>51 <span style=''>            maxNumberOfResults: Option[Int]): Action[AnyContent] = </span><span style='background: #F0ADAD'>Action {
-</span>52 <span style=''></span><span style='background: #F0ADAD'>    logger.info(s"Query CSW: ${query.getOrElse("NONE")}")
-</span>53 <span style=''></span><span style='background: #F0ADAD'>    // TODO SR make tuple expression out of this
-</span>54 <span style=''></span><span style='background: #F0ADAD'>    val fromDate = fromDateStr match {
-</span>55 <span style=''></span><span style='background: #F0ADAD'>      case None => Some(LocalDate.ofEpochDay(0))
-</span>56 <span style=''></span><span style='background: #F0ADAD'>      case _ => Some(MdMetadataSet.dateFromStrings(List(fromDateStr.get)))
-</span>57 <span style=''></span><span style='background: #F0ADAD'>    }
-</span>58 <span style=''></span><span style='background: #F0ADAD'>
-</span>59 <span style=''></span><span style='background: #F0ADAD'>    val toDate = toDateStr match {
-</span>60 <span style=''></span><span style='background: #F0ADAD'>      case None => Some(LocalDate.now())
-</span>61 <span style=''></span><span style='background: #F0ADAD'>      case _ => Some(MdMetadataSet.dateFromStrings(List(toDateStr.get)))
-</span>62 <span style=''></span><span style='background: #F0ADAD'>    }
-</span>63 <span style=''></span><span style='background: #F0ADAD'>
-</span>64 <span style=''></span><span style='background: #F0ADAD'>    // FIXME SR error handling
-</span>65 <span style=''></span><span style='background: #F0ADAD'>    val searchResult = luceneService.query(query.getOrElse(DEFAULT_QUERY), bboxWkt, fromDate, toDate,
-</span>66 <span style=''></span><span style='background: #F0ADAD'>      maxNumberOfResults)
-</span>67 <span style=''></span><span style='background: #F0ADAD'>    val featureCollection = searchResult.documents
-</span>68 <span style=''></span><span style='background: #F0ADAD'>
-</span>69 <span style=''></span><span style='background: #F0ADAD'>    // TODO AK here we could insert the query string again if needed
-</span>70 <span style=''></span><span style='background: #F0ADAD'>    val jsonTransformer = __.json.update(
-</span>71 <span style=''></span><span style='background: #F0ADAD'>      (__ \ 'countMatched).json.put(JsNumber(searchResult.numberOfMatchingDocuments)))
-</span>72 <span style=''></span><span style='background: #F0ADAD'>    val resultJson: JsValue = Json.toJson(featureCollection)
-</span>73 <span style=''></span><span style='background: #F0ADAD'>
-</span>74 <span style=''></span><span style='background: #F0ADAD'>    Ok(resultJson.transform(jsonTransformer).get).as(JSON)
-</span>75 <span style=''></span><span style='background: #F0ADAD'>  }</span><span style=''>
-</span>76 <span style=''>
-</span>77 <span style=''>  def buildIndexFor(catalogueName: String): Action[AnyContent] = </span><span style='background: #F0ADAD'>Action {
-</span>78 <span style=''></span><span style='background: #F0ADAD'>    logger.info(s"Request for building index for $catalogueName")
-</span>79 <span style=''></span><span style='background: #F0ADAD'>    luceneService.buildIndex(catalogueName)
-</span>80 <span style=''></span><span style='background: #F0ADAD'>    Ok(s"building index for $catalogueName")
-</span>81 <span style=''></span><span style='background: #F0ADAD'>  }</span><span style=''>
-</span>82 <span style=''>}
+</span>24 <span style=''>
+</span>25 <span style=''>import models.ErrorResult
+</span>26 <span style=''>import play.api.libs.json._
+</span>27 <span style=''>import models.gmd.{GeoJSONFeatureCollectionWriter, MdMetadataSet}
+</span>28 <span style=''>import org.apache.lucene.queryparser.classic.ParseException
+</span>29 <span style=''>import play.api.mvc._
+</span>30 <span style=''>import services.LuceneService
+</span>31 <span style=''>import utils.ClassnameLogger
+</span>32 <span style=''>
+</span>33 <span style=''>/**
+</span>34 <span style=''>  * Controller that serves results from Lucene Index
+</span>35 <span style=''>  */
+</span>36 <span style=''>// TODO SR rename to "IndexController" or something similar
+</span>37 <span style=''>class QueryController @Inject()(luceneService: LuceneService) extends Controller with ClassnameLogger {
+</span>38 <span style=''>
+</span>39 <span style=''>  implicit val geoJSONFeatureCollectionWrite = </span><span style='background: #F0ADAD'>GeoJSONFeatureCollectionWriter</span><span style=''>
+</span>40 <span style=''>  private lazy val DEFAULT_QUERY = </span><span style='background: #F0ADAD'>"*:*"</span><span style=''>
+</span>41 <span style=''>
+</span>42 <span style=''>  /**
+</span>43 <span style=''>    * Action that passes the query from URL to the [[services.LuceneService]].
+</span>44 <span style=''>    *
+</span>45 <span style=''>    * @param query
+</span>46 <span style=''>    * @return
+</span>47 <span style=''>    * @see services.LuceneService
+</span>48 <span style=''>    */
+</span>49 <span style=''>  def query(query: Option[String],
+</span>50 <span style=''>            bboxWkt: Option[String],
+</span>51 <span style=''>            fromDateStr: Option[String],
+</span>52 <span style=''>            toDateStr: Option[String],
+</span>53 <span style=''>            maxNumberOfResults: Option[Int]): Action[AnyContent] = </span><span style='background: #F0ADAD'>Action {
+</span>54 <span style=''></span><span style='background: #F0ADAD'>    logger.info(s"Query CSW: ${query.getOrElse("NONE")}")
+</span>55 <span style=''></span><span style='background: #F0ADAD'>    // TODO SR make tuple expression out of this
+</span>56 <span style=''></span><span style='background: #F0ADAD'>    val fromDate = fromDateStr match {
+</span>57 <span style=''></span><span style='background: #F0ADAD'>      case None => Some(LocalDate.ofEpochDay(0))
+</span>58 <span style=''></span><span style='background: #F0ADAD'>      case _ => Some(MdMetadataSet.dateFromStrings(List(fromDateStr.get)))
+</span>59 <span style=''></span><span style='background: #F0ADAD'>    }
+</span>60 <span style=''></span><span style='background: #F0ADAD'>
+</span>61 <span style=''></span><span style='background: #F0ADAD'>    val toDate = toDateStr match {
+</span>62 <span style=''></span><span style='background: #F0ADAD'>      case None => Some(LocalDate.now())
+</span>63 <span style=''></span><span style='background: #F0ADAD'>      case _ => Some(MdMetadataSet.dateFromStrings(List(toDateStr.get)))
+</span>64 <span style=''></span><span style='background: #F0ADAD'>    }
+</span>65 <span style=''></span><span style='background: #F0ADAD'>
+</span>66 <span style=''></span><span style='background: #F0ADAD'>    try {
+</span>67 <span style=''></span><span style='background: #F0ADAD'>      val searchResult = luceneService.query(query.getOrElse(DEFAULT_QUERY), bboxWkt, fromDate, toDate,
+</span>68 <span style=''></span><span style='background: #F0ADAD'>        maxNumberOfResults)
+</span>69 <span style=''></span><span style='background: #F0ADAD'>      val featureCollection = searchResult.documents
+</span>70 <span style=''></span><span style='background: #F0ADAD'>
+</span>71 <span style=''></span><span style='background: #F0ADAD'>      // TODO AK here we could insert the query string again if needed
+</span>72 <span style=''></span><span style='background: #F0ADAD'>      val jsonTransformer = __.json.update(
+</span>73 <span style=''></span><span style='background: #F0ADAD'>        (__ \ 'countMatched).json.put(JsNumber(searchResult.numberOfMatchingDocuments)))
+</span>74 <span style=''></span><span style='background: #F0ADAD'>      val resultJson: JsValue = Json.toJson(featureCollection)
+</span>75 <span style=''></span><span style='background: #F0ADAD'>
+</span>76 <span style=''></span><span style='background: #F0ADAD'>      Ok(resultJson.transform(jsonTransformer).get).as(JSON)
+</span>77 <span style=''></span><span style='background: #F0ADAD'>    }
+</span>78 <span style=''></span><span style='background: #F0ADAD'>    catch {
+</span>79 <span style=''></span><span style='background: #F0ADAD'>      case e: ParseException => { // TODO SR generally catch Exception is BAD(tm) but can we live with that here?
+</span>80 <span style=''></span><span style='background: #F0ADAD'>        logger.error("Exception parsing query: " + e.getMessage, e);
+</span>81 <span style=''></span><span style='background: #F0ADAD'>        val error: ErrorResult = ErrorResult(s"Could not parse query '${query.get}' ", Some(e.getMessage))
+</span>82 <span style=''></span><span style='background: #F0ADAD'>        InternalServerError(Json.toJson(error)).as(JSON)
+</span>83 <span style=''></span><span style='background: #F0ADAD'>      }
+</span>84 <span style=''></span><span style='background: #F0ADAD'>    }
+</span>85 <span style=''></span><span style='background: #F0ADAD'>  }</span><span style=''>
+</span>86 <span style=''>
+</span>87 <span style=''>  def buildIndexFor(catalogueName: String): Action[AnyContent] = </span><span style='background: #F0ADAD'>Action {
+</span>88 <span style=''></span><span style='background: #F0ADAD'>    logger.info(s"Request for building index for $catalogueName")
+</span>89 <span style=''></span><span style='background: #F0ADAD'>    luceneService.buildIndex(catalogueName)
+</span>90 <span style=''></span><span style='background: #F0ADAD'>    Ok(s"building index for $catalogueName")
+</span>91 <span style=''></span><span style='background: #F0ADAD'>  }</span><span style=''>
+</span>92 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -117,15 +127,15 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          37
+          39
         </td>
         <td>
           16
         </td>
         <td>
-          1400
+          1486
           -
-          1430
+          1516
         </td>
         <td>
           Select
@@ -138,15 +148,15 @@
         </td>
       </tr><tr>
         <td>
-          38
+          40
         </td>
         <td>
           17
         </td>
         <td>
-          1466
+          1552
           -
-          1471
+          1557
         </td>
         <td>
           Literal
@@ -159,15 +169,15 @@
         </td>
       </tr><tr>
         <td>
-          51
+          53
         </td>
         <td>
-          51
+          69
         </td>
         <td>
-          1857
+          1943
           -
-          2832
+          3292
         </td>
         <td>
           Apply
@@ -186,24 +196,32 @@
     case scala.None =&gt; scala.Some.apply[java.time.LocalDate](java.time.LocalDate.now())
     case _ =&gt; scala.Some.apply[java.time.LocalDate](models.gmd.MdMetadataSet.dateFromStrings(immutable.this.List.apply[String](toDateStr.get)))
   };
-  val searchResult: services.SearchResult = QueryController.this.luceneService.query(query.getOrElse[String](QueryController.this.DEFAULT_QUERY), bboxWkt, fromDate, toDate, maxNumberOfResults);
-  val featureCollection: List[models.gmd.MdMetadataSet] = searchResult.documents;
-  val jsonTransformer: play.api.libs.json.Reads[play.api.libs.json.JsObject] = play.api.libs.json.`package`.__.json.update[play.api.libs.json.JsObject](play.api.libs.json.`package`.__.\(scala.Symbol.apply(&quot;countMatched&quot;)).json.put(play.api.libs.json.JsNumber.apply(math.this.BigDecimal.int2bigDecimal(searchResult.numberOfMatchingDocuments))));
-  val resultJson: play.api.libs.json.JsValue = play.api.libs.json.Json.toJson[List[models.gmd.MdMetadataSet]](featureCollection)(QueryController.this.geoJSONFeatureCollectionWrite);
-  QueryController.this.Ok.apply[play.api.libs.json.JsObject](resultJson.transform[play.api.libs.json.JsObject](jsonTransformer).get)(http.this.Writeable.writeableOf_JsValue(mvc.this.Codec.utf_8)).as(QueryController.this.JSON)
+  try {
+    val searchResult: services.SearchResult = QueryController.this.luceneService.query(query.getOrElse[String](QueryController.this.DEFAULT_QUERY), bboxWkt, fromDate, toDate, maxNumberOfResults);
+    val featureCollection: List[models.gmd.MdMetadataSet] = searchResult.documents;
+    val jsonTransformer: play.api.libs.json.Reads[play.api.libs.json.JsObject] = play.api.libs.json.`package`.__.json.update[play.api.libs.json.JsObject](play.api.libs.json.`package`.__.\(scala.Symbol.apply(&quot;countMatched&quot;)).json.put(play.api.libs.json.JsNumber.apply(math.this.BigDecimal.int2bigDecimal(searchResult.numberOfMatchingDocuments))));
+    val resultJson: play.api.libs.json.JsValue = play.api.libs.json.Json.toJson[List[models.gmd.MdMetadataSet]](featureCollection)(QueryController.this.geoJSONFeatureCollectionWrite);
+    QueryController.this.Ok.apply[play.api.libs.json.JsObject](resultJson.transform[play.api.libs.json.JsObject](jsonTransformer).get)(http.this.Writeable.writeableOf_JsValue(mvc.this.Codec.utf_8)).as(QueryController.this.JSON)
+  } catch {
+    case (e @ (_: org.apache.lucene.queryparser.classic.ParseException)) =&gt; {
+      QueryController.this.logger.error(&quot;Exception parsing query: &quot;.+(e.getMessage()), e);
+      val error: models.ErrorResult = models.ErrorResult.apply(scala.StringContext.apply(&quot;Could not parse query \'&quot;, &quot;\' &quot;).s(query.get), scala.Some.apply[String](e.getMessage()));
+      QueryController.this.InternalServerError.apply[play.api.libs.json.JsValue](play.api.libs.json.Json.toJson[models.ErrorResult](error)(models.this.ErrorResult.writes))(http.this.Writeable.writeableOf_JsValue(mvc.this.Codec.utf_8)).as(QueryController.this.JSON)
+    }
+  }
 })
         </td>
       </tr><tr>
         <td>
-          52
+          54
         </td>
         <td>
           20
         </td>
         <td>
-          1897
+          1983
           -
-          1920
+          2006
         </td>
         <td>
           Apply
@@ -216,15 +234,15 @@
         </td>
       </tr><tr>
         <td>
-          52
+          54
         </td>
         <td>
           22
         </td>
         <td>
-          1870
+          1956
           -
-          1923
+          2009
         </td>
         <td>
           Apply
@@ -237,15 +255,15 @@
         </td>
       </tr><tr>
         <td>
-          52
+          54
         </td>
         <td>
           19
         </td>
         <td>
-          1921
+          2007
           -
-          1922
+          2008
         </td>
         <td>
           Literal
@@ -258,15 +276,15 @@
         </td>
       </tr><tr>
         <td>
-          52
+          54
         </td>
         <td>
           18
         </td>
         <td>
-          1884
+          1970
           -
-          1896
+          1982
         </td>
         <td>
           Literal
@@ -279,15 +297,15 @@
         </td>
       </tr><tr>
         <td>
-          52
+          54
         </td>
         <td>
           21
         </td>
         <td>
-          1882
+          1968
           -
-          1922
+          2008
         </td>
         <td>
           Apply
@@ -300,15 +318,15 @@
         </td>
       </tr><tr>
         <td>
-          55
+          57
         </td>
         <td>
           23
         </td>
         <td>
-          2036
+          2122
           -
-          2059
+          2145
         </td>
         <td>
           Apply
@@ -321,15 +339,15 @@
         </td>
       </tr><tr>
         <td>
-          55
+          57
         </td>
         <td>
           24
         </td>
         <td>
-          2031
+          2117
           -
-          2060
+          2146
         </td>
         <td>
           Apply
@@ -342,15 +360,15 @@
         </td>
       </tr><tr>
         <td>
-          56
+          58
         </td>
         <td>
           26
         </td>
         <td>
-          2112
+          2198
           -
-          2133
+          2219
         </td>
         <td>
           Apply
@@ -363,15 +381,15 @@
         </td>
       </tr><tr>
         <td>
-          56
+          58
         </td>
         <td>
           25
         </td>
         <td>
-          2117
+          2203
           -
-          2132
+          2218
         </td>
         <td>
           Select
@@ -384,15 +402,15 @@
         </td>
       </tr><tr>
         <td>
-          56
+          58
         </td>
         <td>
           28
         </td>
         <td>
-          2077
+          2163
           -
-          2135
+          2221
         </td>
         <td>
           Apply
@@ -405,15 +423,15 @@
         </td>
       </tr><tr>
         <td>
-          56
+          58
         </td>
         <td>
           27
         </td>
         <td>
-          2082
+          2168
           -
-          2134
+          2220
         </td>
         <td>
           Apply
@@ -426,15 +444,15 @@
         </td>
       </tr><tr>
         <td>
-          60
+          62
         </td>
         <td>
           29
         </td>
         <td>
-          2202
+          2288
           -
-          2217
+          2303
         </td>
         <td>
           Apply
@@ -447,15 +465,15 @@
         </td>
       </tr><tr>
         <td>
-          60
+          62
         </td>
         <td>
           30
         </td>
         <td>
-          2197
+          2283
           -
-          2218
+          2304
         </td>
         <td>
           Apply
@@ -468,15 +486,15 @@
         </td>
       </tr><tr>
         <td>
-          61
+          63
         </td>
         <td>
           32
         </td>
         <td>
-          2270
+          2356
           -
-          2289
+          2375
         </td>
         <td>
           Apply
@@ -489,15 +507,15 @@
         </td>
       </tr><tr>
         <td>
-          61
+          63
         </td>
         <td>
           31
         </td>
         <td>
-          2275
+          2361
           -
-          2288
+          2374
         </td>
         <td>
           Select
@@ -510,15 +528,15 @@
         </td>
       </tr><tr>
         <td>
-          61
+          63
         </td>
         <td>
           34
         </td>
         <td>
-          2235
+          2321
           -
-          2291
+          2377
         </td>
         <td>
           Apply
@@ -531,15 +549,15 @@
         </td>
       </tr><tr>
         <td>
-          61
+          63
         </td>
         <td>
           33
         </td>
         <td>
-          2240
+          2326
           -
-          2290
+          2376
         </td>
         <td>
           Apply
@@ -552,15 +570,42 @@
         </td>
       </tr><tr>
         <td>
-          65
+          66
+        </td>
+        <td>
+          51
+        </td>
+        <td>
+          2401
+          -
+          2909
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          {
+  val searchResult: services.SearchResult = QueryController.this.luceneService.query(query.getOrElse[String](QueryController.this.DEFAULT_QUERY), bboxWkt, fromDate, toDate, maxNumberOfResults);
+  val featureCollection: List[models.gmd.MdMetadataSet] = searchResult.documents;
+  val jsonTransformer: play.api.libs.json.Reads[play.api.libs.json.JsObject] = play.api.libs.json.`package`.__.json.update[play.api.libs.json.JsObject](play.api.libs.json.`package`.__.\(scala.Symbol.apply(&quot;countMatched&quot;)).json.put(play.api.libs.json.JsNumber.apply(math.this.BigDecimal.int2bigDecimal(searchResult.numberOfMatchingDocuments))));
+  val resultJson: play.api.libs.json.JsValue = play.api.libs.json.Json.toJson[List[models.gmd.MdMetadataSet]](featureCollection)(QueryController.this.geoJSONFeatureCollectionWrite);
+  QueryController.this.Ok.apply[play.api.libs.json.JsObject](resultJson.transform[play.api.libs.json.JsObject](jsonTransformer).get)(http.this.Writeable.writeableOf_JsValue(mvc.this.Codec.utf_8)).as(QueryController.this.JSON)
+}
+        </td>
+      </tr><tr>
+        <td>
+          67
         </td>
         <td>
           35
         </td>
         <td>
-          2373
+          2440
           -
-          2403
+          2470
         </td>
         <td>
           Apply
@@ -573,15 +618,15 @@
         </td>
       </tr><tr>
         <td>
-          65
+          67
         </td>
         <td>
           36
         </td>
         <td>
-          2353
+          2420
           -
-          2457
+          2526
         </td>
         <td>
           Apply
@@ -594,15 +639,15 @@
         </td>
       </tr><tr>
         <td>
-          67
+          69
         </td>
         <td>
           37
         </td>
         <td>
-          2486
+          2557
           -
-          2508
+          2579
         </td>
         <td>
           Select
@@ -615,15 +660,15 @@
         </td>
       </tr><tr>
         <td>
-          70
+          72
         </td>
         <td>
           43
         </td>
         <td>
-          2605
+          2680
           -
-          2707
+          2784
         </td>
         <td>
           Apply
@@ -636,15 +681,15 @@
         </td>
       </tr><tr>
         <td>
-          71
+          73
         </td>
         <td>
           41
         </td>
         <td>
-          2657
+          2734
           -
-          2705
+          2782
         </td>
         <td>
           Apply
@@ -657,15 +702,15 @@
         </td>
       </tr><tr>
         <td>
-          71
+          73
         </td>
         <td>
           38
         </td>
         <td>
-          2633
+          2710
           -
-          2646
+          2723
         </td>
         <td>
           Apply
@@ -678,15 +723,15 @@
         </td>
       </tr><tr>
         <td>
-          71
+          73
         </td>
         <td>
           40
         </td>
         <td>
-          2666
+          2743
           -
-          2704
+          2781
         </td>
         <td>
           ApplyImplicitView
@@ -699,15 +744,15 @@
         </td>
       </tr><tr>
         <td>
-          71
+          73
         </td>
         <td>
           39
         </td>
         <td>
-          2666
+          2743
           -
-          2704
+          2781
         </td>
         <td>
           Select
@@ -720,15 +765,15 @@
         </td>
       </tr><tr>
         <td>
-          71
+          73
         </td>
         <td>
           42
         </td>
         <td>
-          2628
+          2705
           -
-          2706
+          2783
         </td>
         <td>
           Apply
@@ -741,15 +786,15 @@
         </td>
       </tr><tr>
         <td>
-          72
+          74
         </td>
         <td>
           44
         </td>
         <td>
-          2749
+          2828
           -
-          2749
+          2828
         </td>
         <td>
           Select
@@ -762,15 +807,15 @@
         </td>
       </tr><tr>
         <td>
-          72
+          74
         </td>
         <td>
           45
         </td>
         <td>
-          2738
+          2817
           -
-          2768
+          2847
         </td>
         <td>
           ApplyToImplicitArgs
@@ -783,15 +828,15 @@
         </td>
       </tr><tr>
         <td>
-          74
+          76
         </td>
         <td>
           50
         </td>
         <td>
-          2774
+          2855
           -
-          2828
+          2909
         </td>
         <td>
           Apply
@@ -804,15 +849,15 @@
         </td>
       </tr><tr>
         <td>
-          74
+          76
         </td>
         <td>
           47
         </td>
         <td>
-          2776
+          2857
           -
-          2776
+          2857
         </td>
         <td>
           Select
@@ -825,15 +870,15 @@
         </td>
       </tr><tr>
         <td>
-          74
+          76
         </td>
         <td>
           46
         </td>
         <td>
-          2777
+          2858
           -
-          2818
+          2899
         </td>
         <td>
           Select
@@ -846,15 +891,15 @@
         </td>
       </tr><tr>
         <td>
-          74
+          76
         </td>
         <td>
           49
         </td>
         <td>
-          2823
+          2904
           -
-          2827
+          2908
         </td>
         <td>
           Select
@@ -867,15 +912,15 @@
         </td>
       </tr><tr>
         <td>
-          74
+          76
         </td>
         <td>
           48
         </td>
         <td>
-          2776
+          2857
           -
-          2776
+          2857
         </td>
         <td>
           ApplyToImplicitArgs
@@ -888,15 +933,372 @@
         </td>
       </tr><tr>
         <td>
-          77
+          80
+        </td>
+        <td>
+          53
+        </td>
+        <td>
+          3093
+          -
+          3105
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.Throwable.getMessage
+        </td>
+        <td style="background: #F0ADAD">
+          e.getMessage()
+        </td>
+      </tr><tr>
+        <td>
+          80
+        </td>
+        <td>
+          55
+        </td>
+        <td>
+          3050
+          -
+          3109
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.LoggerLike.error
+        </td>
+        <td style="background: #F0ADAD">
+          QueryController.this.logger.error(&quot;Exception parsing query: &quot;.+(e.getMessage()), e)
+        </td>
+      </tr><tr>
+        <td>
+          80
+        </td>
+        <td>
+          52
+        </td>
+        <td>
+          3063
+          -
+          3090
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;Exception parsing query: &quot;
+        </td>
+      </tr><tr>
+        <td>
+          80
+        </td>
+        <td>
+          54
+        </td>
+        <td>
+          3063
+          -
+          3105
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.String.+
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;Exception parsing query: &quot;.+(e.getMessage())
+        </td>
+      </tr><tr>
+        <td>
+          81
         </td>
         <td>
           59
         </td>
         <td>
-          2899
+          3156
           -
-          3066
+          3196
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.StringContext.s
+        </td>
+        <td style="background: #F0ADAD">
+          scala.StringContext.apply(&quot;Could not parse query \'&quot;, &quot;\' &quot;).s(query.get)
+        </td>
+      </tr><tr>
+        <td>
+          81
+        </td>
+        <td>
+          62
+        </td>
+        <td>
+          3144
+          -
+          3217
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          models.ErrorResult.apply
+        </td>
+        <td style="background: #F0ADAD">
+          models.ErrorResult.apply(scala.StringContext.apply(&quot;Could not parse query \'&quot;, &quot;\' &quot;).s(query.get), scala.Some.apply[String](e.getMessage()))
+        </td>
+      </tr><tr>
+        <td>
+          81
+        </td>
+        <td>
+          56
+        </td>
+        <td>
+          3158
+          -
+          3182
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;Could not parse query \'&quot;
+        </td>
+      </tr><tr>
+        <td>
+          81
+        </td>
+        <td>
+          58
+        </td>
+        <td>
+          3183
+          -
+          3192
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.Option.get
+        </td>
+        <td style="background: #F0ADAD">
+          query.get
+        </td>
+      </tr><tr>
+        <td>
+          81
+        </td>
+        <td>
+          61
+        </td>
+        <td>
+          3198
+          -
+          3216
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Some.apply
+        </td>
+        <td style="background: #F0ADAD">
+          scala.Some.apply[String](e.getMessage())
+        </td>
+      </tr><tr>
+        <td>
+          81
+        </td>
+        <td>
+          60
+        </td>
+        <td>
+          3203
+          -
+          3215
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.Throwable.getMessage
+        </td>
+        <td style="background: #F0ADAD">
+          e.getMessage()
+        </td>
+      </tr><tr>
+        <td>
+          81
+        </td>
+        <td>
+          57
+        </td>
+        <td>
+          3193
+          -
+          3196
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;\' &quot;
+        </td>
+      </tr><tr>
+        <td>
+          82
+        </td>
+        <td>
+          68
+        </td>
+        <td>
+          3226
+          -
+          3274
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.mvc.Result.as
+        </td>
+        <td style="background: #F0ADAD">
+          QueryController.this.InternalServerError.apply[play.api.libs.json.JsValue](play.api.libs.json.Json.toJson[models.ErrorResult](error)(models.this.ErrorResult.writes))(http.this.Writeable.writeableOf_JsValue(mvc.this.Codec.utf_8)).as(QueryController.this.JSON)
+        </td>
+      </tr><tr>
+        <td>
+          82
+        </td>
+        <td>
+          65
+        </td>
+        <td>
+          3245
+          -
+          3245
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          play.api.mvc.Codec.utf_8
+        </td>
+        <td style="background: #F0ADAD">
+          mvc.this.Codec.utf_8
+        </td>
+      </tr><tr>
+        <td>
+          82
+        </td>
+        <td>
+          64
+        </td>
+        <td>
+          3246
+          -
+          3264
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.api.libs.json.Json.toJson
+        </td>
+        <td style="background: #F0ADAD">
+          play.api.libs.json.Json.toJson[models.ErrorResult](error)(models.this.ErrorResult.writes)
+        </td>
+      </tr><tr>
+        <td>
+          82
+        </td>
+        <td>
+          67
+        </td>
+        <td>
+          3269
+          -
+          3273
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          play.api.http.ContentTypes.JSON
+        </td>
+        <td style="background: #F0ADAD">
+          QueryController.this.JSON
+        </td>
+      </tr><tr>
+        <td>
+          82
+        </td>
+        <td>
+          63
+        </td>
+        <td>
+          3257
+          -
+          3257
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          models.ErrorResult.writes
+        </td>
+        <td style="background: #F0ADAD">
+          models.this.ErrorResult.writes
+        </td>
+      </tr><tr>
+        <td>
+          82
+        </td>
+        <td>
+          66
+        </td>
+        <td>
+          3245
+          -
+          3245
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.api.http.DefaultWriteables.writeableOf_JsValue
+        </td>
+        <td style="background: #F0ADAD">
+          http.this.Writeable.writeableOf_JsValue(mvc.this.Codec.utf_8)
+        </td>
+      </tr><tr>
+        <td>
+          87
+        </td>
+        <td>
+          77
+        </td>
+        <td>
+          3359
+          -
+          3526
         </td>
         <td>
           Apply
@@ -913,15 +1315,15 @@
         </td>
       </tr><tr>
         <td>
-          78
+          88
         </td>
         <td>
-          53
+          71
         </td>
         <td>
-          2912
+          3372
           -
-          2973
+          3433
         </td>
         <td>
           Apply
@@ -934,15 +1336,15 @@
         </td>
       </tr><tr>
         <td>
-          78
+          88
         </td>
         <td>
-          52
+          70
         </td>
         <td>
-          2924
+          3384
           -
-          2972
+          3432
         </td>
         <td>
           Apply
@@ -955,15 +1357,15 @@
         </td>
       </tr><tr>
         <td>
-          79
+          89
         </td>
         <td>
-          54
+          72
         </td>
         <td>
-          2978
+          3438
           -
-          3017
+          3477
         </td>
         <td>
           Apply
@@ -976,15 +1378,15 @@
         </td>
       </tr><tr>
         <td>
-          80
+          90
         </td>
         <td>
-          56
+          74
         </td>
         <td>
-          3024
+          3484
           -
-          3024
+          3484
         </td>
         <td>
           Select
@@ -997,15 +1399,15 @@
         </td>
       </tr><tr>
         <td>
-          80
+          90
         </td>
         <td>
-          55
+          73
         </td>
         <td>
-          3025
+          3485
           -
-          3061
+          3521
         </td>
         <td>
           Apply
@@ -1018,15 +1420,15 @@
         </td>
       </tr><tr>
         <td>
-          80
+          90
         </td>
         <td>
-          58
+          76
         </td>
         <td>
-          3022
+          3482
           -
-          3062
+          3522
         </td>
         <td>
           ApplyToImplicitArgs
@@ -1039,15 +1441,15 @@
         </td>
       </tr><tr>
         <td>
-          80
+          90
         </td>
         <td>
-          57
+          75
         </td>
         <td>
-          3024
+          3484
           -
-          3024
+          3484
         </td>
         <td>
           ApplyToImplicitArgs

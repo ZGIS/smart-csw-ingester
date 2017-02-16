@@ -87,11 +87,11 @@
 </span>63 <span style=''>                                       (implicit ec: ExecutionContext) extends Actor with
 </span>64 <span style=''>  ClassnameLogger {
 </span>65 <span style=''>
-</span>66 <span style=''>  </span><span style='background: #F0ADAD'>logger.debug("Reading configuration: csw.maxDocs ")</span><span style=''>
-</span>67 <span style=''>  private val CSW_MAX_RECORDS = </span><span style='background: #F0ADAD'>500</span><span style=''>
-</span>68 <span style=''>  private val maxDocsPerFetch = </span><span style='background: #F0ADAD'>configuration.getInt("csw.maxDocs").getOrElse(CSW_MAX_RECORDS)</span><span style=''>
+</span>66 <span style=''>  </span><span style='background: #AEF1AE'>logger.debug("Reading configuration: csw.maxDocs ")</span><span style=''>
+</span>67 <span style=''>  private val CSW_MAX_RECORDS = </span><span style='background: #AEF1AE'>500</span><span style=''>
+</span>68 <span style=''>  private val maxDocsPerFetch = </span><span style='background: #AEF1AE'>configuration.getInt("csw.maxDocs").getOrElse(</span><span style='background: #F0ADAD'>CSW_MAX_RECORDS</span><span style='background: #AEF1AE'>)</span><span style=''>
 </span>69 <span style=''>
-</span>70 <span style=''>  private val catalogueDirectory = </span><span style='background: #F0ADAD'>new RAMDirectory()</span><span style=''>
+</span>70 <span style=''>  private val catalogueDirectory = </span><span style='background: #AEF1AE'>new RAMDirectory()</span><span style=''>
 </span>71 <span style=''>
 </span>72 <span style=''>
 </span>73 <span style=''>  /**
@@ -103,55 +103,55 @@
 </span>79 <span style=''>  override def receive: Receive = {
 </span>80 <span style=''>
 </span>81 <span style=''>    case IndexCatalogue(catalogueName, catalogueUrl) => {
-</span>82 <span style=''>      </span><span style='background: #F0ADAD'>logger.info("querying catalogue")</span><span style=''>
-</span>83 <span style=''>      </span><span style='background: #F0ADAD'>context.become(indexing)</span><span style=''>
-</span>84 <span style=''>      </span><span style='background: #F0ADAD'>self ! QueryCatalogue(catalogueName, catalogueUrl)</span><span style=''>
+</span>82 <span style=''>      </span><span style='background: #AEF1AE'>logger.info("querying catalogue")</span><span style=''>
+</span>83 <span style=''>      </span><span style='background: #AEF1AE'>context.become(indexing)</span><span style=''>
+</span>84 <span style=''>      </span><span style='background: #AEF1AE'>self ! QueryCatalogue(catalogueName, catalogueUrl)</span><span style=''>
 </span>85 <span style=''>    }
 </span>86 <span style=''>    //FIXME some kind of default behaviour?
 </span>87 <span style=''>  }
 </span>88 <span style=''>
 </span>89 <span style=''>  def indexing: Receive = {
 </span>90 <span style=''>    case QueryCatalogue(catalogueName, catalogueUrl) => {
-</span>91 <span style=''>      </span><span style='background: #F0ADAD'>logger.info(s"Querying $catalogueName on url $catalogueUrl")</span><span style=''>
-</span>92 <span style=''>      </span><span style='background: #F0ADAD'>queryCatalogue(catalogueName, catalogueUrl, 1, maxDocsPerFetch)</span><span style=''>
+</span>91 <span style=''>      </span><span style='background: #AEF1AE'>logger.info(s"Querying $catalogueName on url $catalogueUrl")</span><span style=''>
+</span>92 <span style=''>      </span><span style='background: #AEF1AE'>queryCatalogue(catalogueName, catalogueUrl, 1, maxDocsPerFetch)</span><span style=''>
 </span>93 <span style=''>    }
 </span>94 <span style=''>
 </span>95 <span style=''>    case IndexResponseDocument(cswGetRecordsResponse, catalogueName, isLast) => {
-</span>96 <span style=''>      val directory = </span><span style='background: #F0ADAD'>buildIndexFor(cswGetRecordsResponse, catalogueName)</span><span style=''>
-</span>97 <span style=''>      </span><span style='background: #F0ADAD'>sender() ! MergeLuceneIndex(directory, catalogueName)</span><span style=''>
+</span>96 <span style=''>      val directory = </span><span style='background: #AEF1AE'>buildIndexFor(cswGetRecordsResponse, catalogueName)</span><span style=''>
+</span>97 <span style=''>      </span><span style='background: #AEF1AE'>sender() ! MergeLuceneIndex(directory, catalogueName)</span><span style=''>
 </span>98 <span style=''>
 </span>99 <span style=''>      //its important to send the shutdown from here, otherwise the last merge will not be executed, because shutdown
 </span>100 <span style=''>      //will be received before this merge message
-</span>101 <span style=''>      if (isLast) </span><span style='background: #F0ADAD'>{
-</span>102 <span style=''></span><span style='background: #F0ADAD'>        logger.info(s"Last response indexed. Sending shutdown for $catalogueName")
-</span>103 <span style=''></span><span style='background: #F0ADAD'>        sender() ! ShutdownActor(catalogueName)
-</span>104 <span style=''></span><span style='background: #F0ADAD'>      }</span><span style=''>
+</span>101 <span style=''>      if (isLast) </span><span style='background: #AEF1AE'>{
+</span>102 <span style=''></span><span style='background: #AEF1AE'>        logger.info(s"Last response indexed. Sending shutdown for $catalogueName")
+</span>103 <span style=''></span><span style='background: #AEF1AE'>        sender() ! ShutdownActor(catalogueName)
+</span>104 <span style=''></span><span style='background: #AEF1AE'>      }</span><span style=''>
 </span>105 <span style=''>    }
 </span>106 <span style=''>
 </span>107 <span style=''>    case MergeLuceneIndex(directory, catalogueName) => {
-</span>108 <span style=''>      </span><span style='background: #F0ADAD'>logger.info(s"Merging index in actor for $catalogueName")</span><span style=''>
-</span>109 <span style=''>      val config = </span><span style='background: #F0ADAD'>new IndexWriterConfig()</span><span style=''>
-</span>110 <span style=''>      </span><span style='background: #F0ADAD'>config.setCommitOnClose(true)</span><span style=''>
+</span>108 <span style=''>      </span><span style='background: #AEF1AE'>logger.info(s"Merging index in actor for $catalogueName")</span><span style=''>
+</span>109 <span style=''>      val config = </span><span style='background: #AEF1AE'>new IndexWriterConfig()</span><span style=''>
+</span>110 <span style=''>      </span><span style='background: #AEF1AE'>config.setCommitOnClose(true)</span><span style=''>
 </span>111 <span style=''>
-</span>112 <span style=''>      val iwriter = </span><span style='background: #F0ADAD'>new IndexWriter(catalogueDirectory, config)</span><span style=''>
+</span>112 <span style=''>      val iwriter = </span><span style='background: #AEF1AE'>new IndexWriter(catalogueDirectory, config)</span><span style=''>
 </span>113 <span style=''>      try {
-</span>114 <span style=''>        </span><span style='background: #F0ADAD'>iwriter.addIndexes(directory)
-</span>115 <span style=''></span><span style='background: #F0ADAD'>        iwriter.commit()
-</span>116 <span style=''></span><span style='background: #F0ADAD'>        logger.info("Done merging index")</span><span style=''>
+</span>114 <span style=''>        </span><span style='background: #AEF1AE'>iwriter.addIndexes(directory)
+</span>115 <span style=''></span><span style='background: #AEF1AE'>        iwriter.commit()
+</span>116 <span style=''></span><span style='background: #AEF1AE'>        logger.info("Done merging index")</span><span style=''>
 </span>117 <span style=''>      }
 </span>118 <span style=''>      finally {
-</span>119 <span style=''>        </span><span style='background: #F0ADAD'>iwriter.close()</span><span style=''>
+</span>119 <span style=''>        </span><span style='background: #AEF1AE'>iwriter.close()</span><span style=''>
 </span>120 <span style=''>      }
 </span>121 <span style=''>    }
 </span>122 <span style=''>
 </span>123 <span style=''>    case ShutdownActor(catalogueName) => {
-</span>124 <span style=''>      if (</span><span style='background: #F0ADAD'>catalogueDirectory.listAll().length > 0</span><span style=''>) </span><span style='background: #F0ADAD'>{
-</span>125 <span style=''></span><span style='background: #F0ADAD'>        logger.info("Merging index back to Service")
-</span>126 <span style=''></span><span style='background: #F0ADAD'>        luceneService.mergeIndex(catalogueDirectory, catalogueName)
-</span>127 <span style=''></span><span style='background: #F0ADAD'>      }</span><span style=''>
+</span>124 <span style=''>      if (</span><span style='background: #AEF1AE'>catalogueDirectory.listAll().length > 0</span><span style=''>) </span><span style='background: #AEF1AE'>{
+</span>125 <span style=''></span><span style='background: #AEF1AE'>        logger.info("Merging index back to Service")
+</span>126 <span style=''></span><span style='background: #AEF1AE'>        luceneService.mergeIndex(catalogueDirectory, catalogueName)
+</span>127 <span style=''></span><span style='background: #AEF1AE'>      }</span><span style=''>
 </span>128 <span style=''>
-</span>129 <span style=''>      </span><span style='background: #F0ADAD'>logger.info(s"Shutting down actor for $catalogueName")</span><span style=''>
-</span>130 <span style=''>      </span><span style='background: #F0ADAD'>context.stop(self)</span><span style=''>
+</span>129 <span style=''>      </span><span style='background: #AEF1AE'>logger.info(s"Shutting down actor for $catalogueName")</span><span style=''>
+</span>130 <span style=''>      </span><span style='background: #AEF1AE'>context.stop(self)</span><span style=''>
 </span>131 <span style=''>    }
 </span>132 <span style=''>    //FIXME some kind of default behaviour?
 </span>133 <span style=''>  }
@@ -164,30 +164,30 @@
 </span>140 <span style=''>    * @return [[Directory]] containing the index
 </span>141 <span style=''>    */
 </span>142 <span style=''>  private def buildIndexFor(cswGetRecordsResponse: CswGetRecordsResponse, catalogueName: String): Directory = {
-</span>143 <span style=''>    </span><span style='background: #F0ADAD'>logger.info(s"Start building (partial) index for ${catalogueName}...")</span><span style=''>
-</span>144 <span style=''>    val mdMetadataSet = (</span><span style='background: #F0ADAD'>cswGetRecordsResponse.xml \\ "MD_Metadata").map(mdMetadataNode => {
-</span>145 <span style=''></span><span style='background: #F0ADAD'>      logger.debug(f"Preparing($catalogueName): ${(mdMetadataNode \ "fileIdentifier" \ "CharacterString").text}")
-</span>146 <span style=''></span><span style='background: #F0ADAD'>      logger.trace(mdMetadataNode.toString)
-</span>147 <span style=''></span><span style='background: #F0ADAD'>      MdMetadataSet.fromXml(mdMetadataNode, catalogueName)
-</span>148 <span style=''></span><span style='background: #F0ADAD'>    }).filter(item => item.isDefined).map(item => item.get)</span><span style=''> //filter out all None values
+</span>143 <span style=''>    </span><span style='background: #AEF1AE'>logger.info(s"Start building (partial) index for ${catalogueName}...")</span><span style=''>
+</span>144 <span style=''>    val mdMetadataSet = (</span><span style='background: #AEF1AE'>cswGetRecordsResponse.xml \\ "MD_Metadata").map(mdMetadataNode => {
+</span>145 <span style=''></span><span style='background: #AEF1AE'>      logger.debug(f"Preparing($catalogueName): ${(mdMetadataNode \ "fileIdentifier" \ "CharacterString").text}")
+</span>146 <span style=''></span><span style='background: #AEF1AE'>      logger.trace(</span><span style='background: #F0ADAD'>mdMetadataNode.toString</span><span style='background: #AEF1AE'>)
+</span>147 <span style=''></span><span style='background: #AEF1AE'>      MdMetadataSet.fromXml(mdMetadataNode, catalogueName)
+</span>148 <span style=''></span><span style='background: #AEF1AE'>    }).filter(item => item.isDefined).map(item => item.get)</span><span style=''> //filter out all None values
 </span>149 <span style=''>
-</span>150 <span style=''>    val luceneDocuments = </span><span style='background: #F0ADAD'>mdMetadataSet.map(_.asLuceneDocument())</span><span style=''>
+</span>150 <span style=''>    val luceneDocuments = </span><span style='background: #AEF1AE'>mdMetadataSet.map(_.asLuceneDocument())</span><span style=''>
 </span>151 <span style=''>
-</span>152 <span style=''>    val directory = </span><span style='background: #F0ADAD'>new RAMDirectory()</span><span style=''>
-</span>153 <span style=''>    val config = </span><span style='background: #F0ADAD'>new IndexWriterConfig()</span><span style=''>
-</span>154 <span style=''>    </span><span style='background: #F0ADAD'>config.setCommitOnClose(true)</span><span style=''>
+</span>152 <span style=''>    val directory = </span><span style='background: #AEF1AE'>new RAMDirectory()</span><span style=''>
+</span>153 <span style=''>    val config = </span><span style='background: #AEF1AE'>new IndexWriterConfig()</span><span style=''>
+</span>154 <span style=''>    </span><span style='background: #AEF1AE'>config.setCommitOnClose(true)</span><span style=''>
 </span>155 <span style=''>
 </span>156 <span style=''>    //FIXME SR use SCALA_ARM (automated resource management)?
-</span>157 <span style=''>    val iwriter = </span><span style='background: #F0ADAD'>new IndexWriter(directory, config)</span><span style=''>
+</span>157 <span style=''>    val iwriter = </span><span style='background: #AEF1AE'>new IndexWriter(directory, config)</span><span style=''>
 </span>158 <span style=''>    try {
-</span>159 <span style=''>      </span><span style='background: #F0ADAD'>iwriter.deleteAll()
-</span>160 <span style=''></span><span style='background: #F0ADAD'>      iwriter.commit()
-</span>161 <span style=''></span><span style='background: #F0ADAD'>      luceneDocuments.foreach(iwriter.addDocument(_))
-</span>162 <span style=''></span><span style='background: #F0ADAD'>      iwriter.commit()
-</span>163 <span style=''></span><span style='background: #F0ADAD'>      logger.info(s"Partial index ready for $catalogueName")</span><span style=''>
+</span>159 <span style=''>      </span><span style='background: #AEF1AE'>iwriter.deleteAll()
+</span>160 <span style=''></span><span style='background: #AEF1AE'>      iwriter.commit()
+</span>161 <span style=''></span><span style='background: #AEF1AE'>      luceneDocuments.foreach(iwriter.addDocument(_))
+</span>162 <span style=''></span><span style='background: #AEF1AE'>      iwriter.commit()
+</span>163 <span style=''></span><span style='background: #AEF1AE'>      logger.info(s"Partial index ready for $catalogueName")</span><span style=''>
 </span>164 <span style=''>    }
 </span>165 <span style=''>    finally {
-</span>166 <span style=''>      </span><span style='background: #F0ADAD'>iwriter.close()</span><span style=''>
+</span>166 <span style=''>      </span><span style='background: #AEF1AE'>iwriter.close()</span><span style=''>
 </span>167 <span style=''>    }
 </span>168 <span style=''>    directory
 </span>169 <span style=''>  }
@@ -195,52 +195,52 @@
 </span>171 <span style=''>  private def queryCatalogue(catalogueName: String, catalogueUrl: String, startDocument: Int,
 </span>172 <span style=''>                             documentsToFetch: Int): Unit = {
 </span>173 <span style=''>    val wsClientResponseFuture =
-</span>174 <span style=''>      </span><span style='background: #F0ADAD'>wsClient.url(catalogueUrl)
-</span>175 <span style=''></span><span style='background: #F0ADAD'>//        .withRequestTimeout(20.seconds)
-</span>176 <span style=''></span><span style='background: #F0ADAD'>        .withHeaders("Content-Type" -> "application/xml")
-</span>177 <span style=''></span><span style='background: #F0ADAD'>        .post(CswGetRecordsRequest(startDocument, documentsToFetch))</span><span style=''>
+</span>174 <span style=''>      </span><span style='background: #AEF1AE'>wsClient.url(catalogueUrl)
+</span>175 <span style=''></span><span style='background: #AEF1AE'>//        .withRequestTimeout(20.seconds)
+</span>176 <span style=''></span><span style='background: #AEF1AE'>        .withHeaders("Content-Type" -> "application/xml")
+</span>177 <span style=''></span><span style='background: #AEF1AE'>        .post(CswGetRecordsRequest(startDocument, documentsToFetch))</span><span style=''>
 </span>178 <span style=''>
-</span>179 <span style=''>    </span><span style='background: #F0ADAD'>wsClientResponseFuture.onComplete {
-</span>180 <span style=''></span><span style='background: #F0ADAD'>      case Success(wsClientResponse) => {
-</span>181 <span style=''></span><span style='background: #F0ADAD'>        wsClientResponse.status match {
-</span>182 <span style=''></span><span style='background: #F0ADAD'>          case Status.OK => {
-</span>183 <span style=''></span><span style='background: #F0ADAD'>            logger.debug(f"Response Content Type: ${wsClientResponse.allHeaders.getOrElse("Content-Type", "Unknown")}")
-</span>184 <span style=''></span><span style='background: #F0ADAD'>            logger.debug(f"Response-Length: ${wsClientResponse.body.length}")
-</span>185 <span style=''></span><span style='background: #F0ADAD'>            logger.trace(f"Response-Body: ${wsClientResponse.body.toString}")
-</span>186 <span style=''></span><span style='background: #F0ADAD'>            wsClientResponse.xml.label match {
-</span>187 <span style=''></span><span style='background: #F0ADAD'>              case "ExceptionReport" => {
-</span>188 <span style=''></span><span style='background: #F0ADAD'>                logger.warn(
-</span>189 <span style=''></span><span style='background: #F0ADAD'>                  f"Got XML Exception Response. Text: ${(wsClientResponse.xml \ "Exception" \ "ExceptionText").text}")
-</span>190 <span style=''></span><span style='background: #F0ADAD'>              }
-</span>191 <span style=''></span><span style='background: #F0ADAD'>              case "GetRecordsResponse" => {
-</span>192 <span style=''></span><span style='background: #F0ADAD'>                val cswGetRecResp = CswGetRecordsResponse(wsClientResponse.xml)
-</span>193 <span style=''></span><span style='background: #F0ADAD'>                logger.info(
-</span>194 <span style=''></span><span style='background: #F0ADAD'>                  f"nextRecord: ${cswGetRecResp.nextRecord}, numberOfRec ${cswGetRecResp.numberOfRecordsMatched}")
-</span>195 <span style=''></span><span style='background: #F0ADAD'>                if ((cswGetRecResp.nextRecord > cswGetRecResp.numberOfRecordsMatched) ||
-</span>196 <span style=''></span><span style='background: #F0ADAD'>                  (cswGetRecResp.nextRecord == 0)) {
-</span>197 <span style=''></span><span style='background: #F0ADAD'>                  self ! IndexResponseDocument(cswGetRecResp, catalogueName, true)
-</span>198 <span style=''></span><span style='background: #F0ADAD'>                }
-</span>199 <span style=''></span><span style='background: #F0ADAD'>                else {
+</span>179 <span style=''>    </span><span style='background: #AEF1AE'>wsClientResponseFuture.onComplete {
+</span>180 <span style=''></span><span style='background: #AEF1AE'>      case Success(wsClientResponse) => {
+</span>181 <span style=''></span><span style='background: #AEF1AE'>        wsClientResponse.status match {
+</span>182 <span style=''></span><span style='background: #AEF1AE'>          case Status.OK => {
+</span>183 <span style=''></span><span style='background: #AEF1AE'>            logger.debug(f"Response Content Type: ${wsClientResponse.allHeaders.getOrElse("Content-Type", "Unknown")}")
+</span>184 <span style=''></span><span style='background: #AEF1AE'>            logger.debug(f"Response-Length: ${wsClientResponse.body.length}")
+</span>185 <span style=''></span><span style='background: #AEF1AE'>            logger.trace(f"Response-Body: ${wsClientResponse.body.toString}")
+</span>186 <span style=''></span><span style='background: #AEF1AE'>            wsClientResponse.xml.label match {
+</span>187 <span style=''></span><span style='background: #AEF1AE'>              case "ExceptionReport" => {
+</span>188 <span style=''></span><span style='background: #AEF1AE'>                </span><span style='background: #F0ADAD'>logger.warn(
+</span>189 <span style=''></span><span style='background: #F0ADAD'>                  f"Got XML Exception Response. Text: ${(wsClientResponse.xml \ "Exception" \ "ExceptionText").text}")</span><span style='background: #AEF1AE'>
+</span>190 <span style=''></span><span style='background: #AEF1AE'>              }
+</span>191 <span style=''></span><span style='background: #AEF1AE'>              case "GetRecordsResponse" => {
+</span>192 <span style=''></span><span style='background: #AEF1AE'>                val cswGetRecResp = CswGetRecordsResponse(wsClientResponse.xml)
+</span>193 <span style=''></span><span style='background: #AEF1AE'>                logger.info(
+</span>194 <span style=''></span><span style='background: #AEF1AE'>                  f"nextRecord: ${cswGetRecResp.nextRecord}, numberOfRec ${cswGetRecResp.numberOfRecordsMatched}")
+</span>195 <span style=''></span><span style='background: #AEF1AE'>                if ((cswGetRecResp.nextRecord > cswGetRecResp.numberOfRecordsMatched) ||
+</span>196 <span style=''></span><span style='background: #AEF1AE'>                  (</span><span style='background: #F0ADAD'>cswGetRecResp.nextRecord == 0</span><span style='background: #AEF1AE'>)) {
+</span>197 <span style=''></span><span style='background: #AEF1AE'>                  self ! IndexResponseDocument(cswGetRecResp, catalogueName, true)
+</span>198 <span style=''></span><span style='background: #AEF1AE'>                }
+</span>199 <span style=''></span><span style='background: #AEF1AE'>                else </span><span style='background: #F0ADAD'>{
 </span>200 <span style=''></span><span style='background: #F0ADAD'>                  self ! IndexResponseDocument(cswGetRecResp, catalogueName, false)
 </span>201 <span style=''></span><span style='background: #F0ADAD'>                  queryCatalogue(catalogueName, catalogueUrl, cswGetRecResp.nextRecord, documentsToFetch)
-</span>202 <span style=''></span><span style='background: #F0ADAD'>                }
-</span>203 <span style=''></span><span style='background: #F0ADAD'>              }
-</span>204 <span style=''></span><span style='background: #F0ADAD'>              case _ => {
-</span>205 <span style=''></span><span style='background: #F0ADAD'>                logger.warn(f"Unknown response content. Body: ${wsClientResponse.xml.toString}")
-</span>206 <span style=''></span><span style='background: #F0ADAD'>                self ! ShutdownActor(catalogueName)
-</span>207 <span style=''></span><span style='background: #F0ADAD'>              }
-</span>208 <span style=''></span><span style='background: #F0ADAD'>            }
-</span>209 <span style=''></span><span style='background: #F0ADAD'>          }
-</span>210 <span style=''></span><span style='background: #F0ADAD'>          case _ => {
-</span>211 <span style=''></span><span style='background: #F0ADAD'>            self ! ShutdownActor(catalogueName)
-</span>212 <span style=''></span><span style='background: #F0ADAD'>          }
-</span>213 <span style=''></span><span style='background: #F0ADAD'>        }
-</span>214 <span style=''></span><span style='background: #F0ADAD'>      }
-</span>215 <span style=''></span><span style='background: #F0ADAD'>      case Failure(ex) => {
-</span>216 <span style=''></span><span style='background: #F0ADAD'>        logger.warn(s"Exception while querying CSW: ${ex.getMessage}", ex)
-</span>217 <span style=''></span><span style='background: #F0ADAD'>        self ! ShutdownActor(catalogueName)
-</span>218 <span style=''></span><span style='background: #F0ADAD'>      }
-</span>219 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''>
+</span>202 <span style=''></span><span style='background: #F0ADAD'>                }</span><span style='background: #AEF1AE'>
+</span>203 <span style=''></span><span style='background: #AEF1AE'>              }
+</span>204 <span style=''></span><span style='background: #AEF1AE'>              case _ => {
+</span>205 <span style=''></span><span style='background: #AEF1AE'>                </span><span style='background: #F0ADAD'>logger.warn(f"Unknown response content. Body: ${wsClientResponse.xml.toString}")</span><span style='background: #AEF1AE'>
+</span>206 <span style=''></span><span style='background: #AEF1AE'>                </span><span style='background: #F0ADAD'>self ! ShutdownActor(catalogueName)</span><span style='background: #AEF1AE'>
+</span>207 <span style=''></span><span style='background: #AEF1AE'>              }
+</span>208 <span style=''></span><span style='background: #AEF1AE'>            }
+</span>209 <span style=''></span><span style='background: #AEF1AE'>          }
+</span>210 <span style=''></span><span style='background: #AEF1AE'>          case _ => {
+</span>211 <span style=''></span><span style='background: #AEF1AE'>            </span><span style='background: #F0ADAD'>self ! ShutdownActor(catalogueName)</span><span style='background: #AEF1AE'>
+</span>212 <span style=''></span><span style='background: #AEF1AE'>          }
+</span>213 <span style=''></span><span style='background: #AEF1AE'>        }
+</span>214 <span style=''></span><span style='background: #AEF1AE'>      }
+</span>215 <span style=''></span><span style='background: #AEF1AE'>      case Failure(ex) => {
+</span>216 <span style=''></span><span style='background: #AEF1AE'>        </span><span style='background: #F0ADAD'>logger.warn(s"Exception while querying CSW: ${ex.getMessage}", ex)</span><span style='background: #AEF1AE'>
+</span>217 <span style=''></span><span style='background: #AEF1AE'>        </span><span style='background: #F0ADAD'>self ! ShutdownActor(catalogueName)</span><span style='background: #AEF1AE'>
+</span>218 <span style=''></span><span style='background: #AEF1AE'>      }
+</span>219 <span style=''></span><span style='background: #AEF1AE'>    }</span><span style=''>
 </span>220 <span style=''>  }
 </span>221 <span style=''>}
 </span></pre>
@@ -259,7 +259,7 @@
           41
         </td>
         <td>
-          826
+          872
         </td>
         <td>
           1492
@@ -280,7 +280,7 @@
           66
         </td>
         <td>
-          827
+          873
         </td>
         <td>
           2280
@@ -293,7 +293,7 @@
         <td>
           play.api.LoggerLike.debug
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           LuceneIndexBuilderActor.this.logger.debug(&quot;Reading configuration: csw.maxDocs &quot;)
         </td>
       </tr><tr>
@@ -301,7 +301,7 @@
           67
         </td>
         <td>
-          828
+          874
         </td>
         <td>
           2364
@@ -314,7 +314,7 @@
         <td>
           &lt;nosymbol&gt;
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           500
         </td>
       </tr><tr>
@@ -322,7 +322,28 @@
           68
         </td>
         <td>
-          831
+          875
+        </td>
+        <td>
+          2421
+          -
+          2434
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;csw.maxDocs&quot;
+        </td>
+      </tr><tr>
+        <td>
+          68
+        </td>
+        <td>
+          877
         </td>
         <td>
           2400
@@ -335,7 +356,7 @@
         <td>
           scala.Option.getOrElse
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           LuceneIndexBuilderActor.this.configuration.getInt(&quot;csw.maxDocs&quot;).getOrElse[Int](LuceneIndexBuilderActor.this.CSW_MAX_RECORDS)
         </td>
       </tr><tr>
@@ -343,7 +364,7 @@
           68
         </td>
         <td>
-          830
+          876
         </td>
         <td>
           2446
@@ -361,31 +382,10 @@
         </td>
       </tr><tr>
         <td>
-          68
-        </td>
-        <td>
-          829
-        </td>
-        <td>
-          2421
-          -
-          2434
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;csw.maxDocs&quot;
-        </td>
-      </tr><tr>
-        <td>
           70
         </td>
         <td>
-          832
+          878
         </td>
         <td>
           2499
@@ -398,7 +398,7 @@
         <td>
           org.apache.lucene.store.RAMDirectory.&lt;init&gt;
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           new org.apache.lucene.store.RAMDirectory()
         </td>
       </tr><tr>
@@ -406,7 +406,7 @@
           79
         </td>
         <td>
-          840
+          886
         </td>
         <td>
           2697
@@ -419,7 +419,7 @@
         <td>
           services.LuceneIndexBuilderActor.$anonfun.&lt;init&gt;
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           new $anonfun()
         </td>
       </tr><tr>
@@ -427,7 +427,7 @@
           82
         </td>
         <td>
-          833
+          879
         </td>
         <td>
           2764
@@ -440,7 +440,7 @@
         <td>
           play.api.LoggerLike.info
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           LuceneIndexBuilderActor.this.logger.info(&quot;querying catalogue&quot;)
         </td>
       </tr><tr>
@@ -448,7 +448,7 @@
           83
         </td>
         <td>
-          835
+          881
         </td>
         <td>
           2804
@@ -461,7 +461,7 @@
         <td>
           akka.actor.ActorContext.become
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           LuceneIndexBuilderActor.this.context.become(LuceneIndexBuilderActor.this.indexing)
         </td>
       </tr><tr>
@@ -469,7 +469,7 @@
           83
         </td>
         <td>
-          834
+          880
         </td>
         <td>
           2819
@@ -482,7 +482,7 @@
         <td>
           services.LuceneIndexBuilderActor.indexing
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           LuceneIndexBuilderActor.this.indexing
         </td>
       </tr><tr>
@@ -490,49 +490,7 @@
           84
         </td>
         <td>
-          837
-        </td>
-        <td>
-          2842
-          -
-          2885
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          services.LuceneIndexBuilderActor.QueryCatalogue.apply
-        </td>
-        <td style="background: #F0ADAD">
-          services.LuceneIndexBuilderActor.QueryCatalogue.apply(catalogueName, catalogueUrl)
-        </td>
-      </tr><tr>
-        <td>
-          84
-        </td>
-        <td>
-          839
-        </td>
-        <td>
-          2835
-          -
-          2885
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          akka.actor.ScalaActorRef.!
-        </td>
-        <td style="background: #F0ADAD">
-          akka.this.actor.`package`.actorRef2Scala(LuceneIndexBuilderActor.this.self).!(services.LuceneIndexBuilderActor.QueryCatalogue.apply(catalogueName, catalogueUrl))(LuceneIndexBuilderActor.this.self)
-        </td>
-      </tr><tr>
-        <td>
-          84
-        </td>
-        <td>
-          836
+          882
         </td>
         <td>
           2835
@@ -545,7 +503,7 @@
         <td>
           akka.actor.Actor.self
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           LuceneIndexBuilderActor.this.self
         </td>
       </tr><tr>
@@ -553,7 +511,7 @@
           84
         </td>
         <td>
-          838
+          884
         </td>
         <td>
           2840
@@ -566,15 +524,57 @@
         <td>
           akka.actor.Actor.self
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           LuceneIndexBuilderActor.this.self
+        </td>
+      </tr><tr>
+        <td>
+          84
+        </td>
+        <td>
+          883
+        </td>
+        <td>
+          2842
+          -
+          2885
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          services.LuceneIndexBuilderActor.QueryCatalogue.apply
+        </td>
+        <td style="background: #AEF1AE">
+          services.LuceneIndexBuilderActor.QueryCatalogue.apply(catalogueName, catalogueUrl)
+        </td>
+      </tr><tr>
+        <td>
+          84
+        </td>
+        <td>
+          885
+        </td>
+        <td>
+          2835
+          -
+          2885
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          akka.actor.ScalaActorRef.!
+        </td>
+        <td style="background: #AEF1AE">
+          akka.this.actor.`package`.actorRef2Scala(LuceneIndexBuilderActor.this.self).!(services.LuceneIndexBuilderActor.QueryCatalogue.apply(catalogueName, catalogueUrl))(LuceneIndexBuilderActor.this.self)
         </td>
       </tr><tr>
         <td>
           89
         </td>
         <td>
-          883
+          929
         </td>
         <td>
           2967
@@ -587,7 +587,7 @@
         <td>
           services.LuceneIndexBuilderActor.$anonfun.&lt;init&gt;
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           new $anonfun()
         </td>
       </tr><tr>
@@ -595,28 +595,7 @@
           91
         </td>
         <td>
-          842
-        </td>
-        <td>
-          3033
-          -
-          3093
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          play.api.LoggerLike.info
-        </td>
-        <td style="background: #F0ADAD">
-          LuceneIndexBuilderActor.this.logger.info(scala.StringContext.apply(&quot;Querying &quot;, &quot; on url &quot;, &quot;&quot;).s(catalogueName, catalogueUrl))
-        </td>
-      </tr><tr>
-        <td>
-          91
-        </td>
-        <td>
-          841
+          887
         </td>
         <td>
           3045
@@ -629,15 +608,36 @@
         <td>
           scala.StringContext.s
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           scala.StringContext.apply(&quot;Querying &quot;, &quot; on url &quot;, &quot;&quot;).s(catalogueName, catalogueUrl)
+        </td>
+      </tr><tr>
+        <td>
+          91
+        </td>
+        <td>
+          888
+        </td>
+        <td>
+          3033
+          -
+          3093
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.LoggerLike.info
+        </td>
+        <td style="background: #AEF1AE">
+          LuceneIndexBuilderActor.this.logger.info(scala.StringContext.apply(&quot;Querying &quot;, &quot; on url &quot;, &quot;&quot;).s(catalogueName, catalogueUrl))
         </td>
       </tr><tr>
         <td>
           92
         </td>
         <td>
-          845
+          891
         </td>
         <td>
           3100
@@ -650,7 +650,7 @@
         <td>
           services.LuceneIndexBuilderActor.queryCatalogue
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           LuceneIndexBuilderActor.this.queryCatalogue(catalogueName, catalogueUrl, 1, LuceneIndexBuilderActor.this.maxDocsPerFetch)
         </td>
       </tr><tr>
@@ -658,7 +658,7 @@
           92
         </td>
         <td>
-          844
+          890
         </td>
         <td>
           3147
@@ -671,7 +671,7 @@
         <td>
           services.LuceneIndexBuilderActor.maxDocsPerFetch
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           LuceneIndexBuilderActor.this.maxDocsPerFetch
         </td>
       </tr><tr>
@@ -679,7 +679,7 @@
           92
         </td>
         <td>
-          843
+          889
         </td>
         <td>
           3144
@@ -692,7 +692,7 @@
         <td>
           &lt;nosymbol&gt;
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           1
         </td>
       </tr><tr>
@@ -700,7 +700,7 @@
           96
         </td>
         <td>
-          846
+          892
         </td>
         <td>
           3275
@@ -713,7 +713,7 @@
         <td>
           services.LuceneIndexBuilderActor.buildIndexFor
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           LuceneIndexBuilderActor.this.buildIndexFor(cswGetRecordsResponse, catalogueName)
         </td>
       </tr><tr>
@@ -721,28 +721,7 @@
           97
         </td>
         <td>
-          848
-        </td>
-        <td>
-          3344
-          -
-          3386
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          services.LuceneIndexBuilderActor.MergeLuceneIndex.apply
-        </td>
-        <td style="background: #F0ADAD">
-          services.LuceneIndexBuilderActor.MergeLuceneIndex.apply(directory, catalogueName)
-        </td>
-      </tr><tr>
-        <td>
-          97
-        </td>
-        <td>
-          847
+          893
         </td>
         <td>
           3333
@@ -755,7 +734,7 @@
         <td>
           akka.actor.Actor.sender
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           LuceneIndexBuilderActor.this.sender()
         </td>
       </tr><tr>
@@ -763,7 +742,7 @@
           97
         </td>
         <td>
-          850
+          896
         </td>
         <td>
           3333
@@ -776,7 +755,7 @@
         <td>
           akka.actor.ScalaActorRef.!
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           akka.this.actor.`package`.actorRef2Scala(LuceneIndexBuilderActor.this.sender()).!(services.LuceneIndexBuilderActor.MergeLuceneIndex.apply(directory, catalogueName))(LuceneIndexBuilderActor.this.self)
         </td>
       </tr><tr>
@@ -784,7 +763,7 @@
           97
         </td>
         <td>
-          849
+          895
         </td>
         <td>
           3342
@@ -797,15 +776,78 @@
         <td>
           akka.actor.Actor.self
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           LuceneIndexBuilderActor.this.self
+        </td>
+      </tr><tr>
+        <td>
+          97
+        </td>
+        <td>
+          894
+        </td>
+        <td>
+          3344
+          -
+          3386
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          services.LuceneIndexBuilderActor.MergeLuceneIndex.apply
+        </td>
+        <td style="background: #AEF1AE">
+          services.LuceneIndexBuilderActor.MergeLuceneIndex.apply(directory, catalogueName)
         </td>
       </tr><tr>
         <td>
           101
         </td>
         <td>
-          857
+          905
+        </td>
+        <td>
+          3563
+          -
+          3563
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          ()
+        </td>
+      </tr><tr>
+        <td>
+          101
+        </td>
+        <td>
+          904
+        </td>
+        <td>
+          3563
+          -
+          3563
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          ()
+        </td>
+      </tr><tr>
+        <td>
+          101
+        </td>
+        <td>
+          903
         </td>
         <td>
           3575
@@ -818,7 +860,7 @@
         <td>
           &lt;nosymbol&gt;
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           {
   LuceneIndexBuilderActor.this.logger.info(scala.StringContext.apply(&quot;Last response indexed. Sending shutdown for &quot;, &quot;&quot;).s(catalogueName));
   akka.this.actor.`package`.actorRef2Scala(LuceneIndexBuilderActor.this.sender()).!(services.LuceneIndexBuilderActor.ShutdownActor.apply(catalogueName))(LuceneIndexBuilderActor.this.self)
@@ -826,73 +868,10 @@
         </td>
       </tr><tr>
         <td>
-          101
-        </td>
-        <td>
-          859
-        </td>
-        <td>
-          3563
-          -
-          3563
-        </td>
-        <td>
-          Block
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          ()
-        </td>
-      </tr><tr>
-        <td>
-          101
-        </td>
-        <td>
-          858
-        </td>
-        <td>
-          3563
-          -
-          3563
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          ()
-        </td>
-      </tr><tr>
-        <td>
           102
         </td>
         <td>
-          851
-        </td>
-        <td>
-          3597
-          -
-          3658
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.StringContext.s
-        </td>
-        <td style="background: #F0ADAD">
-          scala.StringContext.apply(&quot;Last response indexed. Sending shutdown for &quot;, &quot;&quot;).s(catalogueName)
-        </td>
-      </tr><tr>
-        <td>
-          102
-        </td>
-        <td>
-          852
+          898
         </td>
         <td>
           3585
@@ -905,57 +884,36 @@
         <td>
           play.api.LoggerLike.info
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           LuceneIndexBuilderActor.this.logger.info(scala.StringContext.apply(&quot;Last response indexed. Sending shutdown for &quot;, &quot;&quot;).s(catalogueName))
         </td>
       </tr><tr>
         <td>
-          103
+          102
         </td>
         <td>
-          855
+          897
         </td>
         <td>
-          3677
+          3597
           -
-          3677
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          akka.actor.Actor.self
-        </td>
-        <td style="background: #F0ADAD">
-          LuceneIndexBuilderActor.this.self
-        </td>
-      </tr><tr>
-        <td>
-          103
-        </td>
-        <td>
-          854
-        </td>
-        <td>
-          3679
-          -
-          3707
+          3658
         </td>
         <td>
           Apply
         </td>
         <td>
-          services.LuceneIndexBuilderActor.ShutdownActor.apply
+          scala.StringContext.s
         </td>
-        <td style="background: #F0ADAD">
-          services.LuceneIndexBuilderActor.ShutdownActor.apply(catalogueName)
+        <td style="background: #AEF1AE">
+          scala.StringContext.apply(&quot;Last response indexed. Sending shutdown for &quot;, &quot;&quot;).s(catalogueName)
         </td>
       </tr><tr>
         <td>
           103
         </td>
         <td>
-          853
+          899
         </td>
         <td>
           3668
@@ -968,7 +926,7 @@
         <td>
           akka.actor.Actor.sender
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           LuceneIndexBuilderActor.this.sender()
         </td>
       </tr><tr>
@@ -976,7 +934,7 @@
           103
         </td>
         <td>
-          856
+          902
         </td>
         <td>
           3668
@@ -989,36 +947,57 @@
         <td>
           akka.actor.ScalaActorRef.!
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           akka.this.actor.`package`.actorRef2Scala(LuceneIndexBuilderActor.this.sender()).!(services.LuceneIndexBuilderActor.ShutdownActor.apply(catalogueName))(LuceneIndexBuilderActor.this.self)
         </td>
       </tr><tr>
         <td>
-          108
+          103
         </td>
         <td>
-          860
+          901
         </td>
         <td>
-          3798
+          3677
           -
-          3842
+          3677
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          akka.actor.Actor.self
+        </td>
+        <td style="background: #AEF1AE">
+          LuceneIndexBuilderActor.this.self
+        </td>
+      </tr><tr>
+        <td>
+          103
+        </td>
+        <td>
+          900
+        </td>
+        <td>
+          3679
+          -
+          3707
         </td>
         <td>
           Apply
         </td>
         <td>
-          scala.StringContext.s
+          services.LuceneIndexBuilderActor.ShutdownActor.apply
         </td>
-        <td style="background: #F0ADAD">
-          scala.StringContext.apply(&quot;Merging index in actor for &quot;, &quot;&quot;).s(catalogueName)
+        <td style="background: #AEF1AE">
+          services.LuceneIndexBuilderActor.ShutdownActor.apply(catalogueName)
         </td>
       </tr><tr>
         <td>
           108
         </td>
         <td>
-          861
+          907
         </td>
         <td>
           3786
@@ -1031,15 +1010,36 @@
         <td>
           play.api.LoggerLike.info
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           LuceneIndexBuilderActor.this.logger.info(scala.StringContext.apply(&quot;Merging index in actor for &quot;, &quot;&quot;).s(catalogueName))
+        </td>
+      </tr><tr>
+        <td>
+          108
+        </td>
+        <td>
+          906
+        </td>
+        <td>
+          3798
+          -
+          3842
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.StringContext.s
+        </td>
+        <td style="background: #AEF1AE">
+          scala.StringContext.apply(&quot;Merging index in actor for &quot;, &quot;&quot;).s(catalogueName)
         </td>
       </tr><tr>
         <td>
           109
         </td>
         <td>
-          862
+          908
         </td>
         <td>
           3863
@@ -1052,7 +1052,7 @@
         <td>
           org.apache.lucene.index.IndexWriterConfig.&lt;init&gt;
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           new org.apache.lucene.index.IndexWriterConfig()
         </td>
       </tr><tr>
@@ -1060,7 +1060,7 @@
           110
         </td>
         <td>
-          863
+          909
         </td>
         <td>
           3893
@@ -1073,7 +1073,7 @@
         <td>
           org.apache.lucene.index.IndexWriterConfig.setCommitOnClose
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           config.setCommitOnClose(true)
         </td>
       </tr><tr>
@@ -1081,28 +1081,7 @@
           112
         </td>
         <td>
-          864
-        </td>
-        <td>
-          3960
-          -
-          3978
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          services.LuceneIndexBuilderActor.catalogueDirectory
-        </td>
-        <td style="background: #F0ADAD">
-          LuceneIndexBuilderActor.this.catalogueDirectory
-        </td>
-      </tr><tr>
-        <td>
-          112
-        </td>
-        <td>
-          865
+          911
         </td>
         <td>
           3944
@@ -1115,15 +1094,36 @@
         <td>
           org.apache.lucene.index.IndexWriter.&lt;init&gt;
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           new org.apache.lucene.index.IndexWriter(LuceneIndexBuilderActor.this.catalogueDirectory, config)
+        </td>
+      </tr><tr>
+        <td>
+          112
+        </td>
+        <td>
+          910
+        </td>
+        <td>
+          3960
+          -
+          3978
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          services.LuceneIndexBuilderActor.catalogueDirectory
+        </td>
+        <td style="background: #AEF1AE">
+          LuceneIndexBuilderActor.this.catalogueDirectory
         </td>
       </tr><tr>
         <td>
           113
         </td>
         <td>
-          869
+          915
         </td>
         <td>
           4008
@@ -1136,7 +1136,7 @@
         <td>
           &lt;nosymbol&gt;
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           {
   iwriter.addIndexes(directory);
   iwriter.commit();
@@ -1148,7 +1148,7 @@
           114
         </td>
         <td>
-          866
+          912
         </td>
         <td>
           4008
@@ -1161,7 +1161,7 @@
         <td>
           org.apache.lucene.index.IndexWriter.addIndexes
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           iwriter.addIndexes(directory)
         </td>
       </tr><tr>
@@ -1169,7 +1169,7 @@
           115
         </td>
         <td>
-          867
+          913
         </td>
         <td>
           4046
@@ -1182,7 +1182,7 @@
         <td>
           org.apache.lucene.index.IndexWriter.commit
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           iwriter.commit()
         </td>
       </tr><tr>
@@ -1190,7 +1190,7 @@
           116
         </td>
         <td>
-          868
+          914
         </td>
         <td>
           4071
@@ -1203,7 +1203,7 @@
         <td>
           play.api.LoggerLike.info
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           LuceneIndexBuilderActor.this.logger.info(&quot;Done merging index&quot;)
         </td>
       </tr><tr>
@@ -1211,7 +1211,7 @@
           119
         </td>
         <td>
-          871
+          917
         </td>
         <td>
           4137
@@ -1224,7 +1224,7 @@
         <td>
           org.apache.lucene.index.IndexWriter.close
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           iwriter.close()
         </td>
       </tr><tr>
@@ -1232,7 +1232,7 @@
           119
         </td>
         <td>
-          870
+          916
         </td>
         <td>
           4137
@@ -1245,7 +1245,7 @@
         <td>
           org.apache.lucene.index.IndexWriter.close
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           iwriter.close()
         </td>
       </tr><tr>
@@ -1253,49 +1253,7 @@
           124
         </td>
         <td>
-          872
-        </td>
-        <td>
-          4221
-          -
-          4260
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.Int.&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          LuceneIndexBuilderActor.this.catalogueDirectory.listAll().length.&gt;(0)
-        </td>
-      </tr><tr>
-        <td>
-          124
-        </td>
-        <td>
-          878
-        </td>
-        <td>
-          4217
-          -
-          4217
-        </td>
-        <td>
-          Block
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          ()
-        </td>
-      </tr><tr>
-        <td>
-          124
-        </td>
-        <td>
-          877
+          923
         </td>
         <td>
           4217
@@ -1316,7 +1274,7 @@
           124
         </td>
         <td>
-          876
+          922
         </td>
         <td>
           4262
@@ -1329,7 +1287,7 @@
         <td>
           &lt;nosymbol&gt;
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           {
   LuceneIndexBuilderActor.this.logger.info(&quot;Merging index back to Service&quot;);
   LuceneIndexBuilderActor.this.luceneService.mergeIndex(LuceneIndexBuilderActor.this.catalogueDirectory, catalogueName)
@@ -1337,10 +1295,52 @@
         </td>
       </tr><tr>
         <td>
+          124
+        </td>
+        <td>
+          918
+        </td>
+        <td>
+          4221
+          -
+          4260
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Int.&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          LuceneIndexBuilderActor.this.catalogueDirectory.listAll().length.&gt;(0)
+        </td>
+      </tr><tr>
+        <td>
+          124
+        </td>
+        <td>
+          924
+        </td>
+        <td>
+          4217
+          -
+          4217
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          ()
+        </td>
+      </tr><tr>
+        <td>
           125
         </td>
         <td>
-          873
+          919
         </td>
         <td>
           4272
@@ -1353,7 +1353,7 @@
         <td>
           play.api.LoggerLike.info
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           LuceneIndexBuilderActor.this.logger.info(&quot;Merging index back to Service&quot;)
         </td>
       </tr><tr>
@@ -1361,28 +1361,7 @@
           126
         </td>
         <td>
-          875
-        </td>
-        <td>
-          4325
-          -
-          4384
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          services.LuceneService.mergeIndex
-        </td>
-        <td style="background: #F0ADAD">
-          LuceneIndexBuilderActor.this.luceneService.mergeIndex(LuceneIndexBuilderActor.this.catalogueDirectory, catalogueName)
-        </td>
-      </tr><tr>
-        <td>
-          126
-        </td>
-        <td>
-          874
+          920
         </td>
         <td>
           4350
@@ -1395,15 +1374,36 @@
         <td>
           services.LuceneIndexBuilderActor.catalogueDirectory
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           LuceneIndexBuilderActor.this.catalogueDirectory
+        </td>
+      </tr><tr>
+        <td>
+          126
+        </td>
+        <td>
+          921
+        </td>
+        <td>
+          4325
+          -
+          4384
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          services.LuceneService.mergeIndex
+        </td>
+        <td style="background: #AEF1AE">
+          LuceneIndexBuilderActor.this.luceneService.mergeIndex(LuceneIndexBuilderActor.this.catalogueDirectory, catalogueName)
         </td>
       </tr><tr>
         <td>
           129
         </td>
         <td>
-          880
+          926
         </td>
         <td>
           4400
@@ -1416,7 +1416,7 @@
         <td>
           play.api.LoggerLike.info
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           LuceneIndexBuilderActor.this.logger.info(scala.StringContext.apply(&quot;Shutting down actor for &quot;, &quot;&quot;).s(catalogueName))
         </td>
       </tr><tr>
@@ -1424,7 +1424,7 @@
           129
         </td>
         <td>
-          879
+          925
         </td>
         <td>
           4412
@@ -1437,7 +1437,7 @@
         <td>
           scala.StringContext.s
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           scala.StringContext.apply(&quot;Shutting down actor for &quot;, &quot;&quot;).s(catalogueName)
         </td>
       </tr><tr>
@@ -1445,7 +1445,7 @@
           130
         </td>
         <td>
-          882
+          928
         </td>
         <td>
           4461
@@ -1458,7 +1458,7 @@
         <td>
           akka.actor.ActorRefFactory.stop
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           LuceneIndexBuilderActor.this.context.stop(LuceneIndexBuilderActor.this.self)
         </td>
       </tr><tr>
@@ -1466,7 +1466,7 @@
           130
         </td>
         <td>
-          881
+          927
         </td>
         <td>
           4474
@@ -1479,7 +1479,7 @@
         <td>
           akka.actor.Actor.self
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           LuceneIndexBuilderActor.this.self
         </td>
       </tr><tr>
@@ -1487,28 +1487,7 @@
           143
         </td>
         <td>
-          884
-        </td>
-        <td>
-          4957
-          -
-          5014
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.StringContext.s
-        </td>
-        <td style="background: #F0ADAD">
-          scala.StringContext.apply(&quot;Start building (partial) index for &quot;, &quot;...&quot;).s(catalogueName)
-        </td>
-      </tr><tr>
-        <td>
-          143
-        </td>
-        <td>
-          885
+          931
         </td>
         <td>
           4945
@@ -1521,36 +1500,36 @@
         <td>
           play.api.LoggerLike.info
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           LuceneIndexBuilderActor.this.logger.info(scala.StringContext.apply(&quot;Start building (partial) index for &quot;, &quot;...&quot;).s(catalogueName))
         </td>
       </tr><tr>
         <td>
-          144
+          143
         </td>
         <td>
-          891
+          930
         </td>
         <td>
-          5088
+          4957
           -
-          5088
+          5014
         </td>
         <td>
-          TypeApply
+          Apply
         </td>
         <td>
-          scala.collection.immutable.Seq.canBuildFrom
+          scala.StringContext.s
         </td>
-        <td style="background: #F0ADAD">
-          immutable.this.Seq.canBuildFrom[Option[models.gmd.MdMetadataSet]]
+        <td style="background: #AEF1AE">
+          scala.StringContext.apply(&quot;Start building (partial) index for &quot;, &quot;...&quot;).s(catalogueName)
         </td>
       </tr><tr>
         <td>
           144
         </td>
         <td>
-          886
+          932
         </td>
         <td>
           5070
@@ -1563,15 +1542,36 @@
         <td>
           &lt;nosymbol&gt;
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           &quot;MD_Metadata&quot;
+        </td>
+      </tr><tr>
+        <td>
+          144
+        </td>
+        <td>
+          937
+        </td>
+        <td>
+          5088
+          -
+          5088
+        </td>
+        <td>
+          TypeApply
+        </td>
+        <td>
+          scala.collection.immutable.Seq.canBuildFrom
+        </td>
+        <td style="background: #AEF1AE">
+          immutable.this.Seq.canBuildFrom[Option[models.gmd.MdMetadataSet]]
         </td>
       </tr><tr>
         <td>
           145
         </td>
         <td>
-          887
+          933
         </td>
         <td>
           5115
@@ -1584,7 +1584,7 @@
         <td>
           play.api.LoggerLike.debug
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           LuceneIndexBuilderActor.this.logger.debug(({
   val arg$macro$34: Any = catalogueName;
   val arg$macro$35: Any = mdMetadataNode.\(&quot;fileIdentifier&quot;).\(&quot;CharacterString&quot;).text;
@@ -1596,7 +1596,7 @@
           146
         </td>
         <td>
-          889
+          935
         </td>
         <td>
           5229
@@ -1609,7 +1609,7 @@
         <td>
           play.api.LoggerLike.trace
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           LuceneIndexBuilderActor.this.logger.trace(mdMetadataNode.toString())
         </td>
       </tr><tr>
@@ -1617,7 +1617,7 @@
           146
         </td>
         <td>
-          888
+          934
         </td>
         <td>
           5242
@@ -1638,7 +1638,7 @@
           147
         </td>
         <td>
-          890
+          936
         </td>
         <td>
           5273
@@ -1651,7 +1651,7 @@
         <td>
           models.gmd.MdMetadataSet.fromXml
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           models.gmd.MdMetadataSet.fromXml(mdMetadataNode, catalogueName)
         </td>
       </tr><tr>
@@ -1659,28 +1659,7 @@
           148
         </td>
         <td>
-          893
-        </td>
-        <td>
-          5376
-          -
-          5384
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          scala.Option.get
-        </td>
-        <td style="background: #F0ADAD">
-          item.get
-        </td>
-      </tr><tr>
-        <td>
-          148
-        </td>
-        <td>
-          895
+          941
         </td>
         <td>
           5041
@@ -1693,7 +1672,7 @@
         <td>
           scala.collection.TraversableLike.map
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           cswGetRecordsResponse.xml.\\(&quot;MD_Metadata&quot;).map[Option[models.gmd.MdMetadataSet], scala.collection.immutable.Seq[Option[models.gmd.MdMetadataSet]]](((mdMetadataNode: scala.xml.Node) =&gt; {
   LuceneIndexBuilderActor.this.logger.debug(({
     val arg$macro$34: Any = catalogueName;
@@ -1709,7 +1688,7 @@
           148
         </td>
         <td>
-          892
+          938
         </td>
         <td>
           5348
@@ -1722,7 +1701,7 @@
         <td>
           scala.Option.isDefined
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           item.isDefined
         </td>
       </tr><tr>
@@ -1730,7 +1709,7 @@
           148
         </td>
         <td>
-          894
+          940
         </td>
         <td>
           5367
@@ -1743,36 +1722,36 @@
         <td>
           scala.collection.immutable.Seq.canBuildFrom
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           immutable.this.Seq.canBuildFrom[models.gmd.MdMetadataSet]
         </td>
       </tr><tr>
         <td>
-          150
+          148
         </td>
         <td>
-          896
+          939
         </td>
         <td>
-          5460
+          5376
           -
-          5480
+          5384
         </td>
         <td>
-          Apply
+          Select
         </td>
         <td>
-          models.gmd.MdMetadataSet.asLuceneDocument
+          scala.Option.get
         </td>
-        <td style="background: #F0ADAD">
-          x$1.asLuceneDocument()
+        <td style="background: #AEF1AE">
+          item.get
         </td>
       </tr><tr>
         <td>
           150
         </td>
         <td>
-          898
+          944
         </td>
         <td>
           5442
@@ -1785,7 +1764,7 @@
         <td>
           scala.collection.TraversableLike.map
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           mdMetadataSet.map[org.apache.lucene.document.Document, scala.collection.immutable.Seq[org.apache.lucene.document.Document]](((x$1: models.gmd.MdMetadataSet) =&gt; x$1.asLuceneDocument()))(immutable.this.Seq.canBuildFrom[org.apache.lucene.document.Document])
         </td>
       </tr><tr>
@@ -1793,7 +1772,7 @@
           150
         </td>
         <td>
-          897
+          943
         </td>
         <td>
           5459
@@ -1806,15 +1785,36 @@
         <td>
           scala.collection.immutable.Seq.canBuildFrom
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           immutable.this.Seq.canBuildFrom[org.apache.lucene.document.Document]
+        </td>
+      </tr><tr>
+        <td>
+          150
+        </td>
+        <td>
+          942
+        </td>
+        <td>
+          5460
+          -
+          5480
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          models.gmd.MdMetadataSet.asLuceneDocument
+        </td>
+        <td style="background: #AEF1AE">
+          x$1.asLuceneDocument()
         </td>
       </tr><tr>
         <td>
           152
         </td>
         <td>
-          899
+          945
         </td>
         <td>
           5503
@@ -1827,7 +1827,7 @@
         <td>
           org.apache.lucene.store.RAMDirectory.&lt;init&gt;
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           new org.apache.lucene.store.RAMDirectory()
         </td>
       </tr><tr>
@@ -1835,7 +1835,7 @@
           153
         </td>
         <td>
-          900
+          946
         </td>
         <td>
           5539
@@ -1848,7 +1848,7 @@
         <td>
           org.apache.lucene.index.IndexWriterConfig.&lt;init&gt;
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           new org.apache.lucene.index.IndexWriterConfig()
         </td>
       </tr><tr>
@@ -1856,7 +1856,7 @@
           154
         </td>
         <td>
-          901
+          947
         </td>
         <td>
           5567
@@ -1869,7 +1869,7 @@
         <td>
           org.apache.lucene.index.IndexWriterConfig.setCommitOnClose
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           config.setCommitOnClose(true)
         </td>
       </tr><tr>
@@ -1877,7 +1877,7 @@
           157
         </td>
         <td>
-          902
+          948
         </td>
         <td>
           5678
@@ -1890,7 +1890,7 @@
         <td>
           org.apache.lucene.index.IndexWriter.&lt;init&gt;
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           new org.apache.lucene.index.IndexWriter(directory, config)
         </td>
       </tr><tr>
@@ -1898,7 +1898,7 @@
           158
         </td>
         <td>
-          910
+          956
         </td>
         <td>
           5729
@@ -1911,7 +1911,7 @@
         <td>
           &lt;nosymbol&gt;
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           {
   iwriter.deleteAll();
   iwriter.commit();
@@ -1925,7 +1925,7 @@
           159
         </td>
         <td>
-          903
+          949
         </td>
         <td>
           5729
@@ -1938,7 +1938,7 @@
         <td>
           org.apache.lucene.index.IndexWriter.deleteAll
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           iwriter.deleteAll()
         </td>
       </tr><tr>
@@ -1946,7 +1946,7 @@
           160
         </td>
         <td>
-          904
+          950
         </td>
         <td>
           5755
@@ -1959,7 +1959,7 @@
         <td>
           org.apache.lucene.index.IndexWriter.commit
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           iwriter.commit()
         </td>
       </tr><tr>
@@ -1967,28 +1967,7 @@
           161
         </td>
         <td>
-          905
-        </td>
-        <td>
-          5802
-          -
-          5824
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          org.apache.lucene.index.IndexWriter.addDocument
-        </td>
-        <td style="background: #F0ADAD">
-          iwriter.addDocument(x$2)
-        </td>
-      </tr><tr>
-        <td>
-          161
-        </td>
-        <td>
-          906
+          952
         </td>
         <td>
           5778
@@ -2001,15 +1980,36 @@
         <td>
           scala.collection.IterableLike.foreach
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           luceneDocuments.foreach[Long](((x$2: org.apache.lucene.document.Document) =&gt; iwriter.addDocument(x$2)))
+        </td>
+      </tr><tr>
+        <td>
+          161
+        </td>
+        <td>
+          951
+        </td>
+        <td>
+          5802
+          -
+          5824
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          org.apache.lucene.index.IndexWriter.addDocument
+        </td>
+        <td style="background: #AEF1AE">
+          iwriter.addDocument(x$2)
         </td>
       </tr><tr>
         <td>
           162
         </td>
         <td>
-          907
+          953
         </td>
         <td>
           5832
@@ -2022,7 +2022,7 @@
         <td>
           org.apache.lucene.index.IndexWriter.commit
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           iwriter.commit()
         </td>
       </tr><tr>
@@ -2030,28 +2030,7 @@
           163
         </td>
         <td>
-          908
-        </td>
-        <td>
-          5867
-          -
-          5908
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.StringContext.s
-        </td>
-        <td style="background: #F0ADAD">
-          scala.StringContext.apply(&quot;Partial index ready for &quot;, &quot;&quot;).s(catalogueName)
-        </td>
-      </tr><tr>
-        <td>
-          163
-        </td>
-        <td>
-          909
+          955
         </td>
         <td>
           5855
@@ -2064,36 +2043,36 @@
         <td>
           play.api.LoggerLike.info
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           LuceneIndexBuilderActor.this.logger.info(scala.StringContext.apply(&quot;Partial index ready for &quot;, &quot;&quot;).s(catalogueName))
         </td>
       </tr><tr>
         <td>
-          166
+          163
         </td>
         <td>
-          911
+          954
         </td>
         <td>
-          5936
+          5867
           -
-          5951
+          5908
         </td>
         <td>
           Apply
         </td>
         <td>
-          org.apache.lucene.index.IndexWriter.close
+          scala.StringContext.s
         </td>
-        <td style="background: #F0ADAD">
-          iwriter.close()
+        <td style="background: #AEF1AE">
+          scala.StringContext.apply(&quot;Partial index ready for &quot;, &quot;&quot;).s(catalogueName)
         </td>
       </tr><tr>
         <td>
           166
         </td>
         <td>
-          912
+          958
         </td>
         <td>
           5936
@@ -2106,7 +2085,28 @@
         <td>
           org.apache.lucene.index.IndexWriter.close
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
+          iwriter.close()
+        </td>
+      </tr><tr>
+        <td>
+          166
+        </td>
+        <td>
+          957
+        </td>
+        <td>
+          5936
+          -
+          5951
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          org.apache.lucene.index.IndexWriter.close
+        </td>
+        <td style="background: #AEF1AE">
           iwriter.close()
         </td>
       </tr><tr>
@@ -2114,7 +2114,7 @@
           176
         </td>
         <td>
-          913
+          959
         </td>
         <td>
           6262
@@ -2127,7 +2127,7 @@
         <td>
           scala.Predef.ArrowAssoc.-&gt;
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           scala.this.Predef.ArrowAssoc[String](&quot;Content-Type&quot;).-&gt;[String](&quot;application/xml&quot;)
         </td>
       </tr><tr>
@@ -2135,49 +2135,7 @@
           177
         </td>
         <td>
-          917
-        </td>
-        <td>
-          6172
-          -
-          6367
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          play.api.libs.ws.WSRequest.post
-        </td>
-        <td style="background: #F0ADAD">
-          LuceneIndexBuilderActor.this.wsClient.url(catalogueUrl).withHeaders(scala.this.Predef.ArrowAssoc[String](&quot;Content-Type&quot;).-&gt;[String](&quot;application/xml&quot;)).post[String](models.csw.CswGetRecordsRequest.apply(startDocument, documentsToFetch))(http.this.Writeable.wString(mvc.this.Codec.utf_8))
-        </td>
-      </tr><tr>
-        <td>
-          177
-        </td>
-        <td>
-          914
-        </td>
-        <td>
-          6313
-          -
-          6366
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          models.csw.CswGetRecordsRequest.apply
-        </td>
-        <td style="background: #F0ADAD">
-          models.csw.CswGetRecordsRequest.apply(startDocument, documentsToFetch)
-        </td>
-      </tr><tr>
-        <td>
-          177
-        </td>
-        <td>
-          916
+          962
         </td>
         <td>
           6312
@@ -2190,7 +2148,7 @@
         <td>
           play.api.http.DefaultWriteables.wString
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           http.this.Writeable.wString(mvc.this.Codec.utf_8)
         </td>
       </tr><tr>
@@ -2198,7 +2156,7 @@
           177
         </td>
         <td>
-          915
+          961
         </td>
         <td>
           6312
@@ -2211,15 +2169,57 @@
         <td>
           play.api.mvc.Codec.utf_8
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           mvc.this.Codec.utf_8
+        </td>
+      </tr><tr>
+        <td>
+          177
+        </td>
+        <td>
+          960
+        </td>
+        <td>
+          6313
+          -
+          6366
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          models.csw.CswGetRecordsRequest.apply
+        </td>
+        <td style="background: #AEF1AE">
+          models.csw.CswGetRecordsRequest.apply(startDocument, documentsToFetch)
+        </td>
+      </tr><tr>
+        <td>
+          177
+        </td>
+        <td>
+          963
+        </td>
+        <td>
+          6172
+          -
+          6367
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.api.libs.ws.WSRequest.post
+        </td>
+        <td style="background: #AEF1AE">
+          LuceneIndexBuilderActor.this.wsClient.url(catalogueUrl).withHeaders(scala.this.Predef.ArrowAssoc[String](&quot;Content-Type&quot;).-&gt;[String](&quot;application/xml&quot;)).post[String](models.csw.CswGetRecordsRequest.apply(startDocument, documentsToFetch))(http.this.Writeable.wString(mvc.this.Codec.utf_8))
         </td>
       </tr><tr>
         <td>
           179
         </td>
         <td>
-          961
+          1007
         </td>
         <td>
           6373
@@ -2232,7 +2232,7 @@
         <td>
           scala.concurrent.Future.onComplete
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           wsClientResponseFuture.onComplete[Unit](((x0$1: scala.util.Try[play.api.libs.ws.WSResponse]) =&gt; x0$1 match {
   case (value: play.api.libs.ws.WSResponse)scala.util.Success[play.api.libs.ws.WSResponse]((wsClientResponse @ _)) =&gt; wsClientResponse.status match {
     case play.api.http.Status.OK =&gt; {
@@ -2290,7 +2290,7 @@
           179
         </td>
         <td>
-          960
+          1006
         </td>
         <td>
           6407
@@ -2303,7 +2303,7 @@
         <td>
           services.LuceneIndexBuilderActor.ec
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           LuceneIndexBuilderActor.this.ec
         </td>
       </tr><tr>
@@ -2311,7 +2311,7 @@
           181
         </td>
         <td>
-          918
+          964
         </td>
         <td>
           6459
@@ -2324,7 +2324,7 @@
         <td>
           play.api.libs.ws.WSResponse.status
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           wsClientResponse.status
         </td>
       </tr><tr>
@@ -2332,7 +2332,7 @@
           183
         </td>
         <td>
-          919
+          965
         </td>
         <td>
           6533
@@ -2345,7 +2345,7 @@
         <td>
           play.api.LoggerLike.debug
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           LuceneIndexBuilderActor.this.logger.debug(({
   val arg$macro$36: Any = wsClientResponse.allHeaders.getOrElse[Object](&quot;Content-Type&quot;, &quot;Unknown&quot;);
   new scala.collection.immutable.StringOps(&quot;Response Content Type: %s&quot;).format(arg$macro$36)
@@ -2356,7 +2356,7 @@
           184
         </td>
         <td>
-          920
+          966
         </td>
         <td>
           6653
@@ -2369,7 +2369,7 @@
         <td>
           play.api.LoggerLike.debug
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           LuceneIndexBuilderActor.this.logger.debug(({
   val arg$macro$37: Any = wsClientResponse.body.length();
   new scala.collection.immutable.StringOps(&quot;Response-Length: %s&quot;).format(arg$macro$37)
@@ -2380,7 +2380,7 @@
           185
         </td>
         <td>
-          921
+          967
         </td>
         <td>
           6731
@@ -2393,7 +2393,7 @@
         <td>
           play.api.LoggerLike.trace
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           LuceneIndexBuilderActor.this.logger.trace(({
   val arg$macro$38: Any = wsClientResponse.body.toString();
   new scala.collection.immutable.StringOps(&quot;Response-Body: %s&quot;).format(arg$macro$38)
@@ -2404,7 +2404,7 @@
           186
         </td>
         <td>
-          922
+          968
         </td>
         <td>
           6809
@@ -2417,7 +2417,7 @@
         <td>
           scala.xml.Elem.label
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           wsClientResponse.xml.label
         </td>
       </tr><tr>
@@ -2425,7 +2425,7 @@
           188
         </td>
         <td>
-          923
+          969
         </td>
         <td>
           6902
@@ -2449,7 +2449,7 @@
           192
         </td>
         <td>
-          925
+          971
         </td>
         <td>
           7131
@@ -2462,7 +2462,7 @@
         <td>
           models.csw.CswGetRecordsResponse.apply
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           models.csw.CswGetRecordsResponse.apply(wsClientResponse.xml)
         </td>
       </tr><tr>
@@ -2470,7 +2470,7 @@
           192
         </td>
         <td>
-          924
+          970
         </td>
         <td>
           7153
@@ -2483,7 +2483,7 @@
         <td>
           play.api.libs.ws.WSResponse.xml
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           wsClientResponse.xml
         </td>
       </tr><tr>
@@ -2491,7 +2491,7 @@
           193
         </td>
         <td>
-          926
+          972
         </td>
         <td>
           7191
@@ -2504,7 +2504,7 @@
         <td>
           play.api.LoggerLike.info
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           LuceneIndexBuilderActor.this.logger.info(({
   val arg$macro$40: Any = cswGetRecResp.nextRecord;
   val arg$macro$41: Any = cswGetRecResp.numberOfRecordsMatched;
@@ -2516,28 +2516,7 @@
           195
         </td>
         <td>
-          929
-        </td>
-        <td>
-          7339
-          -
-          7457
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.Boolean.||
-        </td>
-        <td style="background: #F0ADAD">
-          cswGetRecResp.nextRecord.&gt;(cswGetRecResp.numberOfRecordsMatched).||(cswGetRecResp.nextRecord.==(0))
-        </td>
-      </tr><tr>
-        <td>
-          195
-        </td>
-        <td>
-          927
+          973
         </td>
         <td>
           7367
@@ -2550,15 +2529,36 @@
         <td>
           models.csw.CswGetRecordsResponse.numberOfRecordsMatched
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           cswGetRecResp.numberOfRecordsMatched
+        </td>
+      </tr><tr>
+        <td>
+          195
+        </td>
+        <td>
+          975
+        </td>
+        <td>
+          7339
+          -
+          7457
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Boolean.||
+        </td>
+        <td style="background: #AEF1AE">
+          cswGetRecResp.nextRecord.&gt;(cswGetRecResp.numberOfRecordsMatched).||(cswGetRecResp.nextRecord.==(0))
         </td>
       </tr><tr>
         <td>
           196
         </td>
         <td>
-          928
+          974
         </td>
         <td>
           7427
@@ -2579,28 +2579,7 @@
           197
         </td>
         <td>
-          932
-        </td>
-        <td>
-          7484
-          -
-          7484
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          akka.actor.Actor.self
-        </td>
-        <td style="background: #F0ADAD">
-          LuceneIndexBuilderActor.this.self
-        </td>
-      </tr><tr>
-        <td>
-          197
-        </td>
-        <td>
-          931
+          977
         </td>
         <td>
           7486
@@ -2613,7 +2592,7 @@
         <td>
           services.LuceneIndexBuilderActor.IndexResponseDocument.apply
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           services.LuceneIndexBuilderActor.IndexResponseDocument.apply(cswGetRecResp, catalogueName, true)
         </td>
       </tr><tr>
@@ -2621,7 +2600,7 @@
           197
         </td>
         <td>
-          934
+          980
         </td>
         <td>
           7479
@@ -2634,7 +2613,7 @@
         <td>
           akka.actor.ScalaActorRef.!
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           akka.this.actor.`package`.actorRef2Scala(LuceneIndexBuilderActor.this.self).!(services.LuceneIndexBuilderActor.IndexResponseDocument.apply(cswGetRecResp, catalogueName, true))(LuceneIndexBuilderActor.this.self)
         </td>
       </tr><tr>
@@ -2642,7 +2621,7 @@
           197
         </td>
         <td>
-          930
+          976
         </td>
         <td>
           7479
@@ -2655,7 +2634,7 @@
         <td>
           akka.actor.Actor.self
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           LuceneIndexBuilderActor.this.self
         </td>
       </tr><tr>
@@ -2663,7 +2642,7 @@
           197
         </td>
         <td>
-          933
+          979
         </td>
         <td>
           7479
@@ -2676,15 +2655,36 @@
         <td>
           akka.actor.ScalaActorRef.!
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           akka.this.actor.`package`.actorRef2Scala(LuceneIndexBuilderActor.this.self).!(services.LuceneIndexBuilderActor.IndexResponseDocument.apply(cswGetRecResp, catalogueName, true))(LuceneIndexBuilderActor.this.self)
+        </td>
+      </tr><tr>
+        <td>
+          197
+        </td>
+        <td>
+          978
+        </td>
+        <td>
+          7484
+          -
+          7484
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          akka.actor.Actor.self
+        </td>
+        <td style="background: #AEF1AE">
+          LuceneIndexBuilderActor.this.self
         </td>
       </tr><tr>
         <td>
           199
         </td>
         <td>
-          941
+          987
         </td>
         <td>
           7583
@@ -2708,7 +2708,49 @@
           200
         </td>
         <td>
-          935
+          983
+        </td>
+        <td>
+          7608
+          -
+          7608
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          akka.actor.Actor.self
+        </td>
+        <td style="background: #F0ADAD">
+          LuceneIndexBuilderActor.this.self
+        </td>
+      </tr><tr>
+        <td>
+          200
+        </td>
+        <td>
+          982
+        </td>
+        <td>
+          7610
+          -
+          7668
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          services.LuceneIndexBuilderActor.IndexResponseDocument.apply
+        </td>
+        <td style="background: #F0ADAD">
+          services.LuceneIndexBuilderActor.IndexResponseDocument.apply(cswGetRecResp, catalogueName, false)
+        </td>
+      </tr><tr>
+        <td>
+          200
+        </td>
+        <td>
+          981
         </td>
         <td>
           7603
@@ -2729,7 +2771,7 @@
           200
         </td>
         <td>
-          938
+          984
         </td>
         <td>
           7603
@@ -2747,52 +2789,10 @@
         </td>
       </tr><tr>
         <td>
-          200
-        </td>
-        <td>
-          937
-        </td>
-        <td>
-          7608
-          -
-          7608
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          akka.actor.Actor.self
-        </td>
-        <td style="background: #F0ADAD">
-          LuceneIndexBuilderActor.this.self
-        </td>
-      </tr><tr>
-        <td>
-          200
-        </td>
-        <td>
-          936
-        </td>
-        <td>
-          7610
-          -
-          7668
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          services.LuceneIndexBuilderActor.IndexResponseDocument.apply
-        </td>
-        <td style="background: #F0ADAD">
-          services.LuceneIndexBuilderActor.IndexResponseDocument.apply(cswGetRecResp, catalogueName, false)
-        </td>
-      </tr><tr>
-        <td>
           201
         </td>
         <td>
-          940
+          986
         </td>
         <td>
           7687
@@ -2813,7 +2813,7 @@
           201
         </td>
         <td>
-          939
+          985
         </td>
         <td>
           7731
@@ -2834,7 +2834,7 @@
           205
         </td>
         <td>
-          942
+          988
         </td>
         <td>
           7851
@@ -2858,28 +2858,7 @@
           206
         </td>
         <td>
-          944
-        </td>
-        <td>
-          7955
-          -
-          7983
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          services.LuceneIndexBuilderActor.ShutdownActor.apply
-        </td>
-        <td style="background: #F0ADAD">
-          services.LuceneIndexBuilderActor.ShutdownActor.apply(catalogueName)
-        </td>
-      </tr><tr>
-        <td>
-          206
-        </td>
-        <td>
-          946
+          992
         </td>
         <td>
           7948
@@ -2900,7 +2879,7 @@
           206
         </td>
         <td>
-          943
+          989
         </td>
         <td>
           7948
@@ -2921,7 +2900,7 @@
           206
         </td>
         <td>
-          945
+          991
         </td>
         <td>
           7953
@@ -2939,10 +2918,73 @@
         </td>
       </tr><tr>
         <td>
+          206
+        </td>
+        <td>
+          990
+        </td>
+        <td>
+          7955
+          -
+          7983
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          services.LuceneIndexBuilderActor.ShutdownActor.apply
+        </td>
+        <td style="background: #F0ADAD">
+          services.LuceneIndexBuilderActor.ShutdownActor.apply(catalogueName)
+        </td>
+      </tr><tr>
+        <td>
           211
         </td>
         <td>
-          950
+          995
+        </td>
+        <td>
+          8065
+          -
+          8065
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          akka.actor.Actor.self
+        </td>
+        <td style="background: #F0ADAD">
+          LuceneIndexBuilderActor.this.self
+        </td>
+      </tr><tr>
+        <td>
+          211
+        </td>
+        <td>
+          994
+        </td>
+        <td>
+          8067
+          -
+          8095
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          services.LuceneIndexBuilderActor.ShutdownActor.apply
+        </td>
+        <td style="background: #F0ADAD">
+          services.LuceneIndexBuilderActor.ShutdownActor.apply(catalogueName)
+        </td>
+      </tr><tr>
+        <td>
+          211
+        </td>
+        <td>
+          996
         </td>
         <td>
           8060
@@ -2963,7 +3005,7 @@
           211
         </td>
         <td>
-          947
+          993
         </td>
         <td>
           8060
@@ -2981,73 +3023,10 @@
         </td>
       </tr><tr>
         <td>
-          211
-        </td>
-        <td>
-          949
-        </td>
-        <td>
-          8065
-          -
-          8065
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          akka.actor.Actor.self
-        </td>
-        <td style="background: #F0ADAD">
-          LuceneIndexBuilderActor.this.self
-        </td>
-      </tr><tr>
-        <td>
-          211
-        </td>
-        <td>
-          948
-        </td>
-        <td>
-          8067
-          -
-          8095
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          services.LuceneIndexBuilderActor.ShutdownActor.apply
-        </td>
-        <td style="background: #F0ADAD">
-          services.LuceneIndexBuilderActor.ShutdownActor.apply(catalogueName)
-        </td>
-      </tr><tr>
-        <td>
           216
         </td>
         <td>
-          953
-        </td>
-        <td>
-          8208
-          -
-          8221
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          java.lang.Throwable.getMessage
-        </td>
-        <td style="background: #F0ADAD">
-          ex.getMessage()
-        </td>
-      </tr><tr>
-        <td>
-          216
-        </td>
-        <td>
-          955
+          1001
         </td>
         <td>
           8162
@@ -3068,7 +3047,7 @@
           216
         </td>
         <td>
-          952
+          998
         </td>
         <td>
           8222
@@ -3089,7 +3068,28 @@
           216
         </td>
         <td>
-          954
+          997
+        </td>
+        <td>
+          8176
+          -
+          8207
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;Exception while querying CSW: &quot;
+        </td>
+      </tr><tr>
+        <td>
+          216
+        </td>
+        <td>
+          1000
         </td>
         <td>
           8174
@@ -3110,28 +3110,70 @@
           216
         </td>
         <td>
-          951
+          999
         </td>
         <td>
-          8176
+          8208
           -
-          8207
+          8221
         </td>
         <td>
-          Literal
+          Apply
         </td>
         <td>
-          &lt;nosymbol&gt;
+          java.lang.Throwable.getMessage
         </td>
         <td style="background: #F0ADAD">
-          &quot;Exception while querying CSW: &quot;
+          ex.getMessage()
         </td>
       </tr><tr>
         <td>
           217
         </td>
         <td>
-          959
+          1004
+        </td>
+        <td>
+          8242
+          -
+          8242
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          akka.actor.Actor.self
+        </td>
+        <td style="background: #F0ADAD">
+          LuceneIndexBuilderActor.this.self
+        </td>
+      </tr><tr>
+        <td>
+          217
+        </td>
+        <td>
+          1003
+        </td>
+        <td>
+          8244
+          -
+          8272
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          services.LuceneIndexBuilderActor.ShutdownActor.apply
+        </td>
+        <td style="background: #F0ADAD">
+          services.LuceneIndexBuilderActor.ShutdownActor.apply(catalogueName)
+        </td>
+      </tr><tr>
+        <td>
+          217
+        </td>
+        <td>
+          1005
         </td>
         <td>
           8237
@@ -3152,7 +3194,7 @@
           217
         </td>
         <td>
-          956
+          1002
         </td>
         <td>
           8237
@@ -3167,48 +3209,6 @@
         </td>
         <td style="background: #F0ADAD">
           LuceneIndexBuilderActor.this.self
-        </td>
-      </tr><tr>
-        <td>
-          217
-        </td>
-        <td>
-          958
-        </td>
-        <td>
-          8242
-          -
-          8242
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          akka.actor.Actor.self
-        </td>
-        <td style="background: #F0ADAD">
-          LuceneIndexBuilderActor.this.self
-        </td>
-      </tr><tr>
-        <td>
-          217
-        </td>
-        <td>
-          957
-        </td>
-        <td>
-          8244
-          -
-          8272
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          services.LuceneIndexBuilderActor.ShutdownActor.apply
-        </td>
-        <td style="background: #F0ADAD">
-          services.LuceneIndexBuilderActor.ShutdownActor.apply(catalogueName)
         </td>
       </tr>
     </table>
