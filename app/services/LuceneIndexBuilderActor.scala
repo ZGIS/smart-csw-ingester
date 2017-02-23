@@ -213,7 +213,7 @@ class LuceneIndexBuilderActor @Inject()(configuration: Configuration, wsClient: 
         }
       }
       case Failure(ex) => {
-        logger.warn(s"Exception while querying CSW: ${ex.getMessage}", ex)
+        logger.warn(s"Exception while querying CSW (${ex.getClass.getCanonicalName}): ${ex.getMessage}", ex)
         self ! ShutdownActor(catalogueName)
       }
     }

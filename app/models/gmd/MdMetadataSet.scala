@@ -305,7 +305,7 @@ object MdMetadataSet extends ClassnameLogger {
     }
     else {
       if (datesList.size > 1) {
-        logger.warn(f"Could parse ${datesList.size} of (${dateStrings.mkString(", ")}) only returning first success")
+        logger.info(f"Could parse ${datesList.size} of (${dateStrings.mkString(", ")}) only returning first success")
       }
       datesList.head
     }
@@ -445,12 +445,12 @@ object MdMetadataSet extends ClassnameLogger {
           case n if value >= minLon && value <= maxLon => n
           case n if math.abs(value % math.abs(minLon - maxLon)) < maxLon => {
             val result = value % maxLon
-            logger.warn(f"changing longitude value $n to $result")
+            logger.info(f"changing longitude value $n to $result")
             result
           }
           case _ => {
             val result = math.signum(value) * minLon + (value % maxLon)
-            logger.warn(f"changing longitude value $value to $result")
+            logger.info(f"changing longitude value $value to $result")
             result
           }
         }
