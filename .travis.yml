@@ -29,7 +29,7 @@ deploy:
     branch: master
 notifications:
   email:
-  - allixender@googlemail.com
+  - allixender@gmail.com
   - grmpfhmbl@gmail.com
   webhooks:
     urls:
