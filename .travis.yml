@@ -30,6 +30,7 @@ deploy:
 notifications:
   email:
   - allixender@googlemail.com
+  - grmpfhmbl@gmail.com
   webhooks:
     urls:
     - https://admin.smart-project.info/travis/notification
