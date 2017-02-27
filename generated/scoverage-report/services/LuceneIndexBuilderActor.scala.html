@@ -237,7 +237,7 @@
 </span>213 <span style=''></span><span style='background: #AEF1AE'>        }
 </span>214 <span style=''></span><span style='background: #AEF1AE'>      }
 </span>215 <span style=''></span><span style='background: #AEF1AE'>      case Failure(ex) => {
-</span>216 <span style=''></span><span style='background: #AEF1AE'>        </span><span style='background: #F0ADAD'>logger.warn(s"Exception while querying CSW: ${ex.getMessage}", ex)</span><span style='background: #AEF1AE'>
+</span>216 <span style=''></span><span style='background: #AEF1AE'>        </span><span style='background: #F0ADAD'>logger.warn(s"Exception while querying CSW (${ex.getClass.getCanonicalName}): ${ex.getMessage}", ex)</span><span style='background: #AEF1AE'>
 </span>217 <span style=''></span><span style='background: #AEF1AE'>        </span><span style='background: #F0ADAD'>self ! ShutdownActor(catalogueName)</span><span style='background: #AEF1AE'>
 </span>218 <span style=''></span><span style='background: #AEF1AE'>      }
 </span>219 <span style=''></span><span style='background: #AEF1AE'>    }</span><span style=''>
@@ -2219,12 +2219,12 @@
           179
         </td>
         <td>
-          1007
+          1009
         </td>
         <td>
           6373
           -
-          8286
+          8320
         </td>
         <td>
           ApplyToImplicitArgs
@@ -2280,7 +2280,7 @@
     case _ =&gt; akka.this.actor.`package`.actorRef2Scala(LuceneIndexBuilderActor.this.self).!(services.LuceneIndexBuilderActor.ShutdownActor.apply(catalogueName))(LuceneIndexBuilderActor.this.self)
   }
   case (exception: Throwable)scala.util.Failure[play.api.libs.ws.WSResponse]((ex @ _)) =&gt; {
-    LuceneIndexBuilderActor.this.logger.warn(scala.StringContext.apply(&quot;Exception while querying CSW: &quot;, &quot;&quot;).s(ex.getMessage()), ex);
+    LuceneIndexBuilderActor.this.logger.warn(scala.StringContext.apply(&quot;Exception while querying CSW (&quot;, &quot;): &quot;, &quot;&quot;).s(ex.getClass().getCanonicalName(), ex.getMessage()), ex);
     akka.this.actor.`package`.actorRef2Scala(LuceneIndexBuilderActor.this.self).!(services.LuceneIndexBuilderActor.ShutdownActor.apply(catalogueName))(LuceneIndexBuilderActor.this.self)
   }
 }))(LuceneIndexBuilderActor.this.ec)
@@ -2290,7 +2290,7 @@
           179
         </td>
         <td>
-          1006
+          1008
         </td>
         <td>
           6407
@@ -3029,18 +3029,18 @@
           1001
         </td>
         <td>
-          8162
+          8242
           -
-          8228
+          8255
         </td>
         <td>
           Apply
         </td>
         <td>
-          play.api.LoggerLike.warn
+          java.lang.Throwable.getMessage
         </td>
         <td style="background: #F0ADAD">
-          LuceneIndexBuilderActor.this.logger.warn(scala.StringContext.apply(&quot;Exception while querying CSW: &quot;, &quot;&quot;).s(ex.getMessage()), ex)
+          ex.getMessage()
         </td>
       </tr><tr>
         <td>
@@ -3050,9 +3050,9 @@
           998
         </td>
         <td>
-          8222
+          8237
           -
-          8223
+          8241
         </td>
         <td>
           Literal
@@ -3061,7 +3061,7 @@
           &lt;nosymbol&gt;
         </td>
         <td style="background: #F0ADAD">
-          &quot;&quot;
+          &quot;): &quot;
         </td>
       </tr><tr>
         <td>
@@ -3082,7 +3082,7 @@
           &lt;nosymbol&gt;
         </td>
         <td style="background: #F0ADAD">
-          &quot;Exception while querying CSW: &quot;
+          &quot;Exception while querying CSW (&quot;
         </td>
       </tr><tr>
         <td>
@@ -3092,18 +3092,39 @@
           1000
         </td>
         <td>
-          8174
+          8208
           -
-          8223
+          8236
         </td>
         <td>
           Apply
         </td>
         <td>
-          scala.StringContext.s
+          java.lang.Class.getCanonicalName
         </td>
         <td style="background: #F0ADAD">
-          scala.StringContext.apply(&quot;Exception while querying CSW: &quot;, &quot;&quot;).s(ex.getMessage())
+          ex.getClass().getCanonicalName()
+        </td>
+      </tr><tr>
+        <td>
+          216
+        </td>
+        <td>
+          1003
+        </td>
+        <td>
+          8162
+          -
+          8262
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.LoggerLike.warn
+        </td>
+        <td style="background: #F0ADAD">
+          LuceneIndexBuilderActor.this.logger.warn(scala.StringContext.apply(&quot;Exception while querying CSW (&quot;, &quot;): &quot;, &quot;&quot;).s(ex.getClass().getCanonicalName(), ex.getMessage()), ex)
         </td>
       </tr><tr>
         <td>
@@ -3113,18 +3134,39 @@
           999
         </td>
         <td>
-          8208
+          8256
           -
-          8221
+          8257
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;&quot;
+        </td>
+      </tr><tr>
+        <td>
+          216
+        </td>
+        <td>
+          1002
+        </td>
+        <td>
+          8174
+          -
+          8257
         </td>
         <td>
           Apply
         </td>
         <td>
-          java.lang.Throwable.getMessage
+          scala.StringContext.s
         </td>
         <td style="background: #F0ADAD">
-          ex.getMessage()
+          scala.StringContext.apply(&quot;Exception while querying CSW (&quot;, &quot;): &quot;, &quot;&quot;).s(ex.getClass().getCanonicalName(), ex.getMessage())
         </td>
       </tr><tr>
         <td>
@@ -3134,9 +3176,9 @@
           1004
         </td>
         <td>
-          8242
+          8271
           -
-          8242
+          8275
         </td>
         <td>
           Select
@@ -3152,33 +3194,12 @@
           217
         </td>
         <td>
-          1003
+          1007
         </td>
         <td>
-          8244
+          8271
           -
-          8272
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          services.LuceneIndexBuilderActor.ShutdownActor.apply
-        </td>
-        <td style="background: #F0ADAD">
-          services.LuceneIndexBuilderActor.ShutdownActor.apply(catalogueName)
-        </td>
-      </tr><tr>
-        <td>
-          217
-        </td>
-        <td>
-          1005
-        </td>
-        <td>
-          8237
-          -
-          8272
+          8306
         </td>
         <td>
           ApplyToImplicitArgs
@@ -3194,12 +3215,12 @@
           217
         </td>
         <td>
-          1002
+          1006
         </td>
         <td>
-          8237
+          8276
           -
-          8241
+          8276
         </td>
         <td>
           Select
@@ -3209,6 +3230,27 @@
         </td>
         <td style="background: #F0ADAD">
           LuceneIndexBuilderActor.this.self
+        </td>
+      </tr><tr>
+        <td>
+          217
+        </td>
+        <td>
+          1005
+        </td>
+        <td>
+          8278
+          -
+          8306
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          services.LuceneIndexBuilderActor.ShutdownActor.apply
+        </td>
+        <td style="background: #F0ADAD">
+          services.LuceneIndexBuilderActor.ShutdownActor.apply(catalogueName)
         </td>
       </tr>
     </table>

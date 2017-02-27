@@ -329,7 +329,7 @@
 </span>305 <span style=''></span><span style='background: #AEF1AE'>    }</span><span style=''>
 </span>306 <span style=''>    else </span><span style='background: #AEF1AE'>{
 </span>307 <span style=''></span><span style='background: #AEF1AE'>      if (datesList.size > 1) {
-</span>308 <span style=''></span><span style='background: #AEF1AE'>        logger.warn(f"Could parse ${datesList.size} of (${dateStrings.mkString(", ")}) only returning first success")
+</span>308 <span style=''></span><span style='background: #AEF1AE'>        logger.info(f"Could parse ${datesList.size} of (${dateStrings.mkString(", ")}) only returning first success")
 </span>309 <span style=''></span><span style='background: #AEF1AE'>      }
 </span>310 <span style=''></span><span style='background: #AEF1AE'>      datesList.head
 </span>311 <span style=''></span><span style='background: #AEF1AE'>    }</span><span style=''>
@@ -469,12 +469,12 @@
 </span>445 <span style=''></span><span style='background: #AEF1AE'>          case n if value >= minLon && value <= maxLon => n
 </span>446 <span style=''></span><span style='background: #AEF1AE'>          case n if math.abs(value % math.abs(minLon - maxLon)) < maxLon => {
 </span>447 <span style=''></span><span style='background: #AEF1AE'>            val result = </span><span style='background: #F0ADAD'>value % maxLon</span><span style='background: #AEF1AE'>
-</span>448 <span style=''></span><span style='background: #AEF1AE'>            </span><span style='background: #F0ADAD'>logger.warn(f"changing longitude value $n to $result")</span><span style='background: #AEF1AE'>
+</span>448 <span style=''></span><span style='background: #AEF1AE'>            </span><span style='background: #F0ADAD'>logger.info(f"changing longitude value $n to $result")</span><span style='background: #AEF1AE'>
 </span>449 <span style=''></span><span style='background: #AEF1AE'>            result
 </span>450 <span style=''></span><span style='background: #AEF1AE'>          }
 </span>451 <span style=''></span><span style='background: #AEF1AE'>          case _ => {
 </span>452 <span style=''></span><span style='background: #AEF1AE'>            val result = math.signum(value) * minLon + (value % maxLon)
-</span>453 <span style=''></span><span style='background: #AEF1AE'>            logger.warn(f"changing longitude value $value to $result")
+</span>453 <span style=''></span><span style='background: #AEF1AE'>            logger.info(f"changing longitude value $value to $result")
 </span>454 <span style=''></span><span style='background: #AEF1AE'>            result
 </span>455 <span style=''></span><span style='background: #AEF1AE'>          }
 </span>456 <span style=''></span><span style='background: #AEF1AE'>        }
@@ -5526,7 +5526,7 @@
         <td style="background: #AEF1AE">
           {
   if (datesList.size.&gt;(1))
-    MdMetadataSet.this.logger.warn(({
+    MdMetadataSet.this.logger.info(({
       val arg$macro$22: Any = datesList.size;
       val arg$macro$23: Any = dateStrings.mkString(&quot;, &quot;);
       new scala.collection.immutable.StringOps(&quot;Could parse %s of (%s) only returning first success&quot;).format(arg$macro$22, arg$macro$23)
@@ -5615,10 +5615,10 @@
           Block
         </td>
         <td>
-          play.api.LoggerLike.warn
+          play.api.LoggerLike.info
         </td>
         <td style="background: #AEF1AE">
-          MdMetadataSet.this.logger.warn(({
+          MdMetadataSet.this.logger.info(({
   val arg$macro$22: Any = datesList.size;
   val arg$macro$23: Any = dateStrings.mkString(&quot;, &quot;);
   new scala.collection.immutable.StringOps(&quot;Could parse %s of (%s) only returning first success&quot;).format(arg$macro$22, arg$macro$23)
@@ -5640,10 +5640,10 @@
           Apply
         </td>
         <td>
-          play.api.LoggerLike.warn
+          play.api.LoggerLike.info
         </td>
         <td style="background: #AEF1AE">
-          MdMetadataSet.this.logger.warn(({
+          MdMetadataSet.this.logger.info(({
   val arg$macro$22: Any = datesList.size;
   val arg$macro$23: Any = dateStrings.mkString(&quot;, &quot;);
   new scala.collection.immutable.StringOps(&quot;Could parse %s of (%s) only returning first success&quot;).format(arg$macro$22, arg$macro$23)
@@ -7272,7 +7272,7 @@
     case (n @ _) if value.&gt;=(MdMetadataSet.this.minLon).&amp;&amp;(value.&lt;=(MdMetadataSet.this.maxLon)) =&gt; n
     case (n @ _) if scala.math.`package`.abs(value.%(scala.math.`package`.abs(MdMetadataSet.this.minLon.-(MdMetadataSet.this.maxLon)))).&lt;(MdMetadataSet.this.maxLon) =&gt; {
       val result: Double = value.%(MdMetadataSet.this.maxLon);
-      MdMetadataSet.this.logger.warn(({
+      MdMetadataSet.this.logger.info(({
         val arg$macro$24: Any = n;
         val arg$macro$25: Any = result;
         new scala.collection.immutable.StringOps(&quot;changing longitude value %s to %s&quot;).format(arg$macro$24, arg$macro$25)
@@ -7281,7 +7281,7 @@
     }
     case _ =&gt; {
       val result: Double = scala.math.`package`.signum(value).*(MdMetadataSet.this.minLon).+(value.%(MdMetadataSet.this.maxLon));
-      MdMetadataSet.this.logger.warn(({
+      MdMetadataSet.this.logger.info(({
         val arg$macro$26: Any = value;
         val arg$macro$27: Any = result;
         new scala.collection.immutable.StringOps(&quot;changing longitude value %s to %s&quot;).format(arg$macro$26, arg$macro$27)
@@ -7315,7 +7315,7 @@
   case (n @ _) if value.&gt;=(MdMetadataSet.this.minLon).&amp;&amp;(value.&lt;=(MdMetadataSet.this.maxLon)) =&gt; n
   case (n @ _) if scala.math.`package`.abs(value.%(scala.math.`package`.abs(MdMetadataSet.this.minLon.-(MdMetadataSet.this.maxLon)))).&lt;(MdMetadataSet.this.maxLon) =&gt; {
     val result: Double = value.%(MdMetadataSet.this.maxLon);
-    MdMetadataSet.this.logger.warn(({
+    MdMetadataSet.this.logger.info(({
       val arg$macro$24: Any = n;
       val arg$macro$25: Any = result;
       new scala.collection.immutable.StringOps(&quot;changing longitude value %s to %s&quot;).format(arg$macro$24, arg$macro$25)
@@ -7324,7 +7324,7 @@
   }
   case _ =&gt; {
     val result: Double = scala.math.`package`.signum(value).*(MdMetadataSet.this.minLon).+(value.%(MdMetadataSet.this.maxLon));
-    MdMetadataSet.this.logger.warn(({
+    MdMetadataSet.this.logger.info(({
       val arg$macro$26: Any = value;
       val arg$macro$27: Any = result;
       new scala.collection.immutable.StringOps(&quot;changing longitude value %s to %s&quot;).format(arg$macro$26, arg$macro$27)
@@ -7517,10 +7517,10 @@
           Apply
         </td>
         <td>
-          play.api.LoggerLike.warn
+          play.api.LoggerLike.info
         </td>
         <td style="background: #F0ADAD">
-          MdMetadataSet.this.logger.warn(({
+          MdMetadataSet.this.logger.info(({
   val arg$macro$24: Any = n;
   val arg$macro$25: Any = result;
   new scala.collection.immutable.StringOps(&quot;changing longitude value %s to %s&quot;).format(arg$macro$24, arg$macro$25)
@@ -7584,10 +7584,10 @@
           Apply
         </td>
         <td>
-          play.api.LoggerLike.warn
+          play.api.LoggerLike.info
         </td>
         <td style="background: #AEF1AE">
-          MdMetadataSet.this.logger.warn(({
+          MdMetadataSet.this.logger.info(({
   val arg$macro$26: Any = value;
   val arg$macro$27: Any = result;
   new scala.collection.immutable.StringOps(&quot;changing longitude value %s to %s&quot;).format(arg$macro$26, arg$macro$27)
