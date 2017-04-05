@@ -25,7 +25,7 @@
             <pre style='font-size: 12pt; font-family: courier;'>1 <span style=''>
 </span>2 <span style=''>// @GENERATOR:play-routes-compiler
 </span>3 <span style=''>// @SOURCE:/home/travis/build/ZGIS/smart-csw-ingester/conf/routes
-</span>4 <span style=''>// @DATE:Mon Feb 27 01:43:47 UTC 2017
+</span>4 <span style=''>// @DATE:Wed Apr 05 04:38:19 UTC 2017
 </span>5 <span style=''>
 </span>6 <span style=''>import play.api.routing.JavaScriptReverseRoute
 </span>7 <span style=''>import play.api.mvc.{ QueryStringBindable, PathBindable, Call, JavascriptLiteral }
@@ -38,7 +38,7 @@
 </span>14 <span style=''>package controllers.javascript {
 </span>15 <span style=''>  import ReverseRouteContext.empty
 </span>16 <span style=''>
-</span>17 <span style=''>  // @LINE:12
+</span>17 <span style=''>  // @LINE:14
 </span>18 <span style=''>  class ReverseQueryController(_prefix: => String) {
 </span>19 <span style=''>
 </span>20 <span style=''>    def _defaultPrefix: String = {
@@ -46,7 +46,7 @@
 </span>22 <span style=''>    }
 </span>23 <span style=''>
 </span>24 <span style=''>  
-</span>25 <span style=''>    // @LINE:13
+</span>25 <span style=''>    // @LINE:15
 </span>26 <span style=''>    def buildIndexFor: JavaScriptReverseRoute = </span><span style='background: #F0ADAD'>JavaScriptReverseRoute(
 </span>27 <span style=''></span><span style='background: #F0ADAD'>      "controllers.QueryController.buildIndexFor",
 </span>28 <span style=''></span><span style='background: #F0ADAD'>      """
@@ -56,7 +56,7 @@
 </span>32 <span style=''></span><span style='background: #F0ADAD'>      """
 </span>33 <span style=''></span><span style='background: #F0ADAD'>    )</span><span style=''>
 </span>34 <span style=''>  
-</span>35 <span style=''>    // @LINE:12
+</span>35 <span style=''>    // @LINE:14
 </span>36 <span style=''>    def query: JavaScriptReverseRoute = </span><span style='background: #F0ADAD'>JavaScriptReverseRoute(
 </span>37 <span style=''></span><span style='background: #F0ADAD'>      "controllers.QueryController.query",
 </span>38 <span style=''></span><span style='background: #F0ADAD'>      """
@@ -86,40 +86,50 @@
 </span>62 <span style=''></span><span style='background: #F0ADAD'>      """
 </span>63 <span style=''></span><span style='background: #F0ADAD'>    )</span><span style=''>
 </span>64 <span style=''>  
-</span>65 <span style=''>    // @LINE:7
-</span>66 <span style=''>    def untrail: JavaScriptReverseRoute = </span><span style='background: #F0ADAD'>JavaScriptReverseRoute(
-</span>67 <span style=''></span><span style='background: #F0ADAD'>      "controllers.MainController.untrail",
+</span>65 <span style=''>    // @LINE:9
+</span>66 <span style=''>    def discovery: JavaScriptReverseRoute = </span><span style='background: #F0ADAD'>JavaScriptReverseRoute(
+</span>67 <span style=''></span><span style='background: #F0ADAD'>      "controllers.MainController.discovery",
 </span>68 <span style=''></span><span style='background: #F0ADAD'>      """
-</span>69 <span style=''></span><span style='background: #F0ADAD'>        function(path0) {
-</span>70 <span style=''></span><span style='background: #F0ADAD'>          return _wA({method:"GET", url:"""" + _prefix + { _defaultPrefix } + """" + (""" + implicitly[PathBindable[String]].javascriptUnbind + """)("path", path0) + "/"})
+</span>69 <span style=''></span><span style='background: #F0ADAD'>        function(fields0) {
+</span>70 <span style=''></span><span style='background: #F0ADAD'>          return _wA({method:"GET", url:"""" + _prefix + { _defaultPrefix } + """" + "api/v1/discovery" + _qS([(""" + implicitly[QueryStringBindable[Option[String]]].javascriptUnbind + """)("fields", fields0)])})
 </span>71 <span style=''></span><span style='background: #F0ADAD'>        }
 </span>72 <span style=''></span><span style='background: #F0ADAD'>      """
 </span>73 <span style=''></span><span style='background: #F0ADAD'>    )</span><span style=''>
 </span>74 <span style=''>  
-</span>75 <span style=''>  }
-</span>76 <span style=''>
-</span>77 <span style=''>  // @LINE:16
-</span>78 <span style=''>  class ReverseAssets(_prefix: => String) {
-</span>79 <span style=''>
-</span>80 <span style=''>    def _defaultPrefix: String = {
-</span>81 <span style=''>      if (</span><span style='background: #F0ADAD'>_prefix.endsWith("/")</span><span style=''>) </span><span style='background: #F0ADAD'>""</span><span style=''> else </span><span style='background: #F0ADAD'>"/"</span><span style=''>
-</span>82 <span style=''>    }
-</span>83 <span style=''>
+</span>75 <span style=''>    // @LINE:7
+</span>76 <span style=''>    def untrail: JavaScriptReverseRoute = </span><span style='background: #F0ADAD'>JavaScriptReverseRoute(
+</span>77 <span style=''></span><span style='background: #F0ADAD'>      "controllers.MainController.untrail",
+</span>78 <span style=''></span><span style='background: #F0ADAD'>      """
+</span>79 <span style=''></span><span style='background: #F0ADAD'>        function(path0) {
+</span>80 <span style=''></span><span style='background: #F0ADAD'>          return _wA({method:"GET", url:"""" + _prefix + { _defaultPrefix } + """" + (""" + implicitly[PathBindable[String]].javascriptUnbind + """)("path", path0) + "/"})
+</span>81 <span style=''></span><span style='background: #F0ADAD'>        }
+</span>82 <span style=''></span><span style='background: #F0ADAD'>      """
+</span>83 <span style=''></span><span style='background: #F0ADAD'>    )</span><span style=''>
 </span>84 <span style=''>  
-</span>85 <span style=''>    // @LINE:16
-</span>86 <span style=''>    def versioned: JavaScriptReverseRoute = </span><span style='background: #F0ADAD'>JavaScriptReverseRoute(
-</span>87 <span style=''></span><span style='background: #F0ADAD'>      "controllers.Assets.versioned",
-</span>88 <span style=''></span><span style='background: #F0ADAD'>      """
-</span>89 <span style=''></span><span style='background: #F0ADAD'>        function(file1) {
-</span>90 <span style=''></span><span style='background: #F0ADAD'>          return _wA({method:"GET", url:"""" + _prefix + { _defaultPrefix } + """" + "assets/" + (""" + implicitly[PathBindable[Asset]].javascriptUnbind + """)("file", file1)})
-</span>91 <span style=''></span><span style='background: #F0ADAD'>        }
-</span>92 <span style=''></span><span style='background: #F0ADAD'>      """
-</span>93 <span style=''></span><span style='background: #F0ADAD'>    )</span><span style=''>
+</span>85 <span style=''>  }
+</span>86 <span style=''>
+</span>87 <span style=''>  // @LINE:18
+</span>88 <span style=''>  class ReverseAssets(_prefix: => String) {
+</span>89 <span style=''>
+</span>90 <span style=''>    def _defaultPrefix: String = {
+</span>91 <span style=''>      if (</span><span style='background: #F0ADAD'>_prefix.endsWith("/")</span><span style=''>) </span><span style='background: #F0ADAD'>""</span><span style=''> else </span><span style='background: #F0ADAD'>"/"</span><span style=''>
+</span>92 <span style=''>    }
+</span>93 <span style=''>
 </span>94 <span style=''>  
-</span>95 <span style=''>  }
-</span>96 <span style=''>
-</span>97 <span style=''>
-</span>98 <span style=''>}
+</span>95 <span style=''>    // @LINE:18
+</span>96 <span style=''>    def versioned: JavaScriptReverseRoute = </span><span style='background: #F0ADAD'>JavaScriptReverseRoute(
+</span>97 <span style=''></span><span style='background: #F0ADAD'>      "controllers.Assets.versioned",
+</span>98 <span style=''></span><span style='background: #F0ADAD'>      """
+</span>99 <span style=''></span><span style='background: #F0ADAD'>        function(file1) {
+</span>100 <span style=''></span><span style='background: #F0ADAD'>          return _wA({method:"GET", url:"""" + _prefix + { _defaultPrefix } + """" + "assets/" + (""" + implicitly[PathBindable[Asset]].javascriptUnbind + """)("file", file1)})
+</span>101 <span style=''></span><span style='background: #F0ADAD'>        }
+</span>102 <span style=''></span><span style='background: #F0ADAD'>      """
+</span>103 <span style=''></span><span style='background: #F0ADAD'>    )</span><span style=''>
+</span>104 <span style=''>  
+</span>105 <span style=''>  }
+</span>106 <span style=''>
+</span>107 <span style=''>
+</span>108 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -136,7 +146,7 @@
           21
         </td>
         <td>
-          1243
+          1270
         </td>
         <td>
           618
@@ -157,28 +167,7 @@
           21
         </td>
         <td>
-          1245
-        </td>
-        <td>
-          626
-          -
-          629
-        </td>
-        <td>
-          Block
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;/&quot;
-        </td>
-      </tr><tr>
-        <td>
-          21
-        </td>
-        <td>
-          1242
+          1269
         </td>
         <td>
           618
@@ -199,7 +188,28 @@
           21
         </td>
         <td>
-          1241
+          1272
+        </td>
+        <td>
+          626
+          -
+          629
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;/&quot;
+        </td>
+      </tr><tr>
+        <td>
+          21
+        </td>
+        <td>
+          1268
         </td>
         <td>
           595
@@ -220,7 +230,7 @@
           21
         </td>
         <td>
-          1244
+          1271
         </td>
         <td>
           626
@@ -241,7 +251,7 @@
           26
         </td>
         <td>
-          1248
+          1275
         </td>
         <td>
           704
@@ -262,7 +272,7 @@
           27
         </td>
         <td>
-          1246
+          1273
         </td>
         <td>
           734
@@ -283,7 +293,7 @@
           30
         </td>
         <td>
-          1247
+          1274
         </td>
         <td>
           785
@@ -304,7 +314,7 @@
           36
         </td>
         <td>
-          1251
+          1278
         </td>
         <td>
           1141
@@ -325,7 +335,7 @@
           37
         </td>
         <td>
-          1249
+          1276
         </td>
         <td>
           1171
@@ -346,7 +356,7 @@
           40
         </td>
         <td>
-          1250
+          1277
         </td>
         <td>
           1214
@@ -367,7 +377,7 @@
           51
         </td>
         <td>
-          1255
+          1282
         </td>
         <td>
           2094
@@ -388,7 +398,7 @@
           51
         </td>
         <td>
-          1252
+          1279
         </td>
         <td>
           2063
@@ -409,7 +419,7 @@
           51
         </td>
         <td>
-          1254
+          1281
         </td>
         <td>
           2086
@@ -430,28 +440,7 @@
           51
         </td>
         <td>
-          1253
-        </td>
-        <td>
-          2086
-          -
-          2088
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;&quot;
-        </td>
-      </tr><tr>
-        <td>
-          51
-        </td>
-        <td>
-          1256
+          1283
         </td>
         <td>
           2094
@@ -469,10 +458,31 @@
         </td>
       </tr><tr>
         <td>
+          51
+        </td>
+        <td>
+          1280
+        </td>
+        <td>
+          2086
+          -
+          2088
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;&quot;
+        </td>
+      </tr><tr>
+        <td>
           56
         </td>
         <td>
-          1259
+          1286
         </td>
         <td>
           2163
@@ -493,7 +503,7 @@
           57
         </td>
         <td>
-          1257
+          1284
         </td>
         <td>
           2193
@@ -514,7 +524,7 @@
           60
         </td>
         <td>
-          1258
+          1285
         </td>
         <td>
           2235
@@ -535,12 +545,75 @@
           66
         </td>
         <td>
-          1262
+          1289
         </td>
         <td>
-          2410
+          2412
           -
-          2711
+          2758
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.routing.JavaScriptReverseRoute.apply
+        </td>
+        <td style="background: #F0ADAD">
+          play.api.routing.JavaScriptReverseRoute.apply(&quot;controllers.MainController.discovery&quot;, &quot;\n        function(fields0) {\n          return _wA({method:\&quot;GET\&quot;, url:\&quot;&quot;.+(ReverseMainController.this._prefix).+(ReverseMainController.this._defaultPrefix).+(&quot;\&quot; + \&quot;api/v1/discovery\&quot; + _qS([(&quot;).+(scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).javascriptUnbind).+(&quot;)(\&quot;fields\&quot;, fields0)])})\n        }\n      &quot;))
+        </td>
+      </tr><tr>
+        <td>
+          67
+        </td>
+        <td>
+          1287
+        </td>
+        <td>
+          2442
+          -
+          2480
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;controllers.MainController.discovery&quot;
+        </td>
+      </tr><tr>
+        <td>
+          70
+        </td>
+        <td>
+          1288
+        </td>
+        <td>
+          2488
+          -
+          2752
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.String.+
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;\n        function(fields0) {\n          return _wA({method:\&quot;GET\&quot;, url:\&quot;&quot;.+(ReverseMainController.this._prefix).+(ReverseMainController.this._defaultPrefix).+(&quot;\&quot; + \&quot;api/v1/discovery\&quot; + _qS([(&quot;).+(scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).javascriptUnbind).+(&quot;)(\&quot;fields\&quot;, fields0)])})\n        }\n      &quot;)
+        </td>
+      </tr><tr>
+        <td>
+          76
+        </td>
+        <td>
+          1292
+        </td>
+        <td>
+          2819
+          -
+          3120
         </td>
         <td>
           Apply
@@ -553,15 +626,15 @@
         </td>
       </tr><tr>
         <td>
-          67
+          77
         </td>
         <td>
-          1260
+          1290
         </td>
         <td>
-          2440
+          2849
           -
-          2476
+          2885
         </td>
         <td>
           Literal
@@ -574,15 +647,15 @@
         </td>
       </tr><tr>
         <td>
-          70
+          80
         </td>
         <td>
-          1261
+          1291
         </td>
         <td>
-          2484
+          2893
           -
-          2705
+          3114
         </td>
         <td>
           Apply
@@ -595,36 +668,15 @@
         </td>
       </tr><tr>
         <td>
-          81
+          91
         </td>
         <td>
-          1264
+          1297
         </td>
         <td>
-          2847
+          3264
           -
-          2849
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;&quot;
-        </td>
-      </tr><tr>
-        <td>
-          81
-        </td>
-        <td>
-          1267
-        </td>
-        <td>
-          2855
-          -
-          2858
+          3267
         </td>
         <td>
           Block
@@ -637,15 +689,57 @@
         </td>
       </tr><tr>
         <td>
-          81
+          91
         </td>
         <td>
-          1263
+          1294
         </td>
         <td>
-          2824
+          3256
           -
-          2845
+          3258
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;&quot;
+        </td>
+      </tr><tr>
+        <td>
+          91
+        </td>
+        <td>
+          1296
+        </td>
+        <td>
+          3264
+          -
+          3267
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;/&quot;
+        </td>
+      </tr><tr>
+        <td>
+          91
+        </td>
+        <td>
+          1293
+        </td>
+        <td>
+          3233
+          -
+          3254
         </td>
         <td>
           Apply
@@ -658,36 +752,15 @@
         </td>
       </tr><tr>
         <td>
-          81
+          91
         </td>
         <td>
-          1266
+          1295
         </td>
         <td>
-          2855
+          3256
           -
-          2858
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;/&quot;
-        </td>
-      </tr><tr>
-        <td>
-          81
-        </td>
-        <td>
-          1265
-        </td>
-        <td>
-          2847
-          -
-          2849
+          3258
         </td>
         <td>
           Block
@@ -700,15 +773,15 @@
         </td>
       </tr><tr>
         <td>
-          86
+          96
         </td>
         <td>
-          1270
+          1300
         </td>
         <td>
-          2929
+          3338
           -
-          3229
+          3638
         </td>
         <td>
           Apply
@@ -721,15 +794,15 @@
         </td>
       </tr><tr>
         <td>
-          87
+          97
         </td>
         <td>
-          1268
+          1298
         </td>
         <td>
-          2959
+          3368
           -
-          2989
+          3398
         </td>
         <td>
           Literal
@@ -742,15 +815,15 @@
         </td>
       </tr><tr>
         <td>
-          90
+          100
         </td>
         <td>
-          1269
+          1299
         </td>
         <td>
-          2997
+          3406
           -
-          3223
+          3632
         </td>
         <td>
           Apply

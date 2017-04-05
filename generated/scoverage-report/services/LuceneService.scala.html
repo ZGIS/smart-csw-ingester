@@ -329,7 +329,7 @@
           54
         </td>
         <td>
-          1019
+          1036
         </td>
         <td>
           2242
@@ -350,7 +350,28 @@
           55
         </td>
         <td>
-          1022
+          1037
+        </td>
+        <td>
+          2323
+          -
+          2334
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;WKT&quot;
+        </td>
+      </tr><tr>
+        <td>
+          55
+        </td>
+        <td>
+          1039
         </td>
         <td>
           2284
@@ -371,7 +392,7 @@
           55
         </td>
         <td>
-          1021
+          1038
         </td>
         <td>
           2345
@@ -389,31 +410,10 @@
         </td>
       </tr><tr>
         <td>
-          55
-        </td>
-        <td>
-          1020
-        </td>
-        <td>
-          2323
-          -
-          2334
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #AEF1AE">
-          &quot;WKT&quot;
-        </td>
-      </tr><tr>
-        <td>
           104
         </td>
         <td>
-          1023
+          1040
         </td>
         <td>
           3799
@@ -434,7 +434,7 @@
           106
         </td>
         <td>
-          1024
+          1041
         </td>
         <td>
           3841
@@ -455,7 +455,28 @@
           107
         </td>
         <td>
-          1025
+          1043
+        </td>
+        <td>
+          3929
+          -
+          3978
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.Option.get
+        </td>
+        <td style="background: #AEF1AE">
+          LuceneService.this.configuration.getConfigList(&quot;csw.catalogues&quot;).get
+        </td>
+      </tr><tr>
+        <td>
+          107
+        </td>
+        <td>
+          1042
         </td>
         <td>
           3957
@@ -476,7 +497,7 @@
           107
         </td>
         <td>
-          1027
+          1044
         </td>
         <td>
           3929
@@ -494,94 +515,73 @@
         </td>
       </tr><tr>
         <td>
-          107
+          108
         </td>
         <td>
-          1026
+          1052
         </td>
         <td>
-          3929
+          4041
           -
-          3978
+          4041
+        </td>
+        <td>
+          TypeApply
+        </td>
+        <td>
+          scala.collection.immutable.List.canBuildFrom
+        </td>
+        <td style="background: #AEF1AE">
+          immutable.this.List.canBuildFrom[(String, String)]
+        </td>
+      </tr><tr>
+        <td>
+          108
+        </td>
+        <td>
+          1046
+        </td>
+        <td>
+          4057
+          -
+          4057
         </td>
         <td>
           Select
         </td>
         <td>
-          scala.Option.get
+          play.api.Configuration.getString$default$2
         </td>
         <td style="background: #AEF1AE">
-          LuceneService.this.configuration.getConfigList(&quot;csw.catalogues&quot;).get
+          item.getString$default$2
         </td>
       </tr><tr>
         <td>
           108
         </td>
         <td>
-          1037
+          1049
         </td>
         <td>
-          4021
+          4087
           -
-          4116
+          4087
         </td>
         <td>
-          ApplyToImplicitArgs
+          Select
         </td>
         <td>
-          scala.collection.TraversableOnce.toMap
+          play.api.Configuration.getString$default$2
         </td>
         <td style="background: #AEF1AE">
-          LuceneService.this.cataloguesConfig.map[(String, String), List[(String, String)]](((item: play.api.Configuration) =&gt; scala.this.Predef.ArrowAssoc[String](item.getString(&quot;name&quot;, item.getString$default$2).get).-&gt;[String](item.getString(&quot;url&quot;, item.getString$default$2).get)))(immutable.this.List.canBuildFrom[(String, String)]).toMap[String, String](scala.this.Predef.$conforms[(String, String)])
+          item.getString$default$2
         </td>
       </tr><tr>
         <td>
           108
         </td>
         <td>
-          1028
-        </td>
-        <td>
-          4067
-          -
-          4073
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #AEF1AE">
-          &quot;name&quot;
-        </td>
-      </tr><tr>
-        <td>
-          108
-        </td>
-        <td>
-          1031
-        </td>
-        <td>
-          4097
-          -
-          4102
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #AEF1AE">
-          &quot;url&quot;
-        </td>
-      </tr><tr>
-        <td>
-          108
-        </td>
-        <td>
-          1034
+          1051
         </td>
         <td>
           4052
@@ -602,49 +602,70 @@
           108
         </td>
         <td>
-          1033
+          1054
         </td>
         <td>
-          4082
+          4021
           -
-          4107
+          4116
         </td>
         <td>
-          Select
+          ApplyToImplicitArgs
         </td>
         <td>
-          scala.Option.get
+          scala.collection.TraversableOnce.toMap
         </td>
         <td style="background: #AEF1AE">
-          item.getString(&quot;url&quot;, item.getString$default$2).get
+          LuceneService.this.cataloguesConfig.map[(String, String), List[(String, String)]](((item: play.api.Configuration) =&gt; scala.this.Predef.ArrowAssoc[String](item.getString(&quot;name&quot;, item.getString$default$2).get).-&gt;[String](item.getString(&quot;url&quot;, item.getString$default$2).get)))(immutable.this.List.canBuildFrom[(String, String)]).toMap[String, String](scala.this.Predef.$conforms[(String, String)])
         </td>
       </tr><tr>
         <td>
           108
         </td>
         <td>
-          1036
+          1045
         </td>
         <td>
-          4111
+          4067
           -
-          4111
+          4073
         </td>
         <td>
-          TypeApply
+          Literal
         </td>
         <td>
-          scala.Predef.$conforms
+          &lt;nosymbol&gt;
         </td>
         <td style="background: #AEF1AE">
-          scala.this.Predef.$conforms[(String, String)]
+          &quot;name&quot;
         </td>
       </tr><tr>
         <td>
           108
         </td>
         <td>
-          1030
+          1048
+        </td>
+        <td>
+          4097
+          -
+          4102
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;url&quot;
+        </td>
+      </tr><tr>
+        <td>
+          108
+        </td>
+        <td>
+          1047
         </td>
         <td>
           4052
@@ -665,70 +686,49 @@
           108
         </td>
         <td>
-          1029
+          1050
         </td>
         <td>
-          4057
+          4082
           -
-          4057
+          4107
         </td>
         <td>
           Select
         </td>
         <td>
-          play.api.Configuration.getString$default$2
+          scala.Option.get
         </td>
         <td style="background: #AEF1AE">
-          item.getString$default$2
+          item.getString(&quot;url&quot;, item.getString$default$2).get
         </td>
       </tr><tr>
         <td>
           108
         </td>
         <td>
-          1032
+          1053
         </td>
         <td>
-          4087
+          4111
           -
-          4087
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          play.api.Configuration.getString$default$2
-        </td>
-        <td style="background: #AEF1AE">
-          item.getString$default$2
-        </td>
-      </tr><tr>
-        <td>
-          108
-        </td>
-        <td>
-          1035
-        </td>
-        <td>
-          4041
-          -
-          4041
+          4111
         </td>
         <td>
           TypeApply
         </td>
         <td>
-          scala.collection.immutable.List.canBuildFrom
+          scala.Predef.$conforms
         </td>
         <td style="background: #AEF1AE">
-          immutable.this.List.canBuildFrom[(String, String)]
+          scala.this.Predef.$conforms[(String, String)]
         </td>
       </tr><tr>
         <td>
           109
         </td>
         <td>
-          1038
+          1055
         </td>
         <td>
           4199
@@ -749,7 +749,7 @@
           110
         </td>
         <td>
-          1039
+          1056
         </td>
         <td>
           4290
@@ -770,7 +770,7 @@
           113
         </td>
         <td>
-          1040
+          1057
         </td>
         <td>
           4429
@@ -791,49 +791,28 @@
           114
         </td>
         <td>
-          1043
+          1061
         </td>
         <td>
-          4538
+          4480
           -
-          4542
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #AEF1AE">
-          null
-        </td>
-      </tr><tr>
-        <td>
-          114
-        </td>
-        <td>
-          1042
-        </td>
-        <td>
-          4500
-          -
-          4536
+          4543
         </td>
         <td>
           Apply
         </td>
         <td>
-          services.LuceneService.prepareEmptyIndex
+          org.apache.lucene.search.SearcherManager.&lt;init&gt;
         </td>
         <td style="background: #AEF1AE">
-          LuceneService.this.prepareEmptyIndex(LuceneService.this.indexRamDirectory)
+          new org.apache.lucene.search.SearcherManager(LuceneService.this.prepareEmptyIndex(LuceneService.this.indexRamDirectory), null)
         </td>
       </tr><tr>
         <td>
           114
         </td>
         <td>
-          1041
+          1058
         </td>
         <td>
           4518
@@ -854,28 +833,49 @@
           114
         </td>
         <td>
-          1044
+          1060
         </td>
         <td>
-          4480
+          4538
           -
-          4543
+          4542
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          null
+        </td>
+      </tr><tr>
+        <td>
+          114
+        </td>
+        <td>
+          1059
+        </td>
+        <td>
+          4500
+          -
+          4536
         </td>
         <td>
           Apply
         </td>
         <td>
-          org.apache.lucene.search.SearcherManager.&lt;init&gt;
+          services.LuceneService.prepareEmptyIndex
         </td>
         <td style="background: #AEF1AE">
-          new org.apache.lucene.search.SearcherManager(LuceneService.this.prepareEmptyIndex(LuceneService.this.indexRamDirectory), null)
+          LuceneService.this.prepareEmptyIndex(LuceneService.this.indexRamDirectory)
         </td>
       </tr><tr>
         <td>
           116
         </td>
         <td>
-          1045
+          1062
         </td>
         <td>
           4547
@@ -896,7 +896,7 @@
           118
         </td>
         <td>
-          1049
+          1066
         </td>
         <td>
           4563
@@ -920,7 +920,7 @@
           119
         </td>
         <td>
-          1048
+          1065
         </td>
         <td>
           4600
@@ -944,7 +944,7 @@
           120
         </td>
         <td>
-          1046
+          1063
         </td>
         <td>
           4632
@@ -965,7 +965,7 @@
           121
         </td>
         <td>
-          1047
+          1064
         </td>
         <td>
           4677
@@ -986,7 +986,28 @@
           126
         </td>
         <td>
-          1058
+          1076
+        </td>
+        <td>
+          4762
+          -
+          4762
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          ()
+        </td>
+      </tr><tr>
+        <td>
+          126
+        </td>
+        <td>
+          1075
         </td>
         <td>
           4748
@@ -1009,7 +1030,7 @@
           126
         </td>
         <td>
-          1057
+          1074
         </td>
         <td>
           4762
@@ -1027,94 +1048,31 @@
         </td>
       </tr><tr>
         <td>
-          126
-        </td>
-        <td>
-          1059
-        </td>
-        <td>
-          4762
-          -
-          4762
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #AEF1AE">
-          ()
-        </td>
-      </tr><tr>
-        <td>
           128
         </td>
         <td>
-          1052
+          1070
         </td>
         <td>
           4853
           -
-          4855
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #AEF1AE">
-          24
-        </td>
-      </tr><tr>
-        <td>
-          128
-        </td>
-        <td>
-          1055
-        </td>
-        <td>
-          4862
-          -
-          4862
+          4861
         </td>
         <td>
           Select
         </td>
         <td>
-          play.api.libs.concurrent.Execution.Implicits.defaultContext
+          scala.concurrent.duration.DurationConversions.hours
         </td>
         <td style="background: #AEF1AE">
-          play.api.libs.concurrent.Execution.Implicits.defaultContext
+          scala.concurrent.duration.`package`.DurationInt(24).hours
         </td>
       </tr><tr>
         <td>
           128
         </td>
         <td>
-          1051
-        </td>
-        <td>
-          4843
-          -
-          4851
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          scala.concurrent.duration.DurationConversions.second
-        </td>
-        <td style="background: #AEF1AE">
-          scala.concurrent.duration.`package`.DurationInt(1).second
-        </td>
-      </tr><tr>
-        <td>
-          128
-        </td>
-        <td>
-          1056
+          1073
         </td>
         <td>
           4817
@@ -1135,7 +1093,7 @@
           128
         </td>
         <td>
-          1050
+          1067
         </td>
         <td>
           4843
@@ -1156,28 +1114,70 @@
           128
         </td>
         <td>
-          1053
+          1069
         </td>
         <td>
           4853
           -
-          4861
+          4855
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          24
+        </td>
+      </tr><tr>
+        <td>
+          128
+        </td>
+        <td>
+          1072
+        </td>
+        <td>
+          4862
+          -
+          4862
         </td>
         <td>
           Select
         </td>
         <td>
-          scala.concurrent.duration.DurationConversions.hours
+          play.api.libs.concurrent.Execution.Implicits.defaultContext
         </td>
         <td style="background: #AEF1AE">
-          scala.concurrent.duration.`package`.DurationInt(24).hours
+          play.api.libs.concurrent.Execution.Implicits.defaultContext
+        </td>
+      </tr><tr>
+        <td>
+          128
+        </td>
+        <td>
+          1068
+        </td>
+        <td>
+          4843
+          -
+          4851
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.concurrent.duration.DurationConversions.second
+        </td>
+        <td style="background: #AEF1AE">
+          scala.concurrent.duration.`package`.DurationInt(1).second
         </td>
       </tr><tr>
         <td>
           129
         </td>
         <td>
-          1054
+          1071
         </td>
         <td>
           4874
@@ -1198,7 +1198,7 @@
           138
         </td>
         <td>
-          1061
+          1078
         </td>
         <td>
           5022
@@ -1219,7 +1219,7 @@
           138
         </td>
         <td>
-          1060
+          1077
         </td>
         <td>
           5034
@@ -1240,7 +1240,7 @@
           139
         </td>
         <td>
-          1062
+          1079
         </td>
         <td>
           5117
@@ -1261,7 +1261,28 @@
           140
         </td>
         <td>
-          1064
+          1082
+        </td>
+        <td>
+          5189
+          -
+          5198
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          akka.util.Timeout.durationToTimeout
+        </td>
+        <td style="background: #AEF1AE">
+          util.this.Timeout.durationToTimeout(scala.concurrent.duration.`package`.DurationInt(5).seconds)
+        </td>
+      </tr><tr>
+        <td>
+          140
+        </td>
+        <td>
+          1081
         </td>
         <td>
           5189
@@ -1282,7 +1303,7 @@
           140
         </td>
         <td>
-          1063
+          1080
         </td>
         <td>
           5189
@@ -1300,136 +1321,10 @@
         </td>
       </tr><tr>
         <td>
-          140
-        </td>
-        <td>
-          1065
-        </td>
-        <td>
-          5189
-          -
-          5198
-        </td>
-        <td>
-          ApplyImplicitView
-        </td>
-        <td>
-          akka.util.Timeout.durationToTimeout
-        </td>
-        <td style="background: #AEF1AE">
-          util.this.Timeout.durationToTimeout(scala.concurrent.duration.`package`.DurationInt(5).seconds)
-        </td>
-      </tr><tr>
-        <td>
           141
         </td>
         <td>
-          1070
-        </td>
-        <td>
-          5223
-          -
-          5282
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          akka.pattern.AskableActorRef.?
-        </td>
-        <td style="background: #AEF1AE">
-          qual$1.?(x$2)(x$3, x$4)
-        </td>
-      </tr><tr>
-        <td>
-          141
-        </td>
-        <td>
-          1067
-        </td>
-        <td>
-          5223
-          -
-          5241
-        </td>
-        <td>
-          ApplyImplicitView
-        </td>
-        <td>
-          akka.pattern.AskSupport.ask
-        </td>
-        <td style="background: #AEF1AE">
-          akka.pattern.`package`.ask(LuceneService.this.indexBuilderMaster)
-        </td>
-      </tr><tr>
-        <td>
-          141
-        </td>
-        <td>
-          1066
-        </td>
-        <td>
-          5223
-          -
-          5241
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          services.LuceneService.indexBuilderMaster
-        </td>
-        <td style="background: #AEF1AE">
-          LuceneService.this.indexBuilderMaster
-        </td>
-      </tr><tr>
-        <td>
-          141
-        </td>
-        <td>
-          1069
-        </td>
-        <td>
-          5242
-          -
-          5242
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          akka.pattern.AskableActorRef.?$default$3
-        </td>
-        <td style="background: #AEF1AE">
-          qual$1.?$default$3(x$2)
-        </td>
-      </tr><tr>
-        <td>
-          141
-        </td>
-        <td>
-          1068
-        </td>
-        <td>
-          5244
-          -
-          5282
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          services.LuceneIndexBuilderMasterActor.GetSpecificIndexBuilder.apply
-        </td>
-        <td style="background: #AEF1AE">
-          services.LuceneIndexBuilderMasterActor.GetSpecificIndexBuilder.apply(catalogueName)
-        </td>
-      </tr><tr>
-        <td>
-          141
-        </td>
-        <td>
-          1071
+          1088
         </td>
         <td>
           5223
@@ -1453,10 +1348,115 @@
         </td>
       </tr><tr>
         <td>
+          141
+        </td>
+        <td>
+          1085
+        </td>
+        <td>
+          5244
+          -
+          5282
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          services.LuceneIndexBuilderMasterActor.GetSpecificIndexBuilder.apply
+        </td>
+        <td style="background: #AEF1AE">
+          services.LuceneIndexBuilderMasterActor.GetSpecificIndexBuilder.apply(catalogueName)
+        </td>
+      </tr><tr>
+        <td>
+          141
+        </td>
+        <td>
+          1084
+        </td>
+        <td>
+          5223
+          -
+          5241
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          akka.pattern.AskSupport.ask
+        </td>
+        <td style="background: #AEF1AE">
+          akka.pattern.`package`.ask(LuceneService.this.indexBuilderMaster)
+        </td>
+      </tr><tr>
+        <td>
+          141
+        </td>
+        <td>
+          1087
+        </td>
+        <td>
+          5223
+          -
+          5282
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          akka.pattern.AskableActorRef.?
+        </td>
+        <td style="background: #AEF1AE">
+          qual$1.?(x$2)(x$3, x$4)
+        </td>
+      </tr><tr>
+        <td>
+          141
+        </td>
+        <td>
+          1083
+        </td>
+        <td>
+          5223
+          -
+          5241
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          services.LuceneService.indexBuilderMaster
+        </td>
+        <td style="background: #AEF1AE">
+          LuceneService.this.indexBuilderMaster
+        </td>
+      </tr><tr>
+        <td>
+          141
+        </td>
+        <td>
+          1086
+        </td>
+        <td>
+          5242
+          -
+          5242
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          akka.pattern.AskableActorRef.?$default$3
+        </td>
+        <td style="background: #AEF1AE">
+          qual$1.?$default$3(x$2)
+        </td>
+      </tr><tr>
+        <td>
           142
         </td>
         <td>
-          1082
+          1099
         </td>
         <td>
           5304
@@ -1485,7 +1485,7 @@
           142
         </td>
         <td>
-          1081
+          1098
         </td>
         <td>
           5327
@@ -1506,7 +1506,28 @@
           143
         </td>
         <td>
-          1073
+          1091
+        </td>
+        <td>
+          5379
+          -
+          5379
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          akka.actor.ScalaActorRef.!$default$2
+        </td>
+        <td style="background: #AEF1AE">
+          qual$2.!$default$2(x$5)
+        </td>
+      </tr><tr>
+        <td>
+          143
+        </td>
+        <td>
+          1090
         </td>
         <td>
           5381
@@ -1527,28 +1548,7 @@
           143
         </td>
         <td>
-          1075
-        </td>
-        <td>
-          5366
-          -
-          5424
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          akka.actor.ScalaActorRef.!
-        </td>
-        <td style="background: #AEF1AE">
-          qual$2.!(x$5)(x$6)
-        </td>
-      </tr><tr>
-        <td>
-          143
-        </td>
-        <td>
-          1072
+          1089
         </td>
         <td>
           5366
@@ -1569,91 +1569,28 @@
           143
         </td>
         <td>
-          1074
+          1092
         </td>
         <td>
-          5379
+          5366
           -
-          5379
+          5424
         </td>
         <td>
-          Apply
+          ApplyToImplicitArgs
         </td>
         <td>
-          akka.actor.ScalaActorRef.!$default$2
+          akka.actor.ScalaActorRef.!
         </td>
         <td style="background: #AEF1AE">
-          qual$2.!$default$2(x$5)
+          qual$2.!(x$5)(x$6)
         </td>
       </tr><tr>
         <td>
           144
         </td>
         <td>
-          1079
-        </td>
-        <td>
-          5463
-          -
-          5511
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.StringContext.s
-        </td>
-        <td style="background: #F0ADAD">
-          scala.StringContext.apply(&quot;Exception during index build &quot;, &quot;&quot;).s(ex.getMessage())
-        </td>
-      </tr><tr>
-        <td>
-          144
-        </td>
-        <td>
-          1076
-        </td>
-        <td>
-          5465
-          -
-          5495
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;Exception during index build &quot;
-        </td>
-      </tr><tr>
-        <td>
-          144
-        </td>
-        <td>
-          1078
-        </td>
-        <td>
-          5496
-          -
-          5509
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          java.lang.Throwable.getMessage
-        </td>
-        <td style="background: #F0ADAD">
-          ex.getMessage()
-        </td>
-      </tr><tr>
-        <td>
-          144
-        </td>
-        <td>
-          1080
+          1097
         </td>
         <td>
           5451
@@ -1674,7 +1611,7 @@
           144
         </td>
         <td>
-          1077
+          1094
         </td>
         <td>
           5510
@@ -1692,31 +1629,73 @@
         </td>
       </tr><tr>
         <td>
-          149
+          144
         </td>
         <td>
-          1084
+          1093
         </td>
         <td>
-          5605
+          5465
           -
-          5653
+          5495
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;Exception during index build &quot;
+        </td>
+      </tr><tr>
+        <td>
+          144
+        </td>
+        <td>
+          1096
+        </td>
+        <td>
+          5463
+          -
+          5511
         </td>
         <td>
           Apply
         </td>
         <td>
-          scala.collection.mutable.MapLike.+=
+          scala.StringContext.s
         </td>
-        <td style="background: #AEF1AE">
-          LuceneService.this.catalogueIndexes.+=(scala.this.Predef.ArrowAssoc[String](catalogueName).-&gt;[org.apache.lucene.store.Directory](directory))
+        <td style="background: #F0ADAD">
+          scala.StringContext.apply(&quot;Exception during index build &quot;, &quot;&quot;).s(ex.getMessage())
+        </td>
+      </tr><tr>
+        <td>
+          144
+        </td>
+        <td>
+          1095
+        </td>
+        <td>
+          5496
+          -
+          5509
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.Throwable.getMessage
+        </td>
+        <td style="background: #F0ADAD">
+          ex.getMessage()
         </td>
       </tr><tr>
         <td>
           149
         </td>
         <td>
-          1083
+          1100
         </td>
         <td>
           5626
@@ -1734,10 +1713,31 @@
         </td>
       </tr><tr>
         <td>
+          149
+        </td>
+        <td>
+          1101
+        </td>
+        <td>
+          5605
+          -
+          5653
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.mutable.MapLike.+=
+        </td>
+        <td style="background: #AEF1AE">
+          LuceneService.this.catalogueIndexes.+=(scala.this.Predef.ArrowAssoc[String](catalogueName).-&gt;[org.apache.lucene.store.Directory](directory))
+        </td>
+      </tr><tr>
+        <td>
           151
         </td>
         <td>
-          1085
+          1102
         </td>
         <td>
           5672
@@ -1758,7 +1758,7 @@
           152
         </td>
         <td>
-          1086
+          1103
         </td>
         <td>
           5700
@@ -1779,7 +1779,7 @@
           154
         </td>
         <td>
-          1088
+          1105
         </td>
         <td>
           5749
@@ -1800,7 +1800,7 @@
           154
         </td>
         <td>
-          1087
+          1104
         </td>
         <td>
           5765
@@ -1821,7 +1821,7 @@
           155
         </td>
         <td>
-          1101
+          1118
         </td>
         <td>
           5808
@@ -1850,70 +1850,7 @@
           156
         </td>
         <td>
-          1091
-        </td>
-        <td>
-          5832
-          -
-          5853
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          scala.collection.MapLike.keys
-        </td>
-        <td style="background: #AEF1AE">
-          LuceneService.this.catalogueIndexes.keys
-        </td>
-      </tr><tr>
-        <td>
-          156
-        </td>
-        <td>
-          1093
-        </td>
-        <td>
-          5808
-          -
-          5874
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          play.api.LoggerLike.info
-        </td>
-        <td style="background: #AEF1AE">
-          LuceneService.this.logger.info(scala.StringContext.apply(&quot;Merging &quot;, &quot; into master index&quot;).s(LuceneService.this.catalogueIndexes.keys))
-        </td>
-      </tr><tr>
-        <td>
-          156
-        </td>
-        <td>
-          1090
-        </td>
-        <td>
-          5854
-          -
-          5873
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #AEF1AE">
-          &quot; into master index&quot;
-        </td>
-      </tr><tr>
-        <td>
-          156
-        </td>
-        <td>
-          1089
+          1106
         </td>
         <td>
           5822
@@ -1934,7 +1871,7 @@
           156
         </td>
         <td>
-          1092
+          1109
         </td>
         <td>
           5820
@@ -1952,10 +1889,73 @@
         </td>
       </tr><tr>
         <td>
+          156
+        </td>
+        <td>
+          1108
+        </td>
+        <td>
+          5832
+          -
+          5853
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.collection.MapLike.keys
+        </td>
+        <td style="background: #AEF1AE">
+          LuceneService.this.catalogueIndexes.keys
+        </td>
+      </tr><tr>
+        <td>
+          156
+        </td>
+        <td>
+          1107
+        </td>
+        <td>
+          5854
+          -
+          5873
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot; into master index&quot;
+        </td>
+      </tr><tr>
+        <td>
+          156
+        </td>
+        <td>
+          1110
+        </td>
+        <td>
+          5808
+          -
+          5874
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.LoggerLike.info
+        </td>
+        <td style="background: #AEF1AE">
+          LuceneService.this.logger.info(scala.StringContext.apply(&quot;Merging &quot;, &quot; into master index&quot;).s(LuceneService.this.catalogueIndexes.keys))
+        </td>
+      </tr><tr>
+        <td>
           157
         </td>
         <td>
-          1094
+          1111
         </td>
         <td>
           5881
@@ -1976,7 +1976,7 @@
           158
         </td>
         <td>
-          1095
+          1112
         </td>
         <td>
           5907
@@ -1997,7 +1997,7 @@
           159
         </td>
         <td>
-          1097
+          1114
         </td>
         <td>
           5930
@@ -2018,7 +2018,7 @@
           159
         </td>
         <td>
-          1096
+          1113
         </td>
         <td>
           5949
@@ -2039,7 +2039,7 @@
           160
         </td>
         <td>
-          1098
+          1115
         </td>
         <td>
           5993
@@ -2060,7 +2060,7 @@
           161
         </td>
         <td>
-          1099
+          1116
         </td>
         <td>
           6016
@@ -2081,7 +2081,7 @@
           162
         </td>
         <td>
-          1100
+          1117
         </td>
         <td>
           6050
@@ -2102,28 +2102,7 @@
           165
         </td>
         <td>
-          1102
-        </td>
-        <td>
-          6110
-          -
-          6125
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          org.apache.lucene.index.IndexWriter.close
-        </td>
-        <td style="background: #AEF1AE">
-          iwriter.close()
-        </td>
-      </tr><tr>
-        <td>
-          165
-        </td>
-        <td>
-          1103
+          1120
         </td>
         <td>
           6110
@@ -2141,10 +2120,31 @@
         </td>
       </tr><tr>
         <td>
+          165
+        </td>
+        <td>
+          1119
+        </td>
+        <td>
+          6110
+          -
+          6125
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          org.apache.lucene.index.IndexWriter.close
+        </td>
+        <td style="background: #AEF1AE">
+          iwriter.close()
+        </td>
+      </tr><tr>
+        <td>
           181
         </td>
         <td>
-          1104
+          1121
         </td>
         <td>
           6476
@@ -2165,28 +2165,7 @@
           183
         </td>
         <td>
-          1105
-        </td>
-        <td>
-          6545
-          -
-          6556
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #AEF1AE">
-          &quot;dateStamp&quot;
-        </td>
-      </tr><tr>
-        <td>
-          183
-        </td>
-        <td>
-          1108
+          1125
         </td>
         <td>
           6521
@@ -2204,10 +2183,31 @@
         </td>
       </tr><tr>
         <td>
+          183
+        </td>
+        <td>
+          1122
+        </td>
+        <td>
+          6545
+          -
+          6556
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;dateStamp&quot;
+        </td>
+      </tr><tr>
+        <td>
           184
         </td>
         <td>
-          1106
+          1123
         </td>
         <td>
           6564
@@ -2228,7 +2228,7 @@
           185
         </td>
         <td>
-          1107
+          1124
         </td>
         <td>
           6628
@@ -2249,7 +2249,28 @@
           187
         </td>
         <td>
-          1109
+          1127
+        </td>
+        <td>
+          6712
+          -
+          6761
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Option.getOrElse
+        </td>
+        <td style="background: #AEF1AE">
+          bboxWtk.filterNot(((x$1: String) =&gt; x$1.isEmpty())).getOrElse[String](LuceneService.this.WORLD_WKT)
+        </td>
+      </tr><tr>
+        <td>
+          187
+        </td>
+        <td>
+          1126
         </td>
         <td>
           6730
@@ -2270,7 +2291,7 @@
           187
         </td>
         <td>
-          1111
+          1128
         </td>
         <td>
           6697
@@ -2288,31 +2309,10 @@
         </td>
       </tr><tr>
         <td>
-          187
-        </td>
-        <td>
-          1110
-        </td>
-        <td>
-          6712
-          -
-          6761
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.Option.getOrElse
-        </td>
-        <td style="background: #AEF1AE">
-          bboxWtk.filterNot(((x$1: String) =&gt; x$1.isEmpty())).getOrElse[String](LuceneService.this.WORLD_WKT)
-        </td>
-      </tr><tr>
-        <td>
           189
         </td>
         <td>
-          1112
+          1129
         </td>
         <td>
           6768
@@ -2333,7 +2333,7 @@
           190
         </td>
         <td>
-          1113
+          1130
         </td>
         <td>
           6827
@@ -2354,7 +2354,7 @@
           194
         </td>
         <td>
-          1114
+          1131
         </td>
         <td>
           7094
@@ -2375,7 +2375,7 @@
           195
         </td>
         <td>
-          1115
+          1132
         </td>
         <td>
           7125
@@ -2396,7 +2396,7 @@
           196
         </td>
         <td>
-          1116
+          1133
         </td>
         <td>
           7190
@@ -2417,7 +2417,7 @@
           197
         </td>
         <td>
-          1117
+          1134
         </td>
         <td>
           7255
@@ -2438,7 +2438,7 @@
           198
         </td>
         <td>
-          1118
+          1135
         </td>
         <td>
           7343
@@ -2459,7 +2459,7 @@
           200
         </td>
         <td>
-          1119
+          1136
         </td>
         <td>
           7405
@@ -2480,28 +2480,7 @@
           204
         </td>
         <td>
-          1120
-        </td>
-        <td>
-          7591
-          -
-          7618
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.Int.&lt;=
-        </td>
-        <td style="background: #F0ADAD">
-          maxNumberOfResults.get.&lt;=(0)
-        </td>
-      </tr><tr>
-        <td>
-          204
-        </td>
-        <td>
-          1121
+          1138
         </td>
         <td>
           7622
@@ -2519,10 +2498,31 @@
         </td>
       </tr><tr>
         <td>
+          204
+        </td>
+        <td>
+          1137
+        </td>
+        <td>
+          7591
+          -
+          7618
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Int.&lt;=
+        </td>
+        <td style="background: #F0ADAD">
+          maxNumberOfResults.get.&lt;=(0)
+        </td>
+      </tr><tr>
+        <td>
           205
         </td>
         <td>
-          1123
+          1140
         </td>
         <td>
           7696
@@ -2543,7 +2543,7 @@
           205
         </td>
         <td>
-          1122
+          1139
         </td>
         <td>
           7725
@@ -2564,7 +2564,7 @@
           207
         </td>
         <td>
-          1124
+          1141
         </td>
         <td>
           7769
@@ -2585,7 +2585,7 @@
           208
         </td>
         <td>
-          1125
+          1142
         </td>
         <td>
           7839
@@ -2606,28 +2606,7 @@
           210
         </td>
         <td>
-          1129
-        </td>
-        <td>
-          7888
-          -
-          7888
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          scala.Array.canBuildFrom
-        </td>
-        <td style="background: #AEF1AE">
-          scala.this.Array.canBuildFrom[models.gmd.MdMetadataSet]((ClassTag.apply[models.gmd.MdMetadataSet](classOf[models.gmd.MdMetadataSet]): scala.reflect.ClassTag[models.gmd.MdMetadataSet]))
-        </td>
-      </tr><tr>
-        <td>
-          210
-        </td>
-        <td>
-          1130
+          1147
         </td>
         <td>
           7875
@@ -2648,10 +2627,31 @@
         </td>
       </tr><tr>
         <td>
+          210
+        </td>
+        <td>
+          1146
+        </td>
+        <td>
+          7888
+          -
+          7888
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          scala.Array.canBuildFrom
+        </td>
+        <td style="background: #AEF1AE">
+          scala.this.Array.canBuildFrom[models.gmd.MdMetadataSet]((ClassTag.apply[models.gmd.MdMetadataSet](classOf[models.gmd.MdMetadataSet]): scala.reflect.ClassTag[models.gmd.MdMetadataSet]))
+        </td>
+      </tr><tr>
+        <td>
           211
         </td>
         <td>
-          1127
+          1144
         </td>
         <td>
           7919
@@ -2672,7 +2672,7 @@
           211
         </td>
         <td>
-          1126
+          1143
         </td>
         <td>
           7933
@@ -2693,7 +2693,7 @@
           212
         </td>
         <td>
-          1128
+          1145
         </td>
         <td>
           7953
@@ -2714,7 +2714,7 @@
           213
         </td>
         <td>
-          1131
+          1148
         </td>
         <td>
           7875
@@ -2738,7 +2738,7 @@
           216
         </td>
         <td>
-          1132
+          1149
         </td>
         <td>
           8050
@@ -2759,7 +2759,7 @@
           218
         </td>
         <td>
-          1133
+          1150
         </td>
         <td>
           8090
@@ -2780,7 +2780,7 @@
           232
         </td>
         <td>
-          1134
+          1151
         </td>
         <td>
           8458
@@ -2801,7 +2801,7 @@
           233
         </td>
         <td>
-          1135
+          1152
         </td>
         <td>
           8502
@@ -2822,7 +2822,28 @@
           235
         </td>
         <td>
-          1136
+          1154
+        </td>
+        <td>
+          8594
+          -
+          8616
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          org.apache.lucene.analysis.standard.StandardAnalyzer.&lt;init&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          new org.apache.lucene.analysis.standard.StandardAnalyzer()
+        </td>
+      </tr><tr>
+        <td>
+          235
+        </td>
+        <td>
+          1153
         </td>
         <td>
           8581
@@ -2843,7 +2864,7 @@
           235
         </td>
         <td>
-          1138
+          1155
         </td>
         <td>
           8565
@@ -2861,31 +2882,10 @@
         </td>
       </tr><tr>
         <td>
-          235
-        </td>
-        <td>
-          1137
-        </td>
-        <td>
-          8594
-          -
-          8616
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          org.apache.lucene.analysis.standard.StandardAnalyzer.&lt;init&gt;
-        </td>
-        <td style="background: #AEF1AE">
-          new org.apache.lucene.analysis.standard.StandardAnalyzer()
-        </td>
-      </tr><tr>
-        <td>
           237
         </td>
         <td>
-          1139
+          1156
         </td>
         <td>
           8656
@@ -2906,7 +2906,7 @@
           249
         </td>
         <td>
-          1141
+          1158
         </td>
         <td>
           8872
@@ -2927,7 +2927,7 @@
           249
         </td>
         <td>
-          1140
+          1157
         </td>
         <td>
           8885
@@ -2948,28 +2948,7 @@
           252
         </td>
         <td>
-          1142
-        </td>
-        <td>
-          8949
-          -
-          9060
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #AEF1AE">
-          &quot;ENVELOPE\\(([-+]?[0-9]*\\.?[0-9]+),([-+]?[0-9]*\\.?[0-9]+),([-+]?[0-9]*\\.?[0-9]+),([-+]?[0-9]*\\.?[0-9]+)\\)&quot;
-        </td>
-      </tr><tr>
-        <td>
-          252
-        </td>
-        <td>
-          1143
+          1160
         </td>
         <td>
           8949
@@ -2987,10 +2966,31 @@
         </td>
       </tr><tr>
         <td>
+          252
+        </td>
+        <td>
+          1159
+        </td>
+        <td>
+          8949
+          -
+          9060
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;ENVELOPE\\(([-+]?[0-9]*\\.?[0-9]+),([-+]?[0-9]*\\.?[0-9]+),([-+]?[0-9]*\\.?[0-9]+),([-+]?[0-9]*\\.?[0-9]+)\\)&quot;
+        </td>
+      </tr><tr>
+        <td>
           254
         </td>
         <td>
-          1144
+          1161
         </td>
         <td>
           9080
@@ -3011,7 +3011,7 @@
           256
         </td>
         <td>
-          1145
+          1162
         </td>
         <td>
           9212
@@ -3032,7 +3032,28 @@
           256
         </td>
         <td>
-          1147
+          1165
+        </td>
+        <td>
+          9254
+          -
+          9266
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.Float.toDouble
+        </td>
+        <td style="background: #AEF1AE">
+          scala.this.Predef.augmentString(maxY).toFloat.toDouble
+        </td>
+      </tr><tr>
+        <td>
+          256
+        </td>
+        <td>
+          1164
         </td>
         <td>
           9240
@@ -3053,28 +3074,7 @@
           256
         </td>
         <td>
-          1149
-        </td>
-        <td>
-          9183
-          -
-          9267
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          models.gmd.MdMetadataSet.bboxFromCoords
-        </td>
-        <td style="background: #AEF1AE">
-          models.gmd.MdMetadataSet.bboxFromCoords(scala.this.Predef.augmentString(minX).toFloat.toDouble, scala.this.Predef.augmentString(maxX).toFloat.toDouble, scala.this.Predef.augmentString(minY).toFloat.toDouble, scala.this.Predef.augmentString(maxY).toFloat.toDouble)
-        </td>
-      </tr><tr>
-        <td>
-          256
-        </td>
-        <td>
-          1146
+          1163
         </td>
         <td>
           9226
@@ -3095,28 +3095,28 @@
           256
         </td>
         <td>
-          1148
+          1166
         </td>
         <td>
-          9254
+          9183
           -
-          9266
+          9267
         </td>
         <td>
-          Select
+          Apply
         </td>
         <td>
-          scala.Float.toDouble
+          models.gmd.MdMetadataSet.bboxFromCoords
         </td>
         <td style="background: #AEF1AE">
-          scala.this.Predef.augmentString(maxY).toFloat.toDouble
+          models.gmd.MdMetadataSet.bboxFromCoords(scala.this.Predef.augmentString(minX).toFloat.toDouble, scala.this.Predef.augmentString(maxX).toFloat.toDouble, scala.this.Predef.augmentString(minY).toFloat.toDouble, scala.this.Predef.augmentString(maxY).toFloat.toDouble)
         </td>
       </tr><tr>
         <td>
           259
         </td>
         <td>
-          1151
+          1168
         </td>
         <td>
           9302
@@ -3137,7 +3137,7 @@
           259
         </td>
         <td>
-          1150
+          1167
         </td>
         <td>
           9314
@@ -3158,7 +3158,7 @@
           260
         </td>
         <td>
-          1152
+          1169
         </td>
         <td>
           9386
@@ -3179,7 +3179,7 @@
           264
         </td>
         <td>
-          1154
+          1171
         </td>
         <td>
           9503
@@ -3200,7 +3200,28 @@
           264
         </td>
         <td>
-          1153
+          1174
+        </td>
+        <td>
+          9455
+          -
+          9505
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.LoggerLike.debug
+        </td>
+        <td style="background: #AEF1AE">
+          LuceneService.this.logger.debug(scala.StringContext.apply(&quot;parsed shape is &quot;, &quot;&quot;).s(shape.toString()))
+        </td>
+      </tr><tr>
+        <td>
+          264
+        </td>
+        <td>
+          1170
         </td>
         <td>
           9470
@@ -3221,7 +3242,7 @@
           264
         </td>
         <td>
-          1156
+          1173
         </td>
         <td>
           9468
@@ -3242,7 +3263,7 @@
           264
         </td>
         <td>
-          1155
+          1172
         </td>
         <td>
           9488
@@ -3260,31 +3281,10 @@
         </td>
       </tr><tr>
         <td>
-          264
-        </td>
-        <td>
-          1157
-        </td>
-        <td>
-          9455
-          -
-          9505
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          play.api.LoggerLike.debug
-        </td>
-        <td style="background: #AEF1AE">
-          LuceneService.this.logger.debug(scala.StringContext.apply(&quot;parsed shape is &quot;, &quot;&quot;).s(shape.toString()))
-        </td>
-      </tr><tr>
-        <td>
           265
         </td>
         <td>
-          1159
+          1176
         </td>
         <td>
           9543
@@ -3305,7 +3305,7 @@
           265
         </td>
         <td>
-          1158
+          1175
         </td>
         <td>
           9585
@@ -3326,7 +3326,28 @@
           266
         </td>
         <td>
-          1160
+          1178
+        </td>
+        <td>
+          9620
+          -
+          9669
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          org.apache.lucene.spatial.query.SpatialArgs.&lt;init&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          new org.apache.lucene.spatial.query.SpatialArgs(org.apache.lucene.spatial.query.SpatialOperation.IsWithin, shape)
+        </td>
+      </tr><tr>
+        <td>
+          266
+        </td>
+        <td>
+          1177
         </td>
         <td>
           9636
@@ -3347,7 +3368,7 @@
           266
         </td>
         <td>
-          1162
+          1179
         </td>
         <td>
           9597
@@ -3365,31 +3386,10 @@
         </td>
       </tr><tr>
         <td>
-          266
-        </td>
-        <td>
-          1161
-        </td>
-        <td>
-          9620
-          -
-          9669
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          org.apache.lucene.spatial.query.SpatialArgs.&lt;init&gt;
-        </td>
-        <td style="background: #AEF1AE">
-          new org.apache.lucene.spatial.query.SpatialArgs(org.apache.lucene.spatial.query.SpatialOperation.IsWithin, shape)
-        </td>
-      </tr><tr>
-        <td>
           275
         </td>
         <td>
-          1163
+          1180
         </td>
         <td>
           9902
@@ -3410,7 +3410,7 @@
           276
         </td>
         <td>
-          1164
+          1181
         </td>
         <td>
           9942
@@ -3431,7 +3431,7 @@
           277
         </td>
         <td>
-          1165
+          1182
         </td>
         <td>
           9978
@@ -3452,7 +3452,7 @@
           279
         </td>
         <td>
-          1166
+          1183
         </td>
         <td>
           10088
@@ -3473,7 +3473,7 @@
           280
         </td>
         <td>
-          1172
+          1189
         </td>
         <td>
           10139
@@ -3499,7 +3499,7 @@
           281
         </td>
         <td>
-          1167
+          1184
         </td>
         <td>
           10139
@@ -3520,7 +3520,7 @@
           282
         </td>
         <td>
-          1169
+          1186
         </td>
         <td>
           10165
@@ -3541,7 +3541,7 @@
           282
         </td>
         <td>
-          1168
+          1185
         </td>
         <td>
           10185
@@ -3562,7 +3562,7 @@
           283
         </td>
         <td>
-          1170
+          1187
         </td>
         <td>
           10205
@@ -3583,7 +3583,7 @@
           284
         </td>
         <td>
-          1171
+          1188
         </td>
         <td>
           10228
@@ -3604,7 +3604,7 @@
           287
         </td>
         <td>
-          1174
+          1191
         </td>
         <td>
           10287
@@ -3625,7 +3625,7 @@
           287
         </td>
         <td>
-          1173
+          1190
         </td>
         <td>
           10287
