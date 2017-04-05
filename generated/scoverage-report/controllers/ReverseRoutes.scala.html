@@ -25,7 +25,7 @@
             <pre style='font-size: 12pt; font-family: courier;'>1 <span style=''>
 </span>2 <span style=''>// @GENERATOR:play-routes-compiler
 </span>3 <span style=''>// @SOURCE:/home/travis/build/ZGIS/smart-csw-ingester/conf/routes
-</span>4 <span style=''>// @DATE:Wed Apr 05 04:38:19 UTC 2017
+</span>4 <span style=''>// @DATE:Wed Apr 05 05:02:21 UTC 2017
 </span>5 <span style=''>
 </span>6 <span style=''>import play.api.mvc.{ QueryStringBindable, PathBindable, Call, JavascriptLiteral }
 </span>7 <span style=''>import play.core.routing.{ HandlerDef, ReverseRouteContext, queryString, dynamicString }
@@ -73,7 +73,7 @@
 </span>49 <span style=''>    // @LINE:9
 </span>50 <span style=''>    def discovery(fields:Option[String]): Call = {
 </span>51 <span style=''>      import ReverseRouteContext.empty
-</span>52 <span style=''>      </span><span style='background: #F0ADAD'>Call("GET", _prefix + { _defaultPrefix } + "api/v1/discovery" + queryString(List(Some(implicitly[QueryStringBindable[Option[String]]].unbind("fields", fields)))))</span><span style=''>
+</span>52 <span style=''>      </span><span style='background: #F0ADAD'>Call("GET", _prefix + { _defaultPrefix } + "cswi-api/v1/discovery" + queryString(List(Some(implicitly[QueryStringBindable[Option[String]]].unbind("fields", fields)))))</span><span style=''>
 </span>53 <span style=''>    }
 </span>54 <span style=''>  
 </span>55 <span style=''>    // @LINE:7
@@ -1004,7 +1004,7 @@
         <td>
           1948
           -
-          2097
+          2102
         </td>
         <td>
           Apply
@@ -1013,7 +1013,7 @@
           java.lang.String.+
         </td>
         <td style="background: #F0ADAD">
-          ReverseMainController.this._prefix.+(ReverseMainController.this._defaultPrefix).+(&quot;api/v1/discovery&quot;).+(play.core.routing.`package`.queryString(immutable.this.List.apply[Some[String]](scala.Some.apply[String](scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).unbind(&quot;fields&quot;, fields)))))
+          ReverseMainController.this._prefix.+(ReverseMainController.this._defaultPrefix).+(&quot;cswi-api/v1/discovery&quot;).+(play.core.routing.`package`.queryString(immutable.this.List.apply[Some[String]](scala.Some.apply[String](scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).unbind(&quot;fields&quot;, fields)))))
         </td>
       </tr><tr>
         <td>
@@ -1044,9 +1044,9 @@
           1243
         </td>
         <td>
-          2017
+          2022
           -
-          2095
+          2100
         </td>
         <td>
           Apply
@@ -1065,9 +1065,9 @@
           1245
         </td>
         <td>
-          2000
+          2005
           -
-          2097
+          2102
         </td>
         <td>
           Apply
@@ -1109,7 +1109,7 @@
         <td>
           1936
           -
-          2098
+          2103
         </td>
         <td>
           Apply
@@ -1118,7 +1118,7 @@
           play.api.mvc.Call.apply
         </td>
         <td style="background: #F0ADAD">
-          play.api.mvc.Call.apply(&quot;GET&quot;, ReverseMainController.this._prefix.+(ReverseMainController.this._defaultPrefix).+(&quot;api/v1/discovery&quot;).+(play.core.routing.`package`.queryString(immutable.this.List.apply[Some[String]](scala.Some.apply[String](scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).unbind(&quot;fields&quot;, fields))))), play.api.mvc.Call.apply$default$3)
+          play.api.mvc.Call.apply(&quot;GET&quot;, ReverseMainController.this._prefix.+(ReverseMainController.this._defaultPrefix).+(&quot;cswi-api/v1/discovery&quot;).+(play.core.routing.`package`.queryString(immutable.this.List.apply[Some[String]](scala.Some.apply[String](scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).unbind(&quot;fields&quot;, fields))))), play.api.mvc.Call.apply$default$3)
         </td>
       </tr><tr>
         <td>
@@ -1128,9 +1128,9 @@
           1242
         </td>
         <td>
-          2022
+          2027
           -
-          2094
+          2099
         </td>
         <td>
           Apply
@@ -1151,7 +1151,7 @@
         <td>
           1979
           -
-          1997
+          2002
         </td>
         <td>
           Literal
@@ -1160,7 +1160,7 @@
           &lt;nosymbol&gt;
         </td>
         <td style="background: #F0ADAD">
-          &quot;api/v1/discovery&quot;
+          &quot;cswi-api/v1/discovery&quot;
         </td>
       </tr><tr>
         <td>
@@ -1170,9 +1170,9 @@
           1244
         </td>
         <td>
-          2012
+          2017
           -
-          2096
+          2101
         </td>
         <td>
           Apply
@@ -1212,9 +1212,9 @@
           1249
         </td>
         <td>
-          2212
-          -
           2217
+          -
+          2222
         </td>
         <td>
           Literal
@@ -1233,9 +1233,9 @@
           1252
         </td>
         <td>
-          2207
+          2212
           -
-          2310
+          2315
         </td>
         <td>
           Apply
@@ -1254,9 +1254,9 @@
           1251
         </td>
         <td>
-          2207
+          2212
           -
-          2207
+          2212
         </td>
         <td>
           Select
@@ -1275,9 +1275,9 @@
           1250
         </td>
         <td>
-          2219
+          2224
           -
-          2309
+          2314
         </td>
         <td>
           Apply
@@ -1296,9 +1296,9 @@
           1255
         </td>
         <td>
-          2451
+          2456
           -
-          2453
+          2458
         </td>
         <td>
           Block
@@ -1317,9 +1317,9 @@
           1254
         </td>
         <td>
-          2451
+          2456
           -
-          2453
+          2458
         </td>
         <td>
           Literal
@@ -1338,9 +1338,9 @@
           1257
         </td>
         <td>
-          2459
+          2464
           -
-          2462
+          2467
         </td>
         <td>
           Block
@@ -1359,9 +1359,9 @@
           1253
         </td>
         <td>
-          2428
+          2433
           -
-          2449
+          2454
         </td>
         <td>
           Apply
@@ -1380,9 +1380,9 @@
           1256
         </td>
         <td>
-          2459
+          2464
           -
-          2462
+          2467
         </td>
         <td>
           Literal
@@ -1401,9 +1401,9 @@
           1258
         </td>
         <td>
-          2583
+          2588
           -
-          2602
+          2607
         </td>
         <td>
           Apply
@@ -1422,9 +1422,9 @@
           1260
         </td>
         <td>
-          2555
+          2560
           -
-          2604
+          2609
         </td>
         <td>
           Apply
@@ -1443,9 +1443,9 @@
           1259
         </td>
         <td>
-          2579
+          2584
           -
-          2603
+          2608
         </td>
         <td>
           Apply
@@ -1464,9 +1464,9 @@
           1264
         </td>
         <td>
-          2666
+          2671
           -
-          2718
+          2723
         </td>
         <td>
           Apply
@@ -1485,9 +1485,9 @@
           1267
         </td>
         <td>
-          2611
+          2616
           -
-          2719
+          2724
         </td>
         <td>
           Apply
@@ -1506,9 +1506,9 @@
           1261
         </td>
         <td>
-          2616
-          -
           2621
+          -
+          2626
         </td>
         <td>
           Literal
@@ -1527,9 +1527,9 @@
           1263
         </td>
         <td>
-          2654
+          2659
           -
-          2663
+          2668
         </td>
         <td>
           Literal
@@ -1548,9 +1548,9 @@
           1266
         </td>
         <td>
-          2611
+          2616
           -
-          2611
+          2616
         </td>
         <td>
           Select
@@ -1569,9 +1569,9 @@
           1262
         </td>
         <td>
-          2635
+          2640
           -
-          2649
+          2654
         </td>
         <td>
           Select
@@ -1590,9 +1590,9 @@
           1265
         </td>
         <td>
-          2623
+          2628
           -
-          2718
+          2723
         </td>
         <td>
           Apply

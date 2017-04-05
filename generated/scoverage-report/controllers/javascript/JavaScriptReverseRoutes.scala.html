@@ -25,7 +25,7 @@
             <pre style='font-size: 12pt; font-family: courier;'>1 <span style=''>
 </span>2 <span style=''>// @GENERATOR:play-routes-compiler
 </span>3 <span style=''>// @SOURCE:/home/travis/build/ZGIS/smart-csw-ingester/conf/routes
-</span>4 <span style=''>// @DATE:Wed Apr 05 04:38:19 UTC 2017
+</span>4 <span style=''>// @DATE:Wed Apr 05 05:02:21 UTC 2017
 </span>5 <span style=''>
 </span>6 <span style=''>import play.api.routing.JavaScriptReverseRoute
 </span>7 <span style=''>import play.api.mvc.{ QueryStringBindable, PathBindable, Call, JavascriptLiteral }
@@ -91,7 +91,7 @@
 </span>67 <span style=''></span><span style='background: #F0ADAD'>      "controllers.MainController.discovery",
 </span>68 <span style=''></span><span style='background: #F0ADAD'>      """
 </span>69 <span style=''></span><span style='background: #F0ADAD'>        function(fields0) {
-</span>70 <span style=''></span><span style='background: #F0ADAD'>          return _wA({method:"GET", url:"""" + _prefix + { _defaultPrefix } + """" + "api/v1/discovery" + _qS([(""" + implicitly[QueryStringBindable[Option[String]]].javascriptUnbind + """)("fields", fields0)])})
+</span>70 <span style=''></span><span style='background: #F0ADAD'>          return _wA({method:"GET", url:"""" + _prefix + { _defaultPrefix } + """" + "cswi-api/v1/discovery" + _qS([(""" + implicitly[QueryStringBindable[Option[String]]].javascriptUnbind + """)("fields", fields0)])})
 </span>71 <span style=''></span><span style='background: #F0ADAD'>        }
 </span>72 <span style=''></span><span style='background: #F0ADAD'>      """
 </span>73 <span style=''></span><span style='background: #F0ADAD'>    )</span><span style=''>
@@ -550,7 +550,7 @@
         <td>
           2412
           -
-          2758
+          2763
         </td>
         <td>
           Apply
@@ -559,7 +559,7 @@
           play.api.routing.JavaScriptReverseRoute.apply
         </td>
         <td style="background: #F0ADAD">
-          play.api.routing.JavaScriptReverseRoute.apply(&quot;controllers.MainController.discovery&quot;, &quot;\n        function(fields0) {\n          return _wA({method:\&quot;GET\&quot;, url:\&quot;&quot;.+(ReverseMainController.this._prefix).+(ReverseMainController.this._defaultPrefix).+(&quot;\&quot; + \&quot;api/v1/discovery\&quot; + _qS([(&quot;).+(scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).javascriptUnbind).+(&quot;)(\&quot;fields\&quot;, fields0)])})\n        }\n      &quot;))
+          play.api.routing.JavaScriptReverseRoute.apply(&quot;controllers.MainController.discovery&quot;, &quot;\n        function(fields0) {\n          return _wA({method:\&quot;GET\&quot;, url:\&quot;&quot;.+(ReverseMainController.this._prefix).+(ReverseMainController.this._defaultPrefix).+(&quot;\&quot; + \&quot;cswi-api/v1/discovery\&quot; + _qS([(&quot;).+(scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).javascriptUnbind).+(&quot;)(\&quot;fields\&quot;, fields0)])})\n        }\n      &quot;))
         </td>
       </tr><tr>
         <td>
@@ -592,7 +592,7 @@
         <td>
           2488
           -
-          2752
+          2757
         </td>
         <td>
           Apply
@@ -601,7 +601,7 @@
           java.lang.String.+
         </td>
         <td style="background: #F0ADAD">
-          &quot;\n        function(fields0) {\n          return _wA({method:\&quot;GET\&quot;, url:\&quot;&quot;.+(ReverseMainController.this._prefix).+(ReverseMainController.this._defaultPrefix).+(&quot;\&quot; + \&quot;api/v1/discovery\&quot; + _qS([(&quot;).+(scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).javascriptUnbind).+(&quot;)(\&quot;fields\&quot;, fields0)])})\n        }\n      &quot;)
+          &quot;\n        function(fields0) {\n          return _wA({method:\&quot;GET\&quot;, url:\&quot;&quot;.+(ReverseMainController.this._prefix).+(ReverseMainController.this._defaultPrefix).+(&quot;\&quot; + \&quot;cswi-api/v1/discovery\&quot; + _qS([(&quot;).+(scala.this.Predef.implicitly[play.api.mvc.QueryStringBindable[Option[String]]](mvc.this.QueryStringBindable.bindableOption[String](mvc.this.QueryStringBindable.bindableString)).javascriptUnbind).+(&quot;)(\&quot;fields\&quot;, fields0)])})\n        }\n      &quot;)
         </td>
       </tr><tr>
         <td>
@@ -611,9 +611,9 @@
           1292
         </td>
         <td>
-          2819
+          2824
           -
-          3120
+          3125
         </td>
         <td>
           Apply
@@ -632,9 +632,9 @@
           1290
         </td>
         <td>
-          2849
+          2854
           -
-          2885
+          2890
         </td>
         <td>
           Literal
@@ -653,9 +653,9 @@
           1291
         </td>
         <td>
-          2893
+          2898
           -
-          3114
+          3119
         </td>
         <td>
           Apply
@@ -674,9 +674,9 @@
           1297
         </td>
         <td>
-          3264
+          3269
           -
-          3267
+          3272
         </td>
         <td>
           Block
@@ -695,9 +695,9 @@
           1294
         </td>
         <td>
-          3256
+          3261
           -
-          3258
+          3263
         </td>
         <td>
           Literal
@@ -716,9 +716,9 @@
           1296
         </td>
         <td>
-          3264
+          3269
           -
-          3267
+          3272
         </td>
         <td>
           Literal
@@ -737,9 +737,9 @@
           1293
         </td>
         <td>
-          3233
+          3238
           -
-          3254
+          3259
         </td>
         <td>
           Apply
@@ -758,9 +758,9 @@
           1295
         </td>
         <td>
-          3256
+          3261
           -
-          3258
+          3263
         </td>
         <td>
           Block
@@ -779,9 +779,9 @@
           1300
         </td>
         <td>
-          3338
+          3343
           -
-          3638
+          3643
         </td>
         <td>
           Apply
@@ -800,9 +800,9 @@
           1298
         </td>
         <td>
-          3368
+          3373
           -
-          3398
+          3403
         </td>
         <td>
           Literal
@@ -821,9 +821,9 @@
           1299
         </td>
         <td>
-          3406
+          3411
           -
-          3632
+          3637
         </td>
         <td>
           Apply
