@@ -16,6 +16,8 @@ addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.5.12")
 // for autoplugins
 addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.1.1")
 
+addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.6.1")
+
 // code quality etc documentation plugins
 addSbtPlugin("org.scalastyle" %% "scalastyle-sbt-plugin" % "0.8.0")
 

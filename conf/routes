@@ -6,6 +6,8 @@
 GET        /                                          controllers.MainController.index
 GET        /*path/                                    controllers.MainController.untrail(path: String)
 
+GET        /api/v1/discovery                              controllers.MainController.discovery(fields: Option[String])
+
 # Routes for querying Lucene Index
 # FIXME SR is there a way to get Option[String] for the URL path binder?
 # GET        /query                                     controllers.QueryController.query(query: Option[String],bbox: Option[String], fromDate: Option[String], toDate: Option[String], maxNumberOfResults: Option[Int])

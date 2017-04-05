@@ -21,7 +21,8 @@
 
 package controllers
 
-import play.api.mvc.{AnyContent, Action}
+import play.api.libs.json.Json
+import play.api.mvc.{Action, AnyContent}
 import play.api.mvc._
 
 
@@ -48,5 +49,23 @@ class MainController extends Controller {
     MovedPermanently("/".concat(path))
   }
 
+  /**
+    * idea is to provide a listing of api usable endpoints with some parameter description,selectable by the fields param
+    *
+    * the BuildInfo object is generated through sbt-buildinfo plugin, src under target/scala-2.11/src_managed
+    * configuration of this in build.sbt buildinfokeys
+    *
+    * @param fields
+    * @return
+    */
+  def discovery(fields: Option[String]): Action[AnyContent] = Action { request =>
+    val appName = utils.BuildInfo.name
+    val appVersion = utils.BuildInfo.version
+    val buildNumber = utils.BuildInfo.buildNumber
+    Ok(Json.obj(
+      "appName" -> appName,
+      "version" -> s"$appVersion-$buildNumber"
+    ))
+  }
 
 }
