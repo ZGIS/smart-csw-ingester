@@ -48,6 +48,7 @@ import scala.xml.NodeSeq
   * @param contactEmail   contact email for the record or dataset
   * @param license        licenses for the record or dataset
   * @param bbox           bbox of the record
+  * @param lineageStmt    Lineage Statement
   * @param origin         origin i.e. source catalogue where the record was loaded from
   */
 case class MdMetadataSet(fileIdentifier: String,
@@ -62,6 +63,7 @@ case class MdMetadataSet(fileIdentifier: String,
                          contactEmail: String,
                          license: String,
                          bbox: Rectangle,
+                         lineageStmt: String,
                          linkage: List[String],
                          origin: String) extends ClassnameLogger {
   require(!fileIdentifier.trim.isEmpty, "FileIdentifier was empty")
@@ -80,6 +82,7 @@ case class MdMetadataSet(fileIdentifier: String,
         |${contactEmail},
         |${license},
         |${bboxAsWkt},
+        |${lineageStmt},
         |${linkage},
         |${origin})
      """.stripMargin.replaceAll("\n", " ")
@@ -138,6 +141,7 @@ case class MdMetadataSet(fileIdentifier: String,
     doc.add(new TextField("contactEmail", contactEmail, Field.Store.YES))
     doc.add(new TextField("license", license, Field.Store.YES))
     doc.add(new TextField("bboxText", bboxAsWkt, Field.Store.YES))
+    doc.add(new TextField("lineageStmt", lineageStmt, Field.Store.YES))
     linkage.foreach(link => {
       doc.add(new TextField("linkage", link, Field.Store.YES))
     })
@@ -166,6 +170,7 @@ case class MdMetadataSet(fileIdentifier: String,
     doc.add(new TextField("catch_all", contactOrg, Field.Store.YES))
     doc.add(new TextField("catch_all", contactEmail, Field.Store.YES))
     doc.add(new TextField("catch_all", license, Field.Store.YES))
+    doc.add(new TextField("catch_all", lineageStmt, Field.Store.YES))
     doc.add(new TextField("catch_all", origin, Field.Store.YES))
 
     doc
@@ -217,6 +222,7 @@ object MdMetadataSet extends ClassnameLogger {
             contactEmailFromXml(nodeSeq),
             licenseFromXml(nodeSeq),
             bboxFromXml(nodeSeq),
+            lineageFromXml(nodeSeq),
             linkageFromXml(nodeSeq),
             origin
           ))
@@ -251,6 +257,7 @@ object MdMetadataSet extends ClassnameLogger {
       contactEmail = doc.get("contactEmail"),
       license = doc.get("license"),
       bbox = MdMetadataSet.bboxFromWkt(doc.get("bboxText")),
+      lineageStmt = doc.get("lineageStmt"),
       linkage = doc.getValues("linkage").toList,
       origin = doc.get("origin")
     )
@@ -408,11 +415,23 @@ object MdMetadataSet extends ClassnameLogger {
     */
   def licenseFromXml(nodeSeq: NodeSeq): String = {
     val resConstraints =
-      (nodeSeq \\ "identificationInfo" \ "MD_DataIdentification" \ "resourceConstraints" \ "MD_LegalConstraints" \ "useLimitation" \ "CharacterString").map(
-        elem => elem.text.trim).mkString(", ")
-    val metaConstraints = (nodeSeq \\ "metadataConstraints" \ "MD_LegalConstraints" \ "useLimitation" \ "CharacterString").map(
-      elem => elem.text.trim).mkString(", ")
+      (nodeSeq \\ "identificationInfo" \ "MD_DataIdentification" \ "resourceConstraints" \ "MD_LegalConstraints"
+        \ "useLimitation" \ "CharacterString")
+        .map(elem => elem.text.trim).mkString(", ")
+    val metaConstraints =
+      (nodeSeq \\ "metadataConstraints" \ "MD_LegalConstraints" \ "useLimitation" \ "CharacterString")
+        .map(elem => elem.text.trim).mkString(", ")
+
     List(resConstraints, metaConstraints).mkString(", ")
+  }
+
+  def lineageFromXml(nodeSeq: NodeSeq): String = {
+    (nodeSeq \\ "MD_Metadata" \\ "dataQualityInfo" \\ "DQ_DataQuality" \\ "lineage" \\ "LI_Lineage").map(
+      elem => {
+        logger.debug(s"Lineage statement '${(elem \\ "statement" \\ "CharacterString").text.trim}'")
+        (elem \\ "statement" \\ "CharacterString").text.trim
+      }
+    ).mkString(", ")
   }
 
   def linkageFromXml(nodeSeq: NodeSeq): List[String] = {
@@ -613,6 +632,7 @@ object MdMetadataSetWriter extends Writes[MdMetadataSet] with ClassnameLogger {
         JsNumber(gmd.bbox.getMaxX()),
         JsNumber(gmd.bbox.getMaxY()))
       ),
+      "lineageStmt" -> gmd.lineageStmt,
       "linkage" -> gmd.linkage,
       "origin" -> gmd.origin
     )
