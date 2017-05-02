@@ -1,0 +1,8 @@
+<gmd:CI_OnlineResource>
+    <gmd:linkage>
+        <gmd:URL>https://www.servername.com/resource/index.html</gmd:URL>
+    </gmd:linkage>
+    <gmd:protocol>
+        <gco:CharacterString>WWW:LINK-1.0-http--metadata-URL</gco:CharacterString>
+    </gmd:protocol>
+</gmd:CI_OnlineResource>

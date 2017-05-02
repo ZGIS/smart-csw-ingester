@@ -58,4 +58,35 @@ object StringUtils {
     }
   }
 
+  /**
+    * Converts String to Option
+    * @param s
+    */
+  implicit class OptionConverters(val s: String) {
+
+    /**
+      * Converts String to Option. None when trimmed String is empty.
+      *
+      * @return Given String encapsulated in Option or None if empty after trimming
+      */
+    def toOption(): Option[String] = {
+      if (s.trim.isEmpty) {
+        None
+      }
+      else {
+        Some(s)
+      }
+    }
+  }
+
+  /**
+    * Little Helper for RegEx matching in match/case
+    *
+    * @see [[http://stackoverflow.com/a/16256935 Stackoverflow answer on how to pattern match RegEx]]
+    * @param sc
+    */
+  implicit class Regex(sc: StringContext) {
+    def r = new util.matching.Regex(sc.parts.mkString, sc.parts.tail.map(_ => "x"): _*)
+  }
+
 }

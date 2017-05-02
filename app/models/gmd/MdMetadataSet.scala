@@ -49,6 +49,7 @@ import scala.xml.NodeSeq
   * @param license        licenses for the record or dataset
   * @param bbox           bbox of the record
   * @param lineageStmt    Lineage Statement
+  * @param linkage        List of Linkages
   * @param origin         origin i.e. source catalogue where the record was loaded from
   */
 case class MdMetadataSet(fileIdentifier: String,
@@ -64,7 +65,7 @@ case class MdMetadataSet(fileIdentifier: String,
                          license: String,
                          bbox: Rectangle,
                          lineageStmt: String,
-                         linkage: List[String],
+                         linkage: List[CIOnlineResource],
                          origin: String) extends ClassnameLogger {
   require(!fileIdentifier.trim.isEmpty, "FileIdentifier was empty")
 
@@ -142,8 +143,9 @@ case class MdMetadataSet(fileIdentifier: String,
     doc.add(new TextField("license", license, Field.Store.YES))
     doc.add(new TextField("bboxText", bboxAsWkt, Field.Store.YES))
     doc.add(new TextField("lineageStmt", lineageStmt, Field.Store.YES))
-    linkage.foreach(link => {
-      doc.add(new TextField("linkage", link, Field.Store.YES))
+    linkage.foreach(linkage => {
+      doc.add(new TextField("linkage", linkage.linkage, Field.Store.YES))
+      doc.add(new TextField("linkageFull", Json.toJson(linkage).toString(), Field.Store.YES))
     })
 
     val ctx = SpatialContext.GEO
@@ -223,7 +225,7 @@ object MdMetadataSet extends ClassnameLogger {
             licenseFromXml(nodeSeq),
             bboxFromXml(nodeSeq),
             lineageFromXml(nodeSeq),
-            linkageFromXml(nodeSeq),
+            linkageFromXml(nodeSeq, origin),
             origin
           ))
         case _ =>
@@ -258,7 +260,9 @@ object MdMetadataSet extends ClassnameLogger {
       license = doc.get("license"),
       bbox = MdMetadataSet.bboxFromWkt(doc.get("bboxText")),
       lineageStmt = doc.get("lineageStmt"),
-      linkage = doc.getValues("linkage").toList,
+      linkage = doc.getValues("linkageFull").toList.map( str =>
+        Json.fromJson[CIOnlineResource](Json.parse(str)).get
+      ),
       origin = doc.get("origin")
     )
   }
@@ -434,13 +438,19 @@ object MdMetadataSet extends ClassnameLogger {
     ).mkString(", ")
   }
 
-  def linkageFromXml(nodeSeq: NodeSeq): List[String] = {
-    (nodeSeq \\ "MD_Metadata" \\ "distributionInfo" \\ "MD_Distribution" \\ "transferOptions"
-      \\ "MD_DigitalTransferOptions" \\ "onLine" \\ "CI_OnlineResource").map(
-      elem => {
-        logger.debug((elem \\ "linkage" \\ "URL").text.trim);
-        (elem \\ "linkage" \\ "URL").text.trim
-      }
+  def linkageFromXml(nodeSeq: NodeSeq, origin: String): List[CIOnlineResource] = {
+    //technically there can be linkages in CI_Contact, but that is more like the website of the contact and not linkages to the data itself
+    //gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:onlineResource
+    //gmd:MD_Metadata/gmd:identificationInfo/srv:SV_ServiceIdentification/srv:containsOperations/srv:SV_OperationMetadata/srv:connectPoint/gmd:CI_OnlineResource
+    //gmd:MD_Metadata/gmd:metadataExtensionInfo/gmd:MD_MetadataExtensionInformation/gmd:extensionOnlineResource
+
+    (
+    //gmd:MD_Metadata/gmd:distributionInfo/gmd:MD_Distribution/gmd:transferOptions/gmd:MD_DigitalTransferOptions/gmd:online
+    (nodeSeq \\ "MD_Metadata" \\ "distributionInfo" \\ "MD_Distribution" \\ "transferOptions" \\ "MD_DigitalTransferOptions" \\ "onLine" \\ "CI_OnlineResource") ++
+    //gmd:MD_Metadata/gmd:distributionInfo/gmd:MD_Distribution/gmd:distributor/gmd:MD_Distributor/gmd:distributorTransferOptions/gmd:MD_DigitalTransferOptions/gmd:online
+    (nodeSeq \\ "MD_Metadata" \\ "distributionInfo" \\ "MD_Distribution" \\ "distributor" \\ "MD_Distributor" \\ "transferOptions" \\ "MD_DigitalTransferOptions"\\ "onLine" \\ "CI_OnlineResource")
+    ).map(
+      elem => CIOnlineResource.fromXml(elem, origin)
     ).toList
   }
 
@@ -633,7 +643,7 @@ object MdMetadataSetWriter extends Writes[MdMetadataSet] with ClassnameLogger {
         JsNumber(gmd.bbox.getMaxY()))
       ),
       "lineageStmt" -> gmd.lineageStmt,
-      "linkage" -> gmd.linkage,
+      "linkage" -> gmd.linkage.map(Json.toJson(_)),
       "origin" -> gmd.origin
     )
 
