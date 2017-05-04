@@ -11,8 +11,8 @@ GET        /cswi-api/v1/discovery                              controllers.MainC
 # Routes for querying Lucene Index
 # FIXME SR is there a way to get Option[String] for the URL path binder?
 # GET        /query                                     controllers.QueryController.query(query: Option[String],bbox: Option[String], fromDate: Option[String], toDate: Option[String], maxNumberOfResults: Option[Int])
-GET        /cswi-api/v1/query                            controllers.QueryController.query(query: Option[String],bbox: Option[String], fromDate: Option[String], toDate: Option[String], maxNumberOfResults: Option[Int])
-GET        /cswi-api/v1/buildIndex/:catalogueName        controllers.QueryController.buildIndexFor(catalogueName: String)
+GET        /cswi-api/v1/query                           controllers.QueryController.query(query: Option[String],bbox: Option[String], fromDate: Option[String], toDate: Option[String], maxNumberOfResults: Option[Int], contentType: Option[String])
+GET        /cswi-api/v1/buildIndex/:catalogueName       controllers.QueryController.buildIndexFor(catalogueName: String)
 
 # Map static resources from the /public folder to the /assets URL path
 GET        /assets/*file                              controllers.Assets.versioned(path="/public", file: Asset)

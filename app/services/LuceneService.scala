@@ -223,6 +223,15 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
   }
 
   /**
+    * returns the URL of a Catalogue.
+    * @param name
+    * @return
+    */
+  def getCatalogueUrl(name: String): String = {
+    catalogues(name)
+  }
+
+  /**
     * parses the query text
     *
     * @param queryString

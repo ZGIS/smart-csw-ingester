@@ -22,13 +22,16 @@ package models.gmd
 import java.time._
 import java.time.format._
 import java.util
+import java.util.UUID
 
+import models.owc._
 import org.apache.lucene.document._
 import org.apache.lucene.spatial.bbox.BBoxStrategy
 import org.locationtech.spatial4j.context.SpatialContext
 import org.locationtech.spatial4j.io.ShapeIO
 import org.locationtech.spatial4j.shape.{Rectangle, ShapeCollection}
 import play.api.libs.json.{JsObject, _}
+import services.LuceneService
 import utils.ClassnameLogger
 import utils.StringUtils._
 
@@ -37,20 +40,20 @@ import scala.xml.NodeSeq
 /**
   * Holds a subset of MDMetadata
   *
-  * @param fileIdentifier the unique file identifier of the record
-  * @param dateStamp      a datestamp of the record
-  * @param title          title of the record
-  * @param abstrakt       abstract of the record
-  * @param keywords       list of keywords for the record
-  * @param topicCategories  list of ISO/ANZLIC topic categories of the record
-  * @param contactName    contact name for the record or dataset
-  * @param contactOrg     cantact organisation for the record or dataset
-  * @param contactEmail   contact email for the record or dataset
-  * @param license        licenses for the record or dataset
-  * @param bbox           bbox of the record
-  * @param lineageStmt    Lineage Statement
-  * @param linkage        List of Linkages
-  * @param origin         origin i.e. source catalogue where the record was loaded from
+  * @param fileIdentifier  the unique file identifier of the record
+  * @param dateStamp       a datestamp of the record
+  * @param title           title of the record
+  * @param abstrakt        abstract of the record
+  * @param keywords        list of keywords for the record
+  * @param topicCategories list of ISO/ANZLIC topic categories of the record
+  * @param contactName     contact name for the record or dataset
+  * @param contactOrg      cantact organisation for the record or dataset
+  * @param contactEmail    contact email for the record or dataset
+  * @param license         licenses for the record or dataset
+  * @param bbox            bbox of the record
+  * @param lineageStmt     Lineage Statement
+  * @param linkage         List of Linkages
+  * @param origin          origin i.e. source catalogue where the record was loaded from
   */
 case class MdMetadataSet(fileIdentifier: String,
                          dateStamp: LocalDate,
@@ -71,42 +74,22 @@ case class MdMetadataSet(fileIdentifier: String,
 
   override def toString: String = {
     f"""MdMetadataSet(
-        |$fileIdentifier,
-        |${dateStampAsIsoString},
-        |${title},
-        |${abstrakt},
-        |keywords(${keywords.mkString(", ")}),
-        |smartCategory(${smartCategory.mkString(", ")}),
-        |topicCategory(${topicCategories.mkString(", ")}),
-        |${contactName},
-        |${contactOrg},
-        |${contactEmail},
-        |${license},
-        |${bboxAsWkt},
-        |${lineageStmt},
-        |${linkage},
-        |${origin})
+       |$fileIdentifier,
+       |${dateStampAsIsoString},
+       |${title},
+       |${abstrakt},
+       |keywords(${keywords.mkString(", ")}),
+       |smartCategory(${smartCategory.mkString(", ")}),
+       |topicCategory(${topicCategories.mkString(", ")}),
+       |${contactName},
+       |${contactOrg},
+       |${contactEmail},
+       |${license},
+       |${bboxAsWkt},
+       |${lineageStmt},
+       |${linkage},
+       |${origin})
      """.stripMargin.replaceAll("\n", " ")
-  }
-
-  /**
-    * returns bounding box as well known text (WKT)
-    *
-    * @return Envelope (WKT) representation of BBOX
-    */
-  private def bboxAsWkt: String = {
-    val ctx = SpatialContext.GEO
-    val shpWriter = ctx.getFormats().getWriter(ShapeIO.WKT)
-    shpWriter.toString(bbox)
-  }
-
-  /**
-    * returns dateStamp as String in ISO_LOCAL_DATE format.
-    *
-    * @return ISO_LOCAL_DATE formatted date string
-    */
-  def dateStampAsIsoString: String = {
-    dateStamp.format(DateTimeFormatter.ISO_LOCAL_DATE)
   }
 
   /**
@@ -177,6 +160,72 @@ case class MdMetadataSet(fileIdentifier: String,
 
     doc
   }
+
+  /**
+    * returns bounding box as well known text (WKT)
+    *
+    * @return Envelope (WKT) representation of BBOX
+    */
+  private def bboxAsWkt: String = {
+    val ctx = SpatialContext.GEO
+    val shpWriter = ctx.getFormats().getWriter(ShapeIO.WKT)
+    shpWriter.toString(bbox)
+  }
+
+  /**
+    * returns dateStamp as String in ISO_LOCAL_DATE format.
+    *
+    * @return ISO_LOCAL_DATE formatted date string
+    */
+  def dateStampAsIsoString: String = {
+    dateStamp.format(DateTimeFormatter.ISO_LOCAL_DATE)
+  }
+
+  /**
+    * Converts MdMetadataSet to [[OwcEntry]]
+    * @return
+    */
+  def asOwcEntry(luceneService: LuceneService): OwcEntry = {
+    import utils.StringUtils._
+
+    val entryProperties = OwcProperties(UUID.randomUUID(),
+      language = "en",
+      title = this.title,
+      subtitle = this.abstrakt.toOption(),
+      updated = Some(this.dateStamp.atStartOfDay(ZoneId.systemDefault())),
+      generator = None,
+      rights = this.license.toOption(),
+      authors = List(OwcAuthorJs(name = this.contactName, email = this.contactEmail.toOption(), uri = None)),
+      contributors = List(),
+      creator = None,
+      publisher = None,
+      categories = List(),
+      links = this.linkage.filter(_.resourceType == ResourceType.WEBSITE)
+        .map(link => OwcLinkJs("alternates", mimeType = Some("text/html"), href = link.linkage, title = link.name))
+    )
+
+    val offerings = CswOffering(uuid = UUID.randomUUID(),
+      operations = OwcOperation(uuid = UUID.randomUUID(),
+        code = "GetCapabilities",
+        method = "GET",
+        contentType = "application/xml",
+        href = luceneService.getCatalogueUrl(this.origin) + "?request=GetCapabilities&service=CSW",
+        request = None,
+        result = None) ::
+        OwcOperation(uuid = UUID.randomUUID(),
+        code = "GetRecordById",
+        method = "GET",
+        contentType = "application/xml",
+        href = luceneService.getCatalogueUrl(this.origin) + "?request=GetRecordById&version=2.0.2&service=CSW&Id=" + this.fileIdentifier,
+        request = None,
+        result = None) :: Nil,
+      content = List()) :: Nil
+
+    OwcEntry(id = fileIdentifier,
+      bbox = Some(bbox),
+      properties = entryProperties,
+      offerings = offerings)
+  }
 }
 
 /**
@@ -240,31 +289,17 @@ object MdMetadataSet extends ClassnameLogger {
   }
 
   /**
-    * converts LuceneDocument into MdMetadataSet from index
+    * extracts a LocalDate from the provided XML
     *
-    * @param doc
-    * @return MdMetadataSet extracted from retrieved LuceneDocument
+    * @param nodeSeq the provided xml
+    * @return a LoclDate from the list of extracted fields
     */
-  def fromLuceneDoc(doc: Document): MdMetadataSet = {
-    MdMetadataSet(
-      fileIdentifier = doc.get("fileIdentifier"),
-      dateStamp = MdMetadataSet.dateFromStrings(List(doc.get("dateStampText"))),
-      title = doc.get("title"),
-      abstrakt = doc.get("abstrakt"),
-      keywords = doc.getValues("keywords").toList,
-      smartCategory = doc.getValues("smartCategory").toList,
-      topicCategories = doc.getValues("topicCategory").toList,
-      contactName = doc.get("contactName"),
-      contactOrg = doc.get("contactOrg"),
-      contactEmail = doc.get("contactEmail"),
-      license = doc.get("license"),
-      bbox = MdMetadataSet.bboxFromWkt(doc.get("bboxText")),
-      lineageStmt = doc.get("lineageStmt"),
-      linkage = doc.getValues("linkageFull").toList.map( str =>
-        Json.fromJson[CIOnlineResource](Json.parse(str)).get
-      ),
-      origin = doc.get("origin")
-    )
+  def dateFromXml(nodeSeq: NodeSeq): LocalDate = {
+    val dateNodes = (nodeSeq \\ "dateStamp" \ "Date") ++
+      (nodeSeq \\ "dateStamp" \ "DateTime") ++
+      (nodeSeq \\ "date" \ "CI_Date" \ "date" \ "Date") ++
+      (nodeSeq \\ "date" \ "CI_Date" \ "date" \ "DateTime")
+    dateFromStrings(dateNodes.map(node => node.text).toList)
   }
 
   /**
@@ -323,27 +358,13 @@ object MdMetadataSet extends ClassnameLogger {
   }
 
   /**
-    * extracts a LocalDate from the provided XML
-    *
-    * @param nodeSeq the provided xml
-    * @return a LoclDate from the list of extracted fields
-    */
-  def dateFromXml(nodeSeq: NodeSeq): LocalDate = {
-    val dateNodes = (nodeSeq \\ "dateStamp" \ "Date") ++
-      (nodeSeq \\ "dateStamp" \ "DateTime") ++
-      (nodeSeq \\ "date" \ "CI_Date" \ "date" \ "Date") ++
-      (nodeSeq \\ "date" \ "CI_Date" \ "date" \ "DateTime")
-    dateFromStrings(dateNodes.map(node => node.text).toList)
-  }
-
-  /**
     * extracts keywords fields from the provided XML
     *
     * @param nodeSeq the provided xml
     * @return a List(String) of extracted fields
     */
   def keywordsFromXml(nodeSeq: NodeSeq): List[String] = {
-    val kwNode = (nodeSeq \\ "identificationInfo" \ "MD_DataIdentification" \ "descriptiveKeywords" ).filter( p => {
+    val kwNode = (nodeSeq \\ "identificationInfo" \ "MD_DataIdentification" \ "descriptiveKeywords").filter(p => {
       //TODO SR internally for smart csw we use "theme" as codelistValue. What are we going to do about that here?
       !((p \ "MD_Keywords" \ "type" \ "MD_KeywordTypeCode" \ "@codeListValue").text.equals("SMART"))
     })
@@ -360,7 +381,7 @@ object MdMetadataSet extends ClassnameLogger {
     * @return a List(String) of extracted fields
     */
   def smartCategoryFromXml(nodeSeq: NodeSeq): List[String] = {
-    val kwNode = (nodeSeq \\ "identificationInfo" \ "MD_DataIdentification" \ "descriptiveKeywords" ).filter( p => {
+    val kwNode = (nodeSeq \\ "identificationInfo" \ "MD_DataIdentification" \ "descriptiveKeywords").filter(p => {
       ((p \ "MD_Keywords" \ "type" \ "MD_KeywordTypeCode" \ "@codeListValue").text.equals("SMART"))
     })
     val resultList = (kwNode \ "MD_Keywords" \ "keyword" \ "CharacterString").map(elem => elem.text.trim).toList
@@ -429,6 +450,11 @@ object MdMetadataSet extends ClassnameLogger {
     List(resConstraints, metaConstraints).mkString(", ")
   }
 
+  /**
+    * extracts lineage statement from XML
+    * @param nodeSeq the provided XML
+    * @return String with the lineage statement
+    */
   def lineageFromXml(nodeSeq: NodeSeq): String = {
     (nodeSeq \\ "MD_Metadata" \\ "dataQualityInfo" \\ "DQ_DataQuality" \\ "lineage" \\ "LI_Lineage").map(
       elem => {
@@ -438,6 +464,13 @@ object MdMetadataSet extends ClassnameLogger {
     ).mkString(", ")
   }
 
+  /**
+    * Extracts linkage from XML. Looks for CI_OnlineResource in MD_Distribution
+    *
+    * @param nodeSeq the provided XML
+    * @param origin  name of the catalogue
+    * @return
+    */
   def linkageFromXml(nodeSeq: NodeSeq, origin: String): List[CIOnlineResource] = {
     //technically there can be linkages in CI_Contact, but that is more like the website of the contact and not linkages to the data itself
     //gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:onlineResource
@@ -445,13 +478,62 @@ object MdMetadataSet extends ClassnameLogger {
     //gmd:MD_Metadata/gmd:metadataExtensionInfo/gmd:MD_MetadataExtensionInformation/gmd:extensionOnlineResource
 
     (
-    //gmd:MD_Metadata/gmd:distributionInfo/gmd:MD_Distribution/gmd:transferOptions/gmd:MD_DigitalTransferOptions/gmd:online
-    (nodeSeq \\ "MD_Metadata" \\ "distributionInfo" \\ "MD_Distribution" \\ "transferOptions" \\ "MD_DigitalTransferOptions" \\ "onLine" \\ "CI_OnlineResource") ++
-    //gmd:MD_Metadata/gmd:distributionInfo/gmd:MD_Distribution/gmd:distributor/gmd:MD_Distributor/gmd:distributorTransferOptions/gmd:MD_DigitalTransferOptions/gmd:online
-    (nodeSeq \\ "MD_Metadata" \\ "distributionInfo" \\ "MD_Distribution" \\ "distributor" \\ "MD_Distributor" \\ "transferOptions" \\ "MD_DigitalTransferOptions"\\ "onLine" \\ "CI_OnlineResource")
-    ).map(
-      elem => CIOnlineResource.fromXml(elem, origin)
+      //gmd:MD_Metadata/gmd:distributionInfo/gmd:MD_Distribution/gmd:transferOptions/gmd:MD_DigitalTransferOptions/gmd:online
+      (nodeSeq \\ "MD_Metadata" \\ "distributionInfo" \\ "MD_Distribution" \\ "transferOptions" \\ "MD_DigitalTransferOptions" \\ "onLine" \\ "CI_OnlineResource") ++
+        //gmd:MD_Metadata/gmd:distributionInfo/gmd:MD_Distribution/gmd:distributor/gmd:MD_Distributor/gmd:distributorTransferOptions/gmd:MD_DigitalTransferOptions/gmd:online
+        (nodeSeq \\ "MD_Metadata" \\ "distributionInfo" \\ "MD_Distribution" \\ "distributor" \\ "MD_Distributor" \\ "transferOptions" \\ "MD_DigitalTransferOptions" \\ "onLine" \\ "CI_OnlineResource")
+      )
+      .flatMap(elem => CIOnlineResource.fromXml(elem, origin)
     ).toList
+  }
+
+  /**
+    * tries to extract a valid and usable bounding box rectangle from xml
+    *
+    * @param nodeSeq xml nodeseq containing an extent element
+    * @return [[Rectangle]] the bounding box
+    */
+  def bboxFromXml(nodeSeq: NodeSeq): Rectangle = {
+    val bboxXml = (nodeSeq \\ "extent" \ "EX_Extent")
+    logger.trace(f"bboxFromXml: ${bboxXml}")
+    if (bboxXml.size == 1) {
+      val westText = (bboxXml \\ "geographicElement" \ "EX_GeographicBoundingBox" \ "westBoundLongitude" \ "Decimal").text
+      val eastText = (bboxXml \\ "geographicElement" \ "EX_GeographicBoundingBox" \ "eastBoundLongitude" \ "Decimal").text
+      val southText = (bboxXml \\ "geographicElement" \ "EX_GeographicBoundingBox" \ "southBoundLatitude" \ "Decimal").text
+      val northText = (bboxXml \\ "geographicElement" \ "EX_GeographicBoundingBox" \ "northBoundLatitude" \ "Decimal").text
+      val west = westText.toDoubleWithDefault(minLon)
+      val east = eastText.toDoubleWithDefault(maxLon)
+      val south = southText.toDoubleWithDefault(minLat)
+      val north = northText.toDoubleWithDefault(maxLat)
+      // Rectangle rect(double minX, double maxX, double minY, double maxY);
+      logger.debug(s"parsed bbox (${west}, ${east}, ${south}, ${north})")
+      bboxFromCoords(west, east, south, north)
+    }
+    else {
+      logger.warn(f"${(nodeSeq \\ "fileIdentifier" \ "CharacterString").text} has no BBOX")
+      bboxFromCoords(minLon, maxLon, minLat, maxLat)
+    }
+    //    bboxFromCoords(165, 360 - 175, -53.1, -28.8)
+  }
+
+  /**
+    * tries to build a bounding box rectangle as safely as possible from provided coordinates
+    * Rectangle rect(double minX, double maxX, double minY, double maxY);
+    * bboxFromCoords(west, east, south, north)
+    *
+    * @param west  most western value / minX
+    * @param east  most eastern value / maxX
+    * @param south most southern value / minY
+    * @param north most northern value / maxY
+    * @return the resulting bounding box
+    */
+  def bboxFromCoords(west: Double, east: Double, south: Double, north: Double): Rectangle = {
+    val (prunedWest, prunedEast) = pruneLongitudeValues(west, east)
+    val (prunedSouth, prunedNorth) = pruneLatitudeValues(south, north)
+
+    val rect = ctx.getShapeFactory().rect(prunedWest, prunedEast, prunedSouth, prunedNorth)
+    logger.debug(s"parsed rect ${rect.toString}")
+    rect
   }
 
   /**
@@ -486,8 +568,6 @@ object MdMetadataSet extends ClassnameLogger {
       })
       (result(0), result(1))
     }
-
-
   }
 
   /**
@@ -504,23 +584,31 @@ object MdMetadataSet extends ClassnameLogger {
   }
 
   /**
-    * tries to build a bounding box rectangle as safely as possible from provided coordinates
-    * Rectangle rect(double minX, double maxX, double minY, double maxY);
-    * bboxFromCoords(west, east, south, north)
+    * converts LuceneDocument into MdMetadataSet from index
     *
-    * @param west  most western value / minX
-    * @param east  most eastern value / maxX
-    * @param south most southern value / minY
-    * @param north most northern value / maxY
-    * @return the resulting bounding box
+    * @param doc [[Document]] containing the MdMetadataSet
+    * @return [[MdMetadataSet]] extracted from retrieved LuceneDocument
     */
-  def bboxFromCoords(west: Double, east: Double, south: Double, north: Double): Rectangle = {
-    val (prunedWest, prunedEast) = pruneLongitudeValues(west, east)
-    val (prunedSouth, prunedNorth) = pruneLatitudeValues(south, north)
-
-    val rect = ctx.getShapeFactory().rect(prunedWest, prunedEast, prunedSouth, prunedNorth)
-    logger.debug(s"parsed rect ${rect.toString}")
-    rect
+  def fromLuceneDoc(doc: Document): MdMetadataSet = {
+    MdMetadataSet(
+      fileIdentifier = doc.get("fileIdentifier"),
+      dateStamp = MdMetadataSet.dateFromStrings(List(doc.get("dateStampText"))),
+      title = doc.get("title"),
+      abstrakt = doc.get("abstrakt"),
+      keywords = doc.getValues("keywords").toList,
+      smartCategory = doc.getValues("smartCategory").toList,
+      topicCategories = doc.getValues("topicCategory").toList,
+      contactName = doc.get("contactName"),
+      contactOrg = doc.get("contactOrg"),
+      contactEmail = doc.get("contactEmail"),
+      license = doc.get("license"),
+      bbox = MdMetadataSet.bboxFromWkt(doc.get("bboxText")),
+      lineageStmt = doc.get("lineageStmt"),
+      linkage = doc.getValues("linkageFull").toList.map(str =>
+        Json.fromJson[CIOnlineResource](Json.parse(str)).get
+      ),
+      origin = doc.get("origin")
+    )
   }
 
   /**
@@ -538,32 +626,28 @@ object MdMetadataSet extends ClassnameLogger {
   }
 
   /**
-    * tries to extract a valid and usable bounding box rectangle from xml
+    * Convert List[MdMetadataSet] to OwcDocument
     *
-    * @param nodeSeq xml nodeseq containing an extent element
-    * @return [[Rectangle]] the bounding box
+    * @param metadataList List[MdMetadataSet] containing the entries
+    * @param id           String containing the ID for the OwcContext document
     */
-  def bboxFromXml(nodeSeq: NodeSeq): Rectangle = {
-    val bboxXml = (nodeSeq \\ "extent" \ "EX_Extent")
-    logger.trace(f"bboxFromXml: ${bboxXml}")
-    if (bboxXml.size == 1) {
-      val westText = (bboxXml \\ "geographicElement" \ "EX_GeographicBoundingBox" \ "westBoundLongitude" \ "Decimal").text
-      val eastText = (bboxXml \\ "geographicElement" \ "EX_GeographicBoundingBox" \ "eastBoundLongitude" \ "Decimal").text
-      val southText = (bboxXml \\ "geographicElement" \ "EX_GeographicBoundingBox" \ "southBoundLatitude" \ "Decimal").text
-      val northText = (bboxXml \\ "geographicElement" \ "EX_GeographicBoundingBox" \ "northBoundLatitude" \ "Decimal").text
-      val west = westText.toDoubleWithDefault(minLon)
-      val east = eastText.toDoubleWithDefault(maxLon)
-      val south = southText.toDoubleWithDefault(minLat)
-      val north = northText.toDoubleWithDefault(maxLat)
-      // Rectangle rect(double minX, double maxX, double minY, double maxY);
-      logger.debug(s"parsed bbox (${west}, ${east}, ${south}, ${north})")
-      bboxFromCoords(west, east, south, north)
-    }
-    else {
-      logger.warn(f"${(nodeSeq \\ "fileIdentifier" \ "CharacterString").text} has no BBOX")
-      bboxFromCoords(minLon, maxLon, minLat, maxLat)
-    }
-//    bboxFromCoords(165, 360 - 175, -53.1, -28.8)
+  def toOwcDocument(metadataList: List[MdMetadataSet], id: String, luceneService: LuceneService): OwcDocument = {
+    val bbox = Some(GeoJSONFeatureCollectionWriter.getBoundingBoxAsRect(metadataList))
+    val documentProperties = OwcProperties(UUID.randomUUID(),
+      language = "en",
+      title = "Search result CSW ingester",
+      subtitle = Some("Subtitle"),
+      updated = None,
+      generator = None,
+      rights = None,
+      authors = List(),
+      contributors = List(),
+      creator = None,
+      publisher = None,
+      categories = List(),
+      links = List())
+    val owcEntries = metadataList.map(_.asOwcEntry(luceneService))
+    OwcDocument(id, bbox, documentProperties, owcEntries)
   }
 }
 
@@ -577,47 +661,6 @@ object MdMetadataSetWriter extends Writes[MdMetadataSet] with ClassnameLogger {
 
   private lazy val ctx = SpatialContext.GEO
   private lazy val jsWriter = ctx.getFormats().getWriter(ShapeIO.GeoJSON)
-
-  /**
-    * provides the GeoJSON Polygon geometry from the feature's Rectangle bbox
-    *
-    * @param gmd MdMetadataSet
-    * @return JsValue with GeoJSON Polygon geometry
-    */
-  def getJsGeom(gmd: MdMetadataSet): JsValue = {
-    val geometry = jsWriter.toString(gmd.bbox)
-
-    if (gmd.bbox.getCrossesDateLine) {
-      val newCoordinates = Json.arr(Json.arr(
-        Json.arr(gmd.bbox.getMinX, gmd.bbox.getMinY), //SW
-        Json.arr(gmd.bbox.getMinX, gmd.bbox.getMaxY), //NW
-        Json.arr(gmd.bbox.getMaxX+360, gmd.bbox.getMaxY), //NE
-        Json.arr(gmd.bbox.getMaxX+360, gmd.bbox.getMinY), //NW
-        Json.arr(gmd.bbox.getMinX, gmd.bbox.getMinY)  //SW
-      ))
-      Json.obj("type" -> "Polygon", "coordinates" -> newCoordinates)
-    }
-    else {
-      Json.parse(geometry)
-    }
-  }
-
-  /**
-    * if bbox crosses dateline (east < west) then correct this for OL3
- *
-    * @param bbox
-    * @return
-    */
-  def correctBbox(bbox: JsArray): JsArray = {
-    val west = bbox(0).asOpt[Double].get
-    val east = if (bbox(0).asOpt[Double].get > bbox(2).asOpt[Double].get) {
-                 bbox(2).asOpt[Double].get + 360
-               }
-               else {
-                 bbox(2).asOpt[Double].get
-               }
-    Json.arr(west, bbox(1).get, east, bbox(3).get)
-  }
 
   /**
     * Converts [[MdMetadataSet]] object into [[JsObject]] as GeoJSON
@@ -653,6 +696,47 @@ object MdMetadataSetWriter extends Writes[MdMetadataSet] with ClassnameLogger {
       "properties" -> properties
     )
   }
+
+  /**
+    * provides the GeoJSON Polygon geometry from the feature's Rectangle bbox
+    *
+    * @param gmd MdMetadataSet
+    * @return JsValue with GeoJSON Polygon geometry
+    */
+  def getJsGeom(gmd: MdMetadataSet): JsValue = {
+    val geometry = jsWriter.toString(gmd.bbox)
+
+    if (gmd.bbox.getCrossesDateLine) {
+      val newCoordinates = Json.arr(Json.arr(
+        Json.arr(gmd.bbox.getMinX, gmd.bbox.getMinY), //SW
+        Json.arr(gmd.bbox.getMinX, gmd.bbox.getMaxY), //NW
+        Json.arr(gmd.bbox.getMaxX + 360, gmd.bbox.getMaxY), //NE
+        Json.arr(gmd.bbox.getMaxX + 360, gmd.bbox.getMinY), //NW
+        Json.arr(gmd.bbox.getMinX, gmd.bbox.getMinY) //SW
+      ))
+      Json.obj("type" -> "Polygon", "coordinates" -> newCoordinates)
+    }
+    else {
+      Json.parse(geometry)
+    }
+  }
+
+  /**
+    * if bbox crosses dateline (east < west) then correct this for OL3
+    *
+    * @param bbox
+    * @return
+    */
+  def correctBbox(bbox: JsArray): JsArray = {
+    val west = bbox(0).asOpt[Double].get
+    val east = if (bbox(0).asOpt[Double].get > bbox(2).asOpt[Double].get) {
+      bbox(2).asOpt[Double].get + 360
+    }
+               else {
+                 bbox(2).asOpt[Double].get
+               }
+    Json.arr(west, bbox(1).get, east, bbox(3).get)
+  }
 }
 
 /**
@@ -661,65 +745,10 @@ object MdMetadataSetWriter extends Writes[MdMetadataSet] with ClassnameLogger {
   * @see [[Writes]]
   */
 object GeoJSONFeatureCollectionWriter extends Writes[List[MdMetadataSet]] with ClassnameLogger {
-
-  private lazy val ctx = SpatialContext.GEO
-//  private lazy val jsWriter = ctx.getFormats().getWriter(ShapeIO.GeoJSON)
-  implicit val gmdElementSetWrite = MdMetadataSetWriter
   lazy val WORLD = ctx.getWorldBounds
-
-  /**
-    * builds a JsArray from single MdMetadataSet GeoJSON features
-    *
-    * @param gmdList List [[MdMetadataSet]]
-    * @return JsArray MdMetadataSet
-    */
-  def getArrayOfFeatures(gmdList: List[MdMetadataSet]): JsValue = {
-    val jsList = gmdList.map(gmd => {
-      Json.toJson(gmd)
-    })
-    Json.toJson(jsList)
-  }
-
-  /**
-    * computes the overall bounding box for the featurecollection
-    *
-    * @param gmdList List [[MdMetadataSet]]
-    * @return JsArray with 4 bbox double values (e, w, s, n)
-    */
-  def getBoundingBox(gmdList: List[MdMetadataSet]): JsValue = {
-    import collection.JavaConverters._
-    import collection.mutable._
-
-    logger.debug(f"gmdList.size() ${gmdList.size}")
-
-    val shapeBuffer: scala.collection.mutable.Buffer[Rectangle] = Buffer[Rectangle]()
-    gmdList.foreach(gmd =>
-      shapeBuffer.append(gmd.bbox)
-    )
-    logger.debug(f"shapeBuffer.size() ${shapeBuffer.size}")
-
-    val shapeList: java.util.List[Rectangle] = new util.ArrayList[Rectangle]
-    shapeList.addAll(shapeBuffer.asJava)
-    logger.debug(f"shapeList.size() ${shapeList.size}")
-    // shapes - Copied by reference! (make a defensive copy if caller modifies), also needs RandomAccess
-    // https://locationtech.github.io/spatial4j/apidocs/org/locationtech/spatial4j/shape/ShapeCollection.html
-    val shapeCollection = new ShapeCollection[Rectangle](shapeList, ctx)
-    logger.debug(f"shapeCollection.size() ${shapeCollection.size}")
-
-    val envelope = if (shapeCollection.size > 0) {
-      shapeCollection.getBoundingBox
-    }
-                   else {
-                     WORLD
-                   }
-
-    Json.arr(
-      JsNumber(envelope.getMinX),
-      JsNumber(envelope.getMinY),
-      JsNumber(envelope.getMaxX),
-      JsNumber(envelope.getMaxY)
-    )
-  }
+  //  private lazy val jsWriter = ctx.getFormats().getWriter(ShapeIO.GeoJSON)
+  implicit val gmdElementSetWrite = MdMetadataSetWriter
+  private lazy val ctx = SpatialContext.GEO
 
   /**
     * Converts List of [[MdMetadataSet]] object into [[JsObject]] as GeoJSON
@@ -750,6 +779,64 @@ object GeoJSONFeatureCollectionWriter extends Writes[List[MdMetadataSet]] with C
         "features" -> Json.arr()
       )
     }
+  }
+
+  /**
+    * builds a JsArray from single MdMetadataSet GeoJSON features
+    *
+    * @param gmdList List [[MdMetadataSet]]
+    * @return JsArray MdMetadataSet
+    */
+  def getArrayOfFeatures(gmdList: List[MdMetadataSet]): JsValue = {
+    val jsList = gmdList.map(gmd => {
+      Json.toJson(gmd)
+    })
+    Json.toJson(jsList)
+  }
+
+  /**
+    * computes the overall bounding box for the featurecollection
+    *
+    * @param gmdList List [[MdMetadataSet]]
+    * @return JsArray with 4 bbox double values (e, w, s, n)
+    */
+  def getBoundingBox(gmdList: List[MdMetadataSet]): JsValue = {
+    val envelope: Rectangle = getBoundingBoxAsRect(gmdList);
+    Json.arr(
+      JsNumber(envelope.getMinX),
+      JsNumber(envelope.getMinY),
+      JsNumber(envelope.getMaxX),
+      JsNumber(envelope.getMaxY)
+    )
+  }
+
+  def getBoundingBoxAsRect(gmdList: List[MdMetadataSet]): Rectangle = {
+    import collection.JavaConverters._
+    import collection.mutable._
+
+    logger.debug(f"gmdList.size() ${gmdList.size}")
+
+    val shapeBuffer: scala.collection.mutable.Buffer[Rectangle] = Buffer[Rectangle]()
+    gmdList.foreach(gmd =>
+      shapeBuffer.append(gmd.bbox)
+    )
+    logger.debug(f"shapeBuffer.size() ${shapeBuffer.size}")
+
+    val shapeList: java.util.List[Rectangle] = new util.ArrayList[Rectangle]
+    shapeList.addAll(shapeBuffer.asJava)
+    logger.debug(f"shapeList.size() ${shapeList.size}")
+    // shapes - Copied by reference! (make a defensive copy if caller modifies), also needs RandomAccess
+    // https://locationtech.github.io/spatial4j/apidocs/org/locationtech/spatial4j/shape/ShapeCollection.html
+    val shapeCollection = new ShapeCollection[Rectangle](shapeList, ctx)
+    logger.debug(f"shapeCollection.size() ${shapeCollection.size}")
+
+    if (shapeCollection.size > 0) {
+      shapeCollection.getBoundingBox
+    }
+    else {
+      WORLD
+    }
+
   }
 }
 

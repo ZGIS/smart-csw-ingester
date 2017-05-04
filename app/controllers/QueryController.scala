@@ -25,6 +25,7 @@ import javax.inject._
 import models.ErrorResult
 import play.api.libs.json._
 import models.gmd.{GeoJSONFeatureCollectionWriter, MdMetadataSet}
+import models.owc.OwcDocument
 import org.apache.lucene.queryparser.classic.ParseException
 import play.api.mvc._
 import services.LuceneService
@@ -42,15 +43,22 @@ class QueryController @Inject()(luceneService: LuceneService) extends Controller
   /**
     * Action that passes the query from URL to the [[services.LuceneService]].
     *
-    * @param query
+    * @param query Option[String] that contains the Lucene query. Defaults to [[QueryController.DEFAULT_QUERY]]
+    * @param bboxWkt Option[String] that contains the bbox (as WKT) to search in.
+    * @param fromDateStr Option[String] containing an ISO-DATE for lower date bound
+    * @param toDateStr Option[String] containing an ISO-DATE for upper date bound
+    * @param maxNumberOfResults Option[Int] containing the max number of documents to return
+    * @param contentType Option[String] containing the type, of the result document. Valid values: "GeoJson" and "OwcContext". Defaults to "GeoJson"
+    *
+    * @see [[services.LuceneService]]
     * @return
-    * @see services.LuceneService
     */
   def query(query: Option[String],
             bboxWkt: Option[String],
             fromDateStr: Option[String],
             toDateStr: Option[String],
-            maxNumberOfResults: Option[Int]): Action[AnyContent] = Action {
+            maxNumberOfResults: Option[Int],
+            contentType: Option[String]): Action[AnyContent] = Action {
     logger.info(s"Query CSW: ${query.getOrElse("NONE")}")
     // TODO SR make tuple expression out of this
     val fromDate = fromDateStr match {
@@ -68,12 +76,21 @@ class QueryController @Inject()(luceneService: LuceneService) extends Controller
         maxNumberOfResults)
       val featureCollection = searchResult.documents
 
-      // TODO AK here we could insert the query string again if needed
-      val jsonTransformer = __.json.update(
-        (__ \ 'countMatched).json.put(JsNumber(searchResult.numberOfMatchingDocuments)))
-      val resultJson: JsValue = Json.toJson(featureCollection)
+      contentType.getOrElse("GeoJson") match {
+        case "GeoJson" => {
+          // TODO AK here we could insert the query string again if needed
+          val jsonTransformer = __.json.update(
+            (__ \ 'countMatched).json.put(JsNumber(searchResult.numberOfMatchingDocuments)))
+          val resultJson: JsValue = Json.toJson(featureCollection)
 
-      Ok(resultJson.transform(jsonTransformer).get).as(JSON)
+          Ok(resultJson.transform(jsonTransformer).get).as(JSON)
+        }
+        case "OwcContext" => {
+          val resultJson = MdMetadataSet.toOwcDocument(featureCollection, "arglgarglgarglgarglgargl", luceneService).toJson
+          Ok(resultJson).as(JSON)
+        }
+        case _ => BadRequest(Json.toJson(ErrorResult(s"Unknown content type: ${contentType}", None))).as(JSON)
+      }
     }
     catch {
       case e: ParseException => { // TODO SR generally catch Exception is BAD(tm) but can we live with that here?

@@ -120,7 +120,7 @@ object CIOnlineResource extends ClassnameLogger {
     * @see [[https://geo-ide.noaa.gov/wiki/index.php?title=CI_OnlineResource NOAA EDM Wiki - CI_OnlineResource]]
     * @return
     */
-  def fromXml(nodeSeq: NodeSeq, origin: String): CIOnlineResource = {
+  def fromXml(nodeSeq: NodeSeq, origin: String): List[CIOnlineResource] = {
     val linkage = (nodeSeq \ "linkage" \ "URL").text.trim
     logger.debug(s"Linkage: ${linkage}")
 
@@ -140,13 +140,13 @@ object CIOnlineResource extends ClassnameLogger {
       case "OGC:WCS-1.1.0-http-get-capabilities" => ResourceType.METADATA
       case _ => linkage match {
         //from here we start some magic by looking at URLs
-        case r"https?:\/\/geoportal\.doc\.govt\.nz\/(?i:ArcGIS)\/.*\/MapServer" => ResourceType.METADATA
+        case r"https?:\/\/geoportal\.doc\.govt\.nz\/(?i:ArcGIS)\/.*\/MapServer" => ResourceType.WEBSITE
         case r"https?:\/\/data.linz.govt.nz\/layer\/.*" => ResourceType.MAP
         case _ => ResourceType.WEBSITE
       }
     }
     logger.debug(s"ResourceType: ${resourceType}")
 
-    CIOnlineResource(linkage, name, description, resourceType)
+    CIOnlineResource(linkage, name, description, resourceType) :: Nil
   }
 }
