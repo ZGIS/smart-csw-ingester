@@ -1,4 +1,5 @@
 {
   "linkage": "https://www.servername.com/resource/index.html",
+  "protocol": "WWW:LINK-1.0-http--metadata-URL",
   "resourceType": "metadata"
 }

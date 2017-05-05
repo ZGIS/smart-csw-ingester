@@ -43,8 +43,8 @@ class MdMetadataJsonWriterSpec extends PlaySpec {
     lazy val xmlResource2 = this.getClass().getResource("sac_rs_ewt_metadata.xml")
     lazy val xml1 = scala.xml.XML.load(xmlResource1)
     lazy val xml2 = scala.xml.XML.load(xmlResource2)
-    lazy val parsedElement1 = MdMetadataSet.fromXml(xml1, "linz")
-    lazy val parsedElement2 = MdMetadataSet.fromXml(xml2, "smart")
+    lazy val parsedElement1 = MdMetadataSet.fromXml(xml1, "linz", "http://data.linz.govt.nz/feeds/csw/csw")
+    lazy val parsedElement2 = MdMetadataSet.fromXml(xml2, "smart", "https://portal.smart-project.info/pycsw/csw")
 
     "parse without errors" in {
       parsedElement1 mustBe defined

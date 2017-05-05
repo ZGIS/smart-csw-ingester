@@ -19,6 +19,7 @@
 
 package models.gmd
 
+import java.net.URLEncoder
 import java.time._
 import java.time.format._
 import java.util
@@ -31,7 +32,6 @@ import org.locationtech.spatial4j.context.SpatialContext
 import org.locationtech.spatial4j.io.ShapeIO
 import org.locationtech.spatial4j.shape.{Rectangle, ShapeCollection}
 import play.api.libs.json.{JsObject, _}
-import services.LuceneService
 import utils.ClassnameLogger
 import utils.StringUtils._
 
@@ -69,7 +69,8 @@ case class MdMetadataSet(fileIdentifier: String,
                          bbox: Rectangle,
                          lineageStmt: String,
                          linkage: List[CIOnlineResource],
-                         origin: String) extends ClassnameLogger {
+                         origin: String,
+                         originUrl: String) extends ClassnameLogger {
   require(!fileIdentifier.trim.isEmpty, "FileIdentifier was empty")
 
   override def toString: String = {
@@ -88,7 +89,9 @@ case class MdMetadataSet(fileIdentifier: String,
        |${bboxAsWkt},
        |${lineageStmt},
        |${linkage},
-       |${origin})
+       |${origin},
+       |${originUrl}
+       |)
      """.stripMargin.replaceAll("\n", " ")
   }
 
@@ -97,7 +100,7 @@ case class MdMetadataSet(fileIdentifier: String,
     *
     * @return LuceneDocument for index
     */
-  def asLuceneDocument(): Document = {
+  def asLuceneDocument: Document = {
     val doc = new Document()
 
     doc.add(new TextField("fileIdentifier", fileIdentifier, Field.Store.YES))
@@ -137,6 +140,7 @@ case class MdMetadataSet(fileIdentifier: String,
     bboxFields.foreach(field => doc.add(field))
 
     doc.add(new StringField("origin", origin, Field.Store.YES))
+    doc.add(new StringField("originUrl", originUrl, Field.Store.YES))
 
     //FIXME decide if use catch_all field or how to build a query that queries all fields
     doc.add(new TextField("catch_all", fileIdentifier, Field.Store.YES))
@@ -183,9 +187,10 @@ case class MdMetadataSet(fileIdentifier: String,
 
   /**
     * Converts MdMetadataSet to [[OwcEntry]]
+    *
     * @return
     */
-  def asOwcEntry(luceneService: LuceneService): OwcEntry = {
+  def asOwcEntry: OwcEntry = {
     import utils.StringUtils._
 
     val entryProperties = OwcProperties(UUID.randomUUID(),
@@ -200,26 +205,32 @@ case class MdMetadataSet(fileIdentifier: String,
       creator = None,
       publisher = None,
       categories = List(),
-      links = this.linkage.filter(_.resourceType == ResourceType.WEBSITE)
-        .map(link => OwcLinkJs("alternates", mimeType = Some("text/html"), href = link.linkage, title = link.name))
+      links = this.linkage.map(_.asOwcLink).filter(_.isDefined).map(_.get)
     )
 
-    val offerings = CswOffering(uuid = UUID.randomUUID(),
-      operations = OwcOperation(uuid = UUID.randomUUID(),
-        code = "GetCapabilities",
-        method = "GET",
-        contentType = "application/xml",
-        href = luceneService.getCatalogueUrl(this.origin) + "?request=GetCapabilities&service=CSW",
-        request = None,
-        result = None) ::
-        OwcOperation(uuid = UUID.randomUUID(),
-        code = "GetRecordById",
-        method = "GET",
-        contentType = "application/xml",
-        href = luceneService.getCatalogueUrl(this.origin) + "?request=GetRecordById&version=2.0.2&service=CSW&Id=" + this.fileIdentifier,
-        request = None,
-        result = None) :: Nil,
-      content = List()) :: Nil
+    val offerings =
+    // convert linkages to offerings (ist might be empty if there are no linkages that can be converted to offerings
+      linkage.flatMap(_.asOwcOfferings) :::
+        //Offering to get the original metadata document. Every document in the index should have that
+        List(CswOffering(uuid = UUID.randomUUID(),
+          operations = List(OwcOperation(uuid = UUID.randomUUID(),
+            code = "GetCapabilities",
+            method = "GET",
+            contentType = "application/xml",
+            href = s"${this.originUrl}?request=GetCapabilities&service=CSW",
+            request = None,
+            result = None),
+            OwcOperation(uuid = UUID.randomUUID(),
+              code = "GetRecordById",
+              method = "GET",
+              contentType = "application/xml",
+              href = s"${this.originUrl}?request=GetRecordById&version=2.0.2&service=CSW&elementSetName=full" +
+                s"&outputSchema=http%3A%2F%2Fwww.isotc211.org%2F2005%2Fgmd" +
+                s"&Id=${URLEncoder.encode(fileIdentifier, "UTF-8")}",
+              request = None,
+              result = None)),
+          content = List())
+        )
 
     OwcEntry(id = fileIdentifier,
       bbox = Some(bbox),
@@ -246,7 +257,7 @@ object MdMetadataSet extends ClassnameLogger {
     * @return Some(MdMetadataSet) or None if parsing error
     */
   def fromXml(nodeSeq: NodeSeq): Option[MdMetadataSet] = {
-    fromXml(nodeSeq, "")
+    fromXml(nodeSeq, "", "")
   }
 
   /**
@@ -256,7 +267,7 @@ object MdMetadataSet extends ClassnameLogger {
     * @param origin  catalogue name of origin
     * @return Some(MdMetadataSet) or None if parsing error
     */
-  def fromXml(nodeSeq: NodeSeq, origin: String): Option[MdMetadataSet] = {
+  def fromXml(nodeSeq: NodeSeq, origin: String, originUrl: String): Option[MdMetadataSet] = {
     try {
       nodeSeq.head.label match {
         case "MD_Metadata" =>
@@ -275,7 +286,8 @@ object MdMetadataSet extends ClassnameLogger {
             bboxFromXml(nodeSeq),
             lineageFromXml(nodeSeq),
             linkageFromXml(nodeSeq, origin),
-            origin
+            origin,
+            originUrl
           ))
         case _ =>
           throw new IllegalArgumentException(f"Expected MDMetadataNode but found  ${nodeSeq.head.label}")
@@ -346,7 +358,7 @@ object MdMetadataSet extends ClassnameLogger {
       ).filter(_.isDefined)).map(_.get) //filter None and remove the Option
 
     if (datesList.isEmpty) {
-      logger.warn(f"Could not parse and of the dates (${dateStrings.mkString(", ")})")
+      logger.warn(f"Could not parse any of the dates (${dateStrings.mkString(", ")})")
       LocalDate.ofEpochDay(0) //1970-01-01
     }
     else {
@@ -452,6 +464,7 @@ object MdMetadataSet extends ClassnameLogger {
 
   /**
     * extracts lineage statement from XML
+    *
     * @param nodeSeq the provided XML
     * @return String with the lineage statement
     */
@@ -472,19 +485,20 @@ object MdMetadataSet extends ClassnameLogger {
     * @return
     */
   def linkageFromXml(nodeSeq: NodeSeq, origin: String): List[CIOnlineResource] = {
-    //technically there can be linkages in CI_Contact, but that is more like the website of the contact and not linkages to the data itself
-    //gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:onlineResource
-    //gmd:MD_Metadata/gmd:identificationInfo/srv:SV_ServiceIdentification/srv:containsOperations/srv:SV_OperationMetadata/srv:connectPoint/gmd:CI_OnlineResource
-    //gmd:MD_Metadata/gmd:metadataExtensionInfo/gmd:MD_MetadataExtensionInformation/gmd:extensionOnlineResource
-
+    // technically there can be linkages in CI_Contact, but that is more like the website of the contact and not linkages to the data itself
+    // gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:onlineResource
+    // gmd:MD_Metadata/gmd:identificationInfo/srv:SV_ServiceIdentification/srv:containsOperations/srv:SV_OperationMetadata/srv:connectPoint/gmd:CI_OnlineResource
+    // gmd:MD_Metadata/gmd:metadataExtensionInfo/gmd:MD_MetadataExtensionInformation/gmd:extensionOnlineResource
     (
-      //gmd:MD_Metadata/gmd:distributionInfo/gmd:MD_Distribution/gmd:transferOptions/gmd:MD_DigitalTransferOptions/gmd:online
-      (nodeSeq \\ "MD_Metadata" \\ "distributionInfo" \\ "MD_Distribution" \\ "transferOptions" \\ "MD_DigitalTransferOptions" \\ "onLine" \\ "CI_OnlineResource") ++
-        //gmd:MD_Metadata/gmd:distributionInfo/gmd:MD_Distribution/gmd:distributor/gmd:MD_Distributor/gmd:distributorTransferOptions/gmd:MD_DigitalTransferOptions/gmd:online
-        (nodeSeq \\ "MD_Metadata" \\ "distributionInfo" \\ "MD_Distribution" \\ "distributor" \\ "MD_Distributor" \\ "transferOptions" \\ "MD_DigitalTransferOptions" \\ "onLine" \\ "CI_OnlineResource")
+      // gmd:MD_Metadata/gmd:distributionInfo/gmd:MD_Distribution/gmd:transferOptions/gmd:MD_DigitalTransferOptions/gmd:onLine
+      (nodeSeq \\ "MD_Metadata" \\ "distributionInfo" \\ "MD_Distribution" \\ "transferOptions" \\
+        "MD_DigitalTransferOptions" \\ "onLine" \\ "CI_OnlineResource") ++
+        // gmd:MD_Metadata/gmd:distributionInfo/gmd:MD_Distribution/gmd:distributor/gmd:MD_Distributor/gmd:distributorTransferOptions/gmd:MD_DigitalTransferOptions/gmd:online
+        (nodeSeq \\ "MD_Metadata" \\ "distributionInfo" \\ "MD_Distribution" \\ "distributor" \\ "MD_Distributor" \\
+          "distributorTransferOptions" \\ "MD_DigitalTransferOptions" \\ "onLine" \\ "CI_OnlineResource")
       )
-      .flatMap(elem => CIOnlineResource.fromXml(elem, origin)
-    ).toList
+      .map(elem => CIOnlineResource.fromXml(elem, origin)
+      ).toList
   }
 
   /**
@@ -607,7 +621,8 @@ object MdMetadataSet extends ClassnameLogger {
       linkage = doc.getValues("linkageFull").toList.map(str =>
         Json.fromJson[CIOnlineResource](Json.parse(str)).get
       ),
-      origin = doc.get("origin")
+      origin = doc.get("origin"),
+      originUrl = doc.get("originUrl")
     )
   }
 
@@ -631,7 +646,7 @@ object MdMetadataSet extends ClassnameLogger {
     * @param metadataList List[MdMetadataSet] containing the entries
     * @param id           String containing the ID for the OwcContext document
     */
-  def toOwcDocument(metadataList: List[MdMetadataSet], id: String, luceneService: LuceneService): OwcDocument = {
+  def toOwcDocument(metadataList: List[MdMetadataSet], id: String): OwcDocument = {
     val bbox = Some(GeoJSONFeatureCollectionWriter.getBoundingBoxAsRect(metadataList))
     val documentProperties = OwcProperties(UUID.randomUUID(),
       language = "en",
@@ -646,7 +661,7 @@ object MdMetadataSet extends ClassnameLogger {
       publisher = None,
       categories = List(),
       links = List())
-    val owcEntries = metadataList.map(_.asOwcEntry(luceneService))
+    val owcEntries = metadataList.map(_.asOwcEntry)
     OwcDocument(id, bbox, documentProperties, owcEntries)
   }
 }
@@ -687,7 +702,8 @@ object MdMetadataSetWriter extends Writes[MdMetadataSet] with ClassnameLogger {
       ),
       "lineageStmt" -> gmd.lineageStmt,
       "linkage" -> gmd.linkage.map(Json.toJson(_)),
-      "origin" -> gmd.origin
+      "origin" -> gmd.origin,
+      "originUrl" -> gmd.originUrl
     )
 
     Json.obj(
@@ -801,7 +817,7 @@ object GeoJSONFeatureCollectionWriter extends Writes[List[MdMetadataSet]] with C
     * @return JsArray with 4 bbox double values (e, w, s, n)
     */
   def getBoundingBox(gmdList: List[MdMetadataSet]): JsValue = {
-    val envelope: Rectangle = getBoundingBoxAsRect(gmdList);
+    val envelope: Rectangle = getBoundingBoxAsRect(gmdList)
     Json.arr(
       JsNumber(envelope.getMinX),
       JsNumber(envelope.getMinY),
@@ -836,7 +852,6 @@ object GeoJSONFeatureCollectionWriter extends Writes[List[MdMetadataSet]] with C
     else {
       WORLD
     }
-
   }
 }
 

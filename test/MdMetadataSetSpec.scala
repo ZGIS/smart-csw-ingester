@@ -150,7 +150,7 @@ class MdMetadataSetSpec extends PlaySpec {
   "MD_Metadata_COMPLETE.xml" must {
     lazy val xmlResource = this.getClass().getResource("MD_Metadata_COMPLETE.xml")
     lazy val xml = scala.xml.XML.load(xmlResource)
-    lazy val parsedElementOption = MdMetadataSet.fromXml(xml, "linz")
+    lazy val parsedElementOption = MdMetadataSet.fromXml(xml, "linz", "http://data.linz.govt.nz/feeds/csw/csw")
 
     "parse without errors" in {
       parsedElementOption mustBe defined
@@ -177,7 +177,7 @@ class MdMetadataSetSpec extends PlaySpec {
   "MD_Metadata_NO_BBOX.xml" must {
     lazy val xmlResource = this.getClass().getResource("MD_Metadata_NO_BBOX.xml")
     lazy val xml = scala.xml.XML.load(xmlResource)
-    lazy val parsedElementOption = MdMetadataSet.fromXml(xml, "linz")
+    lazy val parsedElementOption = MdMetadataSet.fromXml(xml, "linz", "http://data.linz.govt.nz/feeds/csw/csw")
     lazy val world = ctx.getShapeFactory().rect(-180.0, 180.0, -90.0, 90.0)
 
     "parse without errors" in {
@@ -193,7 +193,7 @@ class MdMetadataSetSpec extends PlaySpec {
   "MD_Metadata_NO_TOPICCAT.xml" must {
     lazy val xmlResource = this.getClass().getResource("MD_Metadata_NO_TOPICCAT.xml")
     lazy val xml = scala.xml.XML.load(xmlResource)
-    lazy val parsedElementOption = MdMetadataSet.fromXml(xml, "mfe")
+    lazy val parsedElementOption = MdMetadataSet.fromXml(xml, "mfe", "http://data.mfe.govt.nz/feeds/csw/csw")
 
     "parse without errors" in {
       parsedElementOption mustBe defined

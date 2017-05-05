@@ -58,7 +58,7 @@ class QueryController @Inject()(luceneService: LuceneService) extends Controller
             fromDateStr: Option[String],
             toDateStr: Option[String],
             maxNumberOfResults: Option[Int],
-            contentType: Option[String]): Action[AnyContent] = Action {
+            contentType: Option[String]): Action[AnyContent] = Action { implicit request =>
     logger.info(s"Query CSW: ${query.getOrElse("NONE")}")
     // TODO SR make tuple expression out of this
     val fromDate = fromDateStr match {
@@ -86,14 +86,20 @@ class QueryController @Inject()(luceneService: LuceneService) extends Controller
           Ok(resultJson.transform(jsonTransformer).get).as(JSON)
         }
         case "OwcContext" => {
-          val resultJson = MdMetadataSet.toOwcDocument(featureCollection, "arglgarglgarglgarglgargl", luceneService).toJson
+          // FIXME SR we should use the standardized "FORWARDED" header. Or better both? I hate HTTP(S)!
+          // See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Forwarded
+          val proto = request.headers.get("X-Forwarded-Proto").getOrElse("http")
+          val host = request.headers.get("X-Forwarded-Host").getOrElse(request.headers("host"))
+          val url = s"${proto}://${request.headers("host")}${request.uri}"
+          logger.debug(s"Requested URL by client: ${url}")
+          val resultJson = MdMetadataSet.toOwcDocument(featureCollection, url).toJson
           Ok(resultJson).as(JSON)
         }
         case _ => BadRequest(Json.toJson(ErrorResult(s"Unknown content type: ${contentType}", None))).as(JSON)
       }
     }
     catch {
-      case e: ParseException => { // TODO SR generally catch Exception is BAD(tm) but can we live with that here?
+      case e: ParseException => {
         logger.error("Exception parsing query: " + e.getMessage, e);
         val error: ErrorResult = ErrorResult(s"Could not parse query '${query.get}' ", Some(e.getMessage))
         InternalServerError(Json.toJson(error)).as(JSON)

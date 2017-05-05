@@ -73,7 +73,8 @@
             "resourceType": "map"
           }
         ],
-        "origin": "linz"
+        "origin": "linz",
+        "originUrl": "http://data.linz.govt.nz/feeds/csw/csw"
       }
     },
     {
@@ -138,7 +139,8 @@
             "resourceType": "website"
           }
         ],
-        "origin": "smart"
+        "origin": "smart",
+        "originUrl": "https://portal.smart-project.info/pycsw/csw"
       }
     }
   ]

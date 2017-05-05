@@ -19,6 +19,11 @@
 
 package models.gmd
 
+import java.util.UUID
+
+import models.gmd.CIOnlineResource.logger
+import models.gmd.ResourceType.WEBSITE
+import models.owc._
 import utils.ClassnameLogger
 import play.api.libs.json._
 import play.api.libs.json.Reads._
@@ -77,8 +82,9 @@ object ResourceType {
 case class CIOnlineResource(linkage: String,
                             name: Option[String],
                             description: Option[String],
+                            protocol: Option[String],
                             resourceType: ResourceType
-                           ) {
+                           ) extends ClassnameLogger {
   require(!linkage.trim.isEmpty, "LinkageURL was empty")
 
   override def toString: String = {
@@ -86,8 +92,86 @@ case class CIOnlineResource(linkage: String,
        |$linkage,
        |${name},
        |${description},
+       |${protocol}
        |${resourceType}
      """.stripMargin.replaceAll("\n", " ")
+  }
+
+  /**
+    * Converts to a Option[OwcLink].
+    * @return Some[OwcLink] or None if CIOnlineResource could not be converted sensibly
+    */
+  def asOwcLink: Option[OwcLink] = {
+    import utils.StringUtils._
+
+    protocol match {
+      case Some("WWW:LINK-1.0-http--metadata-URL") => Some(OwcLinkJs("via", mimeType = Some("application/xml"), href = linkage, title = name))
+      case Some("WWW:LINK-1.0-http--link") => Some(OwcLinkJs("alternates", mimeType = Some("text/html"), href = linkage, title = name))
+      case Some(r"WWW:LINK-1.0-http--download(?:data)?") => {
+        val mimeType = linkage.toLowerCase match {
+          case r".*\.jpe?g" => "image/jpeg"
+          case r".*\.png" => "image/png"
+          case r".*\.pdf" => "application/pdf"
+          case r".*\.xlsx?" => "application/excel"
+          case r".*\.txt" => "text/plain"
+          case r".*\.csv" => "text/csv"
+          case _ => "application/octet-stream"
+        }
+        Some(OwcLinkJs("data", mimeType = Some(mimeType), href = linkage, title = name))
+      }
+      case _ => linkage match {
+        case r"https?:\/\/data.linz.govt.nz\/layer\/.*" => Some(OwcLinkJs("alternates", mimeType = Some("text/html"), href = linkage, title = name))
+        case r"https?:\/\/lris.scinfo.org.nz\/layer\/.*" => Some(OwcLinkJs("alternates", mimeType = Some("text/html"), href = linkage, title = name))
+        case r"https?:\/\/geoportal\.doc\.govt\.nz\/(?i:ArcGIS)\/.*\/MapServer" => Some(OwcLinkJs("alternates", mimeType = Some("text/html"), href = linkage, title = name))
+        case _ => resourceType match {
+          case ResourceType.WEBSITE => Some(OwcLinkJs("alternates", mimeType = Some("text/html"), href = linkage, title = name))
+          case _ => None
+        }
+      }
+      }
+  }
+
+  /**
+    * Converts OnlineResource to a List of OwcOffering. List might be empty, if the CIOnlineResource cannot be
+    * converted to offerings in a sensible way.
+    *
+    * @return
+    */
+  def asOwcOfferings: List[OwcOffering] = {
+    import utils.StringUtils._
+    linkage match {
+      case r"https?:\/\/geoportal\.doc\.govt\.nz\/(?i:ArcGIS)\/.*\/MapServer" =>
+        // GeoPortals ArcGIS server offers WMS/WFS for all layers I have seen. So we generate offerings for that.
+        List(
+          WmsOffering(uuid = UUID.randomUUID(),
+            operations = List(
+              OwcOperation(uuid = UUID.randomUUID(),
+                code = "GetCapabilities",
+                method = "GET",
+                contentType = "application/xml",
+                href = s"${linkage}/WMSServer?request=GetCapabilities&service=WMS",
+                request = None,
+                result = None
+              )
+            ),
+            content = List()
+          ),
+          WfsOffering(uuid = UUID.randomUUID(),
+            operations = List(
+              OwcOperation(uuid = UUID.randomUUID(),
+                code = "GetCapabilities",
+                method = "GET",
+                contentType = "application/xml",
+                href = s"${linkage}/WFSServer?request=GetCapabilities&service=WFS",
+                request = None,
+                result = None
+              )
+            ),
+            content = List()
+          )
+        )
+      case _ => Nil
+    }
   }
 }
 
@@ -99,6 +183,7 @@ object CIOnlineResource extends ClassnameLogger {
     (JsPath \ "linkage").write[String] and
       (JsPath \ "name").writeNullable[String] and
       (JsPath \ "description").writeNullable[String] and
+      (JsPath \ "protocol").writeNullable[String] and
       (JsPath \ "resourceType").write[ResourceType]
     )(unlift(CIOnlineResource.unapply))
 
@@ -109,6 +194,7 @@ object CIOnlineResource extends ClassnameLogger {
     (JsPath \ "linkage").read[String] and
       (JsPath \ "name").readNullable[String] and
       (JsPath \ "description").readNullable[String] and
+      (JsPath \ "protocol").readNullable[String] and
       (JsPath \ "resourceType").read[ResourceType]
     ) (CIOnlineResource.apply _)
 
@@ -120,33 +206,41 @@ object CIOnlineResource extends ClassnameLogger {
     * @see [[https://geo-ide.noaa.gov/wiki/index.php?title=CI_OnlineResource NOAA EDM Wiki - CI_OnlineResource]]
     * @return
     */
-  def fromXml(nodeSeq: NodeSeq, origin: String): List[CIOnlineResource] = {
+  def fromXml(nodeSeq: NodeSeq, origin: String): CIOnlineResource = {
     val linkage = (nodeSeq \ "linkage" \ "URL").text.trim
     logger.debug(s"Linkage: ${linkage}")
 
     import utils.StringUtils._
-    val name = (nodeSeq \ "name" \ "CharacterString").text.trim.toOption()
+    val name = (nodeSeq \ "name" \ "CharacterString").text.toOption()
     logger.debug(s"Name: ${name}")
-    val description = (nodeSeq \ "description" \ "CharacterString").text.trim.toOption()
+    val description = (nodeSeq \ "description" \ "CharacterString").text.toOption()
     logger.debug(s"Description: ${description}")
 
-    val protocol = (nodeSeq \ "protocol" \ "CharacterString").text.trim
+    val protocol = linkage match {
+        // the GNS CSW has a little bit of a stupid way of assigning protocol to the linkages...
+      case r"https?:\/\/data.gns.cri.nz\/rgmad\/(?:thumbs|images|layers)\/.*" => "WWW:LINK-1.0-http--download".toOption()
+      case _ => (nodeSeq \ "protocol" \ "CharacterString").text.toOption()
+    }
     logger.debug(s"Protocol ${protocol}")
 
     import utils.StringUtils.Regex
     val resourceType = protocol match {
-      case "WWW:LINK-1.0-http--metadata-URL" => ResourceType.METADATA
-      case "WWW:LINK-1.0-http--link" => ResourceType.WEBSITE
-      case "OGC:WCS-1.1.0-http-get-capabilities" => ResourceType.METADATA
+      case Some("WWW:LINK-1.0-http--metadata-URL") => ResourceType.METADATA
+      case Some("WWW:LINK-1.0-http--link") => linkage match {
+        case r"https?:\/\/data.gns.cri.nz\/rgmad\/(?:thumbs|images|layers)\/.*" => ResourceType.DOWNLOAD
+        case _ => ResourceType.WEBSITE
+      }
+      case Some("WWW:LINK-1.0-http--downloaddata") => ResourceType.DOWNLOAD
+      case Some("OGC:WCS-1.1.0-http-get-capabilities") => ResourceType.METADATA
       case _ => linkage match {
         //from here we start some magic by looking at URLs
-        case r"https?:\/\/geoportal\.doc\.govt\.nz\/(?i:ArcGIS)\/.*\/MapServer" => ResourceType.WEBSITE
+        case r"https?:\/\/geoportal\.doc\.govt\.nz\/(?i:ArcGIS)\/.*\/MapServer" => ResourceType.METADATA
         case r"https?:\/\/data.linz.govt.nz\/layer\/.*" => ResourceType.MAP
         case _ => ResourceType.WEBSITE
       }
     }
     logger.debug(s"ResourceType: ${resourceType}")
 
-    CIOnlineResource(linkage, name, description, resourceType) :: Nil
+    CIOnlineResource(linkage, name, description, protocol, resourceType)
   }
 }

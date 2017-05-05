@@ -57,6 +57,7 @@
         "resourceType": "map"
       }
     ],
-    "origin": "linz"
+    "origin": "linz",
+    "originUrl": "http://data.linz.govt.nz/feeds/csw/csw"
   }
 }

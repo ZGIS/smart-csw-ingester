@@ -86,8 +86,8 @@ class CIOnlineResourceSpec extends PlaySpec with ClassnameLogger {
     }
 
     "read JSON correctly" in {
-      xmlResources.map(CIOnlineResource.fromXml(_, "test")) mustEqual
-            jsonResources.map(Json.fromJson[CIOnlineResource](_).get)
+      jsonResources.map(Json.fromJson[CIOnlineResource](_).get) mustEqual
+        xmlResources.map(CIOnlineResource.fromXml(_, "test"))
     }
   }
 }

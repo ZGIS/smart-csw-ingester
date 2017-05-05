@@ -144,10 +144,10 @@ class LuceneIndexBuilderActor @Inject()(configuration: Configuration, wsClient: 
     val mdMetadataSet = (cswGetRecordsResponse.xml \\ "MD_Metadata").map(mdMetadataNode => {
       logger.debug(f"Preparing($catalogueName): ${(mdMetadataNode \ "fileIdentifier" \ "CharacterString").text}")
       logger.trace(mdMetadataNode.toString)
-      MdMetadataSet.fromXml(mdMetadataNode, catalogueName)
+      MdMetadataSet.fromXml(mdMetadataNode, catalogueName, luceneService.getCatalogueUrl(catalogueName))
     }).filter(item => item.isDefined).map(item => item.get) //filter out all None values
 
-    val luceneDocuments = mdMetadataSet.map(_.asLuceneDocument())
+    val luceneDocuments = mdMetadataSet.map(_.asLuceneDocument)
 
     val directory = new RAMDirectory()
     val config = new IndexWriterConfig()
@@ -191,12 +191,17 @@ class LuceneIndexBuilderActor @Inject()(configuration: Configuration, wsClient: 
               case "GetRecordsResponse" => {
                 val cswGetRecResp = CswGetRecordsResponse(wsClientResponse.xml)
                 logger.info(
-                  f"nextRecord: ${cswGetRecResp.nextRecord}, numberOfRec ${cswGetRecResp.numberOfRecordsMatched}")
+                  f"nextRecord: ${cswGetRecResp.nextRecord}, " +
+                    f"numberOfRec ${cswGetRecResp.numberOfRecordsMatched}, " +
+                    f"recordsReturned ${cswGetRecResp.numberOfRecordsReturned}")
                 if ((cswGetRecResp.nextRecord > cswGetRecResp.numberOfRecordsMatched) ||
-                  (cswGetRecResp.nextRecord == 0)) {
+                  (cswGetRecResp.nextRecord == 0) ||
+                  (cswGetRecResp.numberOfRecordsReturned == 0)) {
+                  logger.info("Sending IndexResponseDocument - is last!")
                   self ! IndexResponseDocument(cswGetRecResp, catalogueName, true)
                 }
                 else {
+                  logger.info("Sending IndexResponseDocument - and start another query round.")
                   self ! IndexResponseDocument(cswGetRecResp, catalogueName, false)
                   queryCatalogue(catalogueName, catalogueUrl, cswGetRecResp.nextRecord, documentsToFetch)
                 }
