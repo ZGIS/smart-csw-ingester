@@ -225,7 +225,7 @@ case class MdMetadataSet(fileIdentifier: String,
               method = "GET",
               contentType = "application/xml",
               href = s"${this.originUrl}?request=GetRecordById&version=2.0.2&service=CSW&elementSetName=full" +
-                s"&outputSchema=http%3A%2F%2Fwww.isotc211.org%2F2005%2Fgmd" +
+                "&outputSchema=http%3A%2F%2Fwww.isotc211.org%2F2005%2Fgmd" +
                 s"&Id=${URLEncoder.encode(fileIdentifier, "UTF-8")}",
               request = None,
               result = None)),
