@@ -55,6 +55,8 @@ libraryDependencies ++= Seq(
   specs2 % Test
 )
 
+resolvers += Resolver.bintrayRepo("hmrc", "releases")
+
 resolvers += Resolver.bintrayIvyRepo("allixender", "ivy2")
 
 scalacOptions in ThisBuild ++= Seq(

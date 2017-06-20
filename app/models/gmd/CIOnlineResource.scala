@@ -22,21 +22,22 @@ package models.gmd
 import java.net.URL
 import java.util.UUID
 
-import models.gmd.CIOnlineResource.logger
-import models.gmd.ResourceType.WEBSITE
 import info.smart.models.owc100._
-import utils.ClassnameLogger
-import play.api.libs.json._
-import play.api.libs.json.Reads._
+import models.gmd.OfferingType.{WMS, WFS}
 import play.api.libs.functional.syntax._
+import play.api.libs.json.Reads._
+import play.api.libs.json._
+import utils.ClassnameLogger
 
 import scala.xml.NodeSeq
 
 /**
   * Trait of the linkage / online resource
   */
-sealed trait ResourceType { def name: String
-//  override def toString: String = name
+sealed trait ResourceType {
+  def name: String
+
+  //  override def toString: String = name
 }
 
 /**
@@ -51,13 +52,28 @@ case class UnknownResourceType(_name: String) extends ResourceType {
   * type of an online resource
   */
 object ResourceType {
-  case object WEBSITE extends ResourceType { val name = "website" }
-  case object DOWNLOAD extends ResourceType { val name = "download" }
-  case object MAP extends ResourceType { val name = "map" }
-  case object DATA extends ResourceType { val name = "data"}
-  case object METADATA extends ResourceType { val name = "metadata"}
 
-  def fromString(str: String):ResourceType = str match {
+  case object WEBSITE extends ResourceType {
+    val name = "website"
+  }
+
+  case object DOWNLOAD extends ResourceType {
+    val name = "download"
+  }
+
+  case object MAP extends ResourceType {
+    val name = "map"
+  }
+
+  case object DATA extends ResourceType {
+    val name = "data"
+  }
+
+  case object METADATA extends ResourceType {
+    val name = "metadata"
+  }
+
+  def fromString(str: String): ResourceType = str match {
     case "website" => WEBSITE
     case "download" => DOWNLOAD
     case "map" => MAP
@@ -68,9 +84,10 @@ object ResourceType {
 
   /**
     * JSON reader
+    *
     * @see For more explanation on this little magic: [[https://groups.google.com/forum/?fromgroups=#!starred/play-framework/hGrveOkbJ6U]]
     */
-  implicit val reads =  Reads[ResourceType](r => JsSuccess(ResourceType.fromString(r.as[String])))
+  implicit val reads = Reads[ResourceType](r => JsSuccess(ResourceType.fromString(r.as[String])))
   implicit val writes = Writes[ResourceType](r => JsString(r.name))
 }
 
@@ -99,6 +116,7 @@ case class CIOnlineResource(linkage: URL,
 
   /**
     * Converts to a Option[OwcLink].
+    *
     * @return Some[OwcLink] or None if CIOnlineResource could not be converted sensibly
     */
   def asOwcLink: Option[OwcLink] = {
@@ -133,7 +151,7 @@ case class CIOnlineResource(linkage: URL,
           case _ => None
         }
       }
-      }
+    }
   }
 
   /**
@@ -148,8 +166,7 @@ case class CIOnlineResource(linkage: URL,
       case r"https?:\/\/geoportal\.doc\.govt\.nz\/(?i:ArcGIS)\/.*\/MapServer" =>
         // GeoPortals ArcGIS server offers WMS/WFS for all layers I have seen. So we generate offerings for that.
         List(
-          OwcOffering(code = OwcOfferingHelper.genOfferingCodeForType("wms")
-            .getOrElse(OwcOfferingHelper.wmsDefaultOfferingCode),
+          OwcOffering(code = WMS.code,
             uuid = UUID.randomUUID(),
             operations = List(
               OwcOperation(uuid = UUID.randomUUID(),
@@ -164,8 +181,7 @@ case class CIOnlineResource(linkage: URL,
             contents = List(),
             styles = List()
           ),
-          OwcOffering(code = OwcOfferingHelper.genOfferingCodeForType("wms")
-            .getOrElse(OwcOfferingHelper.wmsDefaultOfferingCode),
+          OwcOffering(code = WFS.code,
             uuid = UUID.randomUUID(),
             operations = List(
               OwcOperation(uuid = UUID.randomUUID(),
@@ -196,7 +212,7 @@ object CIOnlineResource extends ClassnameLogger {
       (JsPath \ "description").writeNullable[String] and
       (JsPath \ "protocol").writeNullable[String] and
       (JsPath \ "resourceType").write[ResourceType]
-    )(unlift(CIOnlineResource.unapply))
+    ) (unlift(CIOnlineResource.unapply))
 
   /**
     * JSON reader
@@ -218,7 +234,7 @@ object CIOnlineResource extends ClassnameLogger {
     * @return
     */
   def fromXml(nodeSeq: NodeSeq, origin: String): CIOnlineResource = {
-    val linkage = new URL( (nodeSeq \ "linkage" \ "URL").text.trim )
+    val linkage = new URL((nodeSeq \ "linkage" \ "URL").text.trim)
     logger.debug(s"Linkage: ${linkage}")
 
     import utils.StringUtils._
@@ -228,7 +244,7 @@ object CIOnlineResource extends ClassnameLogger {
     logger.debug(s"Description: ${description}")
 
     val protocol = linkage.toString match {
-        // the GNS CSW has a little bit of a stupid way of assigning protocol to the linkages...
+      // the GNS CSW has a little bit of a stupid way of assigning protocol to the linkages...
       case r"https?:\/\/data.gns.cri.nz\/rgmad\/(?:thumbs|images|layers)\/.*" => "WWW:LINK-1.0-http--download".toOption()
       case _ => (nodeSeq \ "protocol" \ "CharacterString").text.toOption()
     }

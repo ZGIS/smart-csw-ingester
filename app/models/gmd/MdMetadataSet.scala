@@ -19,19 +19,21 @@
 
 package models.gmd
 
-import java.net.URLEncoder
+import java.net.{URL, URLEncoder}
 import java.time._
 import java.time.format._
 import java.util
 import java.util.UUID
 
-import info.smart.models.owc._
+import info.smart.models.owc100._
+import models.gmd.OfferingType.CSW
 import org.apache.lucene.document._
 import org.apache.lucene.spatial.bbox.BBoxStrategy
 import org.locationtech.spatial4j.context.SpatialContext
 import org.locationtech.spatial4j.io.ShapeIO
 import org.locationtech.spatial4j.shape.{Rectangle, ShapeCollection}
 import play.api.libs.json.{JsObject, _}
+import uk.gov.hmrc.emailaddress.EmailAddress
 import utils.ClassnameLogger
 import utils.StringUtils._
 
@@ -130,7 +132,7 @@ case class MdMetadataSet(fileIdentifier: String,
     doc.add(new TextField("bboxText", bboxAsWkt, Field.Store.YES))
     doc.add(new TextField("lineageStmt", lineageStmt, Field.Store.YES))
     linkage.foreach(linkage => {
-      doc.add(new TextField("linkage", linkage.linkage, Field.Store.YES))
+      doc.add(new TextField("linkage", linkage.linkage.toString, Field.Store.YES))
       doc.add(new TextField("linkageFull", Json.toJson(linkage).toString(), Field.Store.YES))
     })
 
@@ -186,56 +188,67 @@ case class MdMetadataSet(fileIdentifier: String,
   }
 
   /**
-    * Converts MdMetadataSet to [[OwcEntry]]
+    * Converts MdMetadataSet to [[OwcResource]]
     *
     * @return
     */
-  def asOwcEntry: OwcEntry = {
+  def asOwcResource: OwcResource = {
     import utils.StringUtils._
-
-    val entryProperties = OwcProperties(UUID.randomUUID(),
-      language = "en",
-      title = this.title,
-      subtitle = this.abstrakt.toOption(),
-      updated = Some(this.dateStamp.atStartOfDay(ZoneId.systemDefault())),
-      generator = None,
-      rights = this.license.toOption(),
-      authors = List(OwcAuthorJs(name = this.contactName, email = this.contactEmail.toOption(), uri = None)),
-      contributors = List(),
-      creator = None,
-      publisher = None,
-      categories = List(),
-      links = this.linkage.map(_.asOwcLink).filter(_.isDefined).map(_.get)
-    )
 
     val offerings =
     // convert linkages to offerings (ist might be empty if there are no linkages that can be converted to offerings
       linkage.flatMap(_.asOwcOfferings) :::
         //Offering to get the original metadata document. Every document in the index should have that
-        List(CswOffering(uuid = UUID.randomUUID(),
+        List(OwcOffering(code = CSW.code,
+          uuid = UUID.randomUUID(),
           operations = List(OwcOperation(uuid = UUID.randomUUID(),
             code = "GetCapabilities",
             method = "GET",
-            contentType = "application/xml",
-            href = s"${this.originUrl}?request=GetCapabilities&service=CSW",
+            mimeType = Some("application/xml"),
+            requestUrl = new URL(s"${this.originUrl}?request=GetCapabilities&service=CSW"),
             request = None,
             result = None),
             OwcOperation(uuid = UUID.randomUUID(),
               code = "GetRecordById",
               method = "GET",
-              contentType = "application/xml",
-              href = s"${this.originUrl}?request=GetRecordById&version=2.0.2&service=CSW&elementSetName=full" +
+              mimeType = Some("application/xml"),
+              requestUrl = new URL(s"${this.originUrl}?request=GetRecordById&version=2.0.2&service=CSW&elementSetName=full" +
                 "&outputSchema=http%3A%2F%2Fwww.isotc211.org%2F2005%2Fgmd" +
-                s"&Id=${URLEncoder.encode(fileIdentifier, "UTF-8")}",
+                s"&Id=${URLEncoder.encode(fileIdentifier, "UTF-8")}"),
               request = None,
               result = None)),
-          content = List())
+          contents = List(),
+          styles = List())
         )
 
-    OwcEntry(id = fileIdentifier,
-      bbox = Some(bbox),
-      properties = entryProperties,
-      offerings = offerings)
+    OwcResource(
+      id = new URL(fileIdentifier),
+      geospatialExtent = Some(bbox),
+      title = this.title,
+      subtitle = this.abstrakt.toOption(),
+      updateDate = OffsetDateTime.of(this.dateStamp.atStartOfDay(), ZoneId.systemDefault().getRules.getOffset(this.dateStamp.atStartOfDay())),
+      author = List(OwcAuthor(name = this.contactName.toOption(), email = Some(EmailAddress(this.contactEmail)), uri = None)),
+      publisher = None,
+      rights = this.license.toOption(),
+      temporalExtent = None,
+
+      // links.alternates[] and rel=alternate
+      contentDescription = List(),
+
+      // aka links.previews[] and rel=icon (atom)
+      preview = List(),
+
+      // aka links.data[] and rel=enclosure (atom)
+      contentByRef = this.linkage.map(_.asOwcLink).filter(_.isDefined).map(_.get),
+
+      // aka links.via[] & rel=via
+      resourceMetadata = List(),
+      offering = offerings,
+      minScaleDenominator = None,
+      maxScaleDenominator = None,
+      active = None,
+      keyword = List(),
+      folder = None)
   }
 }
 
@@ -382,8 +395,8 @@ object MdMetadataSet extends ClassnameLogger {
     })
 
     val resultList = (kwNode \ "MD_Keywords" \ "keyword" \ "CharacterString").map(elem => elem.text.trim).toList
-    logger.debug(s"found keywords: $resultList");
-    resultList;
+    logger.debug(s"found keywords: $resultList")
+    resultList
   }
 
   /**
@@ -397,8 +410,8 @@ object MdMetadataSet extends ClassnameLogger {
       ((p \ "MD_Keywords" \ "type" \ "MD_KeywordTypeCode" \ "@codeListValue").text.equals("SMART"))
     })
     val resultList = (kwNode \ "MD_Keywords" \ "keyword" \ "CharacterString").map(elem => elem.text.trim).toList
-    logger.debug(s"found smartCategory: $resultList");
-    resultList;
+    logger.debug(s"found smartCategory: $resultList")
+    resultList
   }
 
   /**
@@ -641,28 +654,43 @@ object MdMetadataSet extends ClassnameLogger {
   }
 
   /**
-    * Convert List[MdMetadataSet] to OwcDocument
+    * Convert List[MdMetadataSet] to OwcContext
     *
     * @param metadataList List[MdMetadataSet] containing the entries
     * @param id           String containing the ID for the OwcContext document
     */
-  def toOwcDocument(metadataList: List[MdMetadataSet], id: String): OwcDocument = {
+  def toOwcContext(metadataList: List[MdMetadataSet], id: String): OwcContext = {
     val bbox = Some(GeoJSONFeatureCollectionWriter.getBoundingBoxAsRect(metadataList))
-    val documentProperties = OwcProperties(UUID.randomUUID(),
+
+    val owcResources = metadataList.map(_.asOwcResource)
+    OwcContext(
+      id = new URL(id),
+      areaOfInterest = bbox,
+
+      // // aka links.profiles[] and rel=profile
+      specReference = List(OwcLink(
+        rel = "profile",
+        href = new URL("http://www.opengis.net/spec/owc-geojson/1.0/req/core"),
+        mimeType = None,
+        lang = None,
+        title = None,
+        length = None,
+        uuid = UUID.randomUUID())),
+
+      // e.g. links.via[] and rel=via
+      contextMetadata = List(),
       language = "en",
       title = "Search result CSW ingester",
       subtitle = Some("Subtitle"),
-      updated = None,
-      generator = None,
-      rights = None,
-      authors = List(),
-      contributors = List(),
-      creator = None,
+      updateDate = OffsetDateTime.now(),
+      author = List(),
       publisher = None,
-      categories = List(),
-      links = List())
-    val owcEntries = metadataList.map(_.asOwcEntry)
-    OwcDocument(id, bbox, documentProperties, owcEntries)
+      creatorApplication = None,
+      creatorDisplay = None,
+      rights = None,
+      timeIntervalOfInterest = None,
+      keyword = List(),
+      resource = owcResources)
   }
 }
 
@@ -748,9 +776,9 @@ object MdMetadataSetWriter extends Writes[MdMetadataSet] with ClassnameLogger {
     val east = if (bbox(0).asOpt[Double].get > bbox(2).asOpt[Double].get) {
       bbox(2).asOpt[Double].get + 360
     }
-               else {
-                 bbox(2).asOpt[Double].get
-               }
+    else {
+      bbox(2).asOpt[Double].get
+    }
     Json.arr(west, bbox(1).get, east, bbox(3).get)
   }
 }

@@ -23,10 +23,9 @@ import java.time.LocalDate
 import javax.inject._
 
 import models.ErrorResult
-import play.api.libs.json._
 import models.gmd.{GeoJSONFeatureCollectionWriter, MdMetadataSet}
-import info.smart.models.owc.OwcDocument
 import org.apache.lucene.queryparser.classic.ParseException
+import play.api.libs.json._
 import play.api.mvc._
 import services.LuceneService
 import utils.ClassnameLogger
@@ -43,13 +42,12 @@ class QueryController @Inject()(luceneService: LuceneService) extends Controller
   /**
     * Action that passes the query from URL to the [[services.LuceneService]].
     *
-    * @param query Option[String] that contains the Lucene query. Defaults to [[QueryController.DEFAULT_QUERY]]
-    * @param bboxWkt Option[String] that contains the bbox (as WKT) to search in.
-    * @param fromDateStr Option[String] containing an ISO-DATE for lower date bound
-    * @param toDateStr Option[String] containing an ISO-DATE for upper date bound
+    * @param query              Option[String] that contains the Lucene query. Defaults to [[QueryController.DEFAULT_QUERY]]
+    * @param bboxWkt            Option[String] that contains the bbox (as WKT) to search in.
+    * @param fromDateStr        Option[String] containing an ISO-DATE for lower date bound
+    * @param toDateStr          Option[String] containing an ISO-DATE for upper date bound
     * @param maxNumberOfResults Option[Int] containing the max number of documents to return
-    * @param contentType Option[String] containing the type, of the result document. Valid values: "GeoJson" and "OwcContext". Defaults to "GeoJson"
-    *
+    * @param contentType        Option[String] containing the type, of the result document. Valid values: "GeoJson" and "OwcContext". Defaults to "GeoJson"
     * @see [[services.LuceneService]]
     * @return
     */
@@ -92,7 +90,7 @@ class QueryController @Inject()(luceneService: LuceneService) extends Controller
           val host = request.headers.get("X-Forwarded-Host").getOrElse(request.headers("host"))
           val url = s"${proto}://${request.headers("host")}${request.uri}"
           logger.debug(s"Requested URL by client: ${url}")
-          val resultJson = MdMetadataSet.toOwcDocument(featureCollection, url).toJson
+          val resultJson = MdMetadataSet.toOwcContext(featureCollection, url).toJson
           Ok(resultJson).as(JSON)
         }
         case _ => BadRequest(Json.toJson(ErrorResult(s"Unknown content type: ${contentType}", None))).as(JSON)
