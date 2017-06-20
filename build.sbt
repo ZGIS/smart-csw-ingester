@@ -42,7 +42,7 @@ libraryDependencies ++= Seq(
   filters,
 
 //  "com.gilt" % "lib-lucene-sugar_2.11" % "0.2.3",
-
+  "info.smart-project" %% "smart-owc-geojson" % "0.9.4",
   "org.apache.lucene" % "lucene-core" % luceneVersion,
   "org.apache.lucene" % "lucene-analyzers-common" % luceneVersion,
   "org.apache.lucene" % "lucene-queryparser" % luceneVersion,
@@ -54,6 +54,8 @@ libraryDependencies ++= Seq(
   "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test,
   specs2 % Test
 )
+
+resolvers += Resolver.bintrayIvyRepo("allixender", "ivy2")
 
 scalacOptions in ThisBuild ++= Seq(
   "-encoding", "UTF-8",

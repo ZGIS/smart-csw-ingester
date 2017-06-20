@@ -23,7 +23,7 @@ import java.util.UUID
 
 import models.gmd.CIOnlineResource.logger
 import models.gmd.ResourceType.WEBSITE
-import models.owc._
+import info.smart.models.owc._
 import utils.ClassnameLogger
 import play.api.libs.json._
 import play.api.libs.json.Reads._

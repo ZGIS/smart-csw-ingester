@@ -25,7 +25,7 @@ import java.time.format._
 import java.util
 import java.util.UUID
 
-import models.owc._
+import info.smart.models.owc._
 import org.apache.lucene.document._
 import org.apache.lucene.spatial.bbox.BBoxStrategy
 import org.locationtech.spatial4j.context.SpatialContext

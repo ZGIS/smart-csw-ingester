@@ -25,7 +25,7 @@ import javax.inject._
 import models.ErrorResult
 import play.api.libs.json._
 import models.gmd.{GeoJSONFeatureCollectionWriter, MdMetadataSet}
-import models.owc.OwcDocument
+import info.smart.models.owc.OwcDocument
 import org.apache.lucene.queryparser.classic.ParseException
 import play.api.mvc._
 import services.LuceneService
