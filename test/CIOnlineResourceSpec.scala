@@ -1,4 +1,5 @@
 import java.io.{FileInputStream, InputStream}
+import java.net.URL
 
 import models.gmd.{CIOnlineResource, ResourceType}
 import org.scalatestplus.play.PlaySpec
@@ -49,7 +50,7 @@ class CIOnlineResourceSpec extends PlaySpec with ClassnameLogger {
   "CIOnlineResource" should {
     "parse full XML" in {
       val ciOnlineResource = CIOnlineResource.fromXml(xmlResources(0), "test")
-      ciOnlineResource.linkage mustEqual "https://www.servername.com/resource/index.html"
+      ciOnlineResource.linkage mustEqual new URL("https://www.servername.com/resource/index.html")
       ciOnlineResource.name mustEqual Some("Name of the resource")
       ciOnlineResource.description mustEqual Some("Description of the resource")
       ciOnlineResource.resourceType mustEqual ResourceType.WEBSITE
@@ -57,7 +58,7 @@ class CIOnlineResourceSpec extends PlaySpec with ClassnameLogger {
 
     "parse minimal XML" in {
       val ciOnlineResource = CIOnlineResource.fromXml(xmlResources(1), "test")
-      ciOnlineResource.linkage mustEqual "https://www.servername.com/resource/index.html"
+      ciOnlineResource.linkage mustEqual new URL("https://www.servername.com/resource/index.html")
       ciOnlineResource.name mustEqual None
       ciOnlineResource.description mustEqual None
       ciOnlineResource.resourceType mustEqual ResourceType.WEBSITE
@@ -65,7 +66,7 @@ class CIOnlineResourceSpec extends PlaySpec with ClassnameLogger {
 
     "parse Geogovt XML" in {
       val ciOnlineResource = CIOnlineResource.fromXml(xmlResources(2), "test")
-      ciOnlineResource.linkage mustEqual "http://geoportal.doc.govt.nz/ArcGIS/rest/services/GeoportalServices/DOC_Huts/MapServer"
+      ciOnlineResource.linkage mustEqual new URL("http://geoportal.doc.govt.nz/ArcGIS/rest/services/GeoportalServices/DOC_Huts/MapServer")
       ciOnlineResource.name mustEqual None
       ciOnlineResource.description mustEqual None
       ciOnlineResource.resourceType mustEqual ResourceType.METADATA
@@ -73,7 +74,7 @@ class CIOnlineResourceSpec extends PlaySpec with ClassnameLogger {
 
     "parse / interpret protocols in XML correctly " in {
       val ciOnlineResource = CIOnlineResource.fromXml(xmlResources(3), "test")
-      ciOnlineResource.linkage mustEqual "https://www.servername.com/resource/index.html"
+      ciOnlineResource.linkage mustEqual new URL("https://www.servername.com/resource/index.html")
       ciOnlineResource.name mustEqual None
       ciOnlineResource.description mustEqual None
       ciOnlineResource.resourceType mustEqual ResourceType.METADATA
