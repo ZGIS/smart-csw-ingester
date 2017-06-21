@@ -23,7 +23,7 @@ import java.net.URL
 import java.util.UUID
 
 import info.smart.models.owc100._
-import models.gmd.OfferingType.{WMS, WFS}
+import models.gmd.OfferingType.{WFS, WMS}
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
@@ -116,6 +116,15 @@ case class CIOnlineResource(linkage: URL,
 
   /**
     * Converts to a Option[OwcLink].
+    * OWC:Context specReference attribute: atom rel="profile" - geojson links.profiles[] array
+    * OWC:Context contextMetadata attribute: atom rel="via" - geojson links.via[] array
+    *
+    * OWC:Resource contentDescription attribute: atom rel="alternate" - geojson links.alternates[] array
+    * OWC:Resource preview attribute: atom rel="icon" - geojson links.previews[] array
+    * OWC:Resource contentByRef attribute: atom rel="enclosure" - geojson links.data[] array
+    * OWC:Resource resourceMetadata attribute: atom rel="via" - geojson links.via[] array
+    *
+    * links for data and previews (aka rels enclosure and icon should have length attributes set)
     *
     * @return Some[OwcLink] or None if CIOnlineResource could not be converted sensibly
     */
@@ -126,7 +135,7 @@ case class CIOnlineResource(linkage: URL,
       case Some("WWW:LINK-1.0-http--metadata-URL") =>
         Some(OwcLink(rel = "via", mimeType = Some("application/xml"), href = linkage, title = name, lang = None, length = None))
       case Some("WWW:LINK-1.0-http--link") =>
-        Some(OwcLink(rel = "alternates", mimeType = Some("text/html"), href = linkage, title = name, lang = None, length = None))
+        Some(OwcLink(rel = "alternate", mimeType = Some("text/html"), href = linkage, title = name, lang = None, length = None))
       case Some(r"WWW:LINK-1.0-http--download(?:data)?") => {
         val mimeType = linkage.getFile.toLowerCase match {
           case r".*\.jpe?g" => "image/jpeg"
@@ -137,7 +146,7 @@ case class CIOnlineResource(linkage: URL,
           case r".*\.csv" => "text/csv"
           case _ => "application/octet-stream"
         }
-        Some(OwcLink(rel = "data", mimeType = Some(mimeType), href = linkage, title = name, lang = None, length = None))
+        Some(OwcLink(rel = "enclosure", mimeType = Some(mimeType), href = linkage, title = name, lang = None, length = None))
       }
       case _ => linkage match {
         case r"https?:\/\/data.linz.govt.nz\/layer\/.*" =>
@@ -147,7 +156,7 @@ case class CIOnlineResource(linkage: URL,
         case r"https?:\/\/geoportal\.doc\.govt\.nz\/(?i:ArcGIS)\/.*\/MapServer" =>
           Some(OwcLink(rel = "alternates", mimeType = Some("text/html"), href = linkage, title = name, lang = None, length = None))
         case _ => resourceType match {
-          case ResourceType.WEBSITE => Some(OwcLink(rel = "alternates", mimeType = Some("text/html"), href = linkage, title = name, lang = None, length = None))
+          case ResourceType.WEBSITE => Some(OwcLink(rel = "alternate", mimeType = Some("text/html"), href = linkage, title = name, lang = None, length = None))
           case _ => None
         }
       }

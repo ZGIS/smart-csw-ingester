@@ -21,6 +21,7 @@
 
 import java.time.LocalDate
 
+import info.smart.models.owc100.OwcContext
 import models.gmd.{GeoJSONFeatureCollectionWriter, MdMetadataSet, MdMetadataSetWriter}
 import org.locationtech.spatial4j.context.SpatialContext
 import org.scalatest.Ignore
@@ -76,6 +77,17 @@ class MdMetadataJsonWriterSpec extends PlaySpec {
 
       geoJsonFeatureCollection mustEqual Json.parse(jsonTestFeatureCollection)
 
+    }
+
+    "provide List of OWC Context GeoJSON as FeatureCollection for list of MdMetadaset" in {
+      import play.api.libs.json._
+
+      val gmdList = List(parsedElement1.get, parsedElement2.get)
+      val owcContext = MdMetadataSet.toOwcContext(gmdList, "http://portal.smart-project.info/request?with=query&parameters=included")
+
+      owcContext.toJson.validate[OwcContext].isSuccess mustBe true
+      val owcGeoJson = owcContext.toJson.validate[OwcContext].get
+      owcGeoJson.toJson.validate[OwcContext].get mustEqual owcGeoJson
     }
 
     "survive empty result list with FeatureCollection and feature count 0" in {

@@ -37,6 +37,7 @@ import uk.gov.hmrc.emailaddress.EmailAddress
 import utils.ClassnameLogger
 import utils.StringUtils._
 
+import scala.util.{Success, Try}
 import scala.xml.NodeSeq
 
 /**
@@ -188,11 +189,37 @@ case class MdMetadataSet(fileIdentifier: String,
   }
 
   /**
+    * returns an Option[EmailAddress] object if parsing is successful
+    *
+    * @param emailString the string that might comprise of or contain an email address
+    * @return Option[EmailAddress]
+    */
+  def parseEmailStringtoEmailAddress(emailString: String): Option[EmailAddress] = {
+
+    if (EmailAddress.isValid(emailString)) {
+      Some(EmailAddress(emailString))
+    } else {
+      if (emailString.contains(",")) {
+        val commaFree = emailString.split(",").head.trim
+
+        Try {
+          EmailAddress(commaFree)
+        } match {
+          case Success(e) => Some(e)
+          case _ => None
+        }
+      } else {
+        None
+      }
+    }
+  }
+
+  /**
     * Converts MdMetadataSet to [[OwcResource]]
     *
     * @return
     */
-  def asOwcResource: OwcResource = {
+  def asOwcResource(urlBaseForIds: String): OwcResource = {
     import utils.StringUtils._
 
     val offerings =
@@ -221,28 +248,34 @@ case class MdMetadataSet(fileIdentifier: String,
           styles = List())
         )
 
+    // ATTENTION: While id in OwcResource is of Type CharacterString, it still expects an IRI/URI type String, that'S why URL
+    val baseUrl = new URL(urlBaseForIds)
     OwcResource(
-      id = new URL(fileIdentifier),
+      id = new URL(s"${baseUrl.getProtocol}://${baseUrl.getHost}/context/resource/${URLEncoder.encode(fileIdentifier, "UTF-8")}"),
       geospatialExtent = Some(bbox),
       title = this.title,
       subtitle = this.abstrakt.toOption(),
       updateDate = OffsetDateTime.of(this.dateStamp.atStartOfDay(), ZoneId.systemDefault().getRules.getOffset(this.dateStamp.atStartOfDay())),
-      author = List(OwcAuthor(name = this.contactName.toOption(), email = Some(EmailAddress(this.contactEmail)), uri = None)),
+      author = List(OwcAuthor(name = this.contactName.toOption(), email = parseEmailStringtoEmailAddress(this.contactEmail), uri = None)),
       publisher = None,
       rights = this.license.toOption(),
       temporalExtent = None,
 
       // links.alternates[] and rel=alternate
-      contentDescription = List(),
+      contentDescription = this.linkage.map(_.asOwcLink).filter(_.isDefined)
+        .map(_.get).filter(link => link.rel.equalsIgnoreCase("alternate")),
 
       // aka links.previews[] and rel=icon (atom)
-      preview = List(),
+      preview = this.linkage.map(_.asOwcLink).filter(_.isDefined)
+        .map(_.get).filter(link => link.rel.equalsIgnoreCase("icon")),
 
       // aka links.data[] and rel=enclosure (atom)
-      contentByRef = this.linkage.map(_.asOwcLink).filter(_.isDefined).map(_.get),
+      contentByRef = this.linkage.map(_.asOwcLink).filter(_.isDefined)
+        .map(_.get).filter(link => link.rel.equalsIgnoreCase("enclosure")),
 
       // aka links.via[] & rel=via
-      resourceMetadata = List(),
+      resourceMetadata = this.linkage.map(_.asOwcLink).filter(_.isDefined)
+        .map(_.get).filter(link => link.rel.equalsIgnoreCase("via")),
       offering = offerings,
       minScaleDenominator = None,
       maxScaleDenominator = None,
@@ -656,18 +689,18 @@ object MdMetadataSet extends ClassnameLogger {
   /**
     * Convert List[MdMetadataSet] to OwcContext
     *
-    * @param metadataList List[MdMetadataSet] containing the entries
-    * @param id           String containing the ID for the OwcContext document
+    * @param metadataList  List[MdMetadataSet] containing the entries
+    * @param idAsUrlString String containing the ID for the OwcContext document
     */
-  def toOwcContext(metadataList: List[MdMetadataSet], id: String): OwcContext = {
+  def toOwcContext(metadataList: List[MdMetadataSet], idAsUrlString: String): OwcContext = {
     val bbox = Some(GeoJSONFeatureCollectionWriter.getBoundingBoxAsRect(metadataList))
 
-    val owcResources = metadataList.map(_.asOwcResource)
+    val owcResources = metadataList.map(_.asOwcResource(idAsUrlString))
     OwcContext(
-      id = new URL(id),
+      id = new URL(idAsUrlString),
       areaOfInterest = bbox,
 
-      // // aka links.profiles[] and rel=profile
+      // aka links.profiles[] and rel=profile
       specReference = List(OwcLink(
         rel = "profile",
         href = new URL("http://www.opengis.net/spec/owc-geojson/1.0/req/core"),

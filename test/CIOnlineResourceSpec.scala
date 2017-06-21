@@ -1,11 +1,3 @@
-import java.io.{FileInputStream, InputStream}
-import java.net.URL
-
-import models.gmd.{CIOnlineResource, ResourceType}
-import org.scalatestplus.play.PlaySpec
-import play.api.libs.json.Json
-import utils.ClassnameLogger
-
 /*
  * Copyright (c) 2011-2017 Interfaculty Department of Geoinformatics, University of
  * Salzburg (Z_GIS) & Institute of Geological and Nuclear Sciences Limited (GNS Science)
@@ -24,6 +16,13 @@ import utils.ClassnameLogger
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+import java.net.URL
+
+import models.gmd.{CIOnlineResource, ResourceType}
+import org.scalatestplus.play.PlaySpec
+import play.api.libs.json._
+import utils.ClassnameLogger
 
 /**
   * Test suite for [[models.gmd.CIOnlineResource]]
