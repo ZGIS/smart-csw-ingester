@@ -1,13 +1,13 @@
 language: scala
-sudo: required
+# sudo: required
 jdk:
 - openjdk8
 scala:
 - 2.11.8
-services:
-- docker
+# services:
+# - docker
 script:
-- sbt -DbuildNumber=$TRAVIS_BUILD_NUMBER compile coverage test scapegoat check coverageReport copyCoverage makeSite
+- travis_wait sbt -DbuildNumber=$TRAVIS_BUILD_NUMBER compile coverage test scapegoat check coverageReport copyCoverage makeSite
 before_install:
 - openssl aes-256-cbc -K $encrypted_a0e0047aef74_key -iv $encrypted_a0e0047aef74_iv
   -in ghpages_ecdsa.enc -out ghpages_ecdsa -d
