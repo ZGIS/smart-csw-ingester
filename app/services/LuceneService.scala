@@ -209,7 +209,7 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
 
     val results = scoreDocs.map(scoreDoc => {
       val doc = isearcher.doc(scoreDoc.doc)
-      MdMetadataSet.fromLuceneDoc(doc)
+      MdMetadataSet.fromLuceneDoc(doc, scoreDoc.score)
     }).toList
 
     //FIXME SR use ARM --> possible mem leak

@@ -73,7 +73,8 @@ case class MdMetadataSet(fileIdentifier: String,
                          lineageStmt: String,
                          linkage: List[CIOnlineResource],
                          origin: String,
-                         originUrl: String) extends ClassnameLogger {
+                         originUrl: String,
+                         searchScore: Float = 0.0f) extends ClassnameLogger {
   require(!fileIdentifier.trim.isEmpty, "FileIdentifier was empty")
 
   override def toString: String = {
@@ -94,6 +95,7 @@ case class MdMetadataSet(fileIdentifier: String,
        |${linkage},
        |${origin},
        |${originUrl}
+       |${searchScore}
        |)
      """.stripMargin.replaceAll("\n", " ")
   }
@@ -281,7 +283,7 @@ case class MdMetadataSet(fileIdentifier: String,
       maxScaleDenominator = None,
       active = None,
       keyword = List(),
-      folder = None)
+      folder = Some(s"$searchScore"))
   }
 }
 
@@ -317,24 +319,7 @@ object MdMetadataSet extends ClassnameLogger {
     try {
       nodeSeq.head.label match {
         case "MD_Metadata" =>
-          Some(MdMetadataSet(
-            (nodeSeq \ "fileIdentifier" \ "CharacterString").text,
-            dateFromXml(nodeSeq),
-            (nodeSeq \\ "identificationInfo" \ "MD_DataIdentification" \ "citation" \ "CI_Citation" \ "title" \ "CharacterString").text,
-            (nodeSeq \\ "identificationInfo" \ "MD_DataIdentification" \ "abstract" \ "CharacterString").text,
-            keywordsFromXml(nodeSeq),
-            smartCategoryFromXml(nodeSeq),
-            topicCategoriesFromXml(nodeSeq),
-            contactNameFromXml(nodeSeq),
-            contactOrgFromXml(nodeSeq),
-            contactEmailFromXml(nodeSeq),
-            licenseFromXml(nodeSeq),
-            bboxFromXml(nodeSeq),
-            lineageFromXml(nodeSeq),
-            linkageFromXml(nodeSeq, origin),
-            origin,
-            originUrl
-          ))
+          Some(MdMetadataSet((nodeSeq \ "fileIdentifier" \ "CharacterString").text, dateFromXml(nodeSeq), (nodeSeq \\ "identificationInfo" \ "MD_DataIdentification" \ "citation" \ "CI_Citation" \ "title" \ "CharacterString").text, (nodeSeq \\ "identificationInfo" \ "MD_DataIdentification" \ "abstract" \ "CharacterString").text, keywordsFromXml(nodeSeq), smartCategoryFromXml(nodeSeq), topicCategoriesFromXml(nodeSeq), contactNameFromXml(nodeSeq), contactOrgFromXml(nodeSeq), contactEmailFromXml(nodeSeq), licenseFromXml(nodeSeq), bboxFromXml(nodeSeq), lineageFromXml(nodeSeq), linkageFromXml(nodeSeq, origin), origin, originUrl))
         case _ =>
           throw new IllegalArgumentException(f"Expected MDMetadataNode but found  ${nodeSeq.head.label}")
       }
@@ -649,27 +634,10 @@ object MdMetadataSet extends ClassnameLogger {
     * @param doc [[Document]] containing the MdMetadataSet
     * @return [[MdMetadataSet]] extracted from retrieved LuceneDocument
     */
-  def fromLuceneDoc(doc: Document): MdMetadataSet = {
-    MdMetadataSet(
-      fileIdentifier = doc.get("fileIdentifier"),
-      dateStamp = MdMetadataSet.dateFromStrings(List(doc.get("dateStampText"))),
-      title = doc.get("title"),
-      abstrakt = doc.get("abstrakt"),
-      keywords = doc.getValues("keywords").toList,
-      smartCategory = doc.getValues("smartCategory").toList,
-      topicCategories = doc.getValues("topicCategory").toList,
-      contactName = doc.get("contactName"),
-      contactOrg = doc.get("contactOrg"),
-      contactEmail = doc.get("contactEmail"),
-      license = doc.get("license"),
-      bbox = MdMetadataSet.bboxFromWkt(doc.get("bboxText")),
-      lineageStmt = doc.get("lineageStmt"),
-      linkage = doc.getValues("linkageFull").toList.map(str =>
-        Json.fromJson[CIOnlineResource](Json.parse(str)).get
-      ),
-      origin = doc.get("origin"),
-      originUrl = doc.get("originUrl")
-    )
+  def fromLuceneDoc(doc: Document, score: Float): MdMetadataSet = {
+    MdMetadataSet(fileIdentifier = doc.get("fileIdentifier"), dateStamp = MdMetadataSet.dateFromStrings(List(doc.get("dateStampText"))), title = doc.get("title"), abstrakt = doc.get("abstrakt"), keywords = doc.getValues("keywords").toList, smartCategory = doc.getValues("smartCategory").toList, topicCategories = doc.getValues("topicCategory").toList, contactName = doc.get("contactName"), contactOrg = doc.get("contactOrg"), contactEmail = doc.get("contactEmail"), license = doc.get("license"), bbox = MdMetadataSet.bboxFromWkt(doc.get("bboxText")), lineageStmt = doc.get("lineageStmt"), linkage = doc.getValues("linkageFull").toList.map(str =>
+            Json.fromJson[CIOnlineResource](Json.parse(str)).get
+          ), origin = doc.get("origin"), originUrl = doc.get("originUrl"), score)
   }
 
   /**
@@ -764,7 +732,8 @@ object MdMetadataSetWriter extends Writes[MdMetadataSet] with ClassnameLogger {
       "lineageStmt" -> gmd.lineageStmt,
       "linkage" -> gmd.linkage.map(Json.toJson(_)),
       "origin" -> gmd.origin,
-      "originUrl" -> gmd.originUrl
+      "originUrl" -> gmd.originUrl,
+      "searchScore" -> gmd.searchScore
     )
 
     Json.obj(

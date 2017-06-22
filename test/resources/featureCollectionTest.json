@@ -74,7 +74,8 @@
           }
         ],
         "origin": "linz",
-        "originUrl": "http://data.linz.govt.nz/feeds/csw/csw"
+        "originUrl": "http://data.linz.govt.nz/feeds/csw/csw",
+        "searchScore": 0
       }
     },
     {
@@ -140,7 +141,8 @@
           }
         ],
         "origin": "smart",
-        "originUrl": "https://portal.smart-project.info/pycsw/csw"
+        "originUrl": "https://portal.smart-project.info/pycsw/csw",
+        "searchScore": 0
       }
     }
   ]
