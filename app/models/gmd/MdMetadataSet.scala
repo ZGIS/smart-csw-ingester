@@ -26,7 +26,7 @@ import java.util
 import java.util.UUID
 
 import info.smart.models.owc100._
-import models.gmd.OfferingType.CSW
+import info.smart.models.owc100.OwcOfferingType.CSW
 import org.apache.lucene.document._
 import org.apache.lucene.spatial.bbox.BBoxStrategy
 import org.locationtech.spatial4j.context.SpatialContext
@@ -669,14 +669,7 @@ object MdMetadataSet extends ClassnameLogger {
       areaOfInterest = bbox,
 
       // aka links.profiles[] and rel=profile
-      specReference = List(OwcLink(
-        rel = "profile",
-        href = new URL("http://www.opengis.net/spec/owc-geojson/1.0/req/core"),
-        mimeType = None,
-        lang = None,
-        title = None,
-        length = None,
-        uuid = UUID.randomUUID())),
+      specReference = List(OwcProfile.CORE.value),
 
       // e.g. links.via[] and rel=via
       contextMetadata = List(),
