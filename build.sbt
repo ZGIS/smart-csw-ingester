@@ -113,6 +113,13 @@ coverageCopyTask := {
   val result = Seq("cp", "-r", "./target/scala-2.11/scoverage-report", genSiteDir + "/scoverage-report") !!
 }
 
+/*
+dependencyCheckCveUrl12Modified := Some(new java.net.URL("https://static.nvd.nist.gov/download/nvdcve-Modified.xml.gz"))
+dependencyCheckCveUrl20Modified := Some(new java.net.URL("https://static.nvd.nist.gov/feeds/xml/cve/nvdcve-2.0-Modified.xml.gz"))
+dependencyCheckCveUrl12Base := Some("https://static.nvd.nist.gov/download/nvdcve-%d.xml.gz")
+dependencyCheckCveUrl20Base := Some("https://static.nvd.nist.gov/feeds/xml/cve/nvdcve-2.0-%d.xml.gz")
+ */
+
 dependencyCheckOutputDirectory := Some(file(genSiteDir + "/dep-sec"))
 
 // Use e.g. yEd to format the graph
