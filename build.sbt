@@ -113,6 +113,8 @@ coverageCopyTask := {
   val result = Seq("cp", "-r", "./target/scala-2.11/scoverage-report", genSiteDir + "/scoverage-report") !!
 }
 
+// vulnerabilities of dependencies
+
 /*
 dependencyCheckCveUrl12Modified := Some(new java.net.URL("https://static.nvd.nist.gov/download/nvdcve-Modified.xml.gz"))
 dependencyCheckCveUrl20Modified := Some(new java.net.URL("https://static.nvd.nist.gov/feeds/xml/cve/nvdcve-2.0-Modified.xml.gz"))
@@ -127,6 +129,10 @@ dependencyGraphMLFile := file(genSiteDir + "/dep-sec/dependencies.graphml")
 
 // Use e.g.graphviz to render
 dependencyDotFile := file(genSiteDir + "/dep-sec/dependencies.dot")
+
+// updates of libs and dependencies
+dependencyUpdatesFilter -= moduleFilter(organization = "org.scala-lang")
+dependencyUpdatesReportFile := file(genSiteDir + "/dep-sec/dependency-updates.txt")
 
 // -----------------
 // publish docs on github
