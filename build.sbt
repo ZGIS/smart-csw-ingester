@@ -148,7 +148,7 @@ buildInfoObject := "BuildInfo"
 
 version in Docker := version.value
 
-maintainer in Docker := "allixender@googlemail.com"
+maintainer in Docker := "allixender@gmail.com"
 
 dockerBaseImage in Docker := "java:8-jre"
 
