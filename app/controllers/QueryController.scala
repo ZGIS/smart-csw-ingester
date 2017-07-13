@@ -28,7 +28,8 @@ import org.apache.lucene.queryparser.classic.ParseException
 import play.api.libs.json._
 import play.api.mvc._
 import services.LuceneService
-import utils.ClassnameLogger
+import utils.OwcGeoJsonConverters.asOwcResource
+import utils.{ClassnameLogger, OwcGeoJsonConverters}
 
 /**
   * Controller that serves results from Lucene Index
@@ -38,6 +39,51 @@ class QueryController @Inject()(luceneService: LuceneService) extends Controller
 
   implicit val geoJSONFeatureCollectionWrite = GeoJSONFeatureCollectionWriter
   private lazy val DEFAULT_QUERY = "*:*"
+
+  /**
+    * add lucene score via Json Transform
+    *
+    * @param json
+    * @param searchScore
+    * @return
+    */
+  private def addScoreJsonTransform(json: JsValue, searchScore: Double): JsValue = {
+
+    // FIXME: decide which one
+    val jsonTransformer = __.json.update(
+      (__ \ 'searchScore).json.put(JsNumber(searchScore)))
+
+    val jsonTransformer2 = JsPath.read[JsObject].map(o => o ++ Json.obj("searchScore" -> JsNumber(searchScore)))
+    json.transform(jsonTransformer2).get
+  }
+  /**
+    * converts the featureCollection of the List of [[MdMetadataSet]] to Json,
+    * and injects the scores into the [[info.smart.models.owc100.OwcResource]] Json
+    *
+    * @param featureCollection
+    * @param url
+    * @return
+    */
+  private def toOwcContextJsonWithScores(featureCollection: List[MdMetadataSet], url: String): JsValue = {
+
+    val owcResourcesJsList = featureCollection.map{
+      md =>
+        val owcResource = OwcGeoJsonConverters.asOwcResource(md, url)
+        val owcJson = owcResource.toJson
+        val owcJsWithScore = addScoreJsonTransform(owcJson, md.searchScore)
+        owcJsWithScore
+    }
+
+    val owcContext = OwcGeoJsonConverters.toOwcContext(featureCollection, url)
+    val emptyContext = owcContext.copy(resource = List.empty)
+    val emptyContextJson = emptyContext.toJson
+
+    val jsonTransformer = __.json.update(
+      (__ \ 'features).json.put(JsArray(owcResourcesJsList)))
+
+    emptyContextJson.transform(jsonTransformer).get
+    // OwcGeoJsonConverters.toOwcContext(featureCollection, url).toJson
+  }
 
   /**
     * Action that passes the query from URL to the [[services.LuceneService]].
@@ -90,7 +136,7 @@ class QueryController @Inject()(luceneService: LuceneService) extends Controller
           val host = request.headers.get("X-Forwarded-Host").getOrElse(request.headers("host"))
           val url = s"${proto}://${request.headers("host")}${request.uri}"
           logger.debug(s"Requested URL by client: ${url}")
-          val resultJson = MdMetadataSet.toOwcContext(featureCollection, url).toJson
+          val resultJson = toOwcContextJsonWithScores(featureCollection = featureCollection, url = url)
           Ok(resultJson).as(JSON)
         }
         case _ => BadRequest(Json.toJson(ErrorResult(s"Unknown content type: ${contentType}", None))).as(JSON)

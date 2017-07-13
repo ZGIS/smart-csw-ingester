@@ -189,102 +189,6 @@ case class MdMetadataSet(fileIdentifier: String,
   def dateStampAsIsoString: String = {
     dateStamp.format(DateTimeFormatter.ISO_LOCAL_DATE)
   }
-
-  /**
-    * returns an Option[EmailAddress] object if parsing is successful
-    *
-    * @param emailString the string that might comprise of or contain an email address
-    * @return Option[EmailAddress]
-    */
-  def parseEmailStringtoEmailAddress(emailString: String): Option[EmailAddress] = {
-
-    if (EmailAddress.isValid(emailString)) {
-      Some(EmailAddress(emailString))
-    } else {
-      if (emailString.contains(",")) {
-        val commaFree = emailString.split(",").head.trim
-
-        Try {
-          EmailAddress(commaFree)
-        } match {
-          case Success(e) => Some(e)
-          case _ => None
-        }
-      } else {
-        None
-      }
-    }
-  }
-
-  /**
-    * Converts MdMetadataSet to [[OwcResource]]
-    *
-    * @return
-    */
-  def asOwcResource(urlBaseForIds: String): OwcResource = {
-    import utils.StringUtils._
-
-    val offerings =
-    // convert linkages to offerings (ist might be empty if there are no linkages that can be converted to offerings
-      linkage.flatMap(_.asOwcOfferings) :::
-        //Offering to get the original metadata document. Every document in the index should have that
-        List(OwcOffering(code = CSW.code,
-          uuid = UUID.randomUUID(),
-          operations = List(OwcOperation(uuid = UUID.randomUUID(),
-            code = "GetCapabilities",
-            method = "GET",
-            mimeType = Some("application/xml"),
-            requestUrl = new URL(s"${this.originUrl}?request=GetCapabilities&service=CSW"),
-            request = None,
-            result = None),
-            OwcOperation(uuid = UUID.randomUUID(),
-              code = "GetRecordById",
-              method = "GET",
-              mimeType = Some("application/xml"),
-              requestUrl = new URL(s"${this.originUrl}?request=GetRecordById&version=2.0.2&service=CSW&elementSetName=full" +
-                "&outputSchema=http%3A%2F%2Fwww.isotc211.org%2F2005%2Fgmd" +
-                s"&Id=${URLEncoder.encode(fileIdentifier, "UTF-8")}"),
-              request = None,
-              result = None)),
-          contents = List(),
-          styles = List())
-        )
-
-    // ATTENTION: While id in OwcResource is of Type CharacterString, it still expects an IRI/URI type String, that'S why URL
-    val baseUrl = new URL(urlBaseForIds)
-    OwcResource(
-      id = new URL(s"${baseUrl.getProtocol}://${baseUrl.getHost}/context/resource/${URLEncoder.encode(fileIdentifier, "UTF-8")}"),
-      geospatialExtent = Some(bbox),
-      title = this.title,
-      subtitle = this.abstrakt.toOption(),
-      updateDate = OffsetDateTime.of(this.dateStamp.atStartOfDay(), ZoneId.systemDefault().getRules.getOffset(this.dateStamp.atStartOfDay())),
-      author = List(OwcAuthor(name = this.contactName.toOption(), email = parseEmailStringtoEmailAddress(this.contactEmail), uri = None)),
-      publisher = None,
-      rights = this.license.toOption(),
-      temporalExtent = None,
-
-      // links.alternates[] and rel=alternate
-      contentDescription = this.linkage.map(_.asOwcLink).filter(_.isDefined)
-        .map(_.get).filter(link => link.rel.equalsIgnoreCase("alternate")),
-
-      // aka links.previews[] and rel=icon (atom)
-      preview = this.linkage.map(_.asOwcLink).filter(_.isDefined)
-        .map(_.get).filter(link => link.rel.equalsIgnoreCase("icon")),
-
-      // aka links.data[] and rel=enclosure (atom)
-      contentByRef = this.linkage.map(_.asOwcLink).filter(_.isDefined)
-        .map(_.get).filter(link => link.rel.equalsIgnoreCase("enclosure")),
-
-      // aka links.via[] & rel=via
-      resourceMetadata = this.linkage.map(_.asOwcLink).filter(_.isDefined)
-        .map(_.get).filter(link => link.rel.equalsIgnoreCase("via")),
-      offering = offerings,
-      minScaleDenominator = None,
-      maxScaleDenominator = None,
-      active = None,
-      keyword = List(),
-      folder = Some(s"$searchScore"))
-  }
 }
 
 /**
@@ -641,6 +545,32 @@ object MdMetadataSet extends ClassnameLogger {
   }
 
   /**
+    * returns an Option[EmailAddress] object if parsing is successful
+    *
+    * @param emailString the string that might comprise of or contain an email address
+    * @return Option[EmailAddress]
+    */
+  def parseEmailStringtoEmailAddress(emailString: String): Option[EmailAddress] = {
+
+    if (EmailAddress.isValid(emailString)) {
+      Some(EmailAddress(emailString))
+    } else {
+      if (emailString.contains(",")) {
+        val commaFree = emailString.split(",").head.trim
+
+        Try {
+          EmailAddress(commaFree)
+        } match {
+          case Success(e) => Some(e)
+          case _ => None
+        }
+      } else {
+        None
+      }
+    }
+  }
+
+  /**
     * naively feeds a WKT string to the Spatial4J Shapereader to transform into a Rectangle
     *
     * @param envelope the WKT envelope as String
@@ -652,39 +582,6 @@ object MdMetadataSet extends ClassnameLogger {
     // Rectangle ENVELOPE(1, 2, 4, 3) (minX, maxX, maxY, minY)
     // https://github.com/locationtech/spatial4j/blob/master/src/main/java/org/locationtech/spatial4j/io/WKTReader.java#L245
     wktReader.read(envelope).asInstanceOf[Rectangle]
-  }
-
-  /**
-    * Convert List[MdMetadataSet] to OwcContext
-    *
-    * @param metadataList  List[MdMetadataSet] containing the entries
-    * @param idAsUrlString String containing the ID for the OwcContext document
-    */
-  def toOwcContext(metadataList: List[MdMetadataSet], idAsUrlString: String): OwcContext = {
-    val bbox = Some(GeoJSONFeatureCollectionWriter.getBoundingBoxAsRect(metadataList))
-
-    val owcResources = metadataList.map(_.asOwcResource(idAsUrlString))
-    OwcContext(
-      id = new URL(idAsUrlString),
-      areaOfInterest = bbox,
-
-      // aka links.profiles[] and rel=profile
-      specReference = List(OwcProfile.CORE.value),
-
-      // e.g. links.via[] and rel=via
-      contextMetadata = List(),
-      language = "en",
-      title = "Search result CSW ingester",
-      subtitle = Some("Subtitle"),
-      updateDate = OffsetDateTime.now(),
-      author = List(),
-      publisher = None,
-      creatorApplication = None,
-      creatorDisplay = None,
-      rights = None,
-      timeIntervalOfInterest = None,
-      keyword = List(),
-      resource = owcResources)
   }
 }
 

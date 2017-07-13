@@ -19,14 +19,13 @@
  *
  */
 
-import java.time.LocalDate
-
 import info.smart.models.owc100.OwcContext
 import models.gmd.{GeoJSONFeatureCollectionWriter, MdMetadataSet, MdMetadataSetWriter}
 import org.locationtech.spatial4j.context.SpatialContext
 import org.scalatest.Ignore
 import org.scalatestplus.play.PlaySpec
 import play.api.libs.json._
+import utils.OwcGeoJsonConverters
 
 import scala.xml._
 
@@ -51,8 +50,8 @@ class MdMetadataJsonWriterSpec extends PlaySpec {
       parsedElement1 mustBe defined
       parsedElement2 mustBe defined
 
-      Json.toJson(parsedElement1.get).toString() must include ("linz")
-      Json.toJson(parsedElement2.get).toString() must include ("smart")
+      Json.toJson(parsedElement1.get).toString() must include("linz")
+      Json.toJson(parsedElement2.get).toString() must include("smart")
     }
 
     "build JsArrList of GeoJSON Features from List of MdMetadataSet" in {
@@ -80,10 +79,9 @@ class MdMetadataJsonWriterSpec extends PlaySpec {
     }
 
     "provide List of OWC Context GeoJSON as FeatureCollection for list of MdMetadaset" in {
-      import play.api.libs.json._
 
       val gmdList = List(parsedElement1.get, parsedElement2.get)
-      val owcContext = MdMetadataSet.toOwcContext(gmdList, "http://portal.smart-project.info/request?with=query&parameters=included")
+      val owcContext = OwcGeoJsonConverters.toOwcContext(gmdList, "http://portal.smart-project.info/request?with=query&parameters=included")
 
       owcContext.toJson.validate[OwcContext].isSuccess mustBe true
       val owcGeoJson = owcContext.toJson.validate[OwcContext].get

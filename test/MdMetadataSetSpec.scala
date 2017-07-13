@@ -19,12 +19,10 @@
 
 import java.time.LocalDate
 
-import models.gmd.{GeoJSONFeatureCollectionWriter, MdMetadataSet, MdMetadataSetWriter}
+import models.gmd.MdMetadataSet
 import org.locationtech.spatial4j.context.SpatialContext
-import org.locationtech.spatial4j.shape._
 import org.scalatest.Ignore
 import org.scalatestplus.play.PlaySpec
-import play.api.libs.json._
 
 import scala.xml._
 
@@ -103,7 +101,7 @@ class MdMetadataSetSpec extends PlaySpec {
       north2 mustEqual 90
       south2 mustEqual -90
 
-      val northSouthSwitch= ctx.getShapeFactory().rect(-180, 180, -70.0, 80.0)
+      val northSouthSwitch = ctx.getShapeFactory().rect(-180, 180, -70.0, 80.0)
       MdMetadataSet.bboxFromCoords(-180.0, 180.0, 80.0, -70.0) mustEqual northSouthSwitch
       MdMetadataSet.bboxFromCoords(-180.0, 180.0, 123.0, -123.0) mustEqual world
     }
@@ -167,7 +165,7 @@ class MdMetadataSetSpec extends PlaySpec {
       parsedElement.contactName mustEqual ("omit, Omit")
       parsedElement.contactOrg mustEqual ("LINZ - Land Information New Zealand, LINZ - Land Information New Zealand, ANZLIC the Spatial Information Council")
       parsedElement.contactEmail mustEqual ("info@linz.govt.nz, info@linz.govt.nz")
-      parsedElement.license must endWith ("Released under Creative Commons By")
+      parsedElement.license must endWith("Released under Creative Commons By")
       parsedElement.bbox mustEqual (ctx.getShapeFactory.rect(168.360399911, 178.548442791, -46.6603664299,
         -34.1537940929))
       parsedElement.origin mustEqual "linz"
@@ -204,6 +202,7 @@ class MdMetadataSetSpec extends PlaySpec {
       parsedElement.topicCategories mustEqual (List())
     }
   }
+
   //TODO SR delete this. its a leftover from ancient times
   @Ignore def `test: Parsing Notes for Alex describe should`: Unit = {
 

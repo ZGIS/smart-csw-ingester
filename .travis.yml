@@ -9,7 +9,7 @@ scala:
 # - docker
 script:
 # currently VCE/NVD OWASP dependency checks fail
-# dependencyCheckAggregate dependencyUpdatesReport
+# dependencyCheckAggregate
 - travis_wait sbt -DbuildNumber=$TRAVIS_BUILD_NUMBER compile coverage test scapegoat coverageReport copyCoverage dependencyUpdates dependencyUpdatesReport makeSite
 before_install:
 - openssl aes-256-cbc -K $encrypted_a0e0047aef74_key -iv $encrypted_a0e0047aef74_iv
