@@ -42,7 +42,7 @@ libraryDependencies ++= Seq(
   filters,
 
 //  "com.gilt" % "lib-lucene-sugar_2.11" % "0.2.3",
-  "info.smart-project" %% "smart-owc-geojson" % "1.0.3",
+  "info.smart-project" %% "smart-owc-geojson" % "1.1.0",
 
   "org.apache.lucene" % "lucene-core" % luceneVersion,
   "org.apache.lucene" % "lucene-analyzers-common" % luceneVersion,

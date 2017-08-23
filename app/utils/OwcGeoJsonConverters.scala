@@ -21,12 +21,10 @@ package utils
 
 import java.net.{URL, URLEncoder}
 import java.time._
-import java.util.UUID
 
 import info.smart.models.owc100.OwcOfferingType.{CSW, WFS, WMS}
 import info.smart.models.owc100._
 import models.gmd.{CIOnlineResource, GeoJSONFeatureCollectionWriter, MdMetadataSet, ResourceType}
-import play.api.libs.json.Json
 
 object OwcGeoJsonConverters extends ClassnameLogger {
 
@@ -52,16 +50,12 @@ object OwcGeoJsonConverters extends ClassnameLogger {
         Some(OwcLink(rel = "via",
           mimeType = Some("application/xml"),
           href = cIOnlineResource.linkage,
-          title = cIOnlineResource.name,
-          lang = None,
-          length = None))
+          title = cIOnlineResource.name))
       case Some("WWW:LINK-1.0-http--link") =>
         Some(OwcLink(rel = "alternate",
           mimeType = Some("text/html"),
           href = cIOnlineResource.linkage,
-          title = cIOnlineResource.name,
-          lang = None,
-          length = None))
+          title = cIOnlineResource.name))
       case Some(r"WWW:LINK-1.0-http--download(?:data)?") => {
         val mimeType = cIOnlineResource.linkage.getFile.toLowerCase match {
           case r".*\.jpe?g" => "image/jpeg"
@@ -75,39 +69,29 @@ object OwcGeoJsonConverters extends ClassnameLogger {
         Some(OwcLink(rel = "enclosure",
           mimeType = Some(mimeType),
           href = cIOnlineResource.linkage,
-          title = cIOnlineResource.name,
-          lang = None,
-          length = None))
+          title = cIOnlineResource.name))
       }
       case _ => cIOnlineResource.linkage match {
         case r"https?:\/\/data.linz.govt.nz\/layer\/.*" =>
           Some(OwcLink(rel = "alternates",
             mimeType = Some("text/html"),
             href = cIOnlineResource.linkage,
-            title = cIOnlineResource.name,
-            lang = None,
-            length = None))
+            title = cIOnlineResource.name))
         case r"https?:\/\/lris.scinfo.org.nz\/layer\/.*" =>
           Some(OwcLink(rel = "alternates",
             mimeType = Some("text/html"),
             href = cIOnlineResource.linkage,
-            title = cIOnlineResource.name,
-            lang = None,
-            length = None))
+            title = cIOnlineResource.name))
         case r"https?:\/\/geoportal\.doc\.govt\.nz\/(?i:ArcGIS)\/.*\/MapServer" =>
           Some(OwcLink(rel = "alternates",
             mimeType = Some("text/html"),
             href = cIOnlineResource.linkage,
-            title = cIOnlineResource.name,
-            lang = None,
-            length = None))
+            title = cIOnlineResource.name))
         case _ => cIOnlineResource.resourceType match {
           case ResourceType.WEBSITE => Some(OwcLink(rel = "alternate",
             mimeType = Some("text/html"),
             href = cIOnlineResource.linkage,
-            title = cIOnlineResource.name,
-            lang = None,
-            length = None))
+            title = cIOnlineResource.name))
           case _ => None
         }
       }
@@ -127,34 +111,22 @@ object OwcGeoJsonConverters extends ClassnameLogger {
         // GeoPortals ArcGIS server offers WMS/WFS for all layers I have seen. So we generate offerings for that.
         List(
           OwcOffering(code = WMS.code,
-            uuid = UUID.randomUUID(),
             operations = List(
-              OwcOperation(uuid = UUID.randomUUID(),
+              OwcOperation(
                 code = "GetCapabilities",
                 method = "GET",
                 mimeType = Some("application/xml"),
-                requestUrl = new URL(s"${cIOnlineResource.linkage}/WMSServer?request=GetCapabilities&service=WMS"),
-                request = None,
-                result = None
-              )
-            ),
-            contents = List(),
-            styles = List()
+                requestUrl = new URL(s"${cIOnlineResource.linkage}/WMSServer?request=GetCapabilities&service=WMS"))
+            )
           ),
           OwcOffering(code = WFS.code,
-            uuid = UUID.randomUUID(),
             operations = List(
-              OwcOperation(uuid = UUID.randomUUID(),
+              OwcOperation(
                 code = "GetCapabilities",
                 method = "GET",
                 mimeType = Some("application/xml"),
-                requestUrl = new URL(s"${cIOnlineResource.linkage}/WFSServer?request=GetCapabilities&service=WFS"),
-                request = None,
-                result = None
-              )
-            ),
-            contents = List(),
-            styles = List()
+                requestUrl = new URL(s"${cIOnlineResource.linkage}/WFSServer?request=GetCapabilities&service=WFS"))
+            )
           )
         )
       case _ => Nil
@@ -173,26 +145,22 @@ object OwcGeoJsonConverters extends ClassnameLogger {
     // convert linkages to offerings (ist might be empty if there are no linkages that can be converted to offerings
       mdMetadataSet.linkage.flatMap(ci => asOwcOfferings(ci)) :::
         //Offering to get the original metadata document. Every document in the index should have that
-        List(OwcOffering(code = CSW.code,
-          uuid = UUID.randomUUID(),
-          operations = List(OwcOperation(uuid = UUID.randomUUID(),
-            code = "GetCapabilities",
-            method = "GET",
-            mimeType = Some("application/xml"),
-            requestUrl = new URL(s"${mdMetadataSet.originUrl}?request=GetCapabilities&service=CSW"),
-            request = None,
-            result = None),
-            OwcOperation(uuid = UUID.randomUUID(),
-              code = "GetRecordById",
-              method = "GET",
-              mimeType = Some("application/xml"),
-              requestUrl = new URL(s"${mdMetadataSet.originUrl}?request=GetRecordById&version=2.0.2&service=CSW&elementSetName=full" +
-                "&outputSchema=http%3A%2F%2Fwww.isotc211.org%2F2005%2Fgmd" +
-                s"&Id=${URLEncoder.encode(mdMetadataSet.fileIdentifier, "UTF-8")}"),
-              request = None,
-              result = None)),
-          contents = List(),
-          styles = List())
+        List(
+          OwcOffering(code = CSW.code,
+            operations = List(
+              OwcOperation(
+                code = "GetCapabilities",
+                method = "GET",
+                mimeType = Some("application/xml"),
+                requestUrl = new URL(s"${mdMetadataSet.originUrl}?request=GetCapabilities&service=CSW")),
+              OwcOperation(
+                code = "GetRecordById",
+                method = "GET",
+                mimeType = Some("application/xml"),
+                requestUrl = new URL(s"${mdMetadataSet.originUrl}?request=GetRecordById&version=2.0.2&service=CSW&elementSetName=full" +
+                  "&outputSchema=http%3A%2F%2Fwww.isotc211.org%2F2005%2Fgmd" +
+                  s"&Id=${URLEncoder.encode(mdMetadataSet.fileIdentifier, "UTF-8")}")))
+          )
         )
 
     // ATTENTION: While id in OwcResource is of Type CharacterString, it still expects an IRI/URI type String, that'S why URL
@@ -226,7 +194,6 @@ object OwcGeoJsonConverters extends ClassnameLogger {
       offering = offerings,
       minScaleDenominator = None,
       maxScaleDenominator = None,
-      active = None,
       keyword = List(),
       folder = None)
   }
@@ -264,7 +231,7 @@ object OwcGeoJsonConverters extends ClassnameLogger {
       areaOfInterest = bbox,
 
       // aka links.profiles[] and rel=profile
-      specReference = List(OwcProfile.CORE.value),
+      specReference = List(OwcProfile.CORE.newOf),
 
       // e.g. links.via[] and rel=via
       contextMetadata = List(),
@@ -281,5 +248,4 @@ object OwcGeoJsonConverters extends ClassnameLogger {
       keyword = List(),
       resource = owcResources)
   }
-
 }

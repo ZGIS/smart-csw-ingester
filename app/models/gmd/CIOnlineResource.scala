@@ -20,10 +20,8 @@
 package models.gmd
 
 import java.net.URL
-import java.util.UUID
 
-import info.smart.models.owc100._
-import info.smart.models.owc100.OwcOfferingType.{WFS, WMS}
+import info.smart.models.owc100.UrlFormat
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._

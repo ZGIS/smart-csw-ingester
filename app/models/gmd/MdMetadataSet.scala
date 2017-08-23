@@ -19,14 +19,10 @@
 
 package models.gmd
 
-import java.net.{URL, URLEncoder}
 import java.time._
 import java.time.format._
 import java.util
-import java.util.UUID
 
-import info.smart.models.owc100._
-import info.smart.models.owc100.OwcOfferingType.CSW
 import org.apache.lucene.document._
 import org.apache.lucene.spatial.bbox.BBoxStrategy
 import org.locationtech.spatial4j.context.SpatialContext
@@ -774,4 +770,3 @@ object GeoJSONFeatureCollectionWriter extends Writes[List[MdMetadataSet]] with C
     }
   }
 }
-
