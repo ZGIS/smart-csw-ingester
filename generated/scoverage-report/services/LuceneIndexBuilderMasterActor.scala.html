@@ -4,7 +4,7 @@
         <title id="title">
           services/LuceneIndexBuilderMasterActor.scala.html
         </title>
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="http://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
         $(document).ready(function() {$(".tablesorter").tablesorter();});
       </script>
         <style>
@@ -24,18 +24,18 @@
           <div class="tab-pane active" id="codegrid">
             <pre style='font-size: 12pt; font-family: courier;'>1 <span style=''>/*
 </span>2 <span style=''> * Copyright (c) 2011-2017 Interfaculty Department of Geoinformatics, University of
-</span>3 <span style=''> * Salzburg (Z_GIS) & Institute of Geological and Nuclear Sciences Limited (GNS Science)
+</span>3 <span style=''> * Salzburg (Z_GIS) &amp; Institute of Geological and Nuclear Sciences Limited (GNS Science)
 </span>4 <span style=''> * in the SMART Aquifer Characterisation (SAC) programme funded by the New Zealand
 </span>5 <span style=''> * Ministry of Business, Innovation and Employment (MBIE)
 </span>6 <span style=''> *
-</span>7 <span style=''> * Licensed under the Apache License, Version 2.0 (the "License");
+</span>7 <span style=''> * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
 </span>8 <span style=''> * you may not use this file except in compliance with the License.
 </span>9 <span style=''> * You may obtain a copy of the License at
 </span>10 <span style=''> *
 </span>11 <span style=''> *    http://www.apache.org/licenses/LICENSE-2.0
 </span>12 <span style=''> *
 </span>13 <span style=''> * Unless required by applicable law or agreed to in writing, software
-</span>14 <span style=''> * distributed under the License is distributed on an "AS IS" BASIS,
+</span>14 <span style=''> * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
 </span>15 <span style=''> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 </span>16 <span style=''> * See the License for the specific language governing permissions and
 </span>17 <span style=''> * limitations under the License.
@@ -56,13 +56,13 @@
 </span>32 <span style=''>}
 </span>33 <span style=''>
 </span>34 <span style=''>/** at that point just a vehicle to get an injected child actor
-</span>35 <span style=''>  * TODO put a "create index" here
+</span>35 <span style=''>  * TODO put a &quot;create index&quot; here
 </span>36 <span style=''>  */
 </span>37 <span style=''>class LuceneIndexBuilderMasterActor @Inject()(luceneIndexBuilderActorFactory: LuceneIndexBuilderActor.Factory) extends Actor with
 </span>38 <span style=''>  InjectedActorSupport {
 </span>39 <span style=''>  override def receive: Receive = {
-</span>40 <span style=''>    case GetSpecificIndexBuilder(catalogueName) => {
-</span>41 <span style=''>      val indexBuilderActor: ActorRef = </span><span style='background: #AEF1AE'>injectedChild(luceneIndexBuilderActorFactory(), s"indexBuilder-$catalogueName")</span><span style=''>
+</span>40 <span style=''>    case GetSpecificIndexBuilder(catalogueName) =&gt; {
+</span>41 <span style=''>      val indexBuilderActor: ActorRef = </span><span style='background: #AEF1AE'>injectedChild(luceneIndexBuilderActorFactory(), s&quot;indexBuilder-$catalogueName&quot;)</span><span style=''>
 </span>42 <span style=''>      </span><span style='background: #AEF1AE'>sender() ! indexBuilderActor</span><span style=''>
 </span>43 <span style=''>    }
 </span>44 <span style=''>  }
@@ -83,7 +83,7 @@
           39
         </td>
         <td>
-          1053
+          1272
         </td>
         <td>
           1482
@@ -104,49 +104,7 @@
           41
         </td>
         <td>
-          1046
-        </td>
-        <td>
-          1625
-          -
-          1655
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.StringContext.s
-        </td>
-        <td style="background: #AEF1AE">
-          scala.StringContext.apply(&quot;indexBuilder-&quot;, &quot;&quot;).s(catalogueName)
-        </td>
-      </tr><tr>
-        <td>
-          41
-        </td>
-        <td>
-          1049
-        </td>
-        <td>
-          1577
-          -
-          1656
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          play.api.libs.concurrent.InjectedActorSupport.injectedChild
-        </td>
-        <td style="background: #AEF1AE">
-          LuceneIndexBuilderMasterActor.this.injectedChild(LuceneIndexBuilderMasterActor.this.luceneIndexBuilderActorFactory.apply(), scala.StringContext.apply(&quot;indexBuilder-&quot;, &quot;&quot;).s(catalogueName), LuceneIndexBuilderMasterActor.this.injectedChild$default$3)(LuceneIndexBuilderMasterActor.this.context)
-        </td>
-      </tr><tr>
-        <td>
-          41
-        </td>
-        <td>
-          1045
+          1264
         </td>
         <td>
           1591
@@ -167,7 +125,7 @@
           41
         </td>
         <td>
-          1048
+          1267
         </td>
         <td>
           1590
@@ -188,7 +146,7 @@
           41
         </td>
         <td>
-          1047
+          1266
         </td>
         <td>
           1577
@@ -206,31 +164,52 @@
         </td>
       </tr><tr>
         <td>
-          42
+          41
         </td>
         <td>
-          1052
+          1268
         </td>
         <td>
-          1663
+          1577
           -
-          1691
+          1656
         </td>
         <td>
           ApplyToImplicitArgs
         </td>
         <td>
-          akka.actor.ScalaActorRef.!
+          play.api.libs.concurrent.InjectedActorSupport.injectedChild
         </td>
         <td style="background: #AEF1AE">
-          akka.this.actor.`package`.actorRef2Scala(LuceneIndexBuilderMasterActor.this.sender()).!(indexBuilderActor)(LuceneIndexBuilderMasterActor.this.self)
+          LuceneIndexBuilderMasterActor.this.injectedChild(LuceneIndexBuilderMasterActor.this.luceneIndexBuilderActorFactory.apply(), scala.StringContext.apply(&quot;indexBuilder-&quot;, &quot;&quot;).s(catalogueName), LuceneIndexBuilderMasterActor.this.injectedChild$default$3)(LuceneIndexBuilderMasterActor.this.context)
+        </td>
+      </tr><tr>
+        <td>
+          41
+        </td>
+        <td>
+          1265
+        </td>
+        <td>
+          1625
+          -
+          1655
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.StringContext.s
+        </td>
+        <td style="background: #AEF1AE">
+          scala.StringContext.apply(&quot;indexBuilder-&quot;, &quot;&quot;).s(catalogueName)
         </td>
       </tr><tr>
         <td>
           42
         </td>
         <td>
-          1051
+          1270
         </td>
         <td>
           1672
@@ -251,7 +230,7 @@
           42
         </td>
         <td>
-          1050
+          1269
         </td>
         <td>
           1663
@@ -266,6 +245,27 @@
         </td>
         <td style="background: #AEF1AE">
           LuceneIndexBuilderMasterActor.this.sender()
+        </td>
+      </tr><tr>
+        <td>
+          42
+        </td>
+        <td>
+          1271
+        </td>
+        <td>
+          1663
+          -
+          1691
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          akka.actor.ScalaActorRef.!
+        </td>
+        <td style="background: #AEF1AE">
+          akka.this.actor.`package`.actorRef2Scala(LuceneIndexBuilderMasterActor.this.sender()).!(indexBuilderActor)(LuceneIndexBuilderMasterActor.this.self)
         </td>
       </tr>
     </table>

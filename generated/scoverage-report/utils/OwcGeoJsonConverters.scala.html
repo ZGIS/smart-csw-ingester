@@ -1,0 +1,5293 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          utils/OwcGeoJsonConverters.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier;'>1 <span style=''>/*
+</span>2 <span style=''> * Copyright (c) 2011-2017 Interfaculty Department of Geoinformatics, University of
+</span>3 <span style=''> * Salzburg (Z_GIS) &amp; Institute of Geological and Nuclear Sciences Limited (GNS Science)
+</span>4 <span style=''> * in the SMART Aquifer Characterisation (SAC) programme funded by the New Zealand
+</span>5 <span style=''> * Ministry of Business, Innovation and Employment (MBIE)
+</span>6 <span style=''> *
+</span>7 <span style=''> * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+</span>8 <span style=''> * you may not use this file except in compliance with the License.
+</span>9 <span style=''> * You may obtain a copy of the License at
+</span>10 <span style=''> *
+</span>11 <span style=''> *    http://www.apache.org/licenses/LICENSE-2.0
+</span>12 <span style=''> *
+</span>13 <span style=''> * Unless required by applicable law or agreed to in writing, software
+</span>14 <span style=''> * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+</span>15 <span style=''> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+</span>16 <span style=''> * See the License for the specific language governing permissions and
+</span>17 <span style=''> * limitations under the License.
+</span>18 <span style=''> */
+</span>19 <span style=''>
+</span>20 <span style=''>package utils
+</span>21 <span style=''>
+</span>22 <span style=''>import java.net.{URL, URLEncoder}
+</span>23 <span style=''>import java.time._
+</span>24 <span style=''>
+</span>25 <span style=''>import info.smart.models.owc100.OwcOfferingType.{CSW, WFS, WMS}
+</span>26 <span style=''>import info.smart.models.owc100._
+</span>27 <span style=''>import models.gmd.{CIOnlineResource, GeoJSONFeatureCollectionWriter, MdMetadataSet, ResourceType}
+</span>28 <span style=''>
+</span>29 <span style=''>object OwcGeoJsonConverters extends ClassnameLogger {
+</span>30 <span style=''>
+</span>31 <span style=''>  /**
+</span>32 <span style=''>    * Converts to a Option[OwcLink].
+</span>33 <span style=''>    * OWC:Context specReference attribute: atom rel=&quot;profile&quot; - geojson links.profiles[] array
+</span>34 <span style=''>    * OWC:Context contextMetadata attribute: atom rel=&quot;via&quot; - geojson links.via[] array
+</span>35 <span style=''>    *
+</span>36 <span style=''>    * OWC:Resource contentDescription attribute: atom rel=&quot;alternate&quot; - geojson links.alternates[] array
+</span>37 <span style=''>    * OWC:Resource preview attribute: atom rel=&quot;icon&quot; - geojson links.previews[] array
+</span>38 <span style=''>    * OWC:Resource contentByRef attribute: atom rel=&quot;enclosure&quot; - geojson links.data[] array
+</span>39 <span style=''>    * OWC:Resource resourceMetadata attribute: atom rel=&quot;via&quot; - geojson links.via[] array
+</span>40 <span style=''>    *
+</span>41 <span style=''>    * links for data and previews (aka rels enclosure and icon should have length attributes set)
+</span>42 <span style=''>    *
+</span>43 <span style=''>    * @return Some[OwcLink] or None if CIOnlineResource could not be converted sensibly
+</span>44 <span style=''>    */
+</span>45 <span style=''>  def asOwcLink(cIOnlineResource: CIOnlineResource): Option[OwcLink] = {
+</span>46 <span style=''>    import utils.StringUtils._
+</span>47 <span style=''>
+</span>48 <span style=''>    </span><span style='background: #AEF1AE'>cIOnlineResource.protocol</span><span style=''> match {
+</span>49 <span style=''>      case Some(&quot;WWW:LINK-1.0-http--metadata-URL&quot;) =&gt;
+</span>50 <span style=''>        </span><span style='background: #F0ADAD'>Some(OwcLink(rel = &quot;via&quot;,
+</span>51 <span style=''></span><span style='background: #F0ADAD'>          mimeType = Some(&quot;application/xml&quot;),
+</span>52 <span style=''></span><span style='background: #F0ADAD'>          href = cIOnlineResource.linkage,
+</span>53 <span style=''></span><span style='background: #F0ADAD'>          title = cIOnlineResource.name))</span><span style=''>
+</span>54 <span style=''>      case Some(&quot;WWW:LINK-1.0-http--link&quot;) =&gt;
+</span>55 <span style=''>        </span><span style='background: #F0ADAD'>Some(OwcLink(rel = &quot;alternate&quot;,
+</span>56 <span style=''></span><span style='background: #F0ADAD'>          mimeType = Some(&quot;text/html&quot;),
+</span>57 <span style=''></span><span style='background: #F0ADAD'>          href = cIOnlineResource.linkage,
+</span>58 <span style=''></span><span style='background: #F0ADAD'>          title = cIOnlineResource.name))</span><span style=''>
+</span>59 <span style=''>      case Some(r&quot;WWW:LINK-1.0-http--download(?:data)?&quot;) =&gt; {
+</span>60 <span style=''>        val mimeType = </span><span style='background: #F0ADAD'>cIOnlineResource.linkage.getFile.toLowerCase</span><span style=''> match {
+</span>61 <span style=''>          case r&quot;.*\.jpe?g&quot; =&gt; </span><span style='background: #F0ADAD'>&quot;image/jpeg&quot;</span><span style=''>
+</span>62 <span style=''>          case r&quot;.*\.png&quot; =&gt; </span><span style='background: #F0ADAD'>&quot;image/png&quot;</span><span style=''>
+</span>63 <span style=''>          case r&quot;.*\.pdf&quot; =&gt; </span><span style='background: #F0ADAD'>&quot;application/pdf&quot;</span><span style=''>
+</span>64 <span style=''>          case r&quot;.*\.xlsx?&quot; =&gt; </span><span style='background: #F0ADAD'>&quot;application/excel&quot;</span><span style=''>
+</span>65 <span style=''>          case r&quot;.*\.txt&quot; =&gt; </span><span style='background: #F0ADAD'>&quot;text/plain&quot;</span><span style=''>
+</span>66 <span style=''>          case r&quot;.*\.csv&quot; =&gt; </span><span style='background: #F0ADAD'>&quot;text/csv&quot;</span><span style=''>
+</span>67 <span style=''>          case _ =&gt; </span><span style='background: #F0ADAD'>&quot;application/octet-stream&quot;</span><span style=''>
+</span>68 <span style=''>        }
+</span>69 <span style=''>        </span><span style='background: #F0ADAD'>Some(OwcLink(rel = &quot;enclosure&quot;,
+</span>70 <span style=''></span><span style='background: #F0ADAD'>          mimeType = Some(mimeType),
+</span>71 <span style=''></span><span style='background: #F0ADAD'>          href = cIOnlineResource.linkage,
+</span>72 <span style=''></span><span style='background: #F0ADAD'>          title = cIOnlineResource.name))</span><span style=''>
+</span>73 <span style=''>      }
+</span>74 <span style=''>      case _ =&gt; </span><span style='background: #AEF1AE'>cIOnlineResource.linkage</span><span style=''> match {
+</span>75 <span style=''>        case r&quot;https?:\/\/data.linz.govt.nz\/layer\/.*&quot; =&gt;
+</span>76 <span style=''>          </span><span style='background: #F0ADAD'>Some(OwcLink(rel = &quot;alternates&quot;,
+</span>77 <span style=''></span><span style='background: #F0ADAD'>            mimeType = Some(&quot;text/html&quot;),
+</span>78 <span style=''></span><span style='background: #F0ADAD'>            href = cIOnlineResource.linkage,
+</span>79 <span style=''></span><span style='background: #F0ADAD'>            title = cIOnlineResource.name))</span><span style=''>
+</span>80 <span style=''>        case r&quot;https?:\/\/lris.scinfo.org.nz\/layer\/.*&quot; =&gt;
+</span>81 <span style=''>          </span><span style='background: #F0ADAD'>Some(OwcLink(rel = &quot;alternates&quot;,
+</span>82 <span style=''></span><span style='background: #F0ADAD'>            mimeType = Some(&quot;text/html&quot;),
+</span>83 <span style=''></span><span style='background: #F0ADAD'>            href = cIOnlineResource.linkage,
+</span>84 <span style=''></span><span style='background: #F0ADAD'>            title = cIOnlineResource.name))</span><span style=''>
+</span>85 <span style=''>        case r&quot;https?:\/\/geoportal\.doc\.govt\.nz\/(?i:ArcGIS)\/.*\/MapServer&quot; =&gt;
+</span>86 <span style=''>          </span><span style='background: #F0ADAD'>Some(OwcLink(rel = &quot;alternates&quot;,
+</span>87 <span style=''></span><span style='background: #F0ADAD'>            mimeType = Some(&quot;text/html&quot;),
+</span>88 <span style=''></span><span style='background: #F0ADAD'>            href = cIOnlineResource.linkage,
+</span>89 <span style=''></span><span style='background: #F0ADAD'>            title = cIOnlineResource.name))</span><span style=''>
+</span>90 <span style=''>        case _ =&gt; </span><span style='background: #AEF1AE'>cIOnlineResource.resourceType</span><span style=''> match {
+</span>91 <span style=''>          case ResourceType.WEBSITE =&gt; </span><span style='background: #AEF1AE'>Some(OwcLink(rel = &quot;alternate&quot;,
+</span>92 <span style=''></span><span style='background: #AEF1AE'>            mimeType = Some(&quot;text/html&quot;),
+</span>93 <span style=''></span><span style='background: #AEF1AE'>            href = cIOnlineResource.linkage,
+</span>94 <span style=''></span><span style='background: #AEF1AE'>            title = cIOnlineResource.name))</span><span style=''>
+</span>95 <span style=''>          case _ =&gt; </span><span style='background: #AEF1AE'>None</span><span style=''>
+</span>96 <span style=''>        }
+</span>97 <span style=''>      }
+</span>98 <span style=''>    }
+</span>99 <span style=''>  }
+</span>100 <span style=''>
+</span>101 <span style=''>  /**
+</span>102 <span style=''>    * Converts OnlineResource to a List of OwcOffering. List might be empty, if the CIOnlineResource cannot be
+</span>103 <span style=''>    * converted to offerings in a sensible way.
+</span>104 <span style=''>    *
+</span>105 <span style=''>    * @return
+</span>106 <span style=''>    */
+</span>107 <span style=''>  def asOwcOfferings(cIOnlineResource: CIOnlineResource): List[OwcOffering] = {
+</span>108 <span style=''>    import utils.StringUtils._
+</span>109 <span style=''>    </span><span style='background: #AEF1AE'>cIOnlineResource.linkage</span><span style=''> match {
+</span>110 <span style=''>      case r&quot;https?:\/\/geoportal\.doc\.govt\.nz\/(?i:ArcGIS)\/.*\/MapServer&quot; =&gt;
+</span>111 <span style=''>        // GeoPortals ArcGIS server offers WMS/WFS for all layers I have seen. So we generate offerings for that.
+</span>112 <span style=''>        </span><span style='background: #F0ADAD'>List(
+</span>113 <span style=''></span><span style='background: #F0ADAD'>          OwcOffering(code = WMS.code,
+</span>114 <span style=''></span><span style='background: #F0ADAD'>            operations = List(
+</span>115 <span style=''></span><span style='background: #F0ADAD'>              OwcOperation(
+</span>116 <span style=''></span><span style='background: #F0ADAD'>                code = &quot;GetCapabilities&quot;,
+</span>117 <span style=''></span><span style='background: #F0ADAD'>                method = &quot;GET&quot;,
+</span>118 <span style=''></span><span style='background: #F0ADAD'>                mimeType = Some(&quot;application/xml&quot;),
+</span>119 <span style=''></span><span style='background: #F0ADAD'>                requestUrl = new URL(s&quot;${cIOnlineResource.linkage}/WMSServer?request=GetCapabilities&amp;service=WMS&quot;))
+</span>120 <span style=''></span><span style='background: #F0ADAD'>            )
+</span>121 <span style=''></span><span style='background: #F0ADAD'>          ),
+</span>122 <span style=''></span><span style='background: #F0ADAD'>          OwcOffering(code = WFS.code,
+</span>123 <span style=''></span><span style='background: #F0ADAD'>            operations = List(
+</span>124 <span style=''></span><span style='background: #F0ADAD'>              OwcOperation(
+</span>125 <span style=''></span><span style='background: #F0ADAD'>                code = &quot;GetCapabilities&quot;,
+</span>126 <span style=''></span><span style='background: #F0ADAD'>                method = &quot;GET&quot;,
+</span>127 <span style=''></span><span style='background: #F0ADAD'>                mimeType = Some(&quot;application/xml&quot;),
+</span>128 <span style=''></span><span style='background: #F0ADAD'>                requestUrl = new URL(s&quot;${cIOnlineResource.linkage}/WFSServer?request=GetCapabilities&amp;service=WFS&quot;))
+</span>129 <span style=''></span><span style='background: #F0ADAD'>            )
+</span>130 <span style=''></span><span style='background: #F0ADAD'>          )
+</span>131 <span style=''></span><span style='background: #F0ADAD'>        )</span><span style=''>
+</span>132 <span style=''>      case _ =&gt; </span><span style='background: #AEF1AE'>Nil</span><span style=''>
+</span>133 <span style=''>    }
+</span>134 <span style=''>  }
+</span>135 <span style=''>
+</span>136 <span style=''>  /**
+</span>137 <span style=''>    * Converts MdMetadataSet to [[OwcResource]]
+</span>138 <span style=''>    *
+</span>139 <span style=''>    * @return
+</span>140 <span style=''>    */
+</span>141 <span style=''>  def asOwcResource(mdMetadataSet: MdMetadataSet, urlBaseForIds: String): OwcResource = {
+</span>142 <span style=''>    import utils.StringUtils._
+</span>143 <span style=''>
+</span>144 <span style=''>    val offerings =
+</span>145 <span style=''>    // convert linkages to offerings (ist might be empty if there are no linkages that can be converted to offerings
+</span>146 <span style=''>      mdMetadataSet.linkage.flatMap(ci =&gt; asOwcOfferings(ci)) </span><span style='background: #AEF1AE'>:::
+</span>147 <span style=''></span><span style='background: #AEF1AE'>        //Offering to get the original metadata document. Every document in the index should have that
+</span>148 <span style=''></span><span style='background: #AEF1AE'>        List(
+</span>149 <span style=''></span><span style='background: #AEF1AE'>          OwcOffering(code = CSW.code,
+</span>150 <span style=''></span><span style='background: #AEF1AE'>            operations = List(
+</span>151 <span style=''></span><span style='background: #AEF1AE'>              OwcOperation(
+</span>152 <span style=''></span><span style='background: #AEF1AE'>                code = &quot;GetCapabilities&quot;,
+</span>153 <span style=''></span><span style='background: #AEF1AE'>                method = &quot;GET&quot;,
+</span>154 <span style=''></span><span style='background: #AEF1AE'>                mimeType = Some(&quot;application/xml&quot;),
+</span>155 <span style=''></span><span style='background: #AEF1AE'>                requestUrl = new URL(s&quot;${mdMetadataSet.originUrl}?request=GetCapabilities&amp;service=CSW&quot;)),
+</span>156 <span style=''></span><span style='background: #AEF1AE'>              OwcOperation(
+</span>157 <span style=''></span><span style='background: #AEF1AE'>                code = &quot;GetRecordById&quot;,
+</span>158 <span style=''></span><span style='background: #AEF1AE'>                method = &quot;GET&quot;,
+</span>159 <span style=''></span><span style='background: #AEF1AE'>                mimeType = Some(&quot;application/xml&quot;),
+</span>160 <span style=''></span><span style='background: #AEF1AE'>                requestUrl = new URL(s&quot;${mdMetadataSet.originUrl}?request=GetRecordById&amp;version=2.0.2&amp;service=CSW&amp;elementSetName=full&quot; +
+</span>161 <span style=''></span><span style='background: #AEF1AE'>                  &quot;&amp;outputSchema=http%3A%2F%2Fwww.isotc211.org%2F2005%2Fgmd&quot; +
+</span>162 <span style=''></span><span style='background: #AEF1AE'>                  s&quot;&amp;Id=${URLEncoder.encode(mdMetadataSet.fileIdentifier, &quot;UTF-8&quot;)}&quot;)))
+</span>163 <span style=''></span><span style='background: #AEF1AE'>          )
+</span>164 <span style=''></span><span style='background: #AEF1AE'>        )</span><span style=''>
+</span>165 <span style=''>
+</span>166 <span style=''>    // ATTENTION: While id in OwcResource is of Type CharacterString, it still expects an IRI/URI type String, that'S why URL
+</span>167 <span style=''>    val baseUrl = </span><span style='background: #AEF1AE'>new URL(urlBaseForIds)</span><span style=''>
+</span>168 <span style=''>    </span><span style='background: #AEF1AE'>OwcResource(
+</span>169 <span style=''></span><span style='background: #AEF1AE'>      id = new URL(s&quot;${baseUrl.getProtocol}://${baseUrl.getHost}/context/resource/${URLEncoder.encode(mdMetadataSet.fileIdentifier, &quot;UTF-8&quot;)}&quot;),
+</span>170 <span style=''></span><span style='background: #AEF1AE'>      geospatialExtent = Some(mdMetadataSet.bbox),
+</span>171 <span style=''></span><span style='background: #AEF1AE'>      title = mdMetadataSet.title,
+</span>172 <span style=''></span><span style='background: #AEF1AE'>      subtitle = mdMetadataSet.abstrakt.toOption(),
+</span>173 <span style=''></span><span style='background: #AEF1AE'>      updateDate = OffsetDateTime.of(mdMetadataSet.dateStamp.atStartOfDay(), ZoneId.systemDefault().getRules.getOffset(mdMetadataSet.dateStamp.atStartOfDay())),
+</span>174 <span style=''></span><span style='background: #AEF1AE'>      author = List(OwcAuthor(name = mdMetadataSet.contactName.toOption(), email = MdMetadataSet.parseEmailStringtoEmailAddress(mdMetadataSet.contactEmail), uri = None)),
+</span>175 <span style=''></span><span style='background: #AEF1AE'>      publisher = None,
+</span>176 <span style=''></span><span style='background: #AEF1AE'>      rights = mdMetadataSet.license.toOption(),
+</span>177 <span style=''></span><span style='background: #AEF1AE'>      temporalExtent = None,
+</span>178 <span style=''></span><span style='background: #AEF1AE'>
+</span>179 <span style=''></span><span style='background: #AEF1AE'>      // links.alternates[] and rel=alternate
+</span>180 <span style=''></span><span style='background: #AEF1AE'>      contentDescription = mdMetadataSet.linkage.map(asOwcLink(_)).filter(_.isDefined)
+</span>181 <span style=''></span><span style='background: #AEF1AE'>        .map(_.get).filter(link =&gt; link.rel.equalsIgnoreCase(&quot;alternate&quot;)),
+</span>182 <span style=''></span><span style='background: #AEF1AE'>
+</span>183 <span style=''></span><span style='background: #AEF1AE'>      // aka links.previews[] and rel=icon (atom)
+</span>184 <span style=''></span><span style='background: #AEF1AE'>      preview = mdMetadataSet.linkage.map(asOwcLink(_)).filter(_.isDefined)
+</span>185 <span style=''></span><span style='background: #AEF1AE'>        .map(_.get).filter(link =&gt; link.rel.equalsIgnoreCase(&quot;icon&quot;)),
+</span>186 <span style=''></span><span style='background: #AEF1AE'>
+</span>187 <span style=''></span><span style='background: #AEF1AE'>      // aka links.data[] and rel=enclosure (atom)
+</span>188 <span style=''></span><span style='background: #AEF1AE'>      contentByRef = mdMetadataSet.linkage.map(asOwcLink(_)).filter(_.isDefined)
+</span>189 <span style=''></span><span style='background: #AEF1AE'>        .map(_.get).filter(link =&gt; link.rel.equalsIgnoreCase(&quot;enclosure&quot;)),
+</span>190 <span style=''></span><span style='background: #AEF1AE'>
+</span>191 <span style=''></span><span style='background: #AEF1AE'>      // aka links.via[] &amp; rel=via
+</span>192 <span style=''></span><span style='background: #AEF1AE'>      resourceMetadata = mdMetadataSet.linkage.map(asOwcLink(_)).filter(_.isDefined)
+</span>193 <span style=''></span><span style='background: #AEF1AE'>        .map(_.get).filter(link =&gt; link.rel.equalsIgnoreCase(&quot;via&quot;)),
+</span>194 <span style=''></span><span style='background: #AEF1AE'>      offering = offerings,
+</span>195 <span style=''></span><span style='background: #AEF1AE'>      minScaleDenominator = None,
+</span>196 <span style=''></span><span style='background: #AEF1AE'>      maxScaleDenominator = None,
+</span>197 <span style=''></span><span style='background: #AEF1AE'>      keyword = List(),
+</span>198 <span style=''></span><span style='background: #AEF1AE'>      folder = None)</span><span style=''>
+</span>199 <span style=''>  }
+</span>200 <span style=''>
+</span>201 <span style=''>  /**
+</span>202 <span style=''>    * Convert List[MdMetadataSet] to OwcContext
+</span>203 <span style=''>    *
+</span>204 <span style=''>    * @param metadataList  List[MdMetadataSet] containing the entries
+</span>205 <span style=''>    * @param idAsUrlString String containing the ID for the OwcContext document
+</span>206 <span style=''>    */
+</span>207 <span style=''>  def toOwcContext(metadataList: List[MdMetadataSet], idAsUrlString: String): OwcContext = {
+</span>208 <span style=''>    val bbox = </span><span style='background: #AEF1AE'>Some(GeoJSONFeatureCollectionWriter.getBoundingBoxAsRect(metadataList))</span><span style=''>
+</span>209 <span style=''>
+</span>210 <span style=''>    val owcCreatorApplication = </span><span style='background: #AEF1AE'>OwcCreatorApplication(
+</span>211 <span style=''></span><span style='background: #AEF1AE'>      title = Some(utils.BuildInfo.name),
+</span>212 <span style=''></span><span style='background: #AEF1AE'>      uri = Some(new URL(idAsUrlString)),
+</span>213 <span style=''></span><span style='background: #AEF1AE'>      version = Some(s&quot;${utils.BuildInfo.version}-${utils.BuildInfo.buildNumber}&quot;)
+</span>214 <span style=''></span><span style='background: #AEF1AE'>    )</span><span style=''>
+</span>215 <span style=''>
+</span>216 <span style=''>    implicit val localDateOrdering: Ordering[LocalDate] = </span><span style='background: #AEF1AE'>Ordering.by(_.toEpochDay)</span><span style=''>
+</span>217 <span style=''>    val dateRange = </span><span style='background: #AEF1AE'>metadataList.map(md =&gt; md.dateStamp).sorted</span><span style=''>
+</span>218 <span style=''>    val optDateInterval: Option[List[OffsetDateTime]] = if (</span><span style='background: #AEF1AE'>dateRange.nonEmpty</span><span style=''>) {
+</span>219 <span style=''>      </span><span style='background: #AEF1AE'>if (dateRange.tail.isEmpty) {
+</span>220 <span style=''></span><span style='background: #AEF1AE'>        </span><span style='background: #F0ADAD'>Some(List(OffsetDateTime.of(dateRange.head, LocalTime.of(12, 0), ZoneOffset.UTC)))</span><span style='background: #AEF1AE'>
+</span>221 <span style=''></span><span style='background: #AEF1AE'>      } else {
+</span>222 <span style=''></span><span style='background: #AEF1AE'>        Some(List(OffsetDateTime.of(dateRange.last, LocalTime.of(12, 0), ZoneOffset.UTC)))
+</span>223 <span style=''></span><span style='background: #AEF1AE'>      }</span><span style=''>
+</span>224 <span style=''>    } else {
+</span>225 <span style=''>      </span><span style='background: #F0ADAD'>None</span><span style=''>
+</span>226 <span style=''>    }
+</span>227 <span style=''>
+</span>228 <span style=''>    val owcResources = </span><span style='background: #AEF1AE'>metadataList.map(md =&gt; asOwcResource(md, idAsUrlString))</span><span style=''>
+</span>229 <span style=''>    </span><span style='background: #AEF1AE'>OwcContext(
+</span>230 <span style=''></span><span style='background: #AEF1AE'>      id = new URL(idAsUrlString),
+</span>231 <span style=''></span><span style='background: #AEF1AE'>      areaOfInterest = bbox,
+</span>232 <span style=''></span><span style='background: #AEF1AE'>
+</span>233 <span style=''></span><span style='background: #AEF1AE'>      // aka links.profiles[] and rel=profile
+</span>234 <span style=''></span><span style='background: #AEF1AE'>      specReference = List(OwcProfile.CORE.newOf),
+</span>235 <span style=''></span><span style='background: #AEF1AE'>
+</span>236 <span style=''></span><span style='background: #AEF1AE'>      // e.g. links.via[] and rel=via
+</span>237 <span style=''></span><span style='background: #AEF1AE'>      contextMetadata = List(),
+</span>238 <span style=''></span><span style='background: #AEF1AE'>      language = &quot;en&quot;,
+</span>239 <span style=''></span><span style='background: #AEF1AE'>      title = &quot;Search result list CSW ingester&quot;,
+</span>240 <span style=''></span><span style='background: #AEF1AE'>      subtitle = Some(&quot;Originating query: &quot;),
+</span>241 <span style=''></span><span style='background: #AEF1AE'>      updateDate = OffsetDateTime.now(),
+</span>242 <span style=''></span><span style='background: #AEF1AE'>      author = List(),
+</span>243 <span style=''></span><span style='background: #AEF1AE'>      publisher = None,
+</span>244 <span style=''></span><span style='background: #AEF1AE'>      creatorApplication = Some(owcCreatorApplication),
+</span>245 <span style=''></span><span style='background: #AEF1AE'>      creatorDisplay = None,
+</span>246 <span style=''></span><span style='background: #AEF1AE'>      rights = None,
+</span>247 <span style=''></span><span style='background: #AEF1AE'>      timeIntervalOfInterest = optDateInterval,
+</span>248 <span style=''></span><span style='background: #AEF1AE'>      keyword = List(),
+</span>249 <span style=''></span><span style='background: #AEF1AE'>      resource = owcResources)</span><span style=''>
+</span>250 <span style=''>  }
+</span>251 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          48
+        </td>
+        <td>
+          1433
+        </td>
+        <td>
+          2121
+          -
+          2146
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          models.gmd.CIOnlineResource.protocol
+        </td>
+        <td style="background: #AEF1AE">
+          cIOnlineResource.protocol
+        </td>
+      </tr><tr>
+        <td>
+          50
+        </td>
+        <td>
+          1438
+        </td>
+        <td>
+          2222
+          -
+          2222
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcLink.apply$default$3
+        </td>
+        <td style="background: #F0ADAD">
+          info.smart.models.owc100.OwcLink.apply$default$3
+        </td>
+      </tr><tr>
+        <td>
+          50
+        </td>
+        <td>
+          1441
+        </td>
+        <td>
+          2222
+          -
+          2372
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          info.smart.models.owc100.OwcLink.apply
+        </td>
+        <td style="background: #F0ADAD">
+          info.smart.models.owc100.OwcLink.apply(x$17, x$16, x$19, x$18, x$20, x$15, x$21)
+        </td>
+      </tr><tr>
+        <td>
+          50
+        </td>
+        <td>
+          1440
+        </td>
+        <td>
+          2222
+          -
+          2222
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcLink.apply$default$7
+        </td>
+        <td style="background: #F0ADAD">
+          info.smart.models.owc100.OwcLink.apply$default$7
+        </td>
+      </tr><tr>
+        <td>
+          50
+        </td>
+        <td>
+          1434
+        </td>
+        <td>
+          2236
+          -
+          2241
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;via&quot;
+        </td>
+      </tr><tr>
+        <td>
+          50
+        </td>
+        <td>
+          1439
+        </td>
+        <td>
+          2222
+          -
+          2222
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcLink.apply$default$5
+        </td>
+        <td style="background: #F0ADAD">
+          info.smart.models.owc100.OwcLink.apply$default$5
+        </td>
+      </tr><tr>
+        <td>
+          50
+        </td>
+        <td>
+          1442
+        </td>
+        <td>
+          2217
+          -
+          2373
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Some.apply
+        </td>
+        <td style="background: #F0ADAD">
+          scala.Some.apply[info.smart.models.owc100.OwcLink]({
+  &lt;artifact&gt; val x$15: String = &quot;via&quot;;
+  &lt;artifact&gt; val x$16: Some[String] @scala.reflect.internal.annotations.uncheckedBounds = scala.Some.apply[String](&quot;application/xml&quot;);
+  &lt;artifact&gt; val x$17: java.net.URL = cIOnlineResource.linkage;
+  &lt;artifact&gt; val x$18: Option[String] @scala.reflect.internal.annotations.uncheckedBounds = cIOnlineResource.name;
+  &lt;artifact&gt; val x$19: Option[String] @scala.reflect.internal.annotations.uncheckedBounds = info.smart.models.owc100.OwcLink.apply$default$3;
+  &lt;artifact&gt; val x$20: Option[Int] @scala.reflect.internal.annotations.uncheckedBounds = info.smart.models.owc100.OwcLink.apply$default$5;
+  &lt;artifact&gt; val x$21: java.util.UUID = info.smart.models.owc100.OwcLink.apply$default$7;
+  info.smart.models.owc100.OwcLink.apply(x$17, x$16, x$19, x$18, x$20, x$15, x$21)
+})
+        </td>
+      </tr><tr>
+        <td>
+          51
+        </td>
+        <td>
+          1435
+        </td>
+        <td>
+          2264
+          -
+          2287
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Some.apply
+        </td>
+        <td style="background: #F0ADAD">
+          scala.Some.apply[String](&quot;application/xml&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          52
+        </td>
+        <td>
+          1436
+        </td>
+        <td>
+          2306
+          -
+          2330
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          models.gmd.CIOnlineResource.linkage
+        </td>
+        <td style="background: #F0ADAD">
+          cIOnlineResource.linkage
+        </td>
+      </tr><tr>
+        <td>
+          53
+        </td>
+        <td>
+          1437
+        </td>
+        <td>
+          2350
+          -
+          2371
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          models.gmd.CIOnlineResource.name
+        </td>
+        <td style="background: #F0ADAD">
+          cIOnlineResource.name
+        </td>
+      </tr><tr>
+        <td>
+          55
+        </td>
+        <td>
+          1447
+        </td>
+        <td>
+          2433
+          -
+          2433
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcLink.apply$default$3
+        </td>
+        <td style="background: #F0ADAD">
+          info.smart.models.owc100.OwcLink.apply$default$3
+        </td>
+      </tr><tr>
+        <td>
+          55
+        </td>
+        <td>
+          1450
+        </td>
+        <td>
+          2433
+          -
+          2583
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          info.smart.models.owc100.OwcLink.apply
+        </td>
+        <td style="background: #F0ADAD">
+          info.smart.models.owc100.OwcLink.apply(x$24, x$23, x$26, x$25, x$27, x$22, x$28)
+        </td>
+      </tr><tr>
+        <td>
+          55
+        </td>
+        <td>
+          1449
+        </td>
+        <td>
+          2433
+          -
+          2433
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcLink.apply$default$7
+        </td>
+        <td style="background: #F0ADAD">
+          info.smart.models.owc100.OwcLink.apply$default$7
+        </td>
+      </tr><tr>
+        <td>
+          55
+        </td>
+        <td>
+          1443
+        </td>
+        <td>
+          2447
+          -
+          2458
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;alternate&quot;
+        </td>
+      </tr><tr>
+        <td>
+          55
+        </td>
+        <td>
+          1448
+        </td>
+        <td>
+          2433
+          -
+          2433
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcLink.apply$default$5
+        </td>
+        <td style="background: #F0ADAD">
+          info.smart.models.owc100.OwcLink.apply$default$5
+        </td>
+      </tr><tr>
+        <td>
+          55
+        </td>
+        <td>
+          1451
+        </td>
+        <td>
+          2428
+          -
+          2584
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Some.apply
+        </td>
+        <td style="background: #F0ADAD">
+          scala.Some.apply[info.smart.models.owc100.OwcLink]({
+  &lt;artifact&gt; val x$22: String = &quot;alternate&quot;;
+  &lt;artifact&gt; val x$23: Some[String] @scala.reflect.internal.annotations.uncheckedBounds = scala.Some.apply[String](&quot;text/html&quot;);
+  &lt;artifact&gt; val x$24: java.net.URL = cIOnlineResource.linkage;
+  &lt;artifact&gt; val x$25: Option[String] @scala.reflect.internal.annotations.uncheckedBounds = cIOnlineResource.name;
+  &lt;artifact&gt; val x$26: Option[String] @scala.reflect.internal.annotations.uncheckedBounds = info.smart.models.owc100.OwcLink.apply$default$3;
+  &lt;artifact&gt; val x$27: Option[Int] @scala.reflect.internal.annotations.uncheckedBounds = info.smart.models.owc100.OwcLink.apply$default$5;
+  &lt;artifact&gt; val x$28: java.util.UUID = info.smart.models.owc100.OwcLink.apply$default$7;
+  info.smart.models.owc100.OwcLink.apply(x$24, x$23, x$26, x$25, x$27, x$22, x$28)
+})
+        </td>
+      </tr><tr>
+        <td>
+          56
+        </td>
+        <td>
+          1444
+        </td>
+        <td>
+          2481
+          -
+          2498
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Some.apply
+        </td>
+        <td style="background: #F0ADAD">
+          scala.Some.apply[String](&quot;text/html&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          57
+        </td>
+        <td>
+          1445
+        </td>
+        <td>
+          2517
+          -
+          2541
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          models.gmd.CIOnlineResource.linkage
+        </td>
+        <td style="background: #F0ADAD">
+          cIOnlineResource.linkage
+        </td>
+      </tr><tr>
+        <td>
+          58
+        </td>
+        <td>
+          1446
+        </td>
+        <td>
+          2561
+          -
+          2582
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          models.gmd.CIOnlineResource.name
+        </td>
+        <td style="background: #F0ADAD">
+          cIOnlineResource.name
+        </td>
+      </tr><tr>
+        <td>
+          60
+        </td>
+        <td>
+          1452
+        </td>
+        <td>
+          2670
+          -
+          2714
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.String.toLowerCase
+        </td>
+        <td style="background: #F0ADAD">
+          cIOnlineResource.linkage.getFile().toLowerCase()
+        </td>
+      </tr><tr>
+        <td>
+          61
+        </td>
+        <td>
+          1453
+        </td>
+        <td>
+          2754
+          -
+          2766
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;image/jpeg&quot;
+        </td>
+      </tr><tr>
+        <td>
+          62
+        </td>
+        <td>
+          1454
+        </td>
+        <td>
+          2796
+          -
+          2807
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;image/png&quot;
+        </td>
+      </tr><tr>
+        <td>
+          63
+        </td>
+        <td>
+          1455
+        </td>
+        <td>
+          2837
+          -
+          2854
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;application/pdf&quot;
+        </td>
+      </tr><tr>
+        <td>
+          64
+        </td>
+        <td>
+          1456
+        </td>
+        <td>
+          2886
+          -
+          2905
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;application/excel&quot;
+        </td>
+      </tr><tr>
+        <td>
+          65
+        </td>
+        <td>
+          1457
+        </td>
+        <td>
+          2935
+          -
+          2947
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;text/plain&quot;
+        </td>
+      </tr><tr>
+        <td>
+          66
+        </td>
+        <td>
+          1458
+        </td>
+        <td>
+          2977
+          -
+          2987
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;text/csv&quot;
+        </td>
+      </tr><tr>
+        <td>
+          67
+        </td>
+        <td>
+          1459
+        </td>
+        <td>
+          3008
+          -
+          3034
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;application/octet-stream&quot;
+        </td>
+      </tr><tr>
+        <td>
+          69
+        </td>
+        <td>
+          1465
+        </td>
+        <td>
+          3058
+          -
+          3058
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcLink.apply$default$5
+        </td>
+        <td style="background: #F0ADAD">
+          info.smart.models.owc100.OwcLink.apply$default$5
+        </td>
+      </tr><tr>
+        <td>
+          69
+        </td>
+        <td>
+          1468
+        </td>
+        <td>
+          3053
+          -
+          3206
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Some.apply
+        </td>
+        <td style="background: #F0ADAD">
+          scala.Some.apply[info.smart.models.owc100.OwcLink]({
+  &lt;artifact&gt; val x$29: String = &quot;enclosure&quot;;
+  &lt;artifact&gt; val x$30: Some[String] @scala.reflect.internal.annotations.uncheckedBounds = scala.Some.apply[String](mimeType);
+  &lt;artifact&gt; val x$31: java.net.URL = cIOnlineResource.linkage;
+  &lt;artifact&gt; val x$32: Option[String] @scala.reflect.internal.annotations.uncheckedBounds = cIOnlineResource.name;
+  &lt;artifact&gt; val x$33: Option[String] @scala.reflect.internal.annotations.uncheckedBounds = info.smart.models.owc100.OwcLink.apply$default$3;
+  &lt;artifact&gt; val x$34: Option[Int] @scala.reflect.internal.annotations.uncheckedBounds = info.smart.models.owc100.OwcLink.apply$default$5;
+  &lt;artifact&gt; val x$35: java.util.UUID = info.smart.models.owc100.OwcLink.apply$default$7;
+  info.smart.models.owc100.OwcLink.apply(x$31, x$30, x$33, x$32, x$34, x$29, x$35)
+})
+        </td>
+      </tr><tr>
+        <td>
+          69
+        </td>
+        <td>
+          1467
+        </td>
+        <td>
+          3058
+          -
+          3205
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          info.smart.models.owc100.OwcLink.apply
+        </td>
+        <td style="background: #F0ADAD">
+          info.smart.models.owc100.OwcLink.apply(x$31, x$30, x$33, x$32, x$34, x$29, x$35)
+        </td>
+      </tr><tr>
+        <td>
+          69
+        </td>
+        <td>
+          1464
+        </td>
+        <td>
+          3058
+          -
+          3058
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcLink.apply$default$3
+        </td>
+        <td style="background: #F0ADAD">
+          info.smart.models.owc100.OwcLink.apply$default$3
+        </td>
+      </tr><tr>
+        <td>
+          69
+        </td>
+        <td>
+          1466
+        </td>
+        <td>
+          3058
+          -
+          3058
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcLink.apply$default$7
+        </td>
+        <td style="background: #F0ADAD">
+          info.smart.models.owc100.OwcLink.apply$default$7
+        </td>
+      </tr><tr>
+        <td>
+          69
+        </td>
+        <td>
+          1460
+        </td>
+        <td>
+          3072
+          -
+          3083
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;enclosure&quot;
+        </td>
+      </tr><tr>
+        <td>
+          70
+        </td>
+        <td>
+          1461
+        </td>
+        <td>
+          3106
+          -
+          3120
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Some.apply
+        </td>
+        <td style="background: #F0ADAD">
+          scala.Some.apply[String](mimeType)
+        </td>
+      </tr><tr>
+        <td>
+          71
+        </td>
+        <td>
+          1462
+        </td>
+        <td>
+          3139
+          -
+          3163
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          models.gmd.CIOnlineResource.linkage
+        </td>
+        <td style="background: #F0ADAD">
+          cIOnlineResource.linkage
+        </td>
+      </tr><tr>
+        <td>
+          72
+        </td>
+        <td>
+          1463
+        </td>
+        <td>
+          3183
+          -
+          3204
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          models.gmd.CIOnlineResource.name
+        </td>
+        <td style="background: #F0ADAD">
+          cIOnlineResource.name
+        </td>
+      </tr><tr>
+        <td>
+          74
+        </td>
+        <td>
+          1469
+        </td>
+        <td>
+          3231
+          -
+          3255
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          models.gmd.CIOnlineResource.linkage
+        </td>
+        <td style="background: #AEF1AE">
+          cIOnlineResource.linkage
+        </td>
+      </tr><tr>
+        <td>
+          76
+        </td>
+        <td>
+          1474
+        </td>
+        <td>
+          3338
+          -
+          3338
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcLink.apply$default$3
+        </td>
+        <td style="background: #F0ADAD">
+          info.smart.models.owc100.OwcLink.apply$default$3
+        </td>
+      </tr><tr>
+        <td>
+          76
+        </td>
+        <td>
+          1476
+        </td>
+        <td>
+          3338
+          -
+          3338
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcLink.apply$default$7
+        </td>
+        <td style="background: #F0ADAD">
+          info.smart.models.owc100.OwcLink.apply$default$7
+        </td>
+      </tr><tr>
+        <td>
+          76
+        </td>
+        <td>
+          1470
+        </td>
+        <td>
+          3352
+          -
+          3364
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;alternates&quot;
+        </td>
+      </tr><tr>
+        <td>
+          76
+        </td>
+        <td>
+          1475
+        </td>
+        <td>
+          3338
+          -
+          3338
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcLink.apply$default$5
+        </td>
+        <td style="background: #F0ADAD">
+          info.smart.models.owc100.OwcLink.apply$default$5
+        </td>
+      </tr><tr>
+        <td>
+          76
+        </td>
+        <td>
+          1478
+        </td>
+        <td>
+          3333
+          -
+          3496
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Some.apply
+        </td>
+        <td style="background: #F0ADAD">
+          scala.Some.apply[info.smart.models.owc100.OwcLink]({
+  &lt;artifact&gt; val x$36: String = &quot;alternates&quot;;
+  &lt;artifact&gt; val x$37: Some[String] @scala.reflect.internal.annotations.uncheckedBounds = scala.Some.apply[String](&quot;text/html&quot;);
+  &lt;artifact&gt; val x$38: java.net.URL = cIOnlineResource.linkage;
+  &lt;artifact&gt; val x$39: Option[String] @scala.reflect.internal.annotations.uncheckedBounds = cIOnlineResource.name;
+  &lt;artifact&gt; val x$40: Option[String] @scala.reflect.internal.annotations.uncheckedBounds = info.smart.models.owc100.OwcLink.apply$default$3;
+  &lt;artifact&gt; val x$41: Option[Int] @scala.reflect.internal.annotations.uncheckedBounds = info.smart.models.owc100.OwcLink.apply$default$5;
+  &lt;artifact&gt; val x$42: java.util.UUID = info.smart.models.owc100.OwcLink.apply$default$7;
+  info.smart.models.owc100.OwcLink.apply(x$38, x$37, x$40, x$39, x$41, x$36, x$42)
+})
+        </td>
+      </tr><tr>
+        <td>
+          76
+        </td>
+        <td>
+          1477
+        </td>
+        <td>
+          3338
+          -
+          3495
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          info.smart.models.owc100.OwcLink.apply
+        </td>
+        <td style="background: #F0ADAD">
+          info.smart.models.owc100.OwcLink.apply(x$38, x$37, x$40, x$39, x$41, x$36, x$42)
+        </td>
+      </tr><tr>
+        <td>
+          77
+        </td>
+        <td>
+          1471
+        </td>
+        <td>
+          3389
+          -
+          3406
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Some.apply
+        </td>
+        <td style="background: #F0ADAD">
+          scala.Some.apply[String](&quot;text/html&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          78
+        </td>
+        <td>
+          1472
+        </td>
+        <td>
+          3427
+          -
+          3451
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          models.gmd.CIOnlineResource.linkage
+        </td>
+        <td style="background: #F0ADAD">
+          cIOnlineResource.linkage
+        </td>
+      </tr><tr>
+        <td>
+          79
+        </td>
+        <td>
+          1473
+        </td>
+        <td>
+          3473
+          -
+          3494
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          models.gmd.CIOnlineResource.name
+        </td>
+        <td style="background: #F0ADAD">
+          cIOnlineResource.name
+        </td>
+      </tr><tr>
+        <td>
+          81
+        </td>
+        <td>
+          1483
+        </td>
+        <td>
+          3572
+          -
+          3572
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcLink.apply$default$3
+        </td>
+        <td style="background: #F0ADAD">
+          info.smart.models.owc100.OwcLink.apply$default$3
+        </td>
+      </tr><tr>
+        <td>
+          81
+        </td>
+        <td>
+          1485
+        </td>
+        <td>
+          3572
+          -
+          3572
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcLink.apply$default$7
+        </td>
+        <td style="background: #F0ADAD">
+          info.smart.models.owc100.OwcLink.apply$default$7
+        </td>
+      </tr><tr>
+        <td>
+          81
+        </td>
+        <td>
+          1479
+        </td>
+        <td>
+          3586
+          -
+          3598
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;alternates&quot;
+        </td>
+      </tr><tr>
+        <td>
+          81
+        </td>
+        <td>
+          1484
+        </td>
+        <td>
+          3572
+          -
+          3572
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcLink.apply$default$5
+        </td>
+        <td style="background: #F0ADAD">
+          info.smart.models.owc100.OwcLink.apply$default$5
+        </td>
+      </tr><tr>
+        <td>
+          81
+        </td>
+        <td>
+          1487
+        </td>
+        <td>
+          3567
+          -
+          3730
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Some.apply
+        </td>
+        <td style="background: #F0ADAD">
+          scala.Some.apply[info.smart.models.owc100.OwcLink]({
+  &lt;artifact&gt; val x$43: String = &quot;alternates&quot;;
+  &lt;artifact&gt; val x$44: Some[String] @scala.reflect.internal.annotations.uncheckedBounds = scala.Some.apply[String](&quot;text/html&quot;);
+  &lt;artifact&gt; val x$45: java.net.URL = cIOnlineResource.linkage;
+  &lt;artifact&gt; val x$46: Option[String] @scala.reflect.internal.annotations.uncheckedBounds = cIOnlineResource.name;
+  &lt;artifact&gt; val x$47: Option[String] @scala.reflect.internal.annotations.uncheckedBounds = info.smart.models.owc100.OwcLink.apply$default$3;
+  &lt;artifact&gt; val x$48: Option[Int] @scala.reflect.internal.annotations.uncheckedBounds = info.smart.models.owc100.OwcLink.apply$default$5;
+  &lt;artifact&gt; val x$49: java.util.UUID = info.smart.models.owc100.OwcLink.apply$default$7;
+  info.smart.models.owc100.OwcLink.apply(x$45, x$44, x$47, x$46, x$48, x$43, x$49)
+})
+        </td>
+      </tr><tr>
+        <td>
+          81
+        </td>
+        <td>
+          1486
+        </td>
+        <td>
+          3572
+          -
+          3729
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          info.smart.models.owc100.OwcLink.apply
+        </td>
+        <td style="background: #F0ADAD">
+          info.smart.models.owc100.OwcLink.apply(x$45, x$44, x$47, x$46, x$48, x$43, x$49)
+        </td>
+      </tr><tr>
+        <td>
+          82
+        </td>
+        <td>
+          1480
+        </td>
+        <td>
+          3623
+          -
+          3640
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Some.apply
+        </td>
+        <td style="background: #F0ADAD">
+          scala.Some.apply[String](&quot;text/html&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          83
+        </td>
+        <td>
+          1481
+        </td>
+        <td>
+          3661
+          -
+          3685
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          models.gmd.CIOnlineResource.linkage
+        </td>
+        <td style="background: #F0ADAD">
+          cIOnlineResource.linkage
+        </td>
+      </tr><tr>
+        <td>
+          84
+        </td>
+        <td>
+          1482
+        </td>
+        <td>
+          3707
+          -
+          3728
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          models.gmd.CIOnlineResource.name
+        </td>
+        <td style="background: #F0ADAD">
+          cIOnlineResource.name
+        </td>
+      </tr><tr>
+        <td>
+          86
+        </td>
+        <td>
+          1492
+        </td>
+        <td>
+          3829
+          -
+          3829
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcLink.apply$default$3
+        </td>
+        <td style="background: #F0ADAD">
+          info.smart.models.owc100.OwcLink.apply$default$3
+        </td>
+      </tr><tr>
+        <td>
+          86
+        </td>
+        <td>
+          1494
+        </td>
+        <td>
+          3829
+          -
+          3829
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcLink.apply$default$7
+        </td>
+        <td style="background: #F0ADAD">
+          info.smart.models.owc100.OwcLink.apply$default$7
+        </td>
+      </tr><tr>
+        <td>
+          86
+        </td>
+        <td>
+          1488
+        </td>
+        <td>
+          3843
+          -
+          3855
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;alternates&quot;
+        </td>
+      </tr><tr>
+        <td>
+          86
+        </td>
+        <td>
+          1493
+        </td>
+        <td>
+          3829
+          -
+          3829
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcLink.apply$default$5
+        </td>
+        <td style="background: #F0ADAD">
+          info.smart.models.owc100.OwcLink.apply$default$5
+        </td>
+      </tr><tr>
+        <td>
+          86
+        </td>
+        <td>
+          1496
+        </td>
+        <td>
+          3824
+          -
+          3987
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Some.apply
+        </td>
+        <td style="background: #F0ADAD">
+          scala.Some.apply[info.smart.models.owc100.OwcLink]({
+  &lt;artifact&gt; val x$50: String = &quot;alternates&quot;;
+  &lt;artifact&gt; val x$51: Some[String] @scala.reflect.internal.annotations.uncheckedBounds = scala.Some.apply[String](&quot;text/html&quot;);
+  &lt;artifact&gt; val x$52: java.net.URL = cIOnlineResource.linkage;
+  &lt;artifact&gt; val x$53: Option[String] @scala.reflect.internal.annotations.uncheckedBounds = cIOnlineResource.name;
+  &lt;artifact&gt; val x$54: Option[String] @scala.reflect.internal.annotations.uncheckedBounds = info.smart.models.owc100.OwcLink.apply$default$3;
+  &lt;artifact&gt; val x$55: Option[Int] @scala.reflect.internal.annotations.uncheckedBounds = info.smart.models.owc100.OwcLink.apply$default$5;
+  &lt;artifact&gt; val x$56: java.util.UUID = info.smart.models.owc100.OwcLink.apply$default$7;
+  info.smart.models.owc100.OwcLink.apply(x$52, x$51, x$54, x$53, x$55, x$50, x$56)
+})
+        </td>
+      </tr><tr>
+        <td>
+          86
+        </td>
+        <td>
+          1495
+        </td>
+        <td>
+          3829
+          -
+          3986
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          info.smart.models.owc100.OwcLink.apply
+        </td>
+        <td style="background: #F0ADAD">
+          info.smart.models.owc100.OwcLink.apply(x$52, x$51, x$54, x$53, x$55, x$50, x$56)
+        </td>
+      </tr><tr>
+        <td>
+          87
+        </td>
+        <td>
+          1489
+        </td>
+        <td>
+          3880
+          -
+          3897
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Some.apply
+        </td>
+        <td style="background: #F0ADAD">
+          scala.Some.apply[String](&quot;text/html&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          88
+        </td>
+        <td>
+          1490
+        </td>
+        <td>
+          3918
+          -
+          3942
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          models.gmd.CIOnlineResource.linkage
+        </td>
+        <td style="background: #F0ADAD">
+          cIOnlineResource.linkage
+        </td>
+      </tr><tr>
+        <td>
+          89
+        </td>
+        <td>
+          1491
+        </td>
+        <td>
+          3964
+          -
+          3985
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          models.gmd.CIOnlineResource.name
+        </td>
+        <td style="background: #F0ADAD">
+          cIOnlineResource.name
+        </td>
+      </tr><tr>
+        <td>
+          90
+        </td>
+        <td>
+          1497
+        </td>
+        <td>
+          4006
+          -
+          4035
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          models.gmd.CIOnlineResource.resourceType
+        </td>
+        <td style="background: #AEF1AE">
+          cIOnlineResource.resourceType
+        </td>
+      </tr><tr>
+        <td>
+          91
+        </td>
+        <td>
+          1503
+        </td>
+        <td>
+          4088
+          -
+          4088
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcLink.apply$default$5
+        </td>
+        <td style="background: #AEF1AE">
+          info.smart.models.owc100.OwcLink.apply$default$5
+        </td>
+      </tr><tr>
+        <td>
+          91
+        </td>
+        <td>
+          1506
+        </td>
+        <td>
+          4083
+          -
+          4245
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Some.apply
+        </td>
+        <td style="background: #AEF1AE">
+          scala.Some.apply[info.smart.models.owc100.OwcLink]({
+  &lt;artifact&gt; val x$57: String = &quot;alternate&quot;;
+  &lt;artifact&gt; val x$58: Some[String] @scala.reflect.internal.annotations.uncheckedBounds = scala.Some.apply[String](&quot;text/html&quot;);
+  &lt;artifact&gt; val x$59: java.net.URL = cIOnlineResource.linkage;
+  &lt;artifact&gt; val x$60: Option[String] @scala.reflect.internal.annotations.uncheckedBounds = cIOnlineResource.name;
+  &lt;artifact&gt; val x$61: Option[String] @scala.reflect.internal.annotations.uncheckedBounds = info.smart.models.owc100.OwcLink.apply$default$3;
+  &lt;artifact&gt; val x$62: Option[Int] @scala.reflect.internal.annotations.uncheckedBounds = info.smart.models.owc100.OwcLink.apply$default$5;
+  &lt;artifact&gt; val x$63: java.util.UUID = info.smart.models.owc100.OwcLink.apply$default$7;
+  info.smart.models.owc100.OwcLink.apply(x$59, x$58, x$61, x$60, x$62, x$57, x$63)
+})
+        </td>
+      </tr><tr>
+        <td>
+          91
+        </td>
+        <td>
+          1502
+        </td>
+        <td>
+          4088
+          -
+          4088
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcLink.apply$default$3
+        </td>
+        <td style="background: #AEF1AE">
+          info.smart.models.owc100.OwcLink.apply$default$3
+        </td>
+      </tr><tr>
+        <td>
+          91
+        </td>
+        <td>
+          1505
+        </td>
+        <td>
+          4088
+          -
+          4244
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          info.smart.models.owc100.OwcLink.apply
+        </td>
+        <td style="background: #AEF1AE">
+          info.smart.models.owc100.OwcLink.apply(x$59, x$58, x$61, x$60, x$62, x$57, x$63)
+        </td>
+      </tr><tr>
+        <td>
+          91
+        </td>
+        <td>
+          1504
+        </td>
+        <td>
+          4088
+          -
+          4088
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcLink.apply$default$7
+        </td>
+        <td style="background: #AEF1AE">
+          info.smart.models.owc100.OwcLink.apply$default$7
+        </td>
+      </tr><tr>
+        <td>
+          91
+        </td>
+        <td>
+          1498
+        </td>
+        <td>
+          4102
+          -
+          4113
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;alternate&quot;
+        </td>
+      </tr><tr>
+        <td>
+          92
+        </td>
+        <td>
+          1499
+        </td>
+        <td>
+          4138
+          -
+          4155
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Some.apply
+        </td>
+        <td style="background: #AEF1AE">
+          scala.Some.apply[String](&quot;text/html&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          93
+        </td>
+        <td>
+          1500
+        </td>
+        <td>
+          4176
+          -
+          4200
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          models.gmd.CIOnlineResource.linkage
+        </td>
+        <td style="background: #AEF1AE">
+          cIOnlineResource.linkage
+        </td>
+      </tr><tr>
+        <td>
+          94
+        </td>
+        <td>
+          1501
+        </td>
+        <td>
+          4222
+          -
+          4243
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          models.gmd.CIOnlineResource.name
+        </td>
+        <td style="background: #AEF1AE">
+          cIOnlineResource.name
+        </td>
+      </tr><tr>
+        <td>
+          95
+        </td>
+        <td>
+          1507
+        </td>
+        <td>
+          4266
+          -
+          4270
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.None
+        </td>
+        <td style="background: #AEF1AE">
+          scala.None
+        </td>
+      </tr><tr>
+        <td>
+          109
+        </td>
+        <td>
+          1508
+        </td>
+        <td>
+          4607
+          -
+          4631
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          models.gmd.CIOnlineResource.linkage
+        </td>
+        <td style="background: #AEF1AE">
+          cIOnlineResource.linkage
+        </td>
+      </tr><tr>
+        <td>
+          112
+        </td>
+        <td>
+          1545
+        </td>
+        <td>
+          4843
+          -
+          5591
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.immutable.List.apply
+        </td>
+        <td style="background: #F0ADAD">
+          immutable.this.List.apply[info.smart.models.owc100.OwcOffering](info.smart.models.owc100.OwcOffering.apply(info.smart.models.owc100.OwcOfferingType.WMS.code, immutable.this.List.apply[info.smart.models.owc100.OwcOperation](info.smart.models.owc100.OwcOperation.apply(&quot;GetCapabilities&quot;, &quot;GET&quot;, scala.Some.apply[String](&quot;application/xml&quot;), new java.net.URL(scala.StringContext.apply(&quot;&quot;, &quot;/WMSServer?request=GetCapabilities&amp;service=WMS&quot;).s(cIOnlineResource.linkage)), info.smart.models.owc100.OwcOperation.apply$default$5, info.smart.models.owc100.OwcOperation.apply$default$6, info.smart.models.owc100.OwcOperation.apply$default$7)), info.smart.models.owc100.OwcOffering.apply$default$3, info.smart.models.owc100.OwcOffering.apply$default$4, info.smart.models.owc100.OwcOffering.apply$default$5), info.smart.models.owc100.OwcOffering.apply(info.smart.models.owc100.OwcOfferingType.WFS.code, immutable.this.List.apply[info.smart.models.owc100.OwcOperation](info.smart.models.owc100.OwcOperation.apply(&quot;GetCapabilities&quot;, &quot;GET&quot;, scala.Some.apply[String](&quot;application/xml&quot;), new java.net.URL(scala.StringContext.apply(&quot;&quot;, &quot;/WFSServer?request=GetCapabilities&amp;service=WFS&quot;).s(cIOnlineResource.linkage)), info.smart.models.owc100.OwcOperation.apply$default$5, info.smart.models.owc100.OwcOperation.apply$default$6, info.smart.models.owc100.OwcOperation.apply$default$7)), info.smart.models.owc100.OwcOffering.apply$default$3, info.smart.models.owc100.OwcOffering.apply$default$4, info.smart.models.owc100.OwcOffering.apply$default$5))
+        </td>
+      </tr><tr>
+        <td>
+          113
+        </td>
+        <td>
+          1509
+        </td>
+        <td>
+          4878
+          -
+          4886
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcOfferingType.WMS.code
+        </td>
+        <td style="background: #F0ADAD">
+          info.smart.models.owc100.OwcOfferingType.WMS.code
+        </td>
+      </tr><tr>
+        <td>
+          113
+        </td>
+        <td>
+          1524
+        </td>
+        <td>
+          4859
+          -
+          4859
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcOffering.apply$default$4
+        </td>
+        <td style="background: #F0ADAD">
+          info.smart.models.owc100.OwcOffering.apply$default$4
+        </td>
+      </tr><tr>
+        <td>
+          113
+        </td>
+        <td>
+          1523
+        </td>
+        <td>
+          4859
+          -
+          4859
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcOffering.apply$default$3
+        </td>
+        <td style="background: #F0ADAD">
+          info.smart.models.owc100.OwcOffering.apply$default$3
+        </td>
+      </tr><tr>
+        <td>
+          113
+        </td>
+        <td>
+          1526
+        </td>
+        <td>
+          4859
+          -
+          5214
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          info.smart.models.owc100.OwcOffering.apply
+        </td>
+        <td style="background: #F0ADAD">
+          info.smart.models.owc100.OwcOffering.apply(info.smart.models.owc100.OwcOfferingType.WMS.code, immutable.this.List.apply[info.smart.models.owc100.OwcOperation](info.smart.models.owc100.OwcOperation.apply(&quot;GetCapabilities&quot;, &quot;GET&quot;, scala.Some.apply[String](&quot;application/xml&quot;), new java.net.URL(scala.StringContext.apply(&quot;&quot;, &quot;/WMSServer?request=GetCapabilities&amp;service=WMS&quot;).s(cIOnlineResource.linkage)), info.smart.models.owc100.OwcOperation.apply$default$5, info.smart.models.owc100.OwcOperation.apply$default$6, info.smart.models.owc100.OwcOperation.apply$default$7)), info.smart.models.owc100.OwcOffering.apply$default$3, info.smart.models.owc100.OwcOffering.apply$default$4, info.smart.models.owc100.OwcOffering.apply$default$5)
+        </td>
+      </tr><tr>
+        <td>
+          113
+        </td>
+        <td>
+          1525
+        </td>
+        <td>
+          4859
+          -
+          4859
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcOffering.apply$default$5
+        </td>
+        <td style="background: #F0ADAD">
+          info.smart.models.owc100.OwcOffering.apply$default$5
+        </td>
+      </tr><tr>
+        <td>
+          114
+        </td>
+        <td>
+          1522
+        </td>
+        <td>
+          4913
+          -
+          5202
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.immutable.List.apply
+        </td>
+        <td style="background: #F0ADAD">
+          immutable.this.List.apply[info.smart.models.owc100.OwcOperation](info.smart.models.owc100.OwcOperation.apply(&quot;GetCapabilities&quot;, &quot;GET&quot;, scala.Some.apply[String](&quot;application/xml&quot;), new java.net.URL(scala.StringContext.apply(&quot;&quot;, &quot;/WMSServer?request=GetCapabilities&amp;service=WMS&quot;).s(cIOnlineResource.linkage)), info.smart.models.owc100.OwcOperation.apply$default$5, info.smart.models.owc100.OwcOperation.apply$default$6, info.smart.models.owc100.OwcOperation.apply$default$7))
+        </td>
+      </tr><tr>
+        <td>
+          115
+        </td>
+        <td>
+          1519
+        </td>
+        <td>
+          4933
+          -
+          4933
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcOperation.apply$default$6
+        </td>
+        <td style="background: #F0ADAD">
+          info.smart.models.owc100.OwcOperation.apply$default$6
+        </td>
+      </tr><tr>
+        <td>
+          115
+        </td>
+        <td>
+          1518
+        </td>
+        <td>
+          4933
+          -
+          4933
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcOperation.apply$default$5
+        </td>
+        <td style="background: #F0ADAD">
+          info.smart.models.owc100.OwcOperation.apply$default$5
+        </td>
+      </tr><tr>
+        <td>
+          115
+        </td>
+        <td>
+          1521
+        </td>
+        <td>
+          4933
+          -
+          5188
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          info.smart.models.owc100.OwcOperation.apply
+        </td>
+        <td style="background: #F0ADAD">
+          info.smart.models.owc100.OwcOperation.apply(&quot;GetCapabilities&quot;, &quot;GET&quot;, scala.Some.apply[String](&quot;application/xml&quot;), new java.net.URL(scala.StringContext.apply(&quot;&quot;, &quot;/WMSServer?request=GetCapabilities&amp;service=WMS&quot;).s(cIOnlineResource.linkage)), info.smart.models.owc100.OwcOperation.apply$default$5, info.smart.models.owc100.OwcOperation.apply$default$6, info.smart.models.owc100.OwcOperation.apply$default$7)
+        </td>
+      </tr><tr>
+        <td>
+          115
+        </td>
+        <td>
+          1520
+        </td>
+        <td>
+          4933
+          -
+          4933
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcOperation.apply$default$7
+        </td>
+        <td style="background: #F0ADAD">
+          info.smart.models.owc100.OwcOperation.apply$default$7
+        </td>
+      </tr><tr>
+        <td>
+          116
+        </td>
+        <td>
+          1510
+        </td>
+        <td>
+          4970
+          -
+          4987
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;GetCapabilities&quot;
+        </td>
+      </tr><tr>
+        <td>
+          117
+        </td>
+        <td>
+          1511
+        </td>
+        <td>
+          5014
+          -
+          5019
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;GET&quot;
+        </td>
+      </tr><tr>
+        <td>
+          118
+        </td>
+        <td>
+          1512
+        </td>
+        <td>
+          5048
+          -
+          5071
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Some.apply
+        </td>
+        <td style="background: #F0ADAD">
+          scala.Some.apply[String](&quot;application/xml&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          119
+        </td>
+        <td>
+          1515
+        </td>
+        <td>
+          5114
+          -
+          5138
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          models.gmd.CIOnlineResource.linkage
+        </td>
+        <td style="background: #F0ADAD">
+          cIOnlineResource.linkage
+        </td>
+      </tr><tr>
+        <td>
+          119
+        </td>
+        <td>
+          1514
+        </td>
+        <td>
+          5139
+          -
+          5186
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;/WMSServer?request=GetCapabilities&amp;service=WMS&quot;
+        </td>
+      </tr><tr>
+        <td>
+          119
+        </td>
+        <td>
+          1517
+        </td>
+        <td>
+          5102
+          -
+          5187
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.net.URL.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new java.net.URL(scala.StringContext.apply(&quot;&quot;, &quot;/WMSServer?request=GetCapabilities&amp;service=WMS&quot;).s(cIOnlineResource.linkage))
+        </td>
+      </tr><tr>
+        <td>
+          119
+        </td>
+        <td>
+          1513
+        </td>
+        <td>
+          5112
+          -
+          5113
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;&quot;
+        </td>
+      </tr><tr>
+        <td>
+          119
+        </td>
+        <td>
+          1516
+        </td>
+        <td>
+          5110
+          -
+          5186
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.StringContext.s
+        </td>
+        <td style="background: #F0ADAD">
+          scala.StringContext.apply(&quot;&quot;, &quot;/WMSServer?request=GetCapabilities&amp;service=WMS&quot;).s(cIOnlineResource.linkage)
+        </td>
+      </tr><tr>
+        <td>
+          122
+        </td>
+        <td>
+          1527
+        </td>
+        <td>
+          5245
+          -
+          5253
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcOfferingType.WFS.code
+        </td>
+        <td style="background: #F0ADAD">
+          info.smart.models.owc100.OwcOfferingType.WFS.code
+        </td>
+      </tr><tr>
+        <td>
+          122
+        </td>
+        <td>
+          1542
+        </td>
+        <td>
+          5226
+          -
+          5226
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcOffering.apply$default$4
+        </td>
+        <td style="background: #F0ADAD">
+          info.smart.models.owc100.OwcOffering.apply$default$4
+        </td>
+      </tr><tr>
+        <td>
+          122
+        </td>
+        <td>
+          1541
+        </td>
+        <td>
+          5226
+          -
+          5226
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcOffering.apply$default$3
+        </td>
+        <td style="background: #F0ADAD">
+          info.smart.models.owc100.OwcOffering.apply$default$3
+        </td>
+      </tr><tr>
+        <td>
+          122
+        </td>
+        <td>
+          1544
+        </td>
+        <td>
+          5226
+          -
+          5581
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          info.smart.models.owc100.OwcOffering.apply
+        </td>
+        <td style="background: #F0ADAD">
+          info.smart.models.owc100.OwcOffering.apply(info.smart.models.owc100.OwcOfferingType.WFS.code, immutable.this.List.apply[info.smart.models.owc100.OwcOperation](info.smart.models.owc100.OwcOperation.apply(&quot;GetCapabilities&quot;, &quot;GET&quot;, scala.Some.apply[String](&quot;application/xml&quot;), new java.net.URL(scala.StringContext.apply(&quot;&quot;, &quot;/WFSServer?request=GetCapabilities&amp;service=WFS&quot;).s(cIOnlineResource.linkage)), info.smart.models.owc100.OwcOperation.apply$default$5, info.smart.models.owc100.OwcOperation.apply$default$6, info.smart.models.owc100.OwcOperation.apply$default$7)), info.smart.models.owc100.OwcOffering.apply$default$3, info.smart.models.owc100.OwcOffering.apply$default$4, info.smart.models.owc100.OwcOffering.apply$default$5)
+        </td>
+      </tr><tr>
+        <td>
+          122
+        </td>
+        <td>
+          1543
+        </td>
+        <td>
+          5226
+          -
+          5226
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcOffering.apply$default$5
+        </td>
+        <td style="background: #F0ADAD">
+          info.smart.models.owc100.OwcOffering.apply$default$5
+        </td>
+      </tr><tr>
+        <td>
+          123
+        </td>
+        <td>
+          1540
+        </td>
+        <td>
+          5280
+          -
+          5569
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.immutable.List.apply
+        </td>
+        <td style="background: #F0ADAD">
+          immutable.this.List.apply[info.smart.models.owc100.OwcOperation](info.smart.models.owc100.OwcOperation.apply(&quot;GetCapabilities&quot;, &quot;GET&quot;, scala.Some.apply[String](&quot;application/xml&quot;), new java.net.URL(scala.StringContext.apply(&quot;&quot;, &quot;/WFSServer?request=GetCapabilities&amp;service=WFS&quot;).s(cIOnlineResource.linkage)), info.smart.models.owc100.OwcOperation.apply$default$5, info.smart.models.owc100.OwcOperation.apply$default$6, info.smart.models.owc100.OwcOperation.apply$default$7))
+        </td>
+      </tr><tr>
+        <td>
+          124
+        </td>
+        <td>
+          1536
+        </td>
+        <td>
+          5300
+          -
+          5300
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcOperation.apply$default$5
+        </td>
+        <td style="background: #F0ADAD">
+          info.smart.models.owc100.OwcOperation.apply$default$5
+        </td>
+      </tr><tr>
+        <td>
+          124
+        </td>
+        <td>
+          1539
+        </td>
+        <td>
+          5300
+          -
+          5555
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          info.smart.models.owc100.OwcOperation.apply
+        </td>
+        <td style="background: #F0ADAD">
+          info.smart.models.owc100.OwcOperation.apply(&quot;GetCapabilities&quot;, &quot;GET&quot;, scala.Some.apply[String](&quot;application/xml&quot;), new java.net.URL(scala.StringContext.apply(&quot;&quot;, &quot;/WFSServer?request=GetCapabilities&amp;service=WFS&quot;).s(cIOnlineResource.linkage)), info.smart.models.owc100.OwcOperation.apply$default$5, info.smart.models.owc100.OwcOperation.apply$default$6, info.smart.models.owc100.OwcOperation.apply$default$7)
+        </td>
+      </tr><tr>
+        <td>
+          124
+        </td>
+        <td>
+          1538
+        </td>
+        <td>
+          5300
+          -
+          5300
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcOperation.apply$default$7
+        </td>
+        <td style="background: #F0ADAD">
+          info.smart.models.owc100.OwcOperation.apply$default$7
+        </td>
+      </tr><tr>
+        <td>
+          124
+        </td>
+        <td>
+          1537
+        </td>
+        <td>
+          5300
+          -
+          5300
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcOperation.apply$default$6
+        </td>
+        <td style="background: #F0ADAD">
+          info.smart.models.owc100.OwcOperation.apply$default$6
+        </td>
+      </tr><tr>
+        <td>
+          125
+        </td>
+        <td>
+          1528
+        </td>
+        <td>
+          5337
+          -
+          5354
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;GetCapabilities&quot;
+        </td>
+      </tr><tr>
+        <td>
+          126
+        </td>
+        <td>
+          1529
+        </td>
+        <td>
+          5381
+          -
+          5386
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;GET&quot;
+        </td>
+      </tr><tr>
+        <td>
+          127
+        </td>
+        <td>
+          1530
+        </td>
+        <td>
+          5415
+          -
+          5438
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Some.apply
+        </td>
+        <td style="background: #F0ADAD">
+          scala.Some.apply[String](&quot;application/xml&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          128
+        </td>
+        <td>
+          1533
+        </td>
+        <td>
+          5481
+          -
+          5505
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          models.gmd.CIOnlineResource.linkage
+        </td>
+        <td style="background: #F0ADAD">
+          cIOnlineResource.linkage
+        </td>
+      </tr><tr>
+        <td>
+          128
+        </td>
+        <td>
+          1532
+        </td>
+        <td>
+          5506
+          -
+          5553
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;/WFSServer?request=GetCapabilities&amp;service=WFS&quot;
+        </td>
+      </tr><tr>
+        <td>
+          128
+        </td>
+        <td>
+          1535
+        </td>
+        <td>
+          5469
+          -
+          5554
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.net.URL.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new java.net.URL(scala.StringContext.apply(&quot;&quot;, &quot;/WFSServer?request=GetCapabilities&amp;service=WFS&quot;).s(cIOnlineResource.linkage))
+        </td>
+      </tr><tr>
+        <td>
+          128
+        </td>
+        <td>
+          1531
+        </td>
+        <td>
+          5479
+          -
+          5480
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;&quot;
+        </td>
+      </tr><tr>
+        <td>
+          128
+        </td>
+        <td>
+          1534
+        </td>
+        <td>
+          5477
+          -
+          5553
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.StringContext.s
+        </td>
+        <td style="background: #F0ADAD">
+          scala.StringContext.apply(&quot;&quot;, &quot;/WFSServer?request=GetCapabilities&amp;service=WFS&quot;).s(cIOnlineResource.linkage)
+        </td>
+      </tr><tr>
+        <td>
+          132
+        </td>
+        <td>
+          1546
+        </td>
+        <td>
+          5608
+          -
+          5611
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.collection.immutable.Nil
+        </td>
+        <td style="background: #AEF1AE">
+          immutable.this.Nil
+        </td>
+      </tr><tr>
+        <td>
+          146
+        </td>
+        <td>
+          1547
+        </td>
+        <td>
+          6025
+          -
+          6953
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.immutable.List.:::
+        </td>
+        <td style="background: #AEF1AE">
+          immutable.this.List.apply[info.smart.models.owc100.OwcOffering](info.smart.models.owc100.OwcOffering.apply(info.smart.models.owc100.OwcOfferingType.CSW.code, immutable.this.List.apply[info.smart.models.owc100.OwcOperation](info.smart.models.owc100.OwcOperation.apply(&quot;GetCapabilities&quot;, &quot;GET&quot;, scala.Some.apply[String](&quot;application/xml&quot;), new java.net.URL(scala.StringContext.apply(&quot;&quot;, &quot;?request=GetCapabilities&amp;service=CSW&quot;).s(mdMetadataSet.originUrl)), info.smart.models.owc100.OwcOperation.apply$default$5, info.smart.models.owc100.OwcOperation.apply$default$6, info.smart.models.owc100.OwcOperation.apply$default$7), info.smart.models.owc100.OwcOperation.apply(&quot;GetRecordById&quot;, &quot;GET&quot;, scala.Some.apply[String](&quot;application/xml&quot;), new java.net.URL(scala.StringContext.apply(&quot;&quot;, &quot;?request=GetRecordById&amp;version=2.0.2&amp;service=CSW&amp;elementSetName=full&quot;).s(mdMetadataSet.originUrl).+(&quot;&amp;outputSchema=http%3A%2F%2Fwww.isotc211.org%2F2005%2Fgmd&quot;).+(scala.StringContext.apply(&quot;&amp;Id=&quot;, &quot;&quot;).s(java.net.URLEncoder.encode(mdMetadataSet.fileIdentifier, &quot;UTF-8&quot;)))), info.smart.models.owc100.OwcOperation.apply$default$5, info.smart.models.owc100.OwcOperation.apply$default$6, info.smart.models.owc100.OwcOperation.apply$default$7)), info.smart.models.owc100.OwcOffering.apply$default$3, info.smart.models.owc100.OwcOffering.apply$default$4, info.smart.models.owc100.OwcOffering.apply$default$5)).:::[info.smart.models.owc100.OwcOffering](x$1)
+        </td>
+      </tr><tr>
+        <td>
+          167
+        </td>
+        <td>
+          1548
+        </td>
+        <td>
+          7099
+          -
+          7121
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.net.URL.&lt;init&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          new java.net.URL(urlBaseForIds)
+        </td>
+      </tr><tr>
+        <td>
+          168
+        </td>
+        <td>
+          1611
+        </td>
+        <td>
+          7126
+          -
+          8804
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          info.smart.models.owc100.OwcResource.apply
+        </td>
+        <td style="background: #AEF1AE">
+          info.smart.models.owc100.OwcResource.apply(x$64, x$66, x$67, x$68, x$69, x$70, x$71, x$65, x$72, x$73, x$74, x$75, x$77, x$82, x$76, x$80, x$78, x$79, x$81)
+        </td>
+      </tr><tr>
+        <td>
+          168
+        </td>
+        <td>
+          1610
+        </td>
+        <td>
+          7126
+          -
+          7126
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcResource.apply$default$14
+        </td>
+        <td style="background: #AEF1AE">
+          info.smart.models.owc100.OwcResource.apply$default$14
+        </td>
+      </tr><tr>
+        <td>
+          169
+        </td>
+        <td>
+          1554
+        </td>
+        <td>
+          7187
+          -
+          7202
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.net.URL.getHost
+        </td>
+        <td style="background: #AEF1AE">
+          baseUrl.getHost()
+        </td>
+      </tr><tr>
+        <td>
+          169
+        </td>
+        <td>
+          1557
+        </td>
+        <td>
+          7223
+          -
+          7279
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.net.URLEncoder.encode
+        </td>
+        <td style="background: #AEF1AE">
+          java.net.URLEncoder.encode(mdMetadataSet.fileIdentifier, &quot;UTF-8&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          169
+        </td>
+        <td>
+          1551
+        </td>
+        <td>
+          7203
+          -
+          7222
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;/context/resource/&quot;
+        </td>
+      </tr><tr>
+        <td>
+          169
+        </td>
+        <td>
+          1550
+        </td>
+        <td>
+          7182
+          -
+          7186
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;://&quot;
+        </td>
+      </tr><tr>
+        <td>
+          169
+        </td>
+        <td>
+          1559
+        </td>
+        <td>
+          7150
+          -
+          7282
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.net.URL.&lt;init&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          new java.net.URL(scala.StringContext.apply(&quot;&quot;, &quot;://&quot;, &quot;/context/resource/&quot;, &quot;&quot;).s(baseUrl.getProtocol(), baseUrl.getHost(), java.net.URLEncoder.encode(mdMetadataSet.fileIdentifier, &quot;UTF-8&quot;)))
+        </td>
+      </tr><tr>
+        <td>
+          169
+        </td>
+        <td>
+          1553
+        </td>
+        <td>
+          7162
+          -
+          7181
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.net.URL.getProtocol
+        </td>
+        <td style="background: #AEF1AE">
+          baseUrl.getProtocol()
+        </td>
+      </tr><tr>
+        <td>
+          169
+        </td>
+        <td>
+          1556
+        </td>
+        <td>
+          7271
+          -
+          7278
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;UTF-8&quot;
+        </td>
+      </tr><tr>
+        <td>
+          169
+        </td>
+        <td>
+          1555
+        </td>
+        <td>
+          7241
+          -
+          7269
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          models.gmd.MdMetadataSet.fileIdentifier
+        </td>
+        <td style="background: #AEF1AE">
+          mdMetadataSet.fileIdentifier
+        </td>
+      </tr><tr>
+        <td>
+          169
+        </td>
+        <td>
+          1549
+        </td>
+        <td>
+          7160
+          -
+          7161
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;&quot;
+        </td>
+      </tr><tr>
+        <td>
+          169
+        </td>
+        <td>
+          1558
+        </td>
+        <td>
+          7158
+          -
+          7281
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.StringContext.s
+        </td>
+        <td style="background: #AEF1AE">
+          scala.StringContext.apply(&quot;&quot;, &quot;://&quot;, &quot;/context/resource/&quot;, &quot;&quot;).s(baseUrl.getProtocol(), baseUrl.getHost(), java.net.URLEncoder.encode(mdMetadataSet.fileIdentifier, &quot;UTF-8&quot;))
+        </td>
+      </tr><tr>
+        <td>
+          169
+        </td>
+        <td>
+          1552
+        </td>
+        <td>
+          7280
+          -
+          7281
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;&quot;
+        </td>
+      </tr><tr>
+        <td>
+          170
+        </td>
+        <td>
+          1560
+        </td>
+        <td>
+          7314
+          -
+          7332
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          models.gmd.MdMetadataSet.bbox
+        </td>
+        <td style="background: #AEF1AE">
+          mdMetadataSet.bbox
+        </td>
+      </tr><tr>
+        <td>
+          170
+        </td>
+        <td>
+          1561
+        </td>
+        <td>
+          7309
+          -
+          7333
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Some.apply
+        </td>
+        <td style="background: #AEF1AE">
+          scala.Some.apply[org.locationtech.spatial4j.shape.Rectangle](mdMetadataSet.bbox)
+        </td>
+      </tr><tr>
+        <td>
+          171
+        </td>
+        <td>
+          1562
+        </td>
+        <td>
+          7349
+          -
+          7368
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          models.gmd.MdMetadataSet.title
+        </td>
+        <td style="background: #AEF1AE">
+          mdMetadataSet.title
+        </td>
+      </tr><tr>
+        <td>
+          172
+        </td>
+        <td>
+          1563
+        </td>
+        <td>
+          7387
+          -
+          7420
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          utils.StringUtils.OptionConverters.toOption
+        </td>
+        <td style="background: #AEF1AE">
+          utils.StringUtils.OptionConverters(mdMetadataSet.abstrakt).toOption()
+        </td>
+      </tr><tr>
+        <td>
+          173
+        </td>
+        <td>
+          1566
+        </td>
+        <td>
+          7499
+          -
+          7580
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.time.zone.ZoneRules.getOffset
+        </td>
+        <td style="background: #AEF1AE">
+          java.time.ZoneId.systemDefault().getRules().getOffset(mdMetadataSet.dateStamp.atStartOfDay())
+        </td>
+      </tr><tr>
+        <td>
+          173
+        </td>
+        <td>
+          1565
+        </td>
+        <td>
+          7541
+          -
+          7579
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.time.LocalDate.atStartOfDay
+        </td>
+        <td style="background: #AEF1AE">
+          mdMetadataSet.dateStamp.atStartOfDay()
+        </td>
+      </tr><tr>
+        <td>
+          173
+        </td>
+        <td>
+          1564
+        </td>
+        <td>
+          7459
+          -
+          7497
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.time.LocalDate.atStartOfDay
+        </td>
+        <td style="background: #AEF1AE">
+          mdMetadataSet.dateStamp.atStartOfDay()
+        </td>
+      </tr><tr>
+        <td>
+          173
+        </td>
+        <td>
+          1567
+        </td>
+        <td>
+          7441
+          -
+          7581
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.time.OffsetDateTime.of
+        </td>
+        <td style="background: #AEF1AE">
+          java.time.OffsetDateTime.of(mdMetadataSet.dateStamp.atStartOfDay(), java.time.ZoneId.systemDefault().getRules().getOffset(mdMetadataSet.dateStamp.atStartOfDay()))
+        </td>
+      </tr><tr>
+        <td>
+          174
+        </td>
+        <td>
+          1569
+        </td>
+        <td>
+          7711
+          -
+          7737
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          models.gmd.MdMetadataSet.contactEmail
+        </td>
+        <td style="background: #AEF1AE">
+          mdMetadataSet.contactEmail
+        </td>
+      </tr><tr>
+        <td>
+          174
+        </td>
+        <td>
+          1572
+        </td>
+        <td>
+          7603
+          -
+          7603
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcAuthor.apply$default$4
+        </td>
+        <td style="background: #AEF1AE">
+          info.smart.models.owc100.OwcAuthor.apply$default$4
+        </td>
+      </tr><tr>
+        <td>
+          174
+        </td>
+        <td>
+          1574
+        </td>
+        <td>
+          7598
+          -
+          7752
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.immutable.List.apply
+        </td>
+        <td style="background: #AEF1AE">
+          immutable.this.List.apply[info.smart.models.owc100.OwcAuthor](info.smart.models.owc100.OwcAuthor.apply(utils.StringUtils.OptionConverters(mdMetadataSet.contactName).toOption(), models.gmd.MdMetadataSet.parseEmailStringtoEmailAddress(mdMetadataSet.contactEmail), scala.None, info.smart.models.owc100.OwcAuthor.apply$default$4))
+        </td>
+      </tr><tr>
+        <td>
+          174
+        </td>
+        <td>
+          1568
+        </td>
+        <td>
+          7620
+          -
+          7656
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          utils.StringUtils.OptionConverters.toOption
+        </td>
+        <td style="background: #AEF1AE">
+          utils.StringUtils.OptionConverters(mdMetadataSet.contactName).toOption()
+        </td>
+      </tr><tr>
+        <td>
+          174
+        </td>
+        <td>
+          1571
+        </td>
+        <td>
+          7746
+          -
+          7750
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.None
+        </td>
+        <td style="background: #AEF1AE">
+          scala.None
+        </td>
+      </tr><tr>
+        <td>
+          174
+        </td>
+        <td>
+          1573
+        </td>
+        <td>
+          7603
+          -
+          7751
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          info.smart.models.owc100.OwcAuthor.apply
+        </td>
+        <td style="background: #AEF1AE">
+          info.smart.models.owc100.OwcAuthor.apply(utils.StringUtils.OptionConverters(mdMetadataSet.contactName).toOption(), models.gmd.MdMetadataSet.parseEmailStringtoEmailAddress(mdMetadataSet.contactEmail), scala.None, info.smart.models.owc100.OwcAuthor.apply$default$4)
+        </td>
+      </tr><tr>
+        <td>
+          174
+        </td>
+        <td>
+          1570
+        </td>
+        <td>
+          7666
+          -
+          7738
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          models.gmd.MdMetadataSet.parseEmailStringtoEmailAddress
+        </td>
+        <td style="background: #AEF1AE">
+          models.gmd.MdMetadataSet.parseEmailStringtoEmailAddress(mdMetadataSet.contactEmail)
+        </td>
+      </tr><tr>
+        <td>
+          175
+        </td>
+        <td>
+          1575
+        </td>
+        <td>
+          7772
+          -
+          7776
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.None
+        </td>
+        <td style="background: #AEF1AE">
+          scala.None
+        </td>
+      </tr><tr>
+        <td>
+          176
+        </td>
+        <td>
+          1576
+        </td>
+        <td>
+          7793
+          -
+          7825
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          utils.StringUtils.OptionConverters.toOption
+        </td>
+        <td style="background: #AEF1AE">
+          utils.StringUtils.OptionConverters(mdMetadataSet.license).toOption()
+        </td>
+      </tr><tr>
+        <td>
+          177
+        </td>
+        <td>
+          1577
+        </td>
+        <td>
+          7850
+          -
+          7854
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.None
+        </td>
+        <td style="background: #AEF1AE">
+          scala.None
+        </td>
+      </tr><tr>
+        <td>
+          180
+        </td>
+        <td>
+          1578
+        </td>
+        <td>
+          7956
+          -
+          7968
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          utils.OwcGeoJsonConverters.asOwcLink
+        </td>
+        <td style="background: #AEF1AE">
+          OwcGeoJsonConverters.this.asOwcLink(x$2)
+        </td>
+      </tr><tr>
+        <td>
+          180
+        </td>
+        <td>
+          1580
+        </td>
+        <td>
+          7977
+          -
+          7988
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.Option.isDefined
+        </td>
+        <td style="background: #AEF1AE">
+          x$3.isDefined
+        </td>
+      </tr><tr>
+        <td>
+          180
+        </td>
+        <td>
+          1579
+        </td>
+        <td>
+          7955
+          -
+          7955
+        </td>
+        <td>
+          TypeApply
+        </td>
+        <td>
+          scala.collection.immutable.List.canBuildFrom
+        </td>
+        <td style="background: #AEF1AE">
+          immutable.this.List.canBuildFrom[Option[info.smart.models.owc100.OwcLink]]
+        </td>
+      </tr><tr>
+        <td>
+          181
+        </td>
+        <td>
+          1581
+        </td>
+        <td>
+          8003
+          -
+          8008
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.Option.get
+        </td>
+        <td style="background: #AEF1AE">
+          x$4.get
+        </td>
+      </tr><tr>
+        <td>
+          181
+        </td>
+        <td>
+          1584
+        </td>
+        <td>
+          7930
+          -
+          8064
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.TraversableLike.filter
+        </td>
+        <td style="background: #AEF1AE">
+          mdMetadataSet.linkage.map[Option[info.smart.models.owc100.OwcLink], List[Option[info.smart.models.owc100.OwcLink]]](((x$2: models.gmd.CIOnlineResource) =&gt; OwcGeoJsonConverters.this.asOwcLink(x$2)))(immutable.this.List.canBuildFrom[Option[info.smart.models.owc100.OwcLink]]).filter(((x$3: Option[info.smart.models.owc100.OwcLink]) =&gt; x$3.isDefined)).map[info.smart.models.owc100.OwcLink, List[info.smart.models.owc100.OwcLink]](((x$4: Option[info.smart.models.owc100.OwcLink]) =&gt; x$4.get))(immutable.this.List.canBuildFrom[info.smart.models.owc100.OwcLink]).filter(((link: info.smart.models.owc100.OwcLink) =&gt; link.rel.equalsIgnoreCase(&quot;alternate&quot;)))
+        </td>
+      </tr><tr>
+        <td>
+          181
+        </td>
+        <td>
+          1583
+        </td>
+        <td>
+          8025
+          -
+          8063
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.String.equalsIgnoreCase
+        </td>
+        <td style="background: #AEF1AE">
+          link.rel.equalsIgnoreCase(&quot;alternate&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          181
+        </td>
+        <td>
+          1582
+        </td>
+        <td>
+          8002
+          -
+          8002
+        </td>
+        <td>
+          TypeApply
+        </td>
+        <td>
+          scala.collection.immutable.List.canBuildFrom
+        </td>
+        <td style="background: #AEF1AE">
+          immutable.this.List.canBuildFrom[info.smart.models.owc100.OwcLink]
+        </td>
+      </tr><tr>
+        <td>
+          184
+        </td>
+        <td>
+          1587
+        </td>
+        <td>
+          8180
+          -
+          8191
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.Option.isDefined
+        </td>
+        <td style="background: #AEF1AE">
+          x$6.isDefined
+        </td>
+      </tr><tr>
+        <td>
+          184
+        </td>
+        <td>
+          1586
+        </td>
+        <td>
+          8158
+          -
+          8158
+        </td>
+        <td>
+          TypeApply
+        </td>
+        <td>
+          scala.collection.immutable.List.canBuildFrom
+        </td>
+        <td style="background: #AEF1AE">
+          immutable.this.List.canBuildFrom[Option[info.smart.models.owc100.OwcLink]]
+        </td>
+      </tr><tr>
+        <td>
+          184
+        </td>
+        <td>
+          1585
+        </td>
+        <td>
+          8159
+          -
+          8171
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          utils.OwcGeoJsonConverters.asOwcLink
+        </td>
+        <td style="background: #AEF1AE">
+          OwcGeoJsonConverters.this.asOwcLink(x$5)
+        </td>
+      </tr><tr>
+        <td>
+          185
+        </td>
+        <td>
+          1590
+        </td>
+        <td>
+          8228
+          -
+          8261
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.String.equalsIgnoreCase
+        </td>
+        <td style="background: #AEF1AE">
+          link.rel.equalsIgnoreCase(&quot;icon&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          185
+        </td>
+        <td>
+          1589
+        </td>
+        <td>
+          8205
+          -
+          8205
+        </td>
+        <td>
+          TypeApply
+        </td>
+        <td>
+          scala.collection.immutable.List.canBuildFrom
+        </td>
+        <td style="background: #AEF1AE">
+          immutable.this.List.canBuildFrom[info.smart.models.owc100.OwcLink]
+        </td>
+      </tr><tr>
+        <td>
+          185
+        </td>
+        <td>
+          1591
+        </td>
+        <td>
+          8133
+          -
+          8262
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.TraversableLike.filter
+        </td>
+        <td style="background: #AEF1AE">
+          mdMetadataSet.linkage.map[Option[info.smart.models.owc100.OwcLink], List[Option[info.smart.models.owc100.OwcLink]]](((x$5: models.gmd.CIOnlineResource) =&gt; OwcGeoJsonConverters.this.asOwcLink(x$5)))(immutable.this.List.canBuildFrom[Option[info.smart.models.owc100.OwcLink]]).filter(((x$6: Option[info.smart.models.owc100.OwcLink]) =&gt; x$6.isDefined)).map[info.smart.models.owc100.OwcLink, List[info.smart.models.owc100.OwcLink]](((x$7: Option[info.smart.models.owc100.OwcLink]) =&gt; x$7.get))(immutable.this.List.canBuildFrom[info.smart.models.owc100.OwcLink]).filter(((link: info.smart.models.owc100.OwcLink) =&gt; link.rel.equalsIgnoreCase(&quot;icon&quot;)))
+        </td>
+      </tr><tr>
+        <td>
+          185
+        </td>
+        <td>
+          1588
+        </td>
+        <td>
+          8206
+          -
+          8211
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.Option.get
+        </td>
+        <td style="background: #AEF1AE">
+          x$7.get
+        </td>
+      </tr><tr>
+        <td>
+          188
+        </td>
+        <td>
+          1593
+        </td>
+        <td>
+          8362
+          -
+          8362
+        </td>
+        <td>
+          TypeApply
+        </td>
+        <td>
+          scala.collection.immutable.List.canBuildFrom
+        </td>
+        <td style="background: #AEF1AE">
+          immutable.this.List.canBuildFrom[Option[info.smart.models.owc100.OwcLink]]
+        </td>
+      </tr><tr>
+        <td>
+          188
+        </td>
+        <td>
+          1592
+        </td>
+        <td>
+          8363
+          -
+          8375
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          utils.OwcGeoJsonConverters.asOwcLink
+        </td>
+        <td style="background: #AEF1AE">
+          OwcGeoJsonConverters.this.asOwcLink(x$8)
+        </td>
+      </tr><tr>
+        <td>
+          188
+        </td>
+        <td>
+          1594
+        </td>
+        <td>
+          8384
+          -
+          8395
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.Option.isDefined
+        </td>
+        <td style="background: #AEF1AE">
+          x$9.isDefined
+        </td>
+      </tr><tr>
+        <td>
+          189
+        </td>
+        <td>
+          1596
+        </td>
+        <td>
+          8409
+          -
+          8409
+        </td>
+        <td>
+          TypeApply
+        </td>
+        <td>
+          scala.collection.immutable.List.canBuildFrom
+        </td>
+        <td style="background: #AEF1AE">
+          immutable.this.List.canBuildFrom[info.smart.models.owc100.OwcLink]
+        </td>
+      </tr><tr>
+        <td>
+          189
+        </td>
+        <td>
+          1595
+        </td>
+        <td>
+          8410
+          -
+          8415
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.Option.get
+        </td>
+        <td style="background: #AEF1AE">
+          x$10.get
+        </td>
+      </tr><tr>
+        <td>
+          189
+        </td>
+        <td>
+          1598
+        </td>
+        <td>
+          8337
+          -
+          8471
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.TraversableLike.filter
+        </td>
+        <td style="background: #AEF1AE">
+          mdMetadataSet.linkage.map[Option[info.smart.models.owc100.OwcLink], List[Option[info.smart.models.owc100.OwcLink]]](((x$8: models.gmd.CIOnlineResource) =&gt; OwcGeoJsonConverters.this.asOwcLink(x$8)))(immutable.this.List.canBuildFrom[Option[info.smart.models.owc100.OwcLink]]).filter(((x$9: Option[info.smart.models.owc100.OwcLink]) =&gt; x$9.isDefined)).map[info.smart.models.owc100.OwcLink, List[info.smart.models.owc100.OwcLink]](((x$10: Option[info.smart.models.owc100.OwcLink]) =&gt; x$10.get))(immutable.this.List.canBuildFrom[info.smart.models.owc100.OwcLink]).filter(((link: info.smart.models.owc100.OwcLink) =&gt; link.rel.equalsIgnoreCase(&quot;enclosure&quot;)))
+        </td>
+      </tr><tr>
+        <td>
+          189
+        </td>
+        <td>
+          1597
+        </td>
+        <td>
+          8432
+          -
+          8470
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.String.equalsIgnoreCase
+        </td>
+        <td style="background: #AEF1AE">
+          link.rel.equalsIgnoreCase(&quot;enclosure&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          192
+        </td>
+        <td>
+          1599
+        </td>
+        <td>
+          8560
+          -
+          8572
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          utils.OwcGeoJsonConverters.asOwcLink
+        </td>
+        <td style="background: #AEF1AE">
+          OwcGeoJsonConverters.this.asOwcLink(x$11)
+        </td>
+      </tr><tr>
+        <td>
+          192
+        </td>
+        <td>
+          1601
+        </td>
+        <td>
+          8581
+          -
+          8592
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.Option.isDefined
+        </td>
+        <td style="background: #AEF1AE">
+          x$12.isDefined
+        </td>
+      </tr><tr>
+        <td>
+          192
+        </td>
+        <td>
+          1600
+        </td>
+        <td>
+          8559
+          -
+          8559
+        </td>
+        <td>
+          TypeApply
+        </td>
+        <td>
+          scala.collection.immutable.List.canBuildFrom
+        </td>
+        <td style="background: #AEF1AE">
+          immutable.this.List.canBuildFrom[Option[info.smart.models.owc100.OwcLink]]
+        </td>
+      </tr><tr>
+        <td>
+          193
+        </td>
+        <td>
+          1605
+        </td>
+        <td>
+          8534
+          -
+          8662
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.TraversableLike.filter
+        </td>
+        <td style="background: #AEF1AE">
+          mdMetadataSet.linkage.map[Option[info.smart.models.owc100.OwcLink], List[Option[info.smart.models.owc100.OwcLink]]](((x$11: models.gmd.CIOnlineResource) =&gt; OwcGeoJsonConverters.this.asOwcLink(x$11)))(immutable.this.List.canBuildFrom[Option[info.smart.models.owc100.OwcLink]]).filter(((x$12: Option[info.smart.models.owc100.OwcLink]) =&gt; x$12.isDefined)).map[info.smart.models.owc100.OwcLink, List[info.smart.models.owc100.OwcLink]](((x$13: Option[info.smart.models.owc100.OwcLink]) =&gt; x$13.get))(immutable.this.List.canBuildFrom[info.smart.models.owc100.OwcLink]).filter(((link: info.smart.models.owc100.OwcLink) =&gt; link.rel.equalsIgnoreCase(&quot;via&quot;)))
+        </td>
+      </tr><tr>
+        <td>
+          193
+        </td>
+        <td>
+          1602
+        </td>
+        <td>
+          8607
+          -
+          8612
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.Option.get
+        </td>
+        <td style="background: #AEF1AE">
+          x$13.get
+        </td>
+      </tr><tr>
+        <td>
+          193
+        </td>
+        <td>
+          1604
+        </td>
+        <td>
+          8629
+          -
+          8661
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.String.equalsIgnoreCase
+        </td>
+        <td style="background: #AEF1AE">
+          link.rel.equalsIgnoreCase(&quot;via&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          193
+        </td>
+        <td>
+          1603
+        </td>
+        <td>
+          8606
+          -
+          8606
+        </td>
+        <td>
+          TypeApply
+        </td>
+        <td>
+          scala.collection.immutable.List.canBuildFrom
+        </td>
+        <td style="background: #AEF1AE">
+          immutable.this.List.canBuildFrom[info.smart.models.owc100.OwcLink]
+        </td>
+      </tr><tr>
+        <td>
+          195
+        </td>
+        <td>
+          1606
+        </td>
+        <td>
+          8720
+          -
+          8724
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.None
+        </td>
+        <td style="background: #AEF1AE">
+          scala.None
+        </td>
+      </tr><tr>
+        <td>
+          196
+        </td>
+        <td>
+          1607
+        </td>
+        <td>
+          8754
+          -
+          8758
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.None
+        </td>
+        <td style="background: #AEF1AE">
+          scala.None
+        </td>
+      </tr><tr>
+        <td>
+          197
+        </td>
+        <td>
+          1608
+        </td>
+        <td>
+          8776
+          -
+          8782
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.collection.immutable.Nil
+        </td>
+        <td style="background: #AEF1AE">
+          immutable.this.Nil
+        </td>
+      </tr><tr>
+        <td>
+          198
+        </td>
+        <td>
+          1609
+        </td>
+        <td>
+          8799
+          -
+          8803
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.None
+        </td>
+        <td style="background: #AEF1AE">
+          scala.None
+        </td>
+      </tr><tr>
+        <td>
+          208
+        </td>
+        <td>
+          1613
+        </td>
+        <td>
+          9135
+          -
+          9206
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Some.apply
+        </td>
+        <td style="background: #AEF1AE">
+          scala.Some.apply[org.locationtech.spatial4j.shape.Rectangle](models.gmd.GeoJSONFeatureCollectionWriter.getBoundingBoxAsRect(metadataList))
+        </td>
+      </tr><tr>
+        <td>
+          208
+        </td>
+        <td>
+          1612
+        </td>
+        <td>
+          9140
+          -
+          9205
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          models.gmd.GeoJSONFeatureCollectionWriter.getBoundingBoxAsRect
+        </td>
+        <td style="background: #AEF1AE">
+          models.gmd.GeoJSONFeatureCollectionWriter.getBoundingBoxAsRect(metadataList)
+        </td>
+      </tr><tr>
+        <td>
+          210
+        </td>
+        <td>
+          1626
+        </td>
+        <td>
+          9240
+          -
+          9435
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          info.smart.models.owc100.OwcCreatorApplication.apply
+        </td>
+        <td style="background: #AEF1AE">
+          info.smart.models.owc100.OwcCreatorApplication.apply(scala.Some.apply[String](utils.BuildInfo.name), scala.Some.apply[java.net.URL](new java.net.URL(idAsUrlString)), scala.Some.apply[String](scala.StringContext.apply(&quot;&quot;, &quot;-&quot;, &quot;&quot;).s(utils.BuildInfo.version, utils.BuildInfo.buildNumber)), info.smart.models.owc100.OwcCreatorApplication.apply$default$4)
+        </td>
+      </tr><tr>
+        <td>
+          210
+        </td>
+        <td>
+          1625
+        </td>
+        <td>
+          9240
+          -
+          9240
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcCreatorApplication.apply$default$4
+        </td>
+        <td style="background: #AEF1AE">
+          info.smart.models.owc100.OwcCreatorApplication.apply$default$4
+        </td>
+      </tr><tr>
+        <td>
+          211
+        </td>
+        <td>
+          1614
+        </td>
+        <td>
+          9282
+          -
+          9302
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          utils.BuildInfo.name
+        </td>
+        <td style="background: #AEF1AE">
+          utils.BuildInfo.name
+        </td>
+      </tr><tr>
+        <td>
+          211
+        </td>
+        <td>
+          1615
+        </td>
+        <td>
+          9277
+          -
+          9303
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Some.apply
+        </td>
+        <td style="background: #AEF1AE">
+          scala.Some.apply[String](utils.BuildInfo.name)
+        </td>
+      </tr><tr>
+        <td>
+          212
+        </td>
+        <td>
+          1617
+        </td>
+        <td>
+          9317
+          -
+          9345
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Some.apply
+        </td>
+        <td style="background: #AEF1AE">
+          scala.Some.apply[java.net.URL](new java.net.URL(idAsUrlString))
+        </td>
+      </tr><tr>
+        <td>
+          212
+        </td>
+        <td>
+          1616
+        </td>
+        <td>
+          9322
+          -
+          9344
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.net.URL.&lt;init&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          new java.net.URL(idAsUrlString)
+        </td>
+      </tr><tr>
+        <td>
+          213
+        </td>
+        <td>
+          1620
+        </td>
+        <td>
+          9427
+          -
+          9428
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;&quot;
+        </td>
+      </tr><tr>
+        <td>
+          213
+        </td>
+        <td>
+          1623
+        </td>
+        <td>
+          9368
+          -
+          9428
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.StringContext.s
+        </td>
+        <td style="background: #AEF1AE">
+          scala.StringContext.apply(&quot;&quot;, &quot;-&quot;, &quot;&quot;).s(utils.BuildInfo.version, utils.BuildInfo.buildNumber)
+        </td>
+      </tr><tr>
+        <td>
+          213
+        </td>
+        <td>
+          1619
+        </td>
+        <td>
+          9396
+          -
+          9398
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;-&quot;
+        </td>
+      </tr><tr>
+        <td>
+          213
+        </td>
+        <td>
+          1622
+        </td>
+        <td>
+          9399
+          -
+          9426
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          utils.BuildInfo.buildNumber
+        </td>
+        <td style="background: #AEF1AE">
+          utils.BuildInfo.buildNumber
+        </td>
+      </tr><tr>
+        <td>
+          213
+        </td>
+        <td>
+          1624
+        </td>
+        <td>
+          9363
+          -
+          9429
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Some.apply
+        </td>
+        <td style="background: #AEF1AE">
+          scala.Some.apply[String](scala.StringContext.apply(&quot;&quot;, &quot;-&quot;, &quot;&quot;).s(utils.BuildInfo.version, utils.BuildInfo.buildNumber))
+        </td>
+      </tr><tr>
+        <td>
+          213
+        </td>
+        <td>
+          1618
+        </td>
+        <td>
+          9370
+          -
+          9371
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;&quot;
+        </td>
+      </tr><tr>
+        <td>
+          213
+        </td>
+        <td>
+          1621
+        </td>
+        <td>
+          9372
+          -
+          9395
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          utils.BuildInfo.version
+        </td>
+        <td style="background: #AEF1AE">
+          utils.BuildInfo.version
+        </td>
+      </tr><tr>
+        <td>
+          216
+        </td>
+        <td>
+          1629
+        </td>
+        <td>
+          9495
+          -
+          9520
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          scala.math.Ordering.by
+        </td>
+        <td style="background: #AEF1AE">
+          scala.`package`.Ordering.by[java.time.LocalDate, Long](((x$14: java.time.LocalDate) =&gt; x$14.toEpochDay()))(math.this.Ordering.Long)
+        </td>
+      </tr><tr>
+        <td>
+          216
+        </td>
+        <td>
+          1628
+        </td>
+        <td>
+          9506
+          -
+          9506
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.math.Ordering.Long
+        </td>
+        <td style="background: #AEF1AE">
+          math.this.Ordering.Long
+        </td>
+      </tr><tr>
+        <td>
+          216
+        </td>
+        <td>
+          1627
+        </td>
+        <td>
+          9507
+          -
+          9519
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.time.LocalDate.toEpochDay
+        </td>
+        <td style="background: #AEF1AE">
+          x$14.toEpochDay()
+        </td>
+      </tr><tr>
+        <td>
+          217
+        </td>
+        <td>
+          1630
+        </td>
+        <td>
+          9541
+          -
+          9584
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          scala.collection.SeqLike.sorted
+        </td>
+        <td style="background: #AEF1AE">
+          metadataList.map[java.time.LocalDate, List[java.time.LocalDate]](((md: models.gmd.MdMetadataSet) =&gt; md.dateStamp))(immutable.this.List.canBuildFrom[java.time.LocalDate]).sorted[java.time.LocalDate](localDateOrdering)
+        </td>
+      </tr><tr>
+        <td>
+          218
+        </td>
+        <td>
+          1631
+        </td>
+        <td>
+          9645
+          -
+          9663
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.collection.TraversableOnce.nonEmpty
+        </td>
+        <td style="background: #AEF1AE">
+          dateRange.nonEmpty
+        </td>
+      </tr><tr>
+        <td>
+          219
+        </td>
+        <td>
+          1647
+        </td>
+        <td>
+          9673
+          -
+          9907
+        </td>
+        <td>
+          If
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          if (dateRange.tail.isEmpty)
+  scala.Some.apply[List[java.time.OffsetDateTime]](immutable.this.List.apply[java.time.OffsetDateTime](java.time.OffsetDateTime.of(dateRange.head, java.time.LocalTime.of(12, 0), java.time.ZoneOffset.UTC)))
+else
+  scala.Some.apply[List[java.time.OffsetDateTime]](immutable.this.List.apply[java.time.OffsetDateTime](java.time.OffsetDateTime.of(dateRange.last, java.time.LocalTime.of(12, 0), java.time.ZoneOffset.UTC)))
+        </td>
+      </tr><tr>
+        <td>
+          219
+        </td>
+        <td>
+          1632
+        </td>
+        <td>
+          9677
+          -
+          9699
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.collection.SeqLike.isEmpty
+        </td>
+        <td style="background: #AEF1AE">
+          dateRange.tail.isEmpty
+        </td>
+      </tr><tr>
+        <td>
+          220
+        </td>
+        <td>
+          1638
+        </td>
+        <td>
+          9711
+          -
+          9793
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Some.apply
+        </td>
+        <td style="background: #F0ADAD">
+          scala.Some.apply[List[java.time.OffsetDateTime]](immutable.this.List.apply[java.time.OffsetDateTime](java.time.OffsetDateTime.of(dateRange.head, java.time.LocalTime.of(12, 0), java.time.ZoneOffset.UTC)))
+        </td>
+      </tr><tr>
+        <td>
+          220
+        </td>
+        <td>
+          1635
+        </td>
+        <td>
+          9776
+          -
+          9790
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          java.time.ZoneOffset.UTC
+        </td>
+        <td style="background: #F0ADAD">
+          java.time.ZoneOffset.UTC
+        </td>
+      </tr><tr>
+        <td>
+          220
+        </td>
+        <td>
+          1634
+        </td>
+        <td>
+          9755
+          -
+          9774
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.time.LocalTime.of
+        </td>
+        <td style="background: #F0ADAD">
+          java.time.LocalTime.of(12, 0)
+        </td>
+      </tr><tr>
+        <td>
+          220
+        </td>
+        <td>
+          1637
+        </td>
+        <td>
+          9716
+          -
+          9792
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.immutable.List.apply
+        </td>
+        <td style="background: #F0ADAD">
+          immutable.this.List.apply[java.time.OffsetDateTime](java.time.OffsetDateTime.of(dateRange.head, java.time.LocalTime.of(12, 0), java.time.ZoneOffset.UTC))
+        </td>
+      </tr><tr>
+        <td>
+          220
+        </td>
+        <td>
+          1633
+        </td>
+        <td>
+          9739
+          -
+          9753
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.collection.IterableLike.head
+        </td>
+        <td style="background: #F0ADAD">
+          dateRange.head
+        </td>
+      </tr><tr>
+        <td>
+          220
+        </td>
+        <td>
+          1636
+        </td>
+        <td>
+          9721
+          -
+          9791
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.time.OffsetDateTime.of
+        </td>
+        <td style="background: #F0ADAD">
+          java.time.OffsetDateTime.of(dateRange.head, java.time.LocalTime.of(12, 0), java.time.ZoneOffset.UTC)
+        </td>
+      </tr><tr>
+        <td>
+          220
+        </td>
+        <td>
+          1639
+        </td>
+        <td>
+          9711
+          -
+          9793
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          scala.Some.apply
+        </td>
+        <td style="background: #F0ADAD">
+          scala.Some.apply[List[java.time.OffsetDateTime]](immutable.this.List.apply[java.time.OffsetDateTime](java.time.OffsetDateTime.of(dateRange.head, java.time.LocalTime.of(12, 0), java.time.ZoneOffset.UTC)))
+        </td>
+      </tr><tr>
+        <td>
+          222
+        </td>
+        <td>
+          1641
+        </td>
+        <td>
+          9861
+          -
+          9880
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.time.LocalTime.of
+        </td>
+        <td style="background: #AEF1AE">
+          java.time.LocalTime.of(12, 0)
+        </td>
+      </tr><tr>
+        <td>
+          222
+        </td>
+        <td>
+          1644
+        </td>
+        <td>
+          9822
+          -
+          9898
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.immutable.List.apply
+        </td>
+        <td style="background: #AEF1AE">
+          immutable.this.List.apply[java.time.OffsetDateTime](java.time.OffsetDateTime.of(dateRange.last, java.time.LocalTime.of(12, 0), java.time.ZoneOffset.UTC))
+        </td>
+      </tr><tr>
+        <td>
+          222
+        </td>
+        <td>
+          1643
+        </td>
+        <td>
+          9827
+          -
+          9897
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.time.OffsetDateTime.of
+        </td>
+        <td style="background: #AEF1AE">
+          java.time.OffsetDateTime.of(dateRange.last, java.time.LocalTime.of(12, 0), java.time.ZoneOffset.UTC)
+        </td>
+      </tr><tr>
+        <td>
+          222
+        </td>
+        <td>
+          1646
+        </td>
+        <td>
+          9817
+          -
+          9899
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          scala.Some.apply
+        </td>
+        <td style="background: #AEF1AE">
+          scala.Some.apply[List[java.time.OffsetDateTime]](immutable.this.List.apply[java.time.OffsetDateTime](java.time.OffsetDateTime.of(dateRange.last, java.time.LocalTime.of(12, 0), java.time.ZoneOffset.UTC)))
+        </td>
+      </tr><tr>
+        <td>
+          222
+        </td>
+        <td>
+          1640
+        </td>
+        <td>
+          9845
+          -
+          9859
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.collection.LinearSeqOptimized.last
+        </td>
+        <td style="background: #AEF1AE">
+          dateRange.last
+        </td>
+      </tr><tr>
+        <td>
+          222
+        </td>
+        <td>
+          1642
+        </td>
+        <td>
+          9882
+          -
+          9896
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          java.time.ZoneOffset.UTC
+        </td>
+        <td style="background: #AEF1AE">
+          java.time.ZoneOffset.UTC
+        </td>
+      </tr><tr>
+        <td>
+          222
+        </td>
+        <td>
+          1645
+        </td>
+        <td>
+          9817
+          -
+          9899
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Some.apply
+        </td>
+        <td style="background: #AEF1AE">
+          scala.Some.apply[List[java.time.OffsetDateTime]](immutable.this.List.apply[java.time.OffsetDateTime](java.time.OffsetDateTime.of(dateRange.last, java.time.LocalTime.of(12, 0), java.time.ZoneOffset.UTC)))
+        </td>
+      </tr><tr>
+        <td>
+          225
+        </td>
+        <td>
+          1649
+        </td>
+        <td>
+          9927
+          -
+          9931
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          scala.None
+        </td>
+        <td style="background: #F0ADAD">
+          scala.None
+        </td>
+      </tr><tr>
+        <td>
+          225
+        </td>
+        <td>
+          1648
+        </td>
+        <td>
+          9927
+          -
+          9931
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.None
+        </td>
+        <td style="background: #F0ADAD">
+          scala.None
+        </td>
+      </tr><tr>
+        <td>
+          228
+        </td>
+        <td>
+          1650
+        </td>
+        <td>
+          9985
+          -
+          10017
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          utils.OwcGeoJsonConverters.asOwcResource
+        </td>
+        <td style="background: #AEF1AE">
+          OwcGeoJsonConverters.this.asOwcResource(md, idAsUrlString)
+        </td>
+      </tr><tr>
+        <td>
+          228
+        </td>
+        <td>
+          1652
+        </td>
+        <td>
+          9962
+          -
+          10018
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          scala.collection.immutable.List.map
+        </td>
+        <td style="background: #AEF1AE">
+          metadataList.map[info.smart.models.owc100.OwcResource, List[info.smart.models.owc100.OwcResource]](((md: models.gmd.MdMetadataSet) =&gt; OwcGeoJsonConverters.this.asOwcResource(md, idAsUrlString)))(immutable.this.List.canBuildFrom[info.smart.models.owc100.OwcResource])
+        </td>
+      </tr><tr>
+        <td>
+          228
+        </td>
+        <td>
+          1651
+        </td>
+        <td>
+          9978
+          -
+          9978
+        </td>
+        <td>
+          TypeApply
+        </td>
+        <td>
+          scala.collection.immutable.List.canBuildFrom
+        </td>
+        <td style="background: #AEF1AE">
+          immutable.this.List.canBuildFrom[info.smart.models.owc100.OwcResource]
+        </td>
+      </tr><tr>
+        <td>
+          229
+        </td>
+        <td>
+          1667
+        </td>
+        <td>
+          10023
+          -
+          10682
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          info.smart.models.owc100.OwcContext.apply
+        </td>
+        <td style="background: #AEF1AE">
+          info.smart.models.owc100.OwcContext.apply(new java.net.URL(idAsUrlString), bbox, immutable.this.List.apply[info.smart.models.owc100.OwcLink](info.smart.models.owc100.OwcProfile.CORE.newOf), immutable.this.Nil, &quot;en&quot;, &quot;Search result list CSW ingester&quot;, scala.Some.apply[String](&quot;Originating query: &quot;), java.time.OffsetDateTime.now(), immutable.this.Nil, scala.None, scala.Some.apply[info.smart.models.owc100.OwcCreatorApplication](owcCreatorApplication), scala.None, scala.None, optDateInterval, immutable.this.Nil, owcResources)
+        </td>
+      </tr><tr>
+        <td>
+          230
+        </td>
+        <td>
+          1653
+        </td>
+        <td>
+          10046
+          -
+          10068
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.net.URL.&lt;init&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          new java.net.URL(idAsUrlString)
+        </td>
+      </tr><tr>
+        <td>
+          234
+        </td>
+        <td>
+          1655
+        </td>
+        <td>
+          10168
+          -
+          10195
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.immutable.List.apply
+        </td>
+        <td style="background: #AEF1AE">
+          immutable.this.List.apply[info.smart.models.owc100.OwcLink](info.smart.models.owc100.OwcProfile.CORE.newOf)
+        </td>
+      </tr><tr>
+        <td>
+          234
+        </td>
+        <td>
+          1654
+        </td>
+        <td>
+          10173
+          -
+          10194
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcProfile.CORE.newOf
+        </td>
+        <td style="background: #AEF1AE">
+          info.smart.models.owc100.OwcProfile.CORE.newOf
+        </td>
+      </tr><tr>
+        <td>
+          237
+        </td>
+        <td>
+          1656
+        </td>
+        <td>
+          10260
+          -
+          10266
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.collection.immutable.Nil
+        </td>
+        <td style="background: #AEF1AE">
+          immutable.this.Nil
+        </td>
+      </tr><tr>
+        <td>
+          238
+        </td>
+        <td>
+          1657
+        </td>
+        <td>
+          10285
+          -
+          10289
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;en&quot;
+        </td>
+      </tr><tr>
+        <td>
+          239
+        </td>
+        <td>
+          1658
+        </td>
+        <td>
+          10305
+          -
+          10338
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;Search result list CSW ingester&quot;
+        </td>
+      </tr><tr>
+        <td>
+          240
+        </td>
+        <td>
+          1659
+        </td>
+        <td>
+          10357
+          -
+          10384
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Some.apply
+        </td>
+        <td style="background: #AEF1AE">
+          scala.Some.apply[String](&quot;Originating query: &quot;)
+        </td>
+      </tr><tr>
+        <td>
+          241
+        </td>
+        <td>
+          1660
+        </td>
+        <td>
+          10405
+          -
+          10425
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.time.OffsetDateTime.now
+        </td>
+        <td style="background: #AEF1AE">
+          java.time.OffsetDateTime.now()
+        </td>
+      </tr><tr>
+        <td>
+          242
+        </td>
+        <td>
+          1661
+        </td>
+        <td>
+          10442
+          -
+          10448
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.collection.immutable.Nil
+        </td>
+        <td style="background: #AEF1AE">
+          immutable.this.Nil
+        </td>
+      </tr><tr>
+        <td>
+          243
+        </td>
+        <td>
+          1662
+        </td>
+        <td>
+          10468
+          -
+          10472
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.None
+        </td>
+        <td style="background: #AEF1AE">
+          scala.None
+        </td>
+      </tr><tr>
+        <td>
+          244
+        </td>
+        <td>
+          1663
+        </td>
+        <td>
+          10501
+          -
+          10528
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Some.apply
+        </td>
+        <td style="background: #AEF1AE">
+          scala.Some.apply[info.smart.models.owc100.OwcCreatorApplication](owcCreatorApplication)
+        </td>
+      </tr><tr>
+        <td>
+          245
+        </td>
+        <td>
+          1664
+        </td>
+        <td>
+          10553
+          -
+          10557
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.None
+        </td>
+        <td style="background: #AEF1AE">
+          scala.None
+        </td>
+      </tr><tr>
+        <td>
+          246
+        </td>
+        <td>
+          1665
+        </td>
+        <td>
+          10574
+          -
+          10578
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.None
+        </td>
+        <td style="background: #AEF1AE">
+          scala.None
+        </td>
+      </tr><tr>
+        <td>
+          248
+        </td>
+        <td>
+          1666
+        </td>
+        <td>
+          10644
+          -
+          10650
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.collection.immutable.Nil
+        </td>
+        <td style="background: #AEF1AE">
+          immutable.this.Nil
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

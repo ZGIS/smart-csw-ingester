@@ -4,7 +4,7 @@
         <title id="title">
           router/RoutesPrefix.scala.html
         </title>
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="http://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
         $(document).ready(function() {$(".tablesorter").tablesorter();});
       </script>
         <style>
@@ -25,17 +25,17 @@
             <pre style='font-size: 12pt; font-family: courier;'>1 <span style=''>
 </span>2 <span style=''>// @GENERATOR:play-routes-compiler
 </span>3 <span style=''>// @SOURCE:/home/travis/build/ZGIS/smart-csw-ingester/conf/routes
-</span>4 <span style=''>// @DATE:Wed Apr 26 03:12:25 UTC 2017
+</span>4 <span style=''>// @DATE:Sun Sep 03 18:31:21 UTC 2017
 </span>5 <span style=''>
 </span>6 <span style=''>
 </span>7 <span style=''>package router {
 </span>8 <span style=''>  object RoutesPrefix {
-</span>9 <span style=''>    private var _prefix: String = </span><span style='background: #F0ADAD'>"/"</span><span style=''>
+</span>9 <span style=''>    private var _prefix: String = </span><span style='background: #F0ADAD'>&quot;/&quot;</span><span style=''>
 </span>10 <span style=''>    def setPrefix(p: String): Unit = {
 </span>11 <span style=''>      </span><span style='background: #F0ADAD'>_prefix = p</span><span style=''>
 </span>12 <span style=''>    }
 </span>13 <span style=''>    def prefix: String = </span><span style='background: #F0ADAD'>_prefix</span><span style=''>
-</span>14 <span style=''>    val byNamePrefix: Function0[String] = { () => </span><span style='background: #F0ADAD'>prefix</span><span style=''> }
+</span>14 <span style=''>    val byNamePrefix: Function0[String] = { () =&gt; </span><span style='background: #F0ADAD'>prefix</span><span style=''> }
 </span>15 <span style=''>  }
 </span>16 <span style=''>}
 </span></pre>
@@ -54,7 +54,7 @@
           9
         </td>
         <td>
-          1567
+          2042
         </td>
         <td>
           217
@@ -75,7 +75,7 @@
           11
         </td>
         <td>
-          1568
+          2043
         </td>
         <td>
           266
@@ -96,7 +96,7 @@
           13
         </td>
         <td>
-          1569
+          2044
         </td>
         <td>
           309
@@ -117,7 +117,7 @@
           14
         </td>
         <td>
-          1570
+          2045
         </td>
         <td>
           367

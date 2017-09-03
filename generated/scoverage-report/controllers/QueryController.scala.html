@@ -4,7 +4,7 @@
         <title id="title">
           controllers/QueryController.scala.html
         </title>
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="http://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
         $(document).ready(function() {$(".tablesorter").tablesorter();});
       </script>
         <style>
@@ -24,18 +24,18 @@
           <div class="tab-pane active" id="codegrid">
             <pre style='font-size: 12pt; font-family: courier;'>1 <span style=''>/*
 </span>2 <span style=''> * Copyright (c) 2011-2017 Interfaculty Department of Geoinformatics, University of
-</span>3 <span style=''> * Salzburg (Z_GIS) & Institute of Geological and Nuclear Sciences Limited (GNS Science)
+</span>3 <span style=''> * Salzburg (Z_GIS) &amp; Institute of Geological and Nuclear Sciences Limited (GNS Science)
 </span>4 <span style=''> * in the SMART Aquifer Characterisation (SAC) programme funded by the New Zealand
 </span>5 <span style=''> * Ministry of Business, Innovation and Employment (MBIE)
 </span>6 <span style=''> *
-</span>7 <span style=''> * Licensed under the Apache License, Version 2.0 (the "License");
+</span>7 <span style=''> * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
 </span>8 <span style=''> * you may not use this file except in compliance with the License.
 </span>9 <span style=''> * You may obtain a copy of the License at
 </span>10 <span style=''> *
 </span>11 <span style=''> *    http://www.apache.org/licenses/LICENSE-2.0
 </span>12 <span style=''> *
 </span>13 <span style=''> * Unless required by applicable law or agreed to in writing, software
-</span>14 <span style=''> * distributed under the License is distributed on an "AS IS" BASIS,
+</span>14 <span style=''> * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
 </span>15 <span style=''> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 </span>16 <span style=''> * See the License for the specific language governing permissions and
 </span>17 <span style=''> * limitations under the License.
@@ -47,73 +47,140 @@
 </span>23 <span style=''>import javax.inject._
 </span>24 <span style=''>
 </span>25 <span style=''>import models.ErrorResult
-</span>26 <span style=''>import play.api.libs.json._
-</span>27 <span style=''>import models.gmd.{GeoJSONFeatureCollectionWriter, MdMetadataSet}
-</span>28 <span style=''>import org.apache.lucene.queryparser.classic.ParseException
+</span>26 <span style=''>import models.gmd.{GeoJSONFeatureCollectionWriter, MdMetadataSet}
+</span>27 <span style=''>import org.apache.lucene.queryparser.classic.ParseException
+</span>28 <span style=''>import play.api.libs.json._
 </span>29 <span style=''>import play.api.mvc._
 </span>30 <span style=''>import services.LuceneService
-</span>31 <span style=''>import utils.ClassnameLogger
-</span>32 <span style=''>
-</span>33 <span style=''>/**
-</span>34 <span style=''>  * Controller that serves results from Lucene Index
-</span>35 <span style=''>  */
-</span>36 <span style=''>// TODO SR rename to "IndexController" or something similar
-</span>37 <span style=''>class QueryController @Inject()(luceneService: LuceneService) extends Controller with ClassnameLogger {
-</span>38 <span style=''>
-</span>39 <span style=''>  implicit val geoJSONFeatureCollectionWrite = </span><span style='background: #F0ADAD'>GeoJSONFeatureCollectionWriter</span><span style=''>
-</span>40 <span style=''>  private lazy val DEFAULT_QUERY = </span><span style='background: #F0ADAD'>"*:*"</span><span style=''>
-</span>41 <span style=''>
-</span>42 <span style=''>  /**
-</span>43 <span style=''>    * Action that passes the query from URL to the [[services.LuceneService]].
-</span>44 <span style=''>    *
-</span>45 <span style=''>    * @param query
-</span>46 <span style=''>    * @return
-</span>47 <span style=''>    * @see services.LuceneService
-</span>48 <span style=''>    */
-</span>49 <span style=''>  def query(query: Option[String],
-</span>50 <span style=''>            bboxWkt: Option[String],
-</span>51 <span style=''>            fromDateStr: Option[String],
-</span>52 <span style=''>            toDateStr: Option[String],
-</span>53 <span style=''>            maxNumberOfResults: Option[Int]): Action[AnyContent] = </span><span style='background: #F0ADAD'>Action {
-</span>54 <span style=''></span><span style='background: #F0ADAD'>    logger.info(s"Query CSW: ${query.getOrElse("NONE")}")
-</span>55 <span style=''></span><span style='background: #F0ADAD'>    // TODO SR make tuple expression out of this
-</span>56 <span style=''></span><span style='background: #F0ADAD'>    val fromDate = fromDateStr match {
-</span>57 <span style=''></span><span style='background: #F0ADAD'>      case None => Some(LocalDate.ofEpochDay(0))
-</span>58 <span style=''></span><span style='background: #F0ADAD'>      case _ => Some(MdMetadataSet.dateFromStrings(List(fromDateStr.get)))
-</span>59 <span style=''></span><span style='background: #F0ADAD'>    }
-</span>60 <span style=''></span><span style='background: #F0ADAD'>
-</span>61 <span style=''></span><span style='background: #F0ADAD'>    val toDate = toDateStr match {
-</span>62 <span style=''></span><span style='background: #F0ADAD'>      case None => Some(LocalDate.now())
-</span>63 <span style=''></span><span style='background: #F0ADAD'>      case _ => Some(MdMetadataSet.dateFromStrings(List(toDateStr.get)))
-</span>64 <span style=''></span><span style='background: #F0ADAD'>    }
-</span>65 <span style=''></span><span style='background: #F0ADAD'>
-</span>66 <span style=''></span><span style='background: #F0ADAD'>    try {
-</span>67 <span style=''></span><span style='background: #F0ADAD'>      val searchResult = luceneService.query(query.getOrElse(DEFAULT_QUERY), bboxWkt, fromDate, toDate,
-</span>68 <span style=''></span><span style='background: #F0ADAD'>        maxNumberOfResults)
-</span>69 <span style=''></span><span style='background: #F0ADAD'>      val featureCollection = searchResult.documents
-</span>70 <span style=''></span><span style='background: #F0ADAD'>
-</span>71 <span style=''></span><span style='background: #F0ADAD'>      // TODO AK here we could insert the query string again if needed
-</span>72 <span style=''></span><span style='background: #F0ADAD'>      val jsonTransformer = __.json.update(
-</span>73 <span style=''></span><span style='background: #F0ADAD'>        (__ \ 'countMatched).json.put(JsNumber(searchResult.numberOfMatchingDocuments)))
-</span>74 <span style=''></span><span style='background: #F0ADAD'>      val resultJson: JsValue = Json.toJson(featureCollection)
-</span>75 <span style=''></span><span style='background: #F0ADAD'>
-</span>76 <span style=''></span><span style='background: #F0ADAD'>      Ok(resultJson.transform(jsonTransformer).get).as(JSON)
-</span>77 <span style=''></span><span style='background: #F0ADAD'>    }
-</span>78 <span style=''></span><span style='background: #F0ADAD'>    catch {
-</span>79 <span style=''></span><span style='background: #F0ADAD'>      case e: ParseException => { // TODO SR generally catch Exception is BAD(tm) but can we live with that here?
-</span>80 <span style=''></span><span style='background: #F0ADAD'>        logger.error("Exception parsing query: " + e.getMessage, e);
-</span>81 <span style=''></span><span style='background: #F0ADAD'>        val error: ErrorResult = ErrorResult(s"Could not parse query '${query.get}' ", Some(e.getMessage))
-</span>82 <span style=''></span><span style='background: #F0ADAD'>        InternalServerError(Json.toJson(error)).as(JSON)
-</span>83 <span style=''></span><span style='background: #F0ADAD'>      }
-</span>84 <span style=''></span><span style='background: #F0ADAD'>    }
-</span>85 <span style=''></span><span style='background: #F0ADAD'>  }</span><span style=''>
-</span>86 <span style=''>
-</span>87 <span style=''>  def buildIndexFor(catalogueName: String): Action[AnyContent] = </span><span style='background: #F0ADAD'>Action {
-</span>88 <span style=''></span><span style='background: #F0ADAD'>    logger.info(s"Request for building index for $catalogueName")
-</span>89 <span style=''></span><span style='background: #F0ADAD'>    luceneService.buildIndex(catalogueName)
-</span>90 <span style=''></span><span style='background: #F0ADAD'>    Ok(s"building index for $catalogueName")
-</span>91 <span style=''></span><span style='background: #F0ADAD'>  }</span><span style=''>
-</span>92 <span style=''>}
+</span>31 <span style=''>import utils.OwcGeoJsonConverters.asOwcResource
+</span>32 <span style=''>import utils.{ClassnameLogger, OwcGeoJsonConverters}
+</span>33 <span style=''>
+</span>34 <span style=''>/**
+</span>35 <span style=''>  * Controller that serves results from Lucene Index
+</span>36 <span style=''>  */
+</span>37 <span style=''>// TODO SR rename to &quot;IndexController&quot; or something similar
+</span>38 <span style=''>class QueryController @Inject()(luceneService: LuceneService) extends Controller with ClassnameLogger {
+</span>39 <span style=''>
+</span>40 <span style=''>  implicit val geoJSONFeatureCollectionWrite = </span><span style='background: #F0ADAD'>GeoJSONFeatureCollectionWriter</span><span style=''>
+</span>41 <span style=''>  private lazy val DEFAULT_QUERY = </span><span style='background: #F0ADAD'>&quot;*:*&quot;</span><span style=''>
+</span>42 <span style=''>
+</span>43 <span style=''>  /**
+</span>44 <span style=''>    * add lucene score via Json Transform
+</span>45 <span style=''>    *
+</span>46 <span style=''>    * @param json
+</span>47 <span style=''>    * @param searchScore
+</span>48 <span style=''>    * @return
+</span>49 <span style=''>    */
+</span>50 <span style=''>  private def addScoreJsonTransform(json: JsValue, searchScore: Double): JsValue = {
+</span>51 <span style=''>
+</span>52 <span style=''>    // FIXME: decide which one
+</span>53 <span style=''>    val jsonTransformer = </span><span style='background: #F0ADAD'>__.json.update(
+</span>54 <span style=''></span><span style='background: #F0ADAD'>      (__ \ 'searchScore).json.put(JsNumber(searchScore)))</span><span style=''>
+</span>55 <span style=''>
+</span>56 <span style=''>    val jsonTransformer2 = </span><span style='background: #F0ADAD'>JsPath.read[JsObject].map(o =&gt; o ++ Json.obj(&quot;searchScore&quot; -&gt; JsNumber(searchScore)))</span><span style=''>
+</span>57 <span style=''>    </span><span style='background: #F0ADAD'>json.transform(jsonTransformer2).get</span><span style=''>
+</span>58 <span style=''>  }
+</span>59 <span style=''>  /**
+</span>60 <span style=''>    * converts the featureCollection of the List of [[MdMetadataSet]] to Json,
+</span>61 <span style=''>    * and injects the scores into the [[info.smart.models.owc100.OwcResource]] Json
+</span>62 <span style=''>    *
+</span>63 <span style=''>    * @param featureCollection
+</span>64 <span style=''>    * @param url
+</span>65 <span style=''>    * @return
+</span>66 <span style=''>    */
+</span>67 <span style=''>  private def toOwcContextJsonWithScores(featureCollection: List[MdMetadataSet], url: String): JsValue = {
+</span>68 <span style=''>
+</span>69 <span style=''>    val owcResourcesJsList = </span><span style='background: #F0ADAD'>featureCollection.map{
+</span>70 <span style=''></span><span style='background: #F0ADAD'>      md =&gt;
+</span>71 <span style=''></span><span style='background: #F0ADAD'>        val owcResource = OwcGeoJsonConverters.asOwcResource(md, url)
+</span>72 <span style=''></span><span style='background: #F0ADAD'>        val owcJson = owcResource.toJson
+</span>73 <span style=''></span><span style='background: #F0ADAD'>        val owcJsWithScore = addScoreJsonTransform(owcJson, md.searchScore)
+</span>74 <span style=''></span><span style='background: #F0ADAD'>        owcJsWithScore
+</span>75 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''>
+</span>76 <span style=''>
+</span>77 <span style=''>    val owcContext = </span><span style='background: #F0ADAD'>OwcGeoJsonConverters.toOwcContext(featureCollection, url)</span><span style=''>
+</span>78 <span style=''>    val emptyContext = </span><span style='background: #F0ADAD'>owcContext.copy(resource = List.empty)</span><span style=''>
+</span>79 <span style=''>    val emptyContextJson = </span><span style='background: #F0ADAD'>emptyContext.toJson</span><span style=''>
+</span>80 <span style=''>
+</span>81 <span style=''>    val jsonTransformer = </span><span style='background: #F0ADAD'>__.json.update(
+</span>82 <span style=''></span><span style='background: #F0ADAD'>      (__ \ 'features).json.put(JsArray(owcResourcesJsList)))</span><span style=''>
+</span>83 <span style=''>
+</span>84 <span style=''>    </span><span style='background: #F0ADAD'>emptyContextJson.transform(jsonTransformer).get</span><span style=''>
+</span>85 <span style=''>    // OwcGeoJsonConverters.toOwcContext(featureCollection, url).toJson
+</span>86 <span style=''>  }
+</span>87 <span style=''>
+</span>88 <span style=''>  /**
+</span>89 <span style=''>    * Action that passes the query from URL to the [[services.LuceneService]].
+</span>90 <span style=''>    *
+</span>91 <span style=''>    * @param query              Option[String] that contains the Lucene query. Defaults to [[QueryController.DEFAULT_QUERY]]
+</span>92 <span style=''>    * @param bboxWkt            Option[String] that contains the bbox (as WKT) to search in.
+</span>93 <span style=''>    * @param fromDateStr        Option[String] containing an ISO-DATE for lower date bound
+</span>94 <span style=''>    * @param toDateStr          Option[String] containing an ISO-DATE for upper date bound
+</span>95 <span style=''>    * @param maxNumberOfResults Option[Int] containing the max number of documents to return
+</span>96 <span style=''>    * @param contentType        Option[String] containing the type, of the result document. Valid values: &quot;GeoJson&quot; and &quot;OwcContext&quot;. Defaults to &quot;GeoJson&quot;
+</span>97 <span style=''>    * @see [[services.LuceneService]]
+</span>98 <span style=''>    * @return
+</span>99 <span style=''>    */
+</span>100 <span style=''>  def query(query: Option[String],
+</span>101 <span style=''>            bboxWkt: Option[String],
+</span>102 <span style=''>            fromDateStr: Option[String],
+</span>103 <span style=''>            toDateStr: Option[String],
+</span>104 <span style=''>            maxNumberOfResults: Option[Int],
+</span>105 <span style=''>            contentType: Option[String]): Action[AnyContent] = </span><span style='background: #F0ADAD'>Action { implicit request =&gt;
+</span>106 <span style=''></span><span style='background: #F0ADAD'>    logger.info(s&quot;Query CSW: ${query.getOrElse(&quot;NONE&quot;)}&quot;)
+</span>107 <span style=''></span><span style='background: #F0ADAD'>    // TODO SR make tuple expression out of this
+</span>108 <span style=''></span><span style='background: #F0ADAD'>    val fromDate = fromDateStr match {
+</span>109 <span style=''></span><span style='background: #F0ADAD'>      case None =&gt; Some(LocalDate.ofEpochDay(0))
+</span>110 <span style=''></span><span style='background: #F0ADAD'>      case _ =&gt; Some(MdMetadataSet.dateFromStrings(List(fromDateStr.get)))
+</span>111 <span style=''></span><span style='background: #F0ADAD'>    }
+</span>112 <span style=''></span><span style='background: #F0ADAD'>
+</span>113 <span style=''></span><span style='background: #F0ADAD'>    val toDate = toDateStr match {
+</span>114 <span style=''></span><span style='background: #F0ADAD'>      case None =&gt; Some(LocalDate.now())
+</span>115 <span style=''></span><span style='background: #F0ADAD'>      case _ =&gt; Some(MdMetadataSet.dateFromStrings(List(toDateStr.get)))
+</span>116 <span style=''></span><span style='background: #F0ADAD'>    }
+</span>117 <span style=''></span><span style='background: #F0ADAD'>
+</span>118 <span style=''></span><span style='background: #F0ADAD'>    try {
+</span>119 <span style=''></span><span style='background: #F0ADAD'>      val searchResult = luceneService.query(query.getOrElse(DEFAULT_QUERY), bboxWkt, fromDate, toDate,
+</span>120 <span style=''></span><span style='background: #F0ADAD'>        maxNumberOfResults)
+</span>121 <span style=''></span><span style='background: #F0ADAD'>      val featureCollection = searchResult.documents
+</span>122 <span style=''></span><span style='background: #F0ADAD'>
+</span>123 <span style=''></span><span style='background: #F0ADAD'>      contentType.getOrElse(&quot;GeoJson&quot;) match {
+</span>124 <span style=''></span><span style='background: #F0ADAD'>        case &quot;GeoJson&quot; =&gt; {
+</span>125 <span style=''></span><span style='background: #F0ADAD'>          // TODO AK here we could insert the query string again if needed
+</span>126 <span style=''></span><span style='background: #F0ADAD'>          val jsonTransformer = __.json.update(
+</span>127 <span style=''></span><span style='background: #F0ADAD'>            (__ \ 'countMatched).json.put(JsNumber(searchResult.numberOfMatchingDocuments)))
+</span>128 <span style=''></span><span style='background: #F0ADAD'>          val resultJson: JsValue = Json.toJson(featureCollection)
+</span>129 <span style=''></span><span style='background: #F0ADAD'>
+</span>130 <span style=''></span><span style='background: #F0ADAD'>          Ok(resultJson.transform(jsonTransformer).get).as(JSON)
+</span>131 <span style=''></span><span style='background: #F0ADAD'>        }
+</span>132 <span style=''></span><span style='background: #F0ADAD'>        case &quot;OwcContext&quot; =&gt; {
+</span>133 <span style=''></span><span style='background: #F0ADAD'>          // FIXME SR we should use the standardized &quot;FORWARDED&quot; header. Or better both? I hate HTTP(S)!
+</span>134 <span style=''></span><span style='background: #F0ADAD'>          // See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Forwarded
+</span>135 <span style=''></span><span style='background: #F0ADAD'>          val proto = request.headers.get(&quot;X-Forwarded-Proto&quot;).getOrElse(&quot;http&quot;)
+</span>136 <span style=''></span><span style='background: #F0ADAD'>          val host = request.headers.get(&quot;X-Forwarded-Host&quot;).getOrElse(request.headers(&quot;host&quot;))
+</span>137 <span style=''></span><span style='background: #F0ADAD'>          val url = s&quot;${proto}://${request.headers(&quot;host&quot;)}${request.uri}&quot;
+</span>138 <span style=''></span><span style='background: #F0ADAD'>          logger.debug(s&quot;Requested URL by client: ${url}&quot;)
+</span>139 <span style=''></span><span style='background: #F0ADAD'>          val resultJson = toOwcContextJsonWithScores(featureCollection = featureCollection, url = url)
+</span>140 <span style=''></span><span style='background: #F0ADAD'>          Ok(resultJson).as(JSON)
+</span>141 <span style=''></span><span style='background: #F0ADAD'>        }
+</span>142 <span style=''></span><span style='background: #F0ADAD'>        case _ =&gt; BadRequest(Json.toJson(ErrorResult(s&quot;Unknown content type: ${contentType}&quot;, None))).as(JSON)
+</span>143 <span style=''></span><span style='background: #F0ADAD'>      }
+</span>144 <span style=''></span><span style='background: #F0ADAD'>    }
+</span>145 <span style=''></span><span style='background: #F0ADAD'>    catch {
+</span>146 <span style=''></span><span style='background: #F0ADAD'>      case e: ParseException =&gt; {
+</span>147 <span style=''></span><span style='background: #F0ADAD'>        logger.error(&quot;Exception parsing query: &quot; + e.getMessage, e);
+</span>148 <span style=''></span><span style='background: #F0ADAD'>        val error: ErrorResult = ErrorResult(s&quot;Could not parse query '${query.get}' &quot;, Some(e.getMessage))
+</span>149 <span style=''></span><span style='background: #F0ADAD'>        InternalServerError(Json.toJson(error)).as(JSON)
+</span>150 <span style=''></span><span style='background: #F0ADAD'>      }
+</span>151 <span style=''></span><span style='background: #F0ADAD'>    }
+</span>152 <span style=''></span><span style='background: #F0ADAD'>  }</span><span style=''>
+</span>153 <span style=''>
+</span>154 <span style=''>  def buildIndexFor(catalogueName: String): Action[AnyContent] = </span><span style='background: #F0ADAD'>Action {
+</span>155 <span style=''></span><span style='background: #F0ADAD'>    logger.info(s&quot;Request for building index for $catalogueName&quot;)
+</span>156 <span style=''></span><span style='background: #F0ADAD'>    luceneService.buildIndex(catalogueName)
+</span>157 <span style=''></span><span style='background: #F0ADAD'>    Ok(s&quot;building index for $catalogueName&quot;)
+</span>158 <span style=''></span><span style='background: #F0ADAD'>  }</span><span style=''>
+</span>159 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -127,15 +194,15 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          39
+          40
         </td>
         <td>
           33
         </td>
         <td>
-          1486
+          1558
           -
-          1516
+          1588
         </td>
         <td>
           Select
@@ -148,15 +215,15 @@
         </td>
       </tr><tr>
         <td>
-          40
+          41
         </td>
         <td>
           34
         </td>
         <td>
-          1552
+          1624
           -
-          1557
+          1629
         </td>
         <td>
           Literal
@@ -172,12 +239,983 @@
           53
         </td>
         <td>
-          86
+          39
+        </td>
+        <td>
+          1892
+          -
+          1966
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.libs.json.JsPath.json.update
+        </td>
+        <td style="background: #F0ADAD">
+          play.api.libs.json.`package`.__.json.update[play.api.libs.json.JsObject](play.api.libs.json.`package`.__.\(scala.Symbol.apply(&quot;searchScore&quot;)).json.put(play.api.libs.json.JsNumber.apply(math.this.BigDecimal.double2bigDecimal(searchScore))))
+        </td>
+      </tr><tr>
+        <td>
+          54
+        </td>
+        <td>
+          35
+        </td>
+        <td>
+          1920
+          -
+          1932
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Symbol.apply
+        </td>
+        <td style="background: #F0ADAD">
+          scala.Symbol.apply(&quot;searchScore&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          54
+        </td>
+        <td>
+          38
+        </td>
+        <td>
+          1915
+          -
+          1965
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.libs.json.JsPath.json.put
+        </td>
+        <td style="background: #F0ADAD">
+          play.api.libs.json.`package`.__.\(scala.Symbol.apply(&quot;searchScore&quot;)).json.put(play.api.libs.json.JsNumber.apply(math.this.BigDecimal.double2bigDecimal(searchScore)))
+        </td>
+      </tr><tr>
+        <td>
+          54
+        </td>
+        <td>
+          37
         </td>
         <td>
           1943
           -
-          3292
+          1964
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.libs.json.JsNumber.apply
+        </td>
+        <td style="background: #F0ADAD">
+          play.api.libs.json.JsNumber.apply(math.this.BigDecimal.double2bigDecimal(searchScore))
+        </td>
+      </tr><tr>
+        <td>
+          54
+        </td>
+        <td>
+          36
+        </td>
+        <td>
+          1952
+          -
+          1963
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          scala.math.BigDecimal.double2bigDecimal
+        </td>
+        <td style="background: #F0ADAD">
+          math.this.BigDecimal.double2bigDecimal(searchScore)
+        </td>
+      </tr><tr>
+        <td>
+          56
+        </td>
+        <td>
+          41
+        </td>
+        <td>
+          2040
+          -
+          2053
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;searchScore&quot;
+        </td>
+      </tr><tr>
+        <td>
+          56
+        </td>
+        <td>
+          44
+        </td>
+        <td>
+          2065
+          -
+          2065
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          play.api.libs.json.DefaultWrites.JsValueWrites
+        </td>
+        <td style="background: #F0ADAD">
+          json.this.Writes.JsValueWrites
+        </td>
+      </tr><tr>
+        <td>
+          56
+        </td>
+        <td>
+          47
+        </td>
+        <td>
+          2031
+          -
+          2079
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.libs.json.Json.obj
+        </td>
+        <td style="background: #F0ADAD">
+          play.api.libs.json.Json.obj(scala.this.Predef.ArrowAssoc[String](&quot;searchScore&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[play.api.libs.json.JsNumber](play.api.libs.json.JsNumber.apply(math.this.BigDecimal.double2bigDecimal(searchScore)))(json.this.Writes.JsValueWrites)))
+        </td>
+      </tr><tr>
+        <td>
+          56
+        </td>
+        <td>
+          46
+        </td>
+        <td>
+          2040
+          -
+          2078
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Predef.ArrowAssoc.-&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          scala.this.Predef.ArrowAssoc[String](&quot;searchScore&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[play.api.libs.json.JsNumber](play.api.libs.json.JsNumber.apply(math.this.BigDecimal.double2bigDecimal(searchScore)))(json.this.Writes.JsValueWrites))
+        </td>
+      </tr><tr>
+        <td>
+          56
+        </td>
+        <td>
+          40
+        </td>
+        <td>
+          2006
+          -
+          2006
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          play.api.libs.json.DefaultReads.JsObjectReads
+        </td>
+        <td style="background: #F0ADAD">
+          json.this.Reads.JsObjectReads
+        </td>
+      </tr><tr>
+        <td>
+          56
+        </td>
+        <td>
+          49
+        </td>
+        <td>
+          1995
+          -
+          2080
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.libs.json.Reads.map
+        </td>
+        <td style="background: #F0ADAD">
+          play.api.libs.json.JsPath.read[play.api.libs.json.JsObject](json.this.Reads.JsObjectReads).map[play.api.libs.json.JsObject](((o: play.api.libs.json.JsObject) =&gt; o.++(play.api.libs.json.Json.obj(scala.this.Predef.ArrowAssoc[String](&quot;searchScore&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[play.api.libs.json.JsNumber](play.api.libs.json.JsNumber.apply(math.this.BigDecimal.double2bigDecimal(searchScore)))(json.this.Writes.JsValueWrites))))))
+        </td>
+      </tr><tr>
+        <td>
+          56
+        </td>
+        <td>
+          43
+        </td>
+        <td>
+          2057
+          -
+          2078
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.libs.json.JsNumber.apply
+        </td>
+        <td style="background: #F0ADAD">
+          play.api.libs.json.JsNumber.apply(math.this.BigDecimal.double2bigDecimal(searchScore))
+        </td>
+      </tr><tr>
+        <td>
+          56
+        </td>
+        <td>
+          45
+        </td>
+        <td>
+          2057
+          -
+          2078
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.api.libs.json.Json.toJsFieldJsValueWrapper
+        </td>
+        <td style="background: #F0ADAD">
+          json.this.Json.toJsFieldJsValueWrapper[play.api.libs.json.JsNumber](play.api.libs.json.JsNumber.apply(math.this.BigDecimal.double2bigDecimal(searchScore)))(json.this.Writes.JsValueWrites)
+        </td>
+      </tr><tr>
+        <td>
+          56
+        </td>
+        <td>
+          48
+        </td>
+        <td>
+          2026
+          -
+          2079
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.libs.json.JsObject.++
+        </td>
+        <td style="background: #F0ADAD">
+          o.++(play.api.libs.json.Json.obj(scala.this.Predef.ArrowAssoc[String](&quot;searchScore&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[play.api.libs.json.JsNumber](play.api.libs.json.JsNumber.apply(math.this.BigDecimal.double2bigDecimal(searchScore)))(json.this.Writes.JsValueWrites))))
+        </td>
+      </tr><tr>
+        <td>
+          56
+        </td>
+        <td>
+          42
+        </td>
+        <td>
+          2066
+          -
+          2077
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          scala.math.BigDecimal.double2bigDecimal
+        </td>
+        <td style="background: #F0ADAD">
+          math.this.BigDecimal.double2bigDecimal(searchScore)
+        </td>
+      </tr><tr>
+        <td>
+          57
+        </td>
+        <td>
+          50
+        </td>
+        <td>
+          2085
+          -
+          2121
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          play.api.libs.json.JsResult.get
+        </td>
+        <td style="background: #F0ADAD">
+          json.transform[play.api.libs.json.JsObject](jsonTransformer2).get
+        </td>
+      </tr><tr>
+        <td>
+          69
+        </td>
+        <td>
+          56
+        </td>
+        <td>
+          2507
+          -
+          2757
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          scala.collection.immutable.List.map
+        </td>
+        <td style="background: #F0ADAD">
+          featureCollection.map[play.api.libs.json.JsValue, List[play.api.libs.json.JsValue]](((md: models.gmd.MdMetadataSet) =&gt; {
+  val owcResource: info.smart.models.owc100.OwcResource = utils.OwcGeoJsonConverters.asOwcResource(md, url);
+  val owcJson: play.api.libs.json.JsValue = owcResource.toJson;
+  val owcJsWithScore: play.api.libs.json.JsValue = QueryController.this.addScoreJsonTransform(owcJson, md.searchScore.toDouble);
+  owcJsWithScore
+}))(immutable.this.List.canBuildFrom[play.api.libs.json.JsValue])
+        </td>
+      </tr><tr>
+        <td>
+          69
+        </td>
+        <td>
+          55
+        </td>
+        <td>
+          2528
+          -
+          2528
+        </td>
+        <td>
+          TypeApply
+        </td>
+        <td>
+          scala.collection.immutable.List.canBuildFrom
+        </td>
+        <td style="background: #F0ADAD">
+          immutable.this.List.canBuildFrom[play.api.libs.json.JsValue]
+        </td>
+      </tr><tr>
+        <td>
+          71
+        </td>
+        <td>
+          51
+        </td>
+        <td>
+          2568
+          -
+          2611
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          utils.OwcGeoJsonConverters.asOwcResource
+        </td>
+        <td style="background: #F0ADAD">
+          utils.OwcGeoJsonConverters.asOwcResource(md, url)
+        </td>
+      </tr><tr>
+        <td>
+          72
+        </td>
+        <td>
+          52
+        </td>
+        <td>
+          2634
+          -
+          2652
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcResource.toJson
+        </td>
+        <td style="background: #F0ADAD">
+          owcResource.toJson
+        </td>
+      </tr><tr>
+        <td>
+          73
+        </td>
+        <td>
+          53
+        </td>
+        <td>
+          2713
+          -
+          2727
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.Float.toDouble
+        </td>
+        <td style="background: #F0ADAD">
+          md.searchScore.toDouble
+        </td>
+      </tr><tr>
+        <td>
+          73
+        </td>
+        <td>
+          54
+        </td>
+        <td>
+          2682
+          -
+          2728
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          controllers.QueryController.addScoreJsonTransform
+        </td>
+        <td style="background: #F0ADAD">
+          QueryController.this.addScoreJsonTransform(owcJson, md.searchScore.toDouble)
+        </td>
+      </tr><tr>
+        <td>
+          77
+        </td>
+        <td>
+          57
+        </td>
+        <td>
+          2780
+          -
+          2837
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          utils.OwcGeoJsonConverters.toOwcContext
+        </td>
+        <td style="background: #F0ADAD">
+          utils.OwcGeoJsonConverters.toOwcContext(featureCollection, url)
+        </td>
+      </tr><tr>
+        <td>
+          78
+        </td>
+        <td>
+          59
+        </td>
+        <td>
+          2872
+          -
+          2872
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcContext.copy$default$1
+        </td>
+        <td style="background: #F0ADAD">
+          owcContext.copy$default$1
+        </td>
+      </tr><tr>
+        <td>
+          78
+        </td>
+        <td>
+          68
+        </td>
+        <td>
+          2872
+          -
+          2872
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcContext.copy$default$10
+        </td>
+        <td style="background: #F0ADAD">
+          owcContext.copy$default$10
+        </td>
+      </tr><tr>
+        <td>
+          78
+        </td>
+        <td>
+          62
+        </td>
+        <td>
+          2872
+          -
+          2872
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcContext.copy$default$4
+        </td>
+        <td style="background: #F0ADAD">
+          owcContext.copy$default$4
+        </td>
+      </tr><tr>
+        <td>
+          78
+        </td>
+        <td>
+          71
+        </td>
+        <td>
+          2872
+          -
+          2872
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcContext.copy$default$13
+        </td>
+        <td style="background: #F0ADAD">
+          owcContext.copy$default$13
+        </td>
+      </tr><tr>
+        <td>
+          78
+        </td>
+        <td>
+          74
+        </td>
+        <td>
+          2861
+          -
+          2899
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          info.smart.models.owc100.OwcContext.copy
+        </td>
+        <td style="background: #F0ADAD">
+          owcContext.copy(x$2, x$3, x$4, x$5, x$6, x$7, x$8, x$9, x$10, x$11, x$12, x$13, x$14, x$15, x$16, x$1)
+        </td>
+      </tr><tr>
+        <td>
+          78
+        </td>
+        <td>
+          65
+        </td>
+        <td>
+          2872
+          -
+          2872
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcContext.copy$default$7
+        </td>
+        <td style="background: #F0ADAD">
+          owcContext.copy$default$7
+        </td>
+      </tr><tr>
+        <td>
+          78
+        </td>
+        <td>
+          64
+        </td>
+        <td>
+          2872
+          -
+          2872
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcContext.copy$default$6
+        </td>
+        <td style="background: #F0ADAD">
+          owcContext.copy$default$6
+        </td>
+      </tr><tr>
+        <td>
+          78
+        </td>
+        <td>
+          73
+        </td>
+        <td>
+          2872
+          -
+          2872
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcContext.copy$default$15
+        </td>
+        <td style="background: #F0ADAD">
+          owcContext.copy$default$15
+        </td>
+      </tr><tr>
+        <td>
+          78
+        </td>
+        <td>
+          58
+        </td>
+        <td>
+          2888
+          -
+          2898
+        </td>
+        <td>
+          TypeApply
+        </td>
+        <td>
+          scala.collection.immutable.List.empty
+        </td>
+        <td style="background: #F0ADAD">
+          immutable.this.List.empty[Nothing]
+        </td>
+      </tr><tr>
+        <td>
+          78
+        </td>
+        <td>
+          67
+        </td>
+        <td>
+          2872
+          -
+          2872
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcContext.copy$default$9
+        </td>
+        <td style="background: #F0ADAD">
+          owcContext.copy$default$9
+        </td>
+      </tr><tr>
+        <td>
+          78
+        </td>
+        <td>
+          70
+        </td>
+        <td>
+          2872
+          -
+          2872
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcContext.copy$default$12
+        </td>
+        <td style="background: #F0ADAD">
+          owcContext.copy$default$12
+        </td>
+      </tr><tr>
+        <td>
+          78
+        </td>
+        <td>
+          61
+        </td>
+        <td>
+          2872
+          -
+          2872
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcContext.copy$default$3
+        </td>
+        <td style="background: #F0ADAD">
+          owcContext.copy$default$3
+        </td>
+      </tr><tr>
+        <td>
+          78
+        </td>
+        <td>
+          60
+        </td>
+        <td>
+          2872
+          -
+          2872
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcContext.copy$default$2
+        </td>
+        <td style="background: #F0ADAD">
+          owcContext.copy$default$2
+        </td>
+      </tr><tr>
+        <td>
+          78
+        </td>
+        <td>
+          69
+        </td>
+        <td>
+          2872
+          -
+          2872
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcContext.copy$default$11
+        </td>
+        <td style="background: #F0ADAD">
+          owcContext.copy$default$11
+        </td>
+      </tr><tr>
+        <td>
+          78
+        </td>
+        <td>
+          63
+        </td>
+        <td>
+          2872
+          -
+          2872
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcContext.copy$default$5
+        </td>
+        <td style="background: #F0ADAD">
+          owcContext.copy$default$5
+        </td>
+      </tr><tr>
+        <td>
+          78
+        </td>
+        <td>
+          72
+        </td>
+        <td>
+          2872
+          -
+          2872
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcContext.copy$default$14
+        </td>
+        <td style="background: #F0ADAD">
+          owcContext.copy$default$14
+        </td>
+      </tr><tr>
+        <td>
+          78
+        </td>
+        <td>
+          66
+        </td>
+        <td>
+          2872
+          -
+          2872
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcContext.copy$default$8
+        </td>
+        <td style="background: #F0ADAD">
+          owcContext.copy$default$8
+        </td>
+      </tr><tr>
+        <td>
+          79
+        </td>
+        <td>
+          75
+        </td>
+        <td>
+          2927
+          -
+          2946
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          info.smart.models.owc100.OwcContext.toJson
+        </td>
+        <td style="background: #F0ADAD">
+          emptyContext.toJson
+        </td>
+      </tr><tr>
+        <td>
+          81
+        </td>
+        <td>
+          79
+        </td>
+        <td>
+          2974
+          -
+          3051
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.libs.json.JsPath.json.update
+        </td>
+        <td style="background: #F0ADAD">
+          play.api.libs.json.`package`.__.json.update[play.api.libs.json.JsObject](play.api.libs.json.`package`.__.\(scala.Symbol.apply(&quot;features&quot;)).json.put(play.api.libs.json.JsArray.apply(owcResourcesJsList)))
+        </td>
+      </tr><tr>
+        <td>
+          82
+        </td>
+        <td>
+          77
+        </td>
+        <td>
+          3022
+          -
+          3049
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.libs.json.JsArray.apply
+        </td>
+        <td style="background: #F0ADAD">
+          play.api.libs.json.JsArray.apply(owcResourcesJsList)
+        </td>
+      </tr><tr>
+        <td>
+          82
+        </td>
+        <td>
+          76
+        </td>
+        <td>
+          3002
+          -
+          3011
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Symbol.apply
+        </td>
+        <td style="background: #F0ADAD">
+          scala.Symbol.apply(&quot;features&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          82
+        </td>
+        <td>
+          78
+        </td>
+        <td>
+          2997
+          -
+          3050
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.libs.json.JsPath.json.put
+        </td>
+        <td style="background: #F0ADAD">
+          play.api.libs.json.`package`.__.\(scala.Symbol.apply(&quot;features&quot;)).json.put(play.api.libs.json.JsArray.apply(owcResourcesJsList))
+        </td>
+      </tr><tr>
+        <td>
+          84
+        </td>
+        <td>
+          80
+        </td>
+        <td>
+          3057
+          -
+          3104
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          play.api.libs.json.JsResult.get
+        </td>
+        <td style="background: #F0ADAD">
+          emptyContextJson.transform[play.api.libs.json.JsObject](jsonTransformer).get
+        </td>
+      </tr><tr>
+        <td>
+          105
+        </td>
+        <td>
+          160
+        </td>
+        <td>
+          4241
+          -
+          6435
         </td>
         <td>
           Apply
@@ -186,7 +1224,7 @@
           play.api.mvc.ActionBuilder.apply
         </td>
         <td style="background: #F0ADAD">
-          play.api.mvc.Action.apply({
+          play.api.mvc.Action.apply(((implicit request: play.api.mvc.Request[play.api.mvc.AnyContent]) =&gt; {
   QueryController.this.logger.info(scala.StringContext.apply(&quot;Query CSW: &quot;, &quot;&quot;).s(query.getOrElse[String](&quot;NONE&quot;)));
   val fromDate: Some[java.time.LocalDate] = fromDateStr match {
     case scala.None =&gt; scala.Some.apply[java.time.LocalDate](java.time.LocalDate.ofEpochDay(0L))
@@ -199,9 +1237,22 @@
   try {
     val searchResult: services.SearchResult = QueryController.this.luceneService.query(query.getOrElse[String](QueryController.this.DEFAULT_QUERY), bboxWkt, fromDate, toDate, maxNumberOfResults);
     val featureCollection: List[models.gmd.MdMetadataSet] = searchResult.documents;
-    val jsonTransformer: play.api.libs.json.Reads[play.api.libs.json.JsObject] = play.api.libs.json.`package`.__.json.update[play.api.libs.json.JsObject](play.api.libs.json.`package`.__.\(scala.Symbol.apply(&quot;countMatched&quot;)).json.put(play.api.libs.json.JsNumber.apply(math.this.BigDecimal.int2bigDecimal(searchResult.numberOfMatchingDocuments))));
-    val resultJson: play.api.libs.json.JsValue = play.api.libs.json.Json.toJson[List[models.gmd.MdMetadataSet]](featureCollection)(QueryController.this.geoJSONFeatureCollectionWrite);
-    QueryController.this.Ok.apply[play.api.libs.json.JsObject](resultJson.transform[play.api.libs.json.JsObject](jsonTransformer).get)(http.this.Writeable.writeableOf_JsValue(mvc.this.Codec.utf_8)).as(QueryController.this.JSON)
+    contentType.getOrElse[String](&quot;GeoJson&quot;) match {
+      case &quot;GeoJson&quot; =&gt; {
+        val jsonTransformer: play.api.libs.json.Reads[play.api.libs.json.JsObject] = play.api.libs.json.`package`.__.json.update[play.api.libs.json.JsObject](play.api.libs.json.`package`.__.\(scala.Symbol.apply(&quot;countMatched&quot;)).json.put(play.api.libs.json.JsNumber.apply(math.this.BigDecimal.int2bigDecimal(searchResult.numberOfMatchingDocuments))));
+        val resultJson: play.api.libs.json.JsValue = play.api.libs.json.Json.toJson[List[models.gmd.MdMetadataSet]](featureCollection)(QueryController.this.geoJSONFeatureCollectionWrite);
+        QueryController.this.Ok.apply[play.api.libs.json.JsObject](resultJson.transform[play.api.libs.json.JsObject](jsonTransformer).get)(http.this.Writeable.writeableOf_JsValue(mvc.this.Codec.utf_8)).as(QueryController.this.JSON)
+      }
+      case &quot;OwcContext&quot; =&gt; {
+        val proto: String = request.headers.get(&quot;X-Forwarded-Proto&quot;).getOrElse[String](&quot;http&quot;);
+        val host: String = request.headers.get(&quot;X-Forwarded-Host&quot;).getOrElse[String](request.headers.apply(&quot;host&quot;));
+        val url: String = scala.StringContext.apply(&quot;&quot;, &quot;://&quot;, &quot;&quot;, &quot;&quot;).s(proto, request.headers.apply(&quot;host&quot;), request.uri);
+        QueryController.this.logger.debug(scala.StringContext.apply(&quot;Requested URL by client: &quot;, &quot;&quot;).s(url));
+        val resultJson: play.api.libs.json.JsValue = QueryController.this.toOwcContextJsonWithScores(featureCollection, url);
+        QueryController.this.Ok.apply[play.api.libs.json.JsValue](resultJson)(http.this.Writeable.writeableOf_JsValue(mvc.this.Codec.utf_8)).as(QueryController.this.JSON)
+      }
+      case _ =&gt; QueryController.this.BadRequest.apply[play.api.libs.json.JsValue](play.api.libs.json.Json.toJson[models.ErrorResult](models.ErrorResult.apply(scala.StringContext.apply(&quot;Unknown content type: &quot;, &quot;&quot;).s(contentType), scala.None))(models.this.ErrorResult.writes))(http.this.Writeable.writeableOf_JsValue(mvc.this.Codec.utf_8)).as(QueryController.this.JSON)
+    }
   } catch {
     case (e @ (_: org.apache.lucene.queryparser.classic.ParseException)) =&gt; {
       QueryController.this.logger.error(&quot;Exception parsing query: &quot;.+(e.getMessage()), e);
@@ -209,61 +1260,19 @@
       QueryController.this.InternalServerError.apply[play.api.libs.json.JsValue](play.api.libs.json.Json.toJson[models.ErrorResult](error)(models.this.ErrorResult.writes))(http.this.Writeable.writeableOf_JsValue(mvc.this.Codec.utf_8)).as(QueryController.this.JSON)
     }
   }
-})
+}))
         </td>
       </tr><tr>
         <td>
-          54
+          106
         </td>
         <td>
-          35
+          83
         </td>
         <td>
-          1970
+          4301
           -
-          1982
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;Query CSW: &quot;
-        </td>
-      </tr><tr>
-        <td>
-          54
-        </td>
-        <td>
-          38
-        </td>
-        <td>
-          1968
-          -
-          2008
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.StringContext.s
-        </td>
-        <td style="background: #F0ADAD">
-          scala.StringContext.apply(&quot;Query CSW: &quot;, &quot;&quot;).s(query.getOrElse[String](&quot;NONE&quot;))
-        </td>
-      </tr><tr>
-        <td>
-          54
-        </td>
-        <td>
-          37
-        </td>
-        <td>
-          1983
-          -
-          2006
+          4324
         </td>
         <td>
           Apply
@@ -276,15 +1285,15 @@
         </td>
       </tr><tr>
         <td>
-          54
+          106
         </td>
         <td>
-          36
+          82
         </td>
         <td>
-          2007
+          4325
           -
-          2008
+          4326
         </td>
         <td>
           Literal
@@ -297,15 +1306,15 @@
         </td>
       </tr><tr>
         <td>
-          54
+          106
         </td>
         <td>
-          39
+          85
         </td>
         <td>
-          1956
+          4274
           -
-          2009
+          4327
         </td>
         <td>
           Apply
@@ -318,36 +1327,57 @@
         </td>
       </tr><tr>
         <td>
-          57
+          106
         </td>
         <td>
-          41
+          81
         </td>
         <td>
-          2117
+          4288
           -
-          2146
+          4300
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;Query CSW: &quot;
+        </td>
+      </tr><tr>
+        <td>
+          106
+        </td>
+        <td>
+          84
+        </td>
+        <td>
+          4286
+          -
+          4326
         </td>
         <td>
           Apply
         </td>
         <td>
-          scala.Some.apply
+          scala.StringContext.s
         </td>
         <td style="background: #F0ADAD">
-          scala.Some.apply[java.time.LocalDate](java.time.LocalDate.ofEpochDay(0L))
+          scala.StringContext.apply(&quot;Query CSW: &quot;, &quot;&quot;).s(query.getOrElse[String](&quot;NONE&quot;))
         </td>
       </tr><tr>
         <td>
-          57
+          109
         </td>
         <td>
-          40
+          86
         </td>
         <td>
-          2122
+          4440
           -
-          2145
+          4463
         </td>
         <td>
           Apply
@@ -360,36 +1390,36 @@
         </td>
       </tr><tr>
         <td>
-          58
+          109
         </td>
         <td>
-          44
+          87
         </td>
         <td>
-          2168
+          4435
           -
-          2220
+          4464
         </td>
         <td>
           Apply
         </td>
         <td>
-          models.gmd.MdMetadataSet.dateFromStrings
+          scala.Some.apply
         </td>
         <td style="background: #F0ADAD">
-          models.gmd.MdMetadataSet.dateFromStrings(immutable.this.List.apply[String](fromDateStr.get))
+          scala.Some.apply[java.time.LocalDate](java.time.LocalDate.ofEpochDay(0L))
         </td>
       </tr><tr>
         <td>
-          58
+          110
         </td>
         <td>
-          43
+          89
         </td>
         <td>
-          2198
+          4516
           -
-          2219
+          4537
         </td>
         <td>
           Apply
@@ -402,15 +1432,15 @@
         </td>
       </tr><tr>
         <td>
-          58
+          110
         </td>
         <td>
-          45
+          91
         </td>
         <td>
-          2163
+          4481
           -
-          2221
+          4539
         </td>
         <td>
           Apply
@@ -423,15 +1453,15 @@
         </td>
       </tr><tr>
         <td>
-          58
+          110
         </td>
         <td>
-          42
+          88
         </td>
         <td>
-          2203
+          4521
           -
-          2218
+          4536
         </td>
         <td>
           Select
@@ -444,36 +1474,36 @@
         </td>
       </tr><tr>
         <td>
-          62
+          110
         </td>
         <td>
-          47
+          90
         </td>
         <td>
-          2283
+          4486
           -
-          2304
+          4538
         </td>
         <td>
           Apply
         </td>
         <td>
-          scala.Some.apply
+          models.gmd.MdMetadataSet.dateFromStrings
         </td>
         <td style="background: #F0ADAD">
-          scala.Some.apply[java.time.LocalDate](java.time.LocalDate.now())
+          models.gmd.MdMetadataSet.dateFromStrings(immutable.this.List.apply[String](fromDateStr.get))
         </td>
       </tr><tr>
         <td>
-          62
+          114
         </td>
         <td>
-          46
+          92
         </td>
         <td>
-          2288
+          4606
           -
-          2303
+          4621
         </td>
         <td>
           Apply
@@ -486,36 +1516,36 @@
         </td>
       </tr><tr>
         <td>
-          63
+          114
         </td>
         <td>
-          50
+          93
         </td>
         <td>
-          2326
+          4601
           -
-          2376
+          4622
         </td>
         <td>
           Apply
         </td>
         <td>
-          models.gmd.MdMetadataSet.dateFromStrings
+          scala.Some.apply
         </td>
         <td style="background: #F0ADAD">
-          models.gmd.MdMetadataSet.dateFromStrings(immutable.this.List.apply[String](toDateStr.get))
+          scala.Some.apply[java.time.LocalDate](java.time.LocalDate.now())
         </td>
       </tr><tr>
         <td>
-          63
+          115
         </td>
         <td>
-          49
+          95
         </td>
         <td>
-          2356
+          4674
           -
-          2375
+          4693
         </td>
         <td>
           Apply
@@ -528,15 +1558,15 @@
         </td>
       </tr><tr>
         <td>
-          63
+          115
         </td>
         <td>
-          48
+          94
         </td>
         <td>
-          2361
+          4679
           -
-          2374
+          4692
         </td>
         <td>
           Select
@@ -549,15 +1579,15 @@
         </td>
       </tr><tr>
         <td>
-          63
+          115
         </td>
         <td>
-          51
+          97
         </td>
         <td>
-          2321
+          4639
           -
-          2377
+          4695
         </td>
         <td>
           Apply
@@ -570,15 +1600,36 @@
         </td>
       </tr><tr>
         <td>
-          66
+          115
         </td>
         <td>
-          68
+          96
         </td>
         <td>
-          2401
+          4644
           -
-          2909
+          4694
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          models.gmd.MdMetadataSet.dateFromStrings
+        </td>
+        <td style="background: #F0ADAD">
+          models.gmd.MdMetadataSet.dateFromStrings(immutable.this.List.apply[String](toDateStr.get))
+        </td>
+      </tr><tr>
+        <td>
+          118
+        </td>
+        <td>
+          142
+        </td>
+        <td>
+          4719
+          -
+          6132
         </td>
         <td>
           Block
@@ -590,43 +1641,35 @@
           {
   val searchResult: services.SearchResult = QueryController.this.luceneService.query(query.getOrElse[String](QueryController.this.DEFAULT_QUERY), bboxWkt, fromDate, toDate, maxNumberOfResults);
   val featureCollection: List[models.gmd.MdMetadataSet] = searchResult.documents;
-  val jsonTransformer: play.api.libs.json.Reads[play.api.libs.json.JsObject] = play.api.libs.json.`package`.__.json.update[play.api.libs.json.JsObject](play.api.libs.json.`package`.__.\(scala.Symbol.apply(&quot;countMatched&quot;)).json.put(play.api.libs.json.JsNumber.apply(math.this.BigDecimal.int2bigDecimal(searchResult.numberOfMatchingDocuments))));
-  val resultJson: play.api.libs.json.JsValue = play.api.libs.json.Json.toJson[List[models.gmd.MdMetadataSet]](featureCollection)(QueryController.this.geoJSONFeatureCollectionWrite);
-  QueryController.this.Ok.apply[play.api.libs.json.JsObject](resultJson.transform[play.api.libs.json.JsObject](jsonTransformer).get)(http.this.Writeable.writeableOf_JsValue(mvc.this.Codec.utf_8)).as(QueryController.this.JSON)
+  contentType.getOrElse[String](&quot;GeoJson&quot;) match {
+    case &quot;GeoJson&quot; =&gt; {
+      val jsonTransformer: play.api.libs.json.Reads[play.api.libs.json.JsObject] = play.api.libs.json.`package`.__.json.update[play.api.libs.json.JsObject](play.api.libs.json.`package`.__.\(scala.Symbol.apply(&quot;countMatched&quot;)).json.put(play.api.libs.json.JsNumber.apply(math.this.BigDecimal.int2bigDecimal(searchResult.numberOfMatchingDocuments))));
+      val resultJson: play.api.libs.json.JsValue = play.api.libs.json.Json.toJson[List[models.gmd.MdMetadataSet]](featureCollection)(QueryController.this.geoJSONFeatureCollectionWrite);
+      QueryController.this.Ok.apply[play.api.libs.json.JsObject](resultJson.transform[play.api.libs.json.JsObject](jsonTransformer).get)(http.this.Writeable.writeableOf_JsValue(mvc.this.Codec.utf_8)).as(QueryController.this.JSON)
+    }
+    case &quot;OwcContext&quot; =&gt; {
+      val proto: String = request.headers.get(&quot;X-Forwarded-Proto&quot;).getOrElse[String](&quot;http&quot;);
+      val host: String = request.headers.get(&quot;X-Forwarded-Host&quot;).getOrElse[String](request.headers.apply(&quot;host&quot;));
+      val url: String = scala.StringContext.apply(&quot;&quot;, &quot;://&quot;, &quot;&quot;, &quot;&quot;).s(proto, request.headers.apply(&quot;host&quot;), request.uri);
+      QueryController.this.logger.debug(scala.StringContext.apply(&quot;Requested URL by client: &quot;, &quot;&quot;).s(url));
+      val resultJson: play.api.libs.json.JsValue = QueryController.this.toOwcContextJsonWithScores(featureCollection, url);
+      QueryController.this.Ok.apply[play.api.libs.json.JsValue](resultJson)(http.this.Writeable.writeableOf_JsValue(mvc.this.Codec.utf_8)).as(QueryController.this.JSON)
+    }
+    case _ =&gt; QueryController.this.BadRequest.apply[play.api.libs.json.JsValue](play.api.libs.json.Json.toJson[models.ErrorResult](models.ErrorResult.apply(scala.StringContext.apply(&quot;Unknown content type: &quot;, &quot;&quot;).s(contentType), scala.None))(models.this.ErrorResult.writes))(http.this.Writeable.writeableOf_JsValue(mvc.this.Codec.utf_8)).as(QueryController.this.JSON)
+  }
 }
         </td>
       </tr><tr>
         <td>
-          67
+          119
         </td>
         <td>
-          53
+          98
         </td>
         <td>
-          2420
+          4758
           -
-          2526
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          services.LuceneService.query
-        </td>
-        <td style="background: #F0ADAD">
-          QueryController.this.luceneService.query(query.getOrElse[String](QueryController.this.DEFAULT_QUERY), bboxWkt, fromDate, toDate, maxNumberOfResults)
-        </td>
-      </tr><tr>
-        <td>
-          67
-        </td>
-        <td>
-          52
-        </td>
-        <td>
-          2440
-          -
-          2470
+          4788
         </td>
         <td>
           Apply
@@ -639,15 +1682,36 @@
         </td>
       </tr><tr>
         <td>
-          69
+          119
         </td>
         <td>
-          54
+          99
         </td>
         <td>
-          2557
+          4738
           -
-          2579
+          4844
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          services.LuceneService.query
+        </td>
+        <td style="background: #F0ADAD">
+          QueryController.this.luceneService.query(query.getOrElse[String](QueryController.this.DEFAULT_QUERY), bboxWkt, fromDate, toDate, maxNumberOfResults)
+        </td>
+      </tr><tr>
+        <td>
+          121
+        </td>
+        <td>
+          100
+        </td>
+        <td>
+          4875
+          -
+          4897
         </td>
         <td>
           Select
@@ -660,15 +1724,36 @@
         </td>
       </tr><tr>
         <td>
-          72
+          123
         </td>
         <td>
-          60
+          101
         </td>
         <td>
-          2680
+          4905
           -
-          2784
+          4937
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Option.getOrElse
+        </td>
+        <td style="background: #F0ADAD">
+          contentType.getOrElse[String](&quot;GeoJson&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          126
+        </td>
+        <td>
+          107
+        </td>
+        <td>
+          5081
+          -
+          5189
         </td>
         <td>
           Apply
@@ -681,99 +1766,15 @@
         </td>
       </tr><tr>
         <td>
-          73
+          127
         </td>
         <td>
-          59
+          104
         </td>
         <td>
-          2705
+          5148
           -
-          2783
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          play.api.libs.json.JsPath.json.put
-        </td>
-        <td style="background: #F0ADAD">
-          play.api.libs.json.`package`.__.\(scala.Symbol.apply(&quot;countMatched&quot;)).json.put(play.api.libs.json.JsNumber.apply(math.this.BigDecimal.int2bigDecimal(searchResult.numberOfMatchingDocuments)))
-        </td>
-      </tr><tr>
-        <td>
-          73
-        </td>
-        <td>
-          56
-        </td>
-        <td>
-          2743
-          -
-          2781
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          services.SearchResult.numberOfMatchingDocuments
-        </td>
-        <td style="background: #F0ADAD">
-          searchResult.numberOfMatchingDocuments
-        </td>
-      </tr><tr>
-        <td>
-          73
-        </td>
-        <td>
-          55
-        </td>
-        <td>
-          2710
-          -
-          2723
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.Symbol.apply
-        </td>
-        <td style="background: #F0ADAD">
-          scala.Symbol.apply(&quot;countMatched&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          73
-        </td>
-        <td>
-          58
-        </td>
-        <td>
-          2734
-          -
-          2782
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          play.api.libs.json.JsNumber.apply
-        </td>
-        <td style="background: #F0ADAD">
-          play.api.libs.json.JsNumber.apply(math.this.BigDecimal.int2bigDecimal(searchResult.numberOfMatchingDocuments))
-        </td>
-      </tr><tr>
-        <td>
-          73
-        </td>
-        <td>
-          57
-        </td>
-        <td>
-          2743
-          -
-          2781
+          5186
         </td>
         <td>
           ApplyImplicitView
@@ -786,15 +1787,99 @@
         </td>
       </tr><tr>
         <td>
-          74
+          127
         </td>
         <td>
-          62
+          106
         </td>
         <td>
-          2817
+          5110
           -
-          2847
+          5188
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.libs.json.JsPath.json.put
+        </td>
+        <td style="background: #F0ADAD">
+          play.api.libs.json.`package`.__.\(scala.Symbol.apply(&quot;countMatched&quot;)).json.put(play.api.libs.json.JsNumber.apply(math.this.BigDecimal.int2bigDecimal(searchResult.numberOfMatchingDocuments)))
+        </td>
+      </tr><tr>
+        <td>
+          127
+        </td>
+        <td>
+          103
+        </td>
+        <td>
+          5148
+          -
+          5186
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          services.SearchResult.numberOfMatchingDocuments
+        </td>
+        <td style="background: #F0ADAD">
+          searchResult.numberOfMatchingDocuments
+        </td>
+      </tr><tr>
+        <td>
+          127
+        </td>
+        <td>
+          105
+        </td>
+        <td>
+          5139
+          -
+          5187
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.libs.json.JsNumber.apply
+        </td>
+        <td style="background: #F0ADAD">
+          play.api.libs.json.JsNumber.apply(math.this.BigDecimal.int2bigDecimal(searchResult.numberOfMatchingDocuments))
+        </td>
+      </tr><tr>
+        <td>
+          127
+        </td>
+        <td>
+          102
+        </td>
+        <td>
+          5115
+          -
+          5128
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Symbol.apply
+        </td>
+        <td style="background: #F0ADAD">
+          scala.Symbol.apply(&quot;countMatched&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          128
+        </td>
+        <td>
+          109
+        </td>
+        <td>
+          5226
+          -
+          5256
         </td>
         <td>
           ApplyToImplicitArgs
@@ -807,15 +1892,15 @@
         </td>
       </tr><tr>
         <td>
-          74
+          128
         </td>
         <td>
-          61
+          108
         </td>
         <td>
-          2828
+          5237
           -
-          2828
+          5237
         </td>
         <td>
           Select
@@ -828,78 +1913,15 @@
         </td>
       </tr><tr>
         <td>
-          76
+          130
         </td>
         <td>
-          65
+          110
         </td>
         <td>
-          2857
+          5271
           -
-          2857
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          play.api.http.DefaultWriteables.writeableOf_JsValue
-        </td>
-        <td style="background: #F0ADAD">
-          http.this.Writeable.writeableOf_JsValue(mvc.this.Codec.utf_8)
-        </td>
-      </tr><tr>
-        <td>
-          76
-        </td>
-        <td>
-          64
-        </td>
-        <td>
-          2857
-          -
-          2857
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          play.api.mvc.Codec.utf_8
-        </td>
-        <td style="background: #F0ADAD">
-          mvc.this.Codec.utf_8
-        </td>
-      </tr><tr>
-        <td>
-          76
-        </td>
-        <td>
-          67
-        </td>
-        <td>
-          2855
-          -
-          2909
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          play.api.mvc.Result.as
-        </td>
-        <td style="background: #F0ADAD">
-          QueryController.this.Ok.apply[play.api.libs.json.JsObject](resultJson.transform[play.api.libs.json.JsObject](jsonTransformer).get)(http.this.Writeable.writeableOf_JsValue(mvc.this.Codec.utf_8)).as(QueryController.this.JSON)
-        </td>
-      </tr><tr>
-        <td>
-          76
-        </td>
-        <td>
-          63
-        </td>
-        <td>
-          2858
-          -
-          2899
+          5312
         </td>
         <td>
           Select
@@ -912,15 +1934,15 @@
         </td>
       </tr><tr>
         <td>
-          76
+          130
         </td>
         <td>
-          66
+          113
         </td>
         <td>
-          2904
+          5317
           -
-          2908
+          5321
         </td>
         <td>
           Select
@@ -933,246 +1955,15 @@
         </td>
       </tr><tr>
         <td>
-          80
+          130
         </td>
         <td>
-          71
+          112
         </td>
         <td>
-          3063
+          5270
           -
-          3105
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          java.lang.String.+
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;Exception parsing query: &quot;.+(e.getMessage())
-        </td>
-      </tr><tr>
-        <td>
-          80
-        </td>
-        <td>
-          70
-        </td>
-        <td>
-          3093
-          -
-          3105
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          java.lang.Throwable.getMessage
-        </td>
-        <td style="background: #F0ADAD">
-          e.getMessage()
-        </td>
-      </tr><tr>
-        <td>
-          80
-        </td>
-        <td>
-          69
-        </td>
-        <td>
-          3063
-          -
-          3090
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;Exception parsing query: &quot;
-        </td>
-      </tr><tr>
-        <td>
-          80
-        </td>
-        <td>
-          72
-        </td>
-        <td>
-          3050
-          -
-          3109
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          play.api.LoggerLike.error
-        </td>
-        <td style="background: #F0ADAD">
-          QueryController.this.logger.error(&quot;Exception parsing query: &quot;.+(e.getMessage()), e)
-        </td>
-      </tr><tr>
-        <td>
-          81
-        </td>
-        <td>
-          77
-        </td>
-        <td>
-          3203
-          -
-          3215
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          java.lang.Throwable.getMessage
-        </td>
-        <td style="background: #F0ADAD">
-          e.getMessage()
-        </td>
-      </tr><tr>
-        <td>
-          81
-        </td>
-        <td>
-          74
-        </td>
-        <td>
-          3193
-          -
-          3196
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;\' &quot;
-        </td>
-      </tr><tr>
-        <td>
-          81
-        </td>
-        <td>
-          73
-        </td>
-        <td>
-          3158
-          -
-          3182
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;Could not parse query \'&quot;
-        </td>
-      </tr><tr>
-        <td>
-          81
-        </td>
-        <td>
-          76
-        </td>
-        <td>
-          3156
-          -
-          3196
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.StringContext.s
-        </td>
-        <td style="background: #F0ADAD">
-          scala.StringContext.apply(&quot;Could not parse query \'&quot;, &quot;\' &quot;).s(query.get)
-        </td>
-      </tr><tr>
-        <td>
-          81
-        </td>
-        <td>
-          79
-        </td>
-        <td>
-          3144
-          -
-          3217
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          models.ErrorResult.apply
-        </td>
-        <td style="background: #F0ADAD">
-          models.ErrorResult.apply(scala.StringContext.apply(&quot;Could not parse query \'&quot;, &quot;\' &quot;).s(query.get), scala.Some.apply[String](e.getMessage()))
-        </td>
-      </tr><tr>
-        <td>
-          81
-        </td>
-        <td>
-          78
-        </td>
-        <td>
-          3198
-          -
-          3216
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.Some.apply
-        </td>
-        <td style="background: #F0ADAD">
-          scala.Some.apply[String](e.getMessage())
-        </td>
-      </tr><tr>
-        <td>
-          81
-        </td>
-        <td>
-          75
-        </td>
-        <td>
-          3183
-          -
-          3192
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          scala.Option.get
-        </td>
-        <td style="background: #F0ADAD">
-          query.get
-        </td>
-      </tr><tr>
-        <td>
-          82
-        </td>
-        <td>
-          83
-        </td>
-        <td>
-          3245
-          -
-          3245
+          5270
         </td>
         <td>
           ApplyToImplicitArgs
@@ -1185,36 +1976,36 @@
         </td>
       </tr><tr>
         <td>
-          82
+          130
         </td>
         <td>
-          80
+          114
         </td>
         <td>
-          3257
+          5268
           -
-          3257
+          5322
         </td>
         <td>
-          Select
+          Apply
         </td>
         <td>
-          models.ErrorResult.writes
+          play.api.mvc.Result.as
         </td>
         <td style="background: #F0ADAD">
-          models.this.ErrorResult.writes
+          QueryController.this.Ok.apply[play.api.libs.json.JsObject](resultJson.transform[play.api.libs.json.JsObject](jsonTransformer).get)(http.this.Writeable.writeableOf_JsValue(mvc.this.Codec.utf_8)).as(QueryController.this.JSON)
         </td>
       </tr><tr>
         <td>
-          82
+          130
         </td>
         <td>
-          82
+          111
         </td>
         <td>
-          3245
+          5270
           -
-          3245
+          5270
         </td>
         <td>
           Select
@@ -1227,57 +2018,309 @@
         </td>
       </tr><tr>
         <td>
-          82
+          135
         </td>
         <td>
-          85
+          115
         </td>
         <td>
-          3226
+          5577
           -
-          3274
+          5635
         </td>
         <td>
           Apply
         </td>
         <td>
-          play.api.mvc.Result.as
+          scala.Option.getOrElse
         </td>
         <td style="background: #F0ADAD">
-          QueryController.this.InternalServerError.apply[play.api.libs.json.JsValue](play.api.libs.json.Json.toJson[models.ErrorResult](error)(models.this.ErrorResult.writes))(http.this.Writeable.writeableOf_JsValue(mvc.this.Codec.utf_8)).as(QueryController.this.JSON)
+          request.headers.get(&quot;X-Forwarded-Proto&quot;).getOrElse[String](&quot;http&quot;)
         </td>
       </tr><tr>
         <td>
-          82
+          136
         </td>
         <td>
-          81
+          116
         </td>
         <td>
-          3246
+          5677
           -
-          3264
+          5695
         </td>
         <td>
-          ApplyToImplicitArgs
+          Literal
         </td>
         <td>
-          play.api.libs.json.Json.toJson
+          &lt;nosymbol&gt;
         </td>
         <td style="background: #F0ADAD">
-          play.api.libs.json.Json.toJson[models.ErrorResult](error)(models.this.ErrorResult.writes)
+          &quot;X-Forwarded-Host&quot;
         </td>
       </tr><tr>
         <td>
-          82
+          136
         </td>
         <td>
-          84
+          118
         </td>
         <td>
-          3269
+          5657
           -
-          3273
+          5731
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Option.getOrElse
+        </td>
+        <td style="background: #F0ADAD">
+          request.headers.get(&quot;X-Forwarded-Host&quot;).getOrElse[String](request.headers.apply(&quot;host&quot;))
+        </td>
+      </tr><tr>
+        <td>
+          136
+        </td>
+        <td>
+          117
+        </td>
+        <td>
+          5707
+          -
+          5730
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.mvc.Headers.apply
+        </td>
+        <td style="background: #F0ADAD">
+          request.headers.apply(&quot;host&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          137
+        </td>
+        <td>
+          119
+        </td>
+        <td>
+          5754
+          -
+          5755
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;&quot;
+        </td>
+      </tr><tr>
+        <td>
+          137
+        </td>
+        <td>
+          122
+        </td>
+        <td>
+          5805
+          -
+          5806
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;&quot;
+        </td>
+      </tr><tr>
+        <td>
+          137
+        </td>
+        <td>
+          125
+        </td>
+        <td>
+          5752
+          -
+          5806
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.StringContext.s
+        </td>
+        <td style="background: #F0ADAD">
+          scala.StringContext.apply(&quot;&quot;, &quot;://&quot;, &quot;&quot;, &quot;&quot;).s(proto, request.headers.apply(&quot;host&quot;), request.uri)
+        </td>
+      </tr><tr>
+        <td>
+          137
+        </td>
+        <td>
+          124
+        </td>
+        <td>
+          5793
+          -
+          5804
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          play.api.mvc.RequestHeader.uri
+        </td>
+        <td style="background: #F0ADAD">
+          request.uri
+        </td>
+      </tr><tr>
+        <td>
+          137
+        </td>
+        <td>
+          121
+        </td>
+        <td>
+          5791
+          -
+          5792
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;&quot;
+        </td>
+      </tr><tr>
+        <td>
+          137
+        </td>
+        <td>
+          120
+        </td>
+        <td>
+          5762
+          -
+          5766
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;://&quot;
+        </td>
+      </tr><tr>
+        <td>
+          137
+        </td>
+        <td>
+          123
+        </td>
+        <td>
+          5767
+          -
+          5790
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.mvc.Headers.apply
+        </td>
+        <td style="background: #F0ADAD">
+          request.headers.apply(&quot;host&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          138
+        </td>
+        <td>
+          127
+        </td>
+        <td>
+          5817
+          -
+          5865
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.LoggerLike.debug
+        </td>
+        <td style="background: #F0ADAD">
+          QueryController.this.logger.debug(scala.StringContext.apply(&quot;Requested URL by client: &quot;, &quot;&quot;).s(url))
+        </td>
+      </tr><tr>
+        <td>
+          138
+        </td>
+        <td>
+          126
+        </td>
+        <td>
+          5830
+          -
+          5864
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.StringContext.s
+        </td>
+        <td style="background: #F0ADAD">
+          scala.StringContext.apply(&quot;Requested URL by client: &quot;, &quot;&quot;).s(url)
+        </td>
+      </tr><tr>
+        <td>
+          139
+        </td>
+        <td>
+          128
+        </td>
+        <td>
+          5893
+          -
+          5969
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          controllers.QueryController.toOwcContextJsonWithScores
+        </td>
+        <td style="background: #F0ADAD">
+          QueryController.this.toOwcContextJsonWithScores(featureCollection, url)
+        </td>
+      </tr><tr>
+        <td>
+          140
+        </td>
+        <td>
+          131
+        </td>
+        <td>
+          5998
+          -
+          6002
         </td>
         <td>
           Select
@@ -1290,15 +2333,624 @@
         </td>
       </tr><tr>
         <td>
-          87
+          140
         </td>
         <td>
-          94
+          130
         </td>
         <td>
-          3359
+          5982
           -
-          3526
+          5982
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.api.http.DefaultWriteables.writeableOf_JsValue
+        </td>
+        <td style="background: #F0ADAD">
+          http.this.Writeable.writeableOf_JsValue(mvc.this.Codec.utf_8)
+        </td>
+      </tr><tr>
+        <td>
+          140
+        </td>
+        <td>
+          129
+        </td>
+        <td>
+          5982
+          -
+          5982
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          play.api.mvc.Codec.utf_8
+        </td>
+        <td style="background: #F0ADAD">
+          mvc.this.Codec.utf_8
+        </td>
+      </tr><tr>
+        <td>
+          140
+        </td>
+        <td>
+          132
+        </td>
+        <td>
+          5980
+          -
+          6003
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.mvc.Result.as
+        </td>
+        <td style="background: #F0ADAD">
+          QueryController.this.Ok.apply[play.api.libs.json.JsValue](resultJson)(http.this.Writeable.writeableOf_JsValue(mvc.this.Codec.utf_8)).as(QueryController.this.JSON)
+        </td>
+      </tr><tr>
+        <td>
+          142
+        </td>
+        <td>
+          137
+        </td>
+        <td>
+          6043
+          -
+          6114
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.api.libs.json.Json.toJson
+        </td>
+        <td style="background: #F0ADAD">
+          play.api.libs.json.Json.toJson[models.ErrorResult](models.ErrorResult.apply(scala.StringContext.apply(&quot;Unknown content type: &quot;, &quot;&quot;).s(contentType), scala.None))(models.this.ErrorResult.writes)
+        </td>
+      </tr><tr>
+        <td>
+          142
+        </td>
+        <td>
+          140
+        </td>
+        <td>
+          6119
+          -
+          6123
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          play.api.http.ContentTypes.JSON
+        </td>
+        <td style="background: #F0ADAD">
+          QueryController.this.JSON
+        </td>
+      </tr><tr>
+        <td>
+          142
+        </td>
+        <td>
+          134
+        </td>
+        <td>
+          6108
+          -
+          6112
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.None
+        </td>
+        <td style="background: #F0ADAD">
+          scala.None
+        </td>
+      </tr><tr>
+        <td>
+          142
+        </td>
+        <td>
+          133
+        </td>
+        <td>
+          6067
+          -
+          6106
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.StringContext.s
+        </td>
+        <td style="background: #F0ADAD">
+          scala.StringContext.apply(&quot;Unknown content type: &quot;, &quot;&quot;).s(contentType)
+        </td>
+      </tr><tr>
+        <td>
+          142
+        </td>
+        <td>
+          136
+        </td>
+        <td>
+          6054
+          -
+          6054
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          models.ErrorResult.writes
+        </td>
+        <td style="background: #F0ADAD">
+          models.this.ErrorResult.writes
+        </td>
+      </tr><tr>
+        <td>
+          142
+        </td>
+        <td>
+          139
+        </td>
+        <td>
+          6042
+          -
+          6042
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.api.http.DefaultWriteables.writeableOf_JsValue
+        </td>
+        <td style="background: #F0ADAD">
+          http.this.Writeable.writeableOf_JsValue(mvc.this.Codec.utf_8)
+        </td>
+      </tr><tr>
+        <td>
+          142
+        </td>
+        <td>
+          138
+        </td>
+        <td>
+          6042
+          -
+          6042
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          play.api.mvc.Codec.utf_8
+        </td>
+        <td style="background: #F0ADAD">
+          mvc.this.Codec.utf_8
+        </td>
+      </tr><tr>
+        <td>
+          142
+        </td>
+        <td>
+          141
+        </td>
+        <td>
+          6032
+          -
+          6124
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.mvc.Result.as
+        </td>
+        <td style="background: #F0ADAD">
+          QueryController.this.BadRequest.apply[play.api.libs.json.JsValue](play.api.libs.json.Json.toJson[models.ErrorResult](models.ErrorResult.apply(scala.StringContext.apply(&quot;Unknown content type: &quot;, &quot;&quot;).s(contentType), scala.None))(models.this.ErrorResult.writes))(http.this.Writeable.writeableOf_JsValue(mvc.this.Codec.utf_8)).as(QueryController.this.JSON)
+        </td>
+      </tr><tr>
+        <td>
+          142
+        </td>
+        <td>
+          135
+        </td>
+        <td>
+          6055
+          -
+          6113
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          models.ErrorResult.apply
+        </td>
+        <td style="background: #F0ADAD">
+          models.ErrorResult.apply(scala.StringContext.apply(&quot;Unknown content type: &quot;, &quot;&quot;).s(contentType), scala.None)
+        </td>
+      </tr><tr>
+        <td>
+          147
+        </td>
+        <td>
+          146
+        </td>
+        <td>
+          6193
+          -
+          6252
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.LoggerLike.error
+        </td>
+        <td style="background: #F0ADAD">
+          QueryController.this.logger.error(&quot;Exception parsing query: &quot;.+(e.getMessage()), e)
+        </td>
+      </tr><tr>
+        <td>
+          147
+        </td>
+        <td>
+          145
+        </td>
+        <td>
+          6206
+          -
+          6248
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.String.+
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;Exception parsing query: &quot;.+(e.getMessage())
+        </td>
+      </tr><tr>
+        <td>
+          147
+        </td>
+        <td>
+          144
+        </td>
+        <td>
+          6236
+          -
+          6248
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.Throwable.getMessage
+        </td>
+        <td style="background: #F0ADAD">
+          e.getMessage()
+        </td>
+      </tr><tr>
+        <td>
+          147
+        </td>
+        <td>
+          143
+        </td>
+        <td>
+          6206
+          -
+          6233
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;Exception parsing query: &quot;
+        </td>
+      </tr><tr>
+        <td>
+          148
+        </td>
+        <td>
+          149
+        </td>
+        <td>
+          6326
+          -
+          6335
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.Option.get
+        </td>
+        <td style="background: #F0ADAD">
+          query.get
+        </td>
+      </tr><tr>
+        <td>
+          148
+        </td>
+        <td>
+          151
+        </td>
+        <td>
+          6346
+          -
+          6358
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.Throwable.getMessage
+        </td>
+        <td style="background: #F0ADAD">
+          e.getMessage()
+        </td>
+      </tr><tr>
+        <td>
+          148
+        </td>
+        <td>
+          148
+        </td>
+        <td>
+          6336
+          -
+          6339
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;\' &quot;
+        </td>
+      </tr><tr>
+        <td>
+          148
+        </td>
+        <td>
+          147
+        </td>
+        <td>
+          6301
+          -
+          6325
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;Could not parse query \'&quot;
+        </td>
+      </tr><tr>
+        <td>
+          148
+        </td>
+        <td>
+          150
+        </td>
+        <td>
+          6299
+          -
+          6339
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.StringContext.s
+        </td>
+        <td style="background: #F0ADAD">
+          scala.StringContext.apply(&quot;Could not parse query \'&quot;, &quot;\' &quot;).s(query.get)
+        </td>
+      </tr><tr>
+        <td>
+          148
+        </td>
+        <td>
+          153
+        </td>
+        <td>
+          6287
+          -
+          6360
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          models.ErrorResult.apply
+        </td>
+        <td style="background: #F0ADAD">
+          models.ErrorResult.apply(scala.StringContext.apply(&quot;Could not parse query \'&quot;, &quot;\' &quot;).s(query.get), scala.Some.apply[String](e.getMessage()))
+        </td>
+      </tr><tr>
+        <td>
+          148
+        </td>
+        <td>
+          152
+        </td>
+        <td>
+          6341
+          -
+          6359
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Some.apply
+        </td>
+        <td style="background: #F0ADAD">
+          scala.Some.apply[String](e.getMessage())
+        </td>
+      </tr><tr>
+        <td>
+          149
+        </td>
+        <td>
+          155
+        </td>
+        <td>
+          6389
+          -
+          6407
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.api.libs.json.Json.toJson
+        </td>
+        <td style="background: #F0ADAD">
+          play.api.libs.json.Json.toJson[models.ErrorResult](error)(models.this.ErrorResult.writes)
+        </td>
+      </tr><tr>
+        <td>
+          149
+        </td>
+        <td>
+          158
+        </td>
+        <td>
+          6412
+          -
+          6416
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          play.api.http.ContentTypes.JSON
+        </td>
+        <td style="background: #F0ADAD">
+          QueryController.this.JSON
+        </td>
+      </tr><tr>
+        <td>
+          149
+        </td>
+        <td>
+          154
+        </td>
+        <td>
+          6400
+          -
+          6400
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          models.ErrorResult.writes
+        </td>
+        <td style="background: #F0ADAD">
+          models.this.ErrorResult.writes
+        </td>
+      </tr><tr>
+        <td>
+          149
+        </td>
+        <td>
+          157
+        </td>
+        <td>
+          6388
+          -
+          6388
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.api.http.DefaultWriteables.writeableOf_JsValue
+        </td>
+        <td style="background: #F0ADAD">
+          http.this.Writeable.writeableOf_JsValue(mvc.this.Codec.utf_8)
+        </td>
+      </tr><tr>
+        <td>
+          149
+        </td>
+        <td>
+          156
+        </td>
+        <td>
+          6388
+          -
+          6388
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          play.api.mvc.Codec.utf_8
+        </td>
+        <td style="background: #F0ADAD">
+          mvc.this.Codec.utf_8
+        </td>
+      </tr><tr>
+        <td>
+          149
+        </td>
+        <td>
+          159
+        </td>
+        <td>
+          6369
+          -
+          6417
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.mvc.Result.as
+        </td>
+        <td style="background: #F0ADAD">
+          QueryController.this.InternalServerError.apply[play.api.libs.json.JsValue](play.api.libs.json.Json.toJson[models.ErrorResult](error)(models.this.ErrorResult.writes))(http.this.Writeable.writeableOf_JsValue(mvc.this.Codec.utf_8)).as(QueryController.this.JSON)
+        </td>
+      </tr><tr>
+        <td>
+          154
+        </td>
+        <td>
+          168
+        </td>
+        <td>
+          6502
+          -
+          6669
         </td>
         <td>
           Apply
@@ -1315,15 +2967,15 @@
         </td>
       </tr><tr>
         <td>
-          88
+          155
         </td>
         <td>
-          88
+          162
         </td>
         <td>
-          3372
+          6515
           -
-          3433
+          6576
         </td>
         <td>
           Apply
@@ -1336,15 +2988,15 @@
         </td>
       </tr><tr>
         <td>
-          88
+          155
         </td>
         <td>
-          87
+          161
         </td>
         <td>
-          3384
+          6527
           -
-          3432
+          6575
         </td>
         <td>
           Apply
@@ -1357,15 +3009,15 @@
         </td>
       </tr><tr>
         <td>
-          89
+          156
         </td>
         <td>
-          89
+          163
         </td>
         <td>
-          3438
+          6581
           -
-          3477
+          6620
         </td>
         <td>
           Apply
@@ -1378,57 +3030,15 @@
         </td>
       </tr><tr>
         <td>
-          90
+          157
         </td>
         <td>
-          92
+          164
         </td>
         <td>
-          3484
+          6628
           -
-          3484
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          play.api.http.DefaultWriteables.wString
-        </td>
-        <td style="background: #F0ADAD">
-          http.this.Writeable.wString(mvc.this.Codec.utf_8)
-        </td>
-      </tr><tr>
-        <td>
-          90
-        </td>
-        <td>
-          91
-        </td>
-        <td>
-          3484
-          -
-          3484
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          play.api.mvc.Codec.utf_8
-        </td>
-        <td style="background: #F0ADAD">
-          mvc.this.Codec.utf_8
-        </td>
-      </tr><tr>
-        <td>
-          90
-        </td>
-        <td>
-          90
-        </td>
-        <td>
-          3485
-          -
-          3521
+          6664
         </td>
         <td>
           Apply
@@ -1441,15 +3051,15 @@
         </td>
       </tr><tr>
         <td>
-          90
+          157
         </td>
         <td>
-          93
+          167
         </td>
         <td>
-          3482
+          6625
           -
-          3522
+          6665
         </td>
         <td>
           ApplyToImplicitArgs
@@ -1459,6 +3069,48 @@
         </td>
         <td style="background: #F0ADAD">
           QueryController.this.Ok.apply[String](scala.StringContext.apply(&quot;building index for &quot;, &quot;&quot;).s(catalogueName))(http.this.Writeable.wString(mvc.this.Codec.utf_8))
+        </td>
+      </tr><tr>
+        <td>
+          157
+        </td>
+        <td>
+          166
+        </td>
+        <td>
+          6627
+          -
+          6627
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.api.http.DefaultWriteables.wString
+        </td>
+        <td style="background: #F0ADAD">
+          http.this.Writeable.wString(mvc.this.Codec.utf_8)
+        </td>
+      </tr><tr>
+        <td>
+          157
+        </td>
+        <td>
+          165
+        </td>
+        <td>
+          6627
+          -
+          6627
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          play.api.mvc.Codec.utf_8
+        </td>
+        <td style="background: #F0ADAD">
+          mvc.this.Codec.utf_8
         </td>
       </tr>
     </table>

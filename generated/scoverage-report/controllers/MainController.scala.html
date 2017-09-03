@@ -4,7 +4,7 @@
         <title id="title">
           controllers/MainController.scala.html
         </title>
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="http://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
         $(document).ready(function() {$(".tablesorter").tablesorter();});
       </script>
         <style>
@@ -24,18 +24,18 @@
           <div class="tab-pane active" id="codegrid">
             <pre style='font-size: 12pt; font-family: courier;'>1 <span style=''>/*
 </span>2 <span style=''> * Copyright (c) 2011-2017 Interfaculty Department of Geoinformatics, University of Salzburg (Z_GIS)
-</span>3 <span style=''> * & Institute of Geological and Nuclear Sciences Limited (GNS Science)
+</span>3 <span style=''> * &amp; Institute of Geological and Nuclear Sciences Limited (GNS Science)
 </span>4 <span style=''> * in the SMART Aquifer Characterisation (SAC) programme funded by the New Zealand
 </span>5 <span style=''> * Ministry of Business, Innovation and Employment (MBIE)
 </span>6 <span style=''> *
-</span>7 <span style=''> * Licensed under the Apache License, Version 2.0 (the "License");
+</span>7 <span style=''> * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
 </span>8 <span style=''> * you may not use this file except in compliance with the License.
 </span>9 <span style=''> * You may obtain a copy of the License at
 </span>10 <span style=''> *
 </span>11 <span style=''> *    http://www.apache.org/licenses/LICENSE-2.0
 </span>12 <span style=''> *
 </span>13 <span style=''> * Unless required by applicable law or agreed to in writing, software
-</span>14 <span style=''> * distributed under the License is distributed on an "AS IS" BASIS,
+</span>14 <span style=''> * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
 </span>15 <span style=''> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 </span>16 <span style=''> * See the License for the specific language governing permissions and
 </span>17 <span style=''> * limitations under the License.
@@ -51,7 +51,7 @@
 </span>27 <span style=''>
 </span>28 <span style=''>
 </span>29 <span style=''>/**
-</span>30 <span style=''>  * Controller that handles every "unspecific" request.
+</span>30 <span style=''>  * Controller that handles every &quot;unspecific&quot; request.
 </span>31 <span style=''>  */
 </span>32 <span style=''>class MainController extends Controller {
 </span>33 <span style=''>  /**
@@ -61,16 +61,16 @@
 </span>37 <span style=''>    * a path of `/`.
 </span>38 <span style=''>    */
 </span>39 <span style=''>  def index: Action[AnyContent] = </span><span style='background: #F0ADAD'>Action {
-</span>40 <span style=''></span><span style='background: #F0ADAD'>    Ok(views.html.index("Your new application is ready."))
+</span>40 <span style=''></span><span style='background: #F0ADAD'>    Ok(views.html.index(&quot;Your new application is ready.&quot;))
 </span>41 <span style=''></span><span style='background: #F0ADAD'>  }</span><span style=''>
 </span>42 <span style=''>
 </span>43 <span style=''>  /**
-</span>44 <span style=''>    * cuts off any trailing "/" from the path
+</span>44 <span style=''>    * cuts off any trailing &quot;/&quot; from the path
 </span>45 <span style=''>    * @param path
 </span>46 <span style=''>    * @return
 </span>47 <span style=''>    */
 </span>48 <span style=''>  def untrail(path: String): Action[AnyContent] = </span><span style='background: #F0ADAD'>Action {
-</span>49 <span style=''></span><span style='background: #F0ADAD'>    MovedPermanently("/".concat(path))
+</span>49 <span style=''></span><span style='background: #F0ADAD'>    MovedPermanently(&quot;/&quot;.concat(path))
 </span>50 <span style=''></span><span style='background: #F0ADAD'>  }</span><span style=''>
 </span>51 <span style=''>
 </span>52 <span style=''>  /**
@@ -82,13 +82,13 @@
 </span>58 <span style=''>    * @param fields
 </span>59 <span style=''>    * @return
 </span>60 <span style=''>    */
-</span>61 <span style=''>  def discovery(fields: Option[String]): Action[AnyContent] = </span><span style='background: #F0ADAD'>Action { request =>
+</span>61 <span style=''>  def discovery(fields: Option[String]): Action[AnyContent] = </span><span style='background: #F0ADAD'>Action { request =&gt;
 </span>62 <span style=''></span><span style='background: #F0ADAD'>    val appName = utils.BuildInfo.name
 </span>63 <span style=''></span><span style='background: #F0ADAD'>    val appVersion = utils.BuildInfo.version
 </span>64 <span style=''></span><span style='background: #F0ADAD'>    val buildNumber = utils.BuildInfo.buildNumber
 </span>65 <span style=''></span><span style='background: #F0ADAD'>    Ok(Json.obj(
-</span>66 <span style=''></span><span style='background: #F0ADAD'>      "appName" -> appName,
-</span>67 <span style=''></span><span style='background: #F0ADAD'>      "version" -> s"$appVersion-$buildNumber"
+</span>66 <span style=''></span><span style='background: #F0ADAD'>      &quot;appName&quot; -&gt; appName,
+</span>67 <span style=''></span><span style='background: #F0ADAD'>      &quot;version&quot; -&gt; s&quot;$appVersion-$buildNumber&quot;
 </span>68 <span style=''></span><span style='background: #F0ADAD'>    ))
 </span>69 <span style=''></span><span style='background: #F0ADAD'>  }</span><span style=''>
 </span>70 <span style=''>

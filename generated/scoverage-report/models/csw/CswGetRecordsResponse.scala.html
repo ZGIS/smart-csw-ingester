@@ -4,7 +4,7 @@
         <title id="title">
           models/csw/CswGetRecordsResponse.scala.html
         </title>
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="http://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
         $(document).ready(function() {$(".tablesorter").tablesorter();});
       </script>
         <style>
@@ -24,18 +24,18 @@
           <div class="tab-pane active" id="codegrid">
             <pre style='font-size: 12pt; font-family: courier;'>1 <span style=''>/*
 </span>2 <span style=''> * Copyright (c) 2011-2017 Interfaculty Department of Geoinformatics, University of
-</span>3 <span style=''> * Salzburg (Z_GIS) & Institute of Geological and Nuclear Sciences Limited (GNS Science)
+</span>3 <span style=''> * Salzburg (Z_GIS) &amp; Institute of Geological and Nuclear Sciences Limited (GNS Science)
 </span>4 <span style=''> * in the SMART Aquifer Characterisation (SAC) programme funded by the New Zealand
 </span>5 <span style=''> * Ministry of Business, Innovation and Employment (MBIE)
 </span>6 <span style=''> *
-</span>7 <span style=''> * Licensed under the Apache License, Version 2.0 (the "License");
+</span>7 <span style=''> * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
 </span>8 <span style=''> * you may not use this file except in compliance with the License.
 </span>9 <span style=''> * You may obtain a copy of the License at
 </span>10 <span style=''> *
 </span>11 <span style=''> *    http://www.apache.org/licenses/LICENSE-2.0
 </span>12 <span style=''> *
 </span>13 <span style=''> * Unless required by applicable law or agreed to in writing, software
-</span>14 <span style=''> * distributed under the License is distributed on an "AS IS" BASIS,
+</span>14 <span style=''> * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
 </span>15 <span style=''> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 </span>16 <span style=''> * See the License for the specific language governing permissions and
 </span>17 <span style=''> * limitations under the License.
@@ -57,12 +57,12 @@
 </span>33 <span style=''>  //Parse XML
 </span>34 <span style=''>  val (numberOfRecordsReturned: Int, numberOfRecordsMatched: Int, nextRecord: Int) =
 </span>35 <span style=''>    xml.label match {
-</span>36 <span style=''>      case "GetRecordsResponse" => {
-</span>37 <span style=''>        ((xml \ "SearchResults" \@ "numberOfRecordsReturned").toIntWithDefault(),
-</span>38 <span style=''>         (xml \ "SearchResults" \@ "numberOfRecordsMatched").toIntWithDefault(),
-</span>39 <span style=''>         (xml \ "SearchResults" \@ "nextRecord").toIntWithDefault())
+</span>36 <span style=''>      case &quot;GetRecordsResponse&quot; =&gt; {
+</span>37 <span style=''>        ((xml \ &quot;SearchResults&quot; \@ &quot;numberOfRecordsReturned&quot;).toIntWithDefault(),
+</span>38 <span style=''>         (xml \ &quot;SearchResults&quot; \@ &quot;numberOfRecordsMatched&quot;).toIntWithDefault(),
+</span>39 <span style=''>         (xml \ &quot;SearchResults&quot; \@ &quot;nextRecord&quot;).toIntWithDefault())
 </span>40 <span style=''>      }
-</span>41 <span style=''>      case _ => throw new IllegalArgumentException(f"Expected Root Element <csw:GetRecordsResponse> but found ${xml.label}")
+</span>41 <span style=''>      case _ =&gt; throw new IllegalArgumentException(f&quot;Expected Root Element &lt;csw:GetRecordsResponse&gt; but found ${xml.label}&quot;)
 </span>42 <span style=''>    }
 </span>43 <span style=''>}
 </span>44 <span style=''>
@@ -87,14 +87,14 @@
 </span>63 <span style=''>    */
 </span>64 <span style=''>  def empty(): CswGetRecordsResponse = {
 </span>65 <span style=''>    </span><span style='background: #F0ADAD'>CswGetRecordsResponse(
-</span>66 <span style=''></span><span style='background: #F0ADAD'>      <csw:GetRecordsResponse xsi:schemaLocation="http://www.opengis.net/cat/csw/2.0.2 http://schemas.opengis.net/csw/2.0.2/CSW-discovery.xsd"
-</span>67 <span style=''></span><span style='background: #F0ADAD'>                              version="2.0.2" xmlns:sitemap="http://www.sitemaps.org/schemas/sitemap/0.9"
-</span>68 <span style=''></span><span style='background: #F0ADAD'>                              xmlns:csw="http://www.opengis.net/cat/csw/2.0.2">
-</span>69 <span style=''></span><span style='background: #F0ADAD'>        <csw:SearchStatus timestamp={java.time.LocalDateTime.now().format(DateTimeFormatter.ISO_INSTANT)}/>
-</span>70 <span style=''></span><span style='background: #F0ADAD'>        <csw:SearchResults elementSet="full" recordSchema="http://www.isotc211.org/2005/gmd"
-</span>71 <span style=''></span><span style='background: #F0ADAD'>                           numberOfRecordsReturned="0" numberOfRecordsMatched="0" nextRecord="0">
-</span>72 <span style=''></span><span style='background: #F0ADAD'>        </csw:SearchResults>
-</span>73 <span style=''></span><span style='background: #F0ADAD'>      </csw:GetRecordsResponse>
+</span>66 <span style=''></span><span style='background: #F0ADAD'>      &lt;csw:GetRecordsResponse xsi:schemaLocation=&quot;http://www.opengis.net/cat/csw/2.0.2 http://schemas.opengis.net/csw/2.0.2/CSW-discovery.xsd&quot;
+</span>67 <span style=''></span><span style='background: #F0ADAD'>                              version=&quot;2.0.2&quot; xmlns:sitemap=&quot;http://www.sitemaps.org/schemas/sitemap/0.9&quot;
+</span>68 <span style=''></span><span style='background: #F0ADAD'>                              xmlns:csw=&quot;http://www.opengis.net/cat/csw/2.0.2&quot;&gt;
+</span>69 <span style=''></span><span style='background: #F0ADAD'>        &lt;csw:SearchStatus timestamp={java.time.LocalDateTime.now().format(DateTimeFormatter.ISO_INSTANT)}/&gt;
+</span>70 <span style=''></span><span style='background: #F0ADAD'>        &lt;csw:SearchResults elementSet=&quot;full&quot; recordSchema=&quot;http://www.isotc211.org/2005/gmd&quot;
+</span>71 <span style=''></span><span style='background: #F0ADAD'>                           numberOfRecordsReturned=&quot;0&quot; numberOfRecordsMatched=&quot;0&quot; nextRecord=&quot;0&quot;&gt;
+</span>72 <span style=''></span><span style='background: #F0ADAD'>        &lt;/csw:SearchResults&gt;
+</span>73 <span style=''></span><span style='background: #F0ADAD'>      &lt;/csw:GetRecordsResponse&gt;
 </span>74 <span style=''></span><span style='background: #F0ADAD'>    )</span><span style=''>
 </span>75 <span style=''>  }
 </span>76 <span style=''>
@@ -115,7 +115,28 @@
           34
         </td>
         <td>
-          125
+          200
+        </td>
+        <td>
+          1148
+          -
+          1148
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.Tuple3._2
+        </td>
+        <td style="background: #AEF1AE">
+          CswGetRecordsResponse.this.x$1._2
+        </td>
+      </tr><tr>
+        <td>
+          34
+        </td>
+        <td>
+          199
         </td>
         <td>
           1118
@@ -136,7 +157,7 @@
           34
         </td>
         <td>
-          127
+          201
         </td>
         <td>
           1177
@@ -154,31 +175,10 @@
         </td>
       </tr><tr>
         <td>
-          34
-        </td>
-        <td>
-          126
-        </td>
-        <td>
-          1148
-          -
-          1148
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          scala.Tuple3._2
-        </td>
-        <td style="background: #AEF1AE">
-          CswGetRecordsResponse.this.x$1._2
-        </td>
-      </tr><tr>
-        <td>
           56
         </td>
         <td>
-          128
+          202
         </td>
         <td>
           1861
@@ -199,7 +199,7 @@
           65
         </td>
         <td>
-          182
+          256
         </td>
         <td>
           2017
@@ -259,7 +259,76 @@
           66
         </td>
         <td>
-          137
+          209
+        </td>
+        <td>
+          2047
+          -
+          2728
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.xml.UnprefixedAttribute.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new scala.xml.UnprefixedAttribute(&quot;version&quot;, new scala.xml.Text(&quot;2.0.2&quot;), $md)
+        </td>
+      </tr><tr>
+        <td>
+          66
+        </td>
+        <td>
+          254
+        </td>
+        <td>
+          2047
+          -
+          2728
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.xml.NodeBuffer.&amp;+
+        </td>
+        <td style="background: #F0ADAD">
+          $buf.&amp;+(new scala.xml.Text(&quot;\n      &quot;))
+        </td>
+      </tr><tr>
+        <td>
+          66
+        </td>
+        <td>
+          226
+        </td>
+        <td>
+          2047
+          -
+          2728
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.xml.NodeBuffer.&amp;+
+        </td>
+        <td style="background: #F0ADAD">
+          $buf.&amp;+({
+  {
+    var $md: scala.xml.MetaData = scala.xml.Null;
+    $md = new scala.xml.UnprefixedAttribute(&quot;timestamp&quot;, java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ISO_INSTANT), $md);
+    new scala.xml.Elem(&quot;csw&quot;, &quot;SearchStatus&quot;, $md, $scope, true)
+  }
+})
+        </td>
+      </tr><tr>
+        <td>
+          66
+        </td>
+        <td>
+          211
         </td>
         <td>
           2047
@@ -280,7 +349,7 @@
           66
         </td>
         <td>
-          131
+          205
         </td>
         <td>
           2047
@@ -301,7 +370,7 @@
           66
         </td>
         <td>
-          140
+          214
         </td>
         <td>
           2047
@@ -322,7 +391,7 @@
           66
         </td>
         <td>
-          142
+          217
         </td>
         <td>
           2047
@@ -330,20 +399,20 @@
           2728
         </td>
         <td>
-          Literal
+          Apply
         </td>
         <td>
-          &lt;nosymbol&gt;
+          scala.xml.NodeBuffer.&lt;init&gt;
         </td>
         <td style="background: #F0ADAD">
-          false
+          new scala.xml.NodeBuffer()
         </td>
       </tr><tr>
         <td>
           66
         </td>
         <td>
-          133
+          207
         </td>
         <td>
           2047
@@ -364,7 +433,28 @@
           66
         </td>
         <td>
-          178
+          216
+        </td>
+        <td>
+          2047
+          -
+          2728
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          false
+        </td>
+      </tr><tr>
+        <td>
+          66
+        </td>
+        <td>
+          252
         </td>
         <td>
           2047
@@ -399,7 +489,7 @@
           66
         </td>
         <td>
-          181
+          255
         </td>
         <td>
           2047
@@ -448,7 +538,28 @@
           66
         </td>
         <td>
-          136
+          228
+        </td>
+        <td>
+          2047
+          -
+          2728
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.xml.NodeBuffer.&amp;+
+        </td>
+        <td style="background: #F0ADAD">
+          $buf.&amp;+(new scala.xml.Text(&quot;\n        &quot;))
+        </td>
+      </tr><tr>
+        <td>
+          66
+        </td>
+        <td>
+          210
         </td>
         <td>
           2047
@@ -469,7 +580,7 @@
           66
         </td>
         <td>
-          145
+          219
         </td>
         <td>
           2047
@@ -490,28 +601,7 @@
           66
         </td>
         <td>
-          154
-        </td>
-        <td>
-          2047
-          -
-          2728
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.xml.NodeBuffer.&amp;+
-        </td>
-        <td style="background: #F0ADAD">
-          $buf.&amp;+(new scala.xml.Text(&quot;\n        &quot;))
-        </td>
-      </tr><tr>
-        <td>
-          66
-        </td>
-        <td>
-          139
+          213
         </td>
         <td>
           2047
@@ -532,7 +622,7 @@
           66
         </td>
         <td>
-          130
+          204
         </td>
         <td>
           2047
@@ -553,28 +643,7 @@
           66
         </td>
         <td>
-          180
-        </td>
-        <td>
-          2047
-          -
-          2728
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.xml.NodeBuffer.&amp;+
-        </td>
-        <td style="background: #F0ADAD">
-          $buf.&amp;+(new scala.xml.Text(&quot;\n      &quot;))
-        </td>
-      </tr><tr>
-        <td>
-          66
-        </td>
-        <td>
-          129
+          203
         </td>
         <td>
           2047
@@ -595,7 +664,7 @@
           66
         </td>
         <td>
-          138
+          212
         </td>
         <td>
           2070
@@ -616,28 +685,7 @@
           66
         </td>
         <td>
-          132
-        </td>
-        <td>
-          2047
-          -
-          2728
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          scala.xml.Null
-        </td>
-        <td style="background: #F0ADAD">
-          scala.xml.Null
-        </td>
-      </tr><tr>
-        <td>
-          66
-        </td>
-        <td>
-          141
+          215
         </td>
         <td>
           2047
@@ -658,7 +706,7 @@
           66
         </td>
         <td>
-          135
+          206
         </td>
         <td>
           2047
@@ -666,68 +714,20 @@
           2728
         </td>
         <td>
-          Apply
+          Select
         </td>
         <td>
-          scala.xml.UnprefixedAttribute.&lt;init&gt;
+          scala.xml.Null
         </td>
         <td style="background: #F0ADAD">
-          new scala.xml.UnprefixedAttribute(&quot;version&quot;, new scala.xml.Text(&quot;2.0.2&quot;), $md)
-        </td>
-      </tr><tr>
-        <td>
-          66
-        </td>
-        <td>
-          152
-        </td>
-        <td>
-          2047
-          -
-          2728
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.xml.NodeBuffer.&amp;+
-        </td>
-        <td style="background: #F0ADAD">
-          $buf.&amp;+({
-  {
-    var $md: scala.xml.MetaData = scala.xml.Null;
-    $md = new scala.xml.UnprefixedAttribute(&quot;timestamp&quot;, java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ISO_INSTANT), $md);
-    new scala.xml.Elem(&quot;csw&quot;, &quot;SearchStatus&quot;, $md, $scope, true)
-  }
-})
-        </td>
-      </tr><tr>
-        <td>
-          66
-        </td>
-        <td>
-          143
-        </td>
-        <td>
-          2047
-          -
-          2728
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.xml.NodeBuffer.&lt;init&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          new scala.xml.NodeBuffer()
+          scala.xml.Null
         </td>
       </tr><tr>
         <td>
           67
         </td>
         <td>
-          134
+          208
         </td>
         <td>
           2213
@@ -748,7 +748,7 @@
           68
         </td>
         <td>
-          144
+          218
         </td>
         <td>
           2368
@@ -769,7 +769,28 @@
           69
         </td>
         <td>
-          146
+          227
+        </td>
+        <td>
+          2476
+          -
+          2476
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.xml.Text.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new scala.xml.Text(&quot;\n        &quot;)
+        </td>
+      </tr><tr>
+        <td>
+          69
+        </td>
+        <td>
+          220
         </td>
         <td>
           2378
@@ -790,7 +811,7 @@
           69
         </td>
         <td>
-          149
+          223
         </td>
         <td>
           2406
@@ -811,7 +832,7 @@
           69
         </td>
         <td>
-          151
+          225
         </td>
         <td>
           2378
@@ -832,7 +853,7 @@
           69
         </td>
         <td>
-          148
+          222
         </td>
         <td>
           2443
@@ -853,7 +874,7 @@
           69
         </td>
         <td>
-          147
+          221
         </td>
         <td>
           2378
@@ -874,7 +895,7 @@
           69
         </td>
         <td>
-          150
+          224
         </td>
         <td>
           2378
@@ -892,31 +913,94 @@
         </td>
       </tr><tr>
         <td>
-          69
+          70
         </td>
         <td>
-          153
+          245
         </td>
         <td>
-          2476
+          2486
           -
-          2476
+          2696
         </td>
         <td>
-          Apply
+          Literal
         </td>
         <td>
-          scala.xml.Text.&lt;init&gt;
+          &lt;nosymbol&gt;
         </td>
         <td style="background: #F0ADAD">
-          new scala.xml.Text(&quot;\n        &quot;)
+          &quot;csw&quot;
         </td>
       </tr><tr>
         <td>
           70
         </td>
         <td>
-          173
+          236
+        </td>
+        <td>
+          2486
+          -
+          2696
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;numberOfRecordsReturned&quot;
+        </td>
+      </tr><tr>
+        <td>
+          70
+        </td>
+        <td>
+          244
+        </td>
+        <td>
+          2486
+          -
+          2696
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.xml.UnprefixedAttribute.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new scala.xml.UnprefixedAttribute(&quot;elementSet&quot;, new scala.xml.Text(&quot;full&quot;), $md)
+        </td>
+      </tr><tr>
+        <td>
+          70
+        </td>
+        <td>
+          235
+        </td>
+        <td>
+          2486
+          -
+          2696
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.xml.UnprefixedAttribute.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new scala.xml.UnprefixedAttribute(&quot;numberOfRecordsMatched&quot;, new scala.xml.Text(&quot;0&quot;), $md)
+        </td>
+      </tr><tr>
+        <td>
+          70
+        </td>
+        <td>
+          247
         </td>
         <td>
           2486
@@ -937,7 +1021,7 @@
           70
         </td>
         <td>
-          155
+          229
         </td>
         <td>
           2486
@@ -958,7 +1042,7 @@
           70
         </td>
         <td>
-          164
+          238
         </td>
         <td>
           2486
@@ -979,7 +1063,7 @@
           70
         </td>
         <td>
-          176
+          250
         </td>
         <td>
           2486
@@ -1000,7 +1084,7 @@
           70
         </td>
         <td>
-          158
+          232
         </td>
         <td>
           2486
@@ -1021,7 +1105,7 @@
           70
         </td>
         <td>
-          167
+          241
         </td>
         <td>
           2486
@@ -1042,7 +1126,7 @@
           70
         </td>
         <td>
-          166
+          240
         </td>
         <td>
           2522
@@ -1063,7 +1147,7 @@
           70
         </td>
         <td>
-          169
+          243
         </td>
         <td>
           2504
@@ -1084,7 +1168,7 @@
           70
         </td>
         <td>
-          172
+          246
         </td>
         <td>
           2486
@@ -1105,28 +1189,7 @@
           70
         </td>
         <td>
-          174
-        </td>
-        <td>
-          2486
-          -
-          2696
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.xml.NodeBuffer.&lt;init&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          new scala.xml.NodeBuffer()
-        </td>
-      </tr><tr>
-        <td>
-          70
-        </td>
-        <td>
-          156
+          230
         </td>
         <td>
           2486
@@ -1147,7 +1210,28 @@
           70
         </td>
         <td>
-          165
+          248
+        </td>
+        <td>
+          2486
+          -
+          2696
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.xml.NodeBuffer.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new scala.xml.NodeBuffer()
+        </td>
+      </tr><tr>
+        <td>
+          70
+        </td>
+        <td>
+          239
         </td>
         <td>
           2486
@@ -1168,7 +1252,7 @@
           70
         </td>
         <td>
-          168
+          242
         </td>
         <td>
           2486
@@ -1189,7 +1273,7 @@
           70
         </td>
         <td>
-          177
+          251
         </td>
         <td>
           2486
@@ -1214,7 +1298,7 @@
           70
         </td>
         <td>
-          159
+          233
         </td>
         <td>
           2486
@@ -1232,94 +1316,10 @@
         </td>
       </tr><tr>
         <td>
-          70
-        </td>
-        <td>
-          171
-        </td>
-        <td>
-          2486
-          -
-          2696
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;csw&quot;
-        </td>
-      </tr><tr>
-        <td>
-          70
-        </td>
-        <td>
-          162
-        </td>
-        <td>
-          2486
-          -
-          2696
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;numberOfRecordsReturned&quot;
-        </td>
-      </tr><tr>
-        <td>
-          70
-        </td>
-        <td>
-          170
-        </td>
-        <td>
-          2486
-          -
-          2696
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.xml.UnprefixedAttribute.&lt;init&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          new scala.xml.UnprefixedAttribute(&quot;elementSet&quot;, new scala.xml.Text(&quot;full&quot;), $md)
-        </td>
-      </tr><tr>
-        <td>
-          70
-        </td>
-        <td>
-          161
-        </td>
-        <td>
-          2486
-          -
-          2696
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.xml.UnprefixedAttribute.&lt;init&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          new scala.xml.UnprefixedAttribute(&quot;numberOfRecordsMatched&quot;, new scala.xml.Text(&quot;0&quot;), $md)
-        </td>
-      </tr><tr>
-        <td>
           71
         </td>
         <td>
-          175
+          249
         </td>
         <td>
           2667
@@ -1340,7 +1340,7 @@
           71
         </td>
         <td>
-          160
+          234
         </td>
         <td>
           2625
@@ -1361,7 +1361,7 @@
           71
         </td>
         <td>
-          163
+          237
         </td>
         <td>
           2597
@@ -1382,7 +1382,7 @@
           71
         </td>
         <td>
-          157
+          231
         </td>
         <td>
           2652
@@ -1403,7 +1403,7 @@
           72
         </td>
         <td>
-          179
+          253
         </td>
         <td>
           2696
