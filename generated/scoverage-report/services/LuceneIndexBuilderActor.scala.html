@@ -242,8 +242,8 @@
 </span>218 <span style=''></span><span style='background: #AEF1AE'>        }
 </span>219 <span style=''></span><span style='background: #AEF1AE'>      }
 </span>220 <span style=''></span><span style='background: #AEF1AE'>      case Failure(ex) =&gt; {
-</span>221 <span style=''></span><span style='background: #AEF1AE'>        logger.warn(s&quot;Exception while querying CSW (${ex.getClass.getCanonicalName}): ${ex.getMessage}&quot;, ex)
-</span>222 <span style=''></span><span style='background: #AEF1AE'>        self ! ShutdownActor(catalogueName)
+</span>221 <span style=''></span><span style='background: #AEF1AE'>        </span><span style='background: #F0ADAD'>logger.warn(s&quot;Exception while querying CSW (${ex.getClass.getCanonicalName}): ${ex.getMessage}&quot;, ex)</span><span style='background: #AEF1AE'>
+</span>222 <span style=''></span><span style='background: #AEF1AE'>        </span><span style='background: #F0ADAD'>self ! ShutdownActor(catalogueName)</span><span style='background: #AEF1AE'>
 </span>223 <span style=''></span><span style='background: #AEF1AE'>      }
 </span>224 <span style=''></span><span style='background: #AEF1AE'>    }</span><span style=''>
 </span>225 <span style=''>  }
@@ -1316,7 +1316,7 @@
         <td>
           &lt;nosymbol&gt;
         </td>
-        <td style="background: #AEF1AE">
+        <td style="background: #F0ADAD">
           ()
         </td>
       </tr><tr>
@@ -1337,7 +1337,7 @@
         <td>
           &lt;nosymbol&gt;
         </td>
-        <td style="background: #AEF1AE">
+        <td style="background: #F0ADAD">
           ()
         </td>
       </tr><tr>
@@ -3176,7 +3176,7 @@
         <td>
           java.lang.Throwable.getMessage
         </td>
-        <td style="background: #AEF1AE">
+        <td style="background: #F0ADAD">
           ex.getMessage()
         </td>
       </tr><tr>
@@ -3197,7 +3197,7 @@
         <td>
           &lt;nosymbol&gt;
         </td>
-        <td style="background: #AEF1AE">
+        <td style="background: #F0ADAD">
           &quot;): &quot;
         </td>
       </tr><tr>
@@ -3218,7 +3218,7 @@
         <td>
           java.lang.Class.getCanonicalName
         </td>
-        <td style="background: #AEF1AE">
+        <td style="background: #F0ADAD">
           ex.getClass().getCanonicalName()
         </td>
       </tr><tr>
@@ -3239,7 +3239,7 @@
         <td>
           play.api.LoggerLike.warn
         </td>
-        <td style="background: #AEF1AE">
+        <td style="background: #F0ADAD">
           LuceneIndexBuilderActor.this.logger.warn(scala.StringContext.apply(&quot;Exception while querying CSW (&quot;, &quot;): &quot;, &quot;&quot;).s(ex.getClass().getCanonicalName(), ex.getMessage()), ex)
         </td>
       </tr><tr>
@@ -3260,7 +3260,7 @@
         <td>
           &lt;nosymbol&gt;
         </td>
-        <td style="background: #AEF1AE">
+        <td style="background: #F0ADAD">
           &quot;Exception while querying CSW (&quot;
         </td>
       </tr><tr>
@@ -3281,7 +3281,7 @@
         <td>
           &lt;nosymbol&gt;
         </td>
-        <td style="background: #AEF1AE">
+        <td style="background: #F0ADAD">
           &quot;&quot;
         </td>
       </tr><tr>
@@ -3302,7 +3302,7 @@
         <td>
           scala.StringContext.s
         </td>
-        <td style="background: #AEF1AE">
+        <td style="background: #F0ADAD">
           scala.StringContext.apply(&quot;Exception while querying CSW (&quot;, &quot;): &quot;, &quot;&quot;).s(ex.getClass().getCanonicalName(), ex.getMessage())
         </td>
       </tr><tr>
@@ -3323,7 +3323,7 @@
         <td>
           akka.actor.Actor.self
         </td>
-        <td style="background: #AEF1AE">
+        <td style="background: #F0ADAD">
           LuceneIndexBuilderActor.this.self
         </td>
       </tr><tr>
@@ -3344,7 +3344,7 @@
         <td>
           akka.actor.ScalaActorRef.!
         </td>
-        <td style="background: #AEF1AE">
+        <td style="background: #F0ADAD">
           akka.this.actor.`package`.actorRef2Scala(LuceneIndexBuilderActor.this.self).!(services.LuceneIndexBuilderActor.ShutdownActor.apply(catalogueName))(LuceneIndexBuilderActor.this.self)
         </td>
       </tr><tr>
@@ -3365,7 +3365,7 @@
         <td>
           akka.actor.Actor.self
         </td>
-        <td style="background: #AEF1AE">
+        <td style="background: #F0ADAD">
           LuceneIndexBuilderActor.this.self
         </td>
       </tr><tr>
@@ -3386,7 +3386,7 @@
         <td>
           services.LuceneIndexBuilderActor.ShutdownActor.apply
         </td>
-        <td style="background: #AEF1AE">
+        <td style="background: #F0ADAD">
           services.LuceneIndexBuilderActor.ShutdownActor.apply(catalogueName)
         </td>
       </tr>
