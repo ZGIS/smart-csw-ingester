@@ -27,3 +27,5 @@ project/.sbtserver*
 
 ## generated files for sbt-site
 src/site/generated/*
+conf/catalogues.local.conf
+conf/application.local.conf
