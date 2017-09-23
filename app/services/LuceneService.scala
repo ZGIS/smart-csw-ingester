@@ -19,6 +19,8 @@
 
 package services
 
+import java.io.{File, IOException}
+import java.nio.file.{Files, Paths}
 import java.time.LocalDate
 import javax.inject.{Inject, Named, Singleton}
 
@@ -26,16 +28,17 @@ import akka.actor.{ActorRef, ActorSystem, _}
 import akka.pattern.ask
 import models.gmd.MdMetadataSet
 import org.apache.lucene.analysis.standard.StandardAnalyzer
-import org.apache.lucene.document.{Document, LongPoint}
-import org.apache.lucene.index.{IndexWriter, IndexWriterConfig}
+import org.apache.lucene.document._
+import org.apache.lucene.index.IndexWriterConfig.OpenMode
+import org.apache.lucene.index.{IndexWriter, IndexWriterConfig, Term}
 import org.apache.lucene.queryparser.classic.QueryParser
 import org.apache.lucene.search._
 import org.apache.lucene.spatial.bbox.BBoxStrategy
 import org.apache.lucene.spatial.query.{SpatialArgs, SpatialOperation}
-import org.apache.lucene.store.{Directory, RAMDirectory}
+import org.apache.lucene.store.{Directory, FSDirectory, RAMDirectory}
 import org.locationtech.spatial4j.context.SpatialContext
 import org.locationtech.spatial4j.io.ShapeIO
-import play.api.Configuration
+import play.api.{Configuration, Environment, Mode}
 import play.api.inject.ApplicationLifecycle
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.concurrent.InjectedActorSupport
@@ -71,18 +74,18 @@ trait SearchResult {
   /**
     * the parsed query
     */
-  val luceneQuery: Query;
+  val luceneQuery: Query
 
   /**
     * number of documents in the index, that match the query. THIS IS NOT THE NUMBER OF RETURNED DOCUMENTS!
     */
-  val numberOfMatchingDocuments: Int;
+  val numberOfMatchingDocuments: Int
 
   /**
     * the documents returned by the query. This might be less than the matching number, depending on wether
     * the user choose to get a maximum count.
     */
-  val documents: List[MdMetadataSet];
+  val documents: List[MdMetadataSet]
 }
 
 
@@ -97,6 +100,7 @@ trait SearchResult {
 class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
                               wsClient: WSClient,
                               configuration: Configuration,
+                              environment: Environment,
                               system: ActorSystem,
                               @Named("indexBuilderMaster") indexBuilderMaster: ActorRef)
   extends IndexService with ClassnameLogger with InjectedActorSupport {
@@ -107,29 +111,41 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
   private val cataloguesConfig = configuration.getConfigList("csw.catalogues").get.asScala.toList
   private val catalogues = cataloguesConfig.map({ item => item.getString("name").get -> item.getString("url").get }).toMap
   private val catalogueIndexes: scala.collection.mutable.Map[String, Directory] = scala.collection.mutable.Map[String, Directory]()
-  private val defaultMaxDocuments: Int = configuration.getInt("searcher.defaultMaxDocuments").getOrElse(100);
+  private val defaultMaxDocuments: Int = configuration.getInt("searcher.defaultMaxDocuments").getOrElse(100)
+  private val indexBaseFolder = configuration.getString("searcher.indexCacheDir").getOrElse(Files.createTempDirectory("lucene-tmp").toAbsolutePath.toString)
 
-  //stores the search index in RAM
-  private val indexRamDirectory = new RAMDirectory()
-  private val searcherManager = new SearcherManager(prepareEmptyIndex(indexRamDirectory), null)
+  // stores the search index in RAM
+  // private val indexRamDirectory = prepareEmptyRamIndex(new RAMDirectory())
+
+  // in fs folder for possible re-open
+  private val indexFileSystemDirectory = openOrCreateFileSystemIndex(indexBaseFolder)
+
+  private val indexDirectory = indexFileSystemDirectory
+
+  private val searcherManager = new SearcherManager(indexDirectory, null)
 
   buildIndex()
 
   appLifecycle.addStopHook { () =>
     Future.successful(() => {
       logger.info("Stopping Lucene Service")
-      indexRamDirectory.close()
+      indexDirectory.close()
     })
   }
 
   def buildIndex(): Unit = {
     catalogues.map({
       case (catalogueName, catalogueUrl) =>
-        system.scheduler.schedule(1.second, 24.hours){
+        val secDelay = if (environment.mode.equals(Mode.Prod)) 5 + scala.util.Random.nextInt(56) else 1
+        val hoursRepeat = 24 + scala.util.Random.nextInt(49)
+        logger.info(s"Schedule for next build index of $catalogueName is secDelay: $secDelay and hoursRepeat: $hoursRepeat")
+        system.scheduler.schedule(secDelay.second, hoursRepeat.hours){
           buildIndex(catalogueName)
         }
     })
   }
+
+  // buildOrUpdateIndex (GetCapa updateSequence = "1504693010")
 
   /** Builds index for catalogue
     *
@@ -137,29 +153,55 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
   def buildIndex(catalogueName: String): Unit = {
     logger.info(s"Building Lucene Index (AKKA VERSION) for $catalogueName")
     val catalogueUrl = catalogues(catalogueName)
-    implicit val timeout: akka.util.Timeout = 5.seconds
+    implicit val timeout: akka.util.Timeout = 30.seconds
     val indexBuilder = (indexBuilderMaster ? GetSpecificIndexBuilder(catalogueName)).mapTo[ActorRef]
     indexBuilder.onComplete({
       case Success(indexBuilder) => indexBuilder ! IndexCatalogue(catalogueName, catalogueUrl)
-      case Failure(ex) => logger.warn(s"Exception during index build ${ex.getMessage}", ex)
+      case Failure(ex) => logger.warn(s"Exception during index build for $catalogueName ${ex.getMessage}", ex)
     })
   }
 
-  def mergeIndex(directory: Directory, catalogueName: String): Unit = {
+  /**
+    *
+    * @param directory
+    * @param catalogueName
+    */
+  @deprecated
+  def mergeOverWriteIndex(directory: Directory, catalogueName: String): Unit = {
     catalogueIndexes += (catalogueName -> directory)
 
     val config = new IndexWriterConfig()
     config.setCommitOnClose(true)
 
-    val iwriter = new IndexWriter(indexRamDirectory, config)
+    val iwriter = new IndexWriter(indexDirectory, config)
     try {
       logger.info(s"Merging ${catalogueIndexes.keys} into master index")
       iwriter.deleteAll()
       iwriter.commit()
       iwriter.addIndexes(catalogueIndexes.values.toArray : _*)
+
       iwriter.commit()
       iwriter.forceMerge(1, true)
-      logger.info("Merged Index ready")
+      logger.info(s"Overwrite-Merging index $catalogueName into main, ready ")
+    }
+    finally {
+      iwriter.close()
+    }
+  }
+
+  def mergeUpdateDocsIndex(docs: Map[String, Document], catalogueName: String): Unit = {
+    val config = new IndexWriterConfig()
+    config.setCommitOnClose(true)
+    config.setOpenMode(OpenMode.CREATE_OR_APPEND)
+    val iwriter = new IndexWriter(indexDirectory, config)
+    try {
+      docs.foreach(
+        // don't use, only for index uniqueness and doc update
+        tup => iwriter.updateDocument(new Term("id", tup._1), tup._2))
+
+      iwriter.commit()
+      // iwriter.forceMerge(1, true)
+      logger.info(s"Update-merging index $catalogueName into main, ready ")
     }
     finally {
       iwriter.close()
@@ -197,14 +239,14 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
     booleanQueryBuilder.add(bboxQuery, BooleanClause.Occur.MUST)
     val finalLuceneQuery = booleanQueryBuilder.build()
 
-    val numOfMatchingDocuments = isearcher.count(finalLuceneQuery);
+    val numOfMatchingDocuments = isearcher.count(finalLuceneQuery)
 
     // TODO SR is "all" a good default, when queried for 0 or less documents?
     val maxDocuments = maxNumberOfResults match {
       case Some(x) if maxNumberOfResults.get <= 0 => numOfMatchingDocuments + 1 //+1 just in case 0 docs match
       case _ => maxNumberOfResults.getOrElse(defaultMaxDocuments)
     }
-    val search = isearcher.search(finalLuceneQuery, maxDocuments);
+    val search = isearcher.search(finalLuceneQuery, maxDocuments)
     val scoreDocs = search.scoreDocs
 
     val results = scoreDocs.map(scoreDoc => {
@@ -280,12 +322,14 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
     *
     * @param directory
     */
-  private def prepareEmptyIndex(directory: Directory): Directory = {
+  @deprecated
+  private def prepareEmptyRamIndex(directory: Directory): Directory = {
     val analyzer = new StandardAnalyzer()
     val config = new IndexWriterConfig(analyzer)
     config.setCommitOnClose(true)
     //FIXME SR use SCALA_ARM (automated resource management)?
     val iwriter = new IndexWriter(directory, config)
+
     try {
       iwriter.deleteAll()
       iwriter.addDocument(new Document)
@@ -295,6 +339,74 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
     finally {
       iwriter.close()
     }
+    directory
+  }
+
+  /**
+    * create a filesystem based lucene directory
+    *
+    * @param indexBaseFolder
+    * @return
+    */
+  private def openOrCreateFileSystemIndex(indexBaseFolder: String): Directory = {
+
+    val baseIndexDir = Paths.get(indexBaseFolder)
+    if (!Files.isWritable(baseIndexDir)) {
+      val errmsg = s"Main index storage directory ${baseIndexDir.toAbsolutePath} does not exist or is not writable, please check the path"
+      logger.error(errmsg)
+      throw new IOException(errmsg)
+    }
+    val jointIndexDir = new File(Paths.get(indexBaseFolder) + File.separator + "main")
+
+    val preExistent = if (Files.isWritable(jointIndexDir.toPath)) {
+      true
+    } else {
+      if (jointIndexDir.mkdir()) {
+        false
+      } else {
+        val errmsg = s"Joint index sub-directory ${jointIndexDir.toPath.toString} could not be created"
+        logger.error(errmsg)
+        throw new IOException(errmsg)
+      }
+    }
+
+    val directory = FSDirectory.open(jointIndexDir.toPath)
+    val analyzer = new StandardAnalyzer()
+    val config = new IndexWriterConfig(analyzer)
+    config.setCommitOnClose(true)
+    if (preExistent) {
+      // Add new documents to an existing index:
+      config.setOpenMode(OpenMode.CREATE_OR_APPEND)
+      val iwriter = new IndexWriter(directory, config)
+
+      try {
+        val emptyDoc = new Document()
+        // id field not used in our search semantics, only to provide lucene uniqueness
+        emptyDoc.add(new StringField("id", "00000000-0000-0000-0000-000000000000", Field.Store.NO))
+        iwriter.updateDocument(new Term("fileIdentifier","00000000-0000-0000-0000-000000000000"), emptyDoc)
+        iwriter.commit()
+        logger.info("Re-opened main index ready")
+      }
+      finally {
+        iwriter.close()
+      }
+    } else {
+      // Create a new index in the directory, removing any
+      // previously indexed documents:
+      config.setOpenMode(OpenMode.CREATE)
+      val iwriter = new IndexWriter(directory, config)
+
+      try {
+        iwriter.deleteAll()
+        iwriter.addDocument(new Document)
+        iwriter.commit()
+        logger.info("Empty main index ready")
+      }
+      finally {
+        iwriter.close()
+      }
+    }
+
     directory
   }
 }

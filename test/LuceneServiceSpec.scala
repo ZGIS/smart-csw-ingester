@@ -54,7 +54,7 @@ trait WithLuceneService {
 
         val injector = new GuiceApplicationBuilder()
           .configure(config)
-          .injector();
+          .injector()
 
         val appLifeCycle = new DefaultApplicationLifecycle()
         val service = injector.instanceOf[LuceneService]
@@ -199,7 +199,8 @@ class LuceneServiceSpec extends PlaySpec with WithLuceneService {
         withLuceneService { service =>
           val result = service.query("*:*", Some("ENVELOPE(166,-176,-34,-48)"))
           result.documents.size mustBe 2
-          result.documents.head.fileIdentifier mustBe "23bdd7a3-fd21-daf1-7825-0d3bdc256f9d"
+          result.documents.exists(
+            md => md.fileIdentifier.equalsIgnoreCase("23bdd7a3-fd21-daf1-7825-0d3bdc256f9d")) mustBe true
         }
       }
 
@@ -240,8 +241,10 @@ class LuceneServiceSpec extends PlaySpec with WithLuceneService {
           val toDate = LocalDate.of(2012, 12, 20)
           val result = service.query("*:*", None, None, Some(toDate))
           result.documents.size mustBe 2
-          result.documents.head.fileIdentifier mustBe "23bdd7a3-fd21-daf1-7825-0d3bdc256f9d"
-          result.documents.tail.head.fileIdentifier mustBe "https://data.mfe.govt.nz/table/2508-water-quality-parameters-in-coastal-and-estuarine-environments-2013/"
+          result.documents.exists(
+            md => md.fileIdentifier.equalsIgnoreCase("23bdd7a3-fd21-daf1-7825-0d3bdc256f9d")) mustBe true
+          result.documents.exists(
+            md => md.fileIdentifier.equalsIgnoreCase("https://data.mfe.govt.nz/table/2508-water-quality-parameters-in-coastal-and-estuarine-environments-2013/")) mustBe true
         }
       }
 

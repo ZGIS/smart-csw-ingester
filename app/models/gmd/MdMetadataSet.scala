@@ -104,6 +104,9 @@ case class MdMetadataSet(fileIdentifier: String,
   def asLuceneDocument: Document = {
     val doc = new Document()
 
+    // don't use, only for index uniqueness and doc update
+    doc.add(new StringField("id", fileIdentifier, Field.Store.YES))
+
     doc.add(new TextField("fileIdentifier", fileIdentifier, Field.Store.YES))
     doc.add(new TextField("title", title, Field.Store.YES))
     doc.add(new TextField("abstrakt", abstrakt, Field.Store.YES))
@@ -140,8 +143,8 @@ case class MdMetadataSet(fileIdentifier: String,
     val bboxFields = bboxStrategy.createIndexableFields(bbox)
     bboxFields.foreach(field => doc.add(field))
 
-    doc.add(new StringField("origin", origin, Field.Store.YES))
-    doc.add(new StringField("originUrl", originUrl, Field.Store.YES))
+    doc.add(new TextField("origin", origin, Field.Store.YES))
+    doc.add(new TextField("originUrl", originUrl, Field.Store.YES))
 
     //FIXME decide if use catch_all field or how to build a query that queries all fields
     doc.add(new TextField("catch_all", fileIdentifier, Field.Store.YES))

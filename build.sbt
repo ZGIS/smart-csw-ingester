@@ -36,8 +36,6 @@ scalaVersion := "2.11.8"
 val luceneVersion = "6.4.0"
 
 libraryDependencies ++= Seq(
-  jdbc,
-  cache,
   ws,
   filters,
 
@@ -87,9 +85,9 @@ fork in run := true
 val genSiteDir = "src/site/generated"
 
 // Scala style task for compile, config file is scalastyle-config.xml
-lazy val compileScalastyle = taskKey[Unit]("compileScalastyle")
-compileScalastyle := org.scalastyle.sbt.ScalastylePlugin.scalastyle.in(Compile).toTask("").value
-(compile in Compile) <<= (compile in Compile) dependsOn compileScalastyle
+// lazy val compileScalastyle = taskKey[Unit]("compileScalastyle")
+// compileScalastyle := org.scalastyle.sbt.ScalastylePlugin.scalastyle.in(Compile).toTask("").value
+// (compile in Compile) <<= (compile in Compile) dependsOn compileScalastyle
 
 // Scala style task to run with tests
 lazy val testScalastyle = taskKey[Unit]("testScalastyle")

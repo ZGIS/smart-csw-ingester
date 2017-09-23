@@ -30,14 +30,15 @@ import play.api.mvc._
   * Controller that handles every "unspecific" request.
   */
 class MainController extends Controller {
+
   /**
-    * Create an Action to render an HTML page with a welcome message.
-    * The configuration in the `routes` file means that this method
-    * will be called when the application receives a `GET` request with
-    * a path of `/`.
+    * just to have something on /
     */
   def index: Action[AnyContent] = Action {
-    Ok(views.html.index("Your new application is ready."))
+    Ok(Json.obj(
+      "status" -> "Ok",
+      "message" -> "application is ready"
+    ))
   }
 
   /**

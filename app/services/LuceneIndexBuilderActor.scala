@@ -24,9 +24,10 @@ import javax.inject.Inject
 import akka.actor.{Actor, Props}
 import models.csw.{CswGetRecordsRequest, CswGetRecordsResponse}
 import models.gmd.MdMetadataSet
+import org.apache.lucene.document.Document
 import org.apache.lucene.index.{IndexWriter, IndexWriterConfig}
 import org.apache.lucene.store.{Directory, RAMDirectory}
-import play.api.Configuration
+import play.api.{Configuration, Environment}
 import play.api.http.Status
 import play.api.libs.ws.WSClient
 import services.LuceneIndexBuilderActor._
@@ -48,7 +49,7 @@ object LuceneIndexBuilderActor {
 
   case class IndexResponseDocument(cswGetRecordsResponse: CswGetRecordsResponse, catalogueName: String, isLast: Boolean)
 
-  case class MergeLuceneIndex(directory: Directory, catalogueName: String)
+  // case class MergeLuceneIndexLocal(directory: Directory, catalogueName: String)
 
   case class QueryCatalogue(catalogueName: String, catalogueUrl: String)
 
@@ -59,15 +60,19 @@ object LuceneIndexBuilderActor {
 /**
   * Builds a Lucene Index from a given CswGetRecordsResponse object
   */
-class LuceneIndexBuilderActor @Inject()(configuration: Configuration, wsClient: WSClient, luceneService: LuceneService)
-                                       (implicit ec: ExecutionContext) extends Actor with
+class LuceneIndexBuilderActor @Inject()(configuration: Configuration,
+                                        environment: Environment,
+                                        wsClient: WSClient,
+                                        luceneService: LuceneService)(implicit ec: ExecutionContext) extends Actor with
   ClassnameLogger {
 
   logger.debug("Reading configuration: csw.maxDocs ")
   private val CSW_MAX_RECORDS = 500
   private val maxDocsPerFetch = configuration.getInt("csw.maxDocs").getOrElse(CSW_MAX_RECORDS)
+  private val indexBaseFolder = configuration.getString("searcher.indexCacheDir").getOrElse(".")
 
-  private val catalogueDirectory = new RAMDirectory()
+  // private val catalogueDirectory = new RAMDirectory()
+  private var luceneDocs = scala.collection.mutable.Map[String, Document]()
 
 
   /**
@@ -79,7 +84,7 @@ class LuceneIndexBuilderActor @Inject()(configuration: Configuration, wsClient: 
   override def receive: Receive = {
 
     case IndexCatalogue(catalogueName, catalogueUrl) => {
-      logger.info("querying catalogue")
+      logger.info(s"Initialising to index catalogue $catalogueName")
       context.become(indexing)
       self ! QueryCatalogue(catalogueName, catalogueUrl)
     }
@@ -93,37 +98,44 @@ class LuceneIndexBuilderActor @Inject()(configuration: Configuration, wsClient: 
     }
 
     case IndexResponseDocument(cswGetRecordsResponse, catalogueName, isLast) => {
-      val directory = buildIndexFor(cswGetRecordsResponse, catalogueName)
-      sender() ! MergeLuceneIndex(directory, catalogueName)
+      val intermediateMapOfDocuments = extractLuceneDocsFromResponse(cswGetRecordsResponse, catalogueName)
+      intermediateMapOfDocuments.foreach (
+        tup => luceneDocs += (tup._1 -> tup._2))
+      // val directory = buildIndexFor(intermediateMapOfDocuments, catalogueName)
+      // sender() ! MergeLuceneIndexLocal(directory, catalogueName)
 
-      //its important to send the shutdown from here, otherwise the last merge will not be executed, because shutdown
-      //will be received before this merge message
+      // its important to send the shutdown from here, otherwise the last merge will not be executed, because shutdown
+      // will be received before this merge message
       if (isLast) {
         logger.info(s"Last response indexed. Sending shutdown for $catalogueName")
         sender() ! ShutdownActor(catalogueName)
       }
     }
 
-    case MergeLuceneIndex(directory, catalogueName) => {
-      logger.info(s"Merging index in actor for $catalogueName")
-      val config = new IndexWriterConfig()
-      config.setCommitOnClose(true)
-
-      val iwriter = new IndexWriter(catalogueDirectory, config)
-      try {
-        iwriter.addIndexes(directory)
-        iwriter.commit()
-        logger.info("Done merging index")
-      }
-      finally {
-        iwriter.close()
-      }
-    }
+//    case MergeLuceneIndexLocal(directory, catalogueName) => {
+//      logger.info(s"Merging index inside actor of $catalogueName")
+//      val config = new IndexWriterConfig()
+//      config.setCommitOnClose(true)
+//
+//      val iwriter = new IndexWriter(catalogueDirectory, config)
+//      try {
+//        iwriter.addIndexes(directory)
+//        iwriter.commit()
+//        logger.info(s"Done merging index for $catalogueName")
+//      }
+//      finally {
+//        iwriter.close()
+//      }
+//    }
 
     case ShutdownActor(catalogueName) => {
-      if (catalogueDirectory.listAll().length > 0) {
-        logger.info("Merging index back to Service")
-        luceneService.mergeIndex(catalogueDirectory, catalogueName)
+//      if (catalogueDirectory.listAll().length > 0) {
+//        logger.info(s"Merging index for $catalogueName back to main service")
+//        luceneService.mergeOverWriteIndex(catalogueDirectory, catalogueName)
+//      }
+      if (luceneDocs.size > 0) {
+        logger.info(s"Merging index (${luceneDocs.size} records) for $catalogueName back to main service")
+        luceneService.mergeUpdateDocsIndex(luceneDocs.toMap, catalogueName)
       }
 
       logger.info(s"Shutting down actor for $catalogueName")
@@ -133,13 +145,13 @@ class LuceneIndexBuilderActor @Inject()(configuration: Configuration, wsClient: 
   }
 
   /**
-    * Builds a Lucene Index from a given CswGetRecordsResponse object
+    * Builds a seq of Lucene Documents from a given CswGetRecordsResponse object
     *
-    * @param cswGetRecordsResponse [[CswGetRecordsResponse]] to build an index from
-    * @param catalogueName         String containing the catalogue name
-    * @return [[Directory]] containing the index
+    * @param cswGetRecordsResponse
+    * @param catalogueName
+    * @return
     */
-  private def buildIndexFor(cswGetRecordsResponse: CswGetRecordsResponse, catalogueName: String): Directory = {
+  private def extractLuceneDocsFromResponse(cswGetRecordsResponse: CswGetRecordsResponse, catalogueName: String): Map[String, Document] = {
     logger.info(s"Start building (partial) index for ${catalogueName}...")
     val mdMetadataSet = (cswGetRecordsResponse.xml \\ "MD_Metadata").map(mdMetadataNode => {
       logger.debug(f"Preparing($catalogueName): ${(mdMetadataNode \ "fileIdentifier" \ "CharacterString").text}")
@@ -147,7 +159,18 @@ class LuceneIndexBuilderActor @Inject()(configuration: Configuration, wsClient: 
       MdMetadataSet.fromXml(mdMetadataNode, catalogueName, luceneService.getCatalogueUrl(catalogueName))
     }).filter(item => item.isDefined).map(item => item.get) //filter out all None values
 
-    val luceneDocuments = mdMetadataSet.map(_.asLuceneDocument)
+    mdMetadataSet.map(md => (md.fileIdentifier, md.asLuceneDocument)).toMap
+  }
+
+  /**
+    * Builds a Lucene Index from a given CswGetRecordsResponse object
+    *
+    * @param intermediateSetofDocuments Set[Document] to build an index from
+    * @param catalogueName         String containing the catalogue name
+    * @return [[Directory]] containing the index
+    */
+  @deprecated
+  private def buildIndexFor(intermediateSetofDocuments: Map[String, Document], catalogueName: String): Directory = {
 
     val directory = new RAMDirectory()
     val config = new IndexWriterConfig()
@@ -158,7 +181,7 @@ class LuceneIndexBuilderActor @Inject()(configuration: Configuration, wsClient: 
     try {
       iwriter.deleteAll()
       iwriter.commit()
-      luceneDocuments.foreach(iwriter.addDocument(_))
+      intermediateSetofDocuments.foreach(tup => iwriter.addDocument(tup._2))
       iwriter.commit()
       logger.info(s"Partial index ready for $catalogueName")
     }
@@ -168,6 +191,14 @@ class LuceneIndexBuilderActor @Inject()(configuration: Configuration, wsClient: 
     directory
   }
 
+  /**
+    * it all happens here
+    *
+    * @param catalogueName
+    * @param catalogueUrl
+    * @param startDocument
+    * @param documentsToFetch
+    */
   private def queryCatalogue(catalogueName: String, catalogueUrl: String, startDocument: Int,
                              documentsToFetch: Int): Unit = {
     val wsClientResponseFuture =
@@ -191,23 +222,23 @@ class LuceneIndexBuilderActor @Inject()(configuration: Configuration, wsClient: 
               case "GetRecordsResponse" => {
                 val cswGetRecResp = CswGetRecordsResponse(wsClientResponse.xml)
                 logger.info(
-                  f"nextRecord: ${cswGetRecResp.nextRecord}, " +
+                  f"c: $catalogueName nextRecord: ${cswGetRecResp.nextRecord}, " +
                     f"numberOfRec ${cswGetRecResp.numberOfRecordsMatched}, " +
                     f"recordsReturned ${cswGetRecResp.numberOfRecordsReturned}")
                 if ((cswGetRecResp.nextRecord > cswGetRecResp.numberOfRecordsMatched) ||
                   (cswGetRecResp.nextRecord == 0) ||
                   (cswGetRecResp.numberOfRecordsReturned == 0)) {
-                  logger.info("Sending IndexResponseDocument - is last!")
+                  logger.info(s"Sending IndexResponseDocument - is last! ($catalogueName)")
                   self ! IndexResponseDocument(cswGetRecResp, catalogueName, true)
                 }
                 else {
-                  logger.info("Sending IndexResponseDocument - and start another query round.")
+                  logger.info(s"Sending IndexResponseDocument - and start another query round. ($catalogueName)")
                   self ! IndexResponseDocument(cswGetRecResp, catalogueName, false)
                   queryCatalogue(catalogueName, catalogueUrl, cswGetRecResp.nextRecord, documentsToFetch)
                 }
               }
               case _ => {
-                logger.warn(f"Unknown response content. Body: ${wsClientResponse.xml.toString}")
+                logger.warn(f"Unknown response content. Body: ${wsClientResponse.xml.toString} ($catalogueName)")
                 self ! ShutdownActor(catalogueName)
               }
             }
@@ -218,7 +249,7 @@ class LuceneIndexBuilderActor @Inject()(configuration: Configuration, wsClient: 
         }
       }
       case Failure(ex) => {
-        logger.warn(s"Exception while querying CSW (${ex.getClass.getCanonicalName}): ${ex.getMessage}", ex)
+        logger.warn(s"Exception while querying CSW $catalogueName (${ex.getClass.getCanonicalName}): ${ex.getMessage}", ex)
         self ! ShutdownActor(catalogueName)
       }
     }

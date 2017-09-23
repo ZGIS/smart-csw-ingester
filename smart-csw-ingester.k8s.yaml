@@ -22,7 +22,7 @@ apiVersion: v1
 kind: ReplicationController
 metadata:
   annotations:
-    software: "Play Framework 2.5.6"
+    software: "Play Framework 2.5.x"
     notes: "uses in memory RAMDirectory index"
   labels:
     app: cswingester
@@ -37,14 +37,14 @@ spec:
   template:
     metadata:
       annotations:
-        software: "Play Framework 2.5.6"
+        software: "Play Framework 2.5.x"
         notes: "uses in memory RAMDirectory index"
       labels:
         app: cswingester
         environment: development
     spec:
       containers:
-      - image: eu.gcr.io/dynamic-cove-129211/cswingester:0.10
+      - image: eu.gcr.io/dynamic-cove-129211/cswingester:150
         imagePullPolicy: Always
         name: cswingester-dev
         ports:
@@ -53,17 +53,25 @@ spec:
           protocol: TCP
         resources:
           limits:
-            cpu: 100m
-            memory: 398Mi
+            cpu: 300m
+            memory: 1280Mi
           requests:
-            cpu: 100m
-            memory: 192Mi
+            cpu: 150m
+            memory: 768Mi
         env:
         - name: JAVA_OPTS
-          value: -Xmx398M
+          value: -Xmx1216M
         - name: APPLICATION_SECRET
           valueFrom:
             secretKeyRef:
               key: appsecret
               name: play-crypto
+        - name: INDEX_CACHE_DIR
+          value: /mnt/data
+        volumeMounts:
+        - mountPath: /mnt/data
+          name: index-cache-vol
       restartPolicy: Always
+      volumes:
+      - emptyDir:
+        name: index-cache-vol
