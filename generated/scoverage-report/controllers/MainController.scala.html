@@ -54,45 +54,46 @@
 </span>30 <span style=''>  * Controller that handles every &quot;unspecific&quot; request.
 </span>31 <span style=''>  */
 </span>32 <span style=''>class MainController extends Controller {
-</span>33 <span style=''>  /**
-</span>34 <span style=''>    * Create an Action to render an HTML page with a welcome message.
-</span>35 <span style=''>    * The configuration in the `routes` file means that this method
-</span>36 <span style=''>    * will be called when the application receives a `GET` request with
-</span>37 <span style=''>    * a path of `/`.
-</span>38 <span style=''>    */
-</span>39 <span style=''>  def index: Action[AnyContent] = </span><span style='background: #F0ADAD'>Action {
-</span>40 <span style=''></span><span style='background: #F0ADAD'>    Ok(views.html.index(&quot;Your new application is ready.&quot;))
-</span>41 <span style=''></span><span style='background: #F0ADAD'>  }</span><span style=''>
-</span>42 <span style=''>
-</span>43 <span style=''>  /**
-</span>44 <span style=''>    * cuts off any trailing &quot;/&quot; from the path
-</span>45 <span style=''>    * @param path
-</span>46 <span style=''>    * @return
-</span>47 <span style=''>    */
-</span>48 <span style=''>  def untrail(path: String): Action[AnyContent] = </span><span style='background: #F0ADAD'>Action {
-</span>49 <span style=''></span><span style='background: #F0ADAD'>    MovedPermanently(&quot;/&quot;.concat(path))
-</span>50 <span style=''></span><span style='background: #F0ADAD'>  }</span><span style=''>
-</span>51 <span style=''>
-</span>52 <span style=''>  /**
-</span>53 <span style=''>    * idea is to provide a listing of api usable endpoints with some parameter description,selectable by the fields param
-</span>54 <span style=''>    *
-</span>55 <span style=''>    * the BuildInfo object is generated through sbt-buildinfo plugin, src under target/scala-2.11/src_managed
-</span>56 <span style=''>    * configuration of this in build.sbt buildinfokeys
-</span>57 <span style=''>    *
-</span>58 <span style=''>    * @param fields
-</span>59 <span style=''>    * @return
-</span>60 <span style=''>    */
-</span>61 <span style=''>  def discovery(fields: Option[String]): Action[AnyContent] = </span><span style='background: #F0ADAD'>Action { request =&gt;
-</span>62 <span style=''></span><span style='background: #F0ADAD'>    val appName = utils.BuildInfo.name
-</span>63 <span style=''></span><span style='background: #F0ADAD'>    val appVersion = utils.BuildInfo.version
-</span>64 <span style=''></span><span style='background: #F0ADAD'>    val buildNumber = utils.BuildInfo.buildNumber
-</span>65 <span style=''></span><span style='background: #F0ADAD'>    Ok(Json.obj(
-</span>66 <span style=''></span><span style='background: #F0ADAD'>      &quot;appName&quot; -&gt; appName,
-</span>67 <span style=''></span><span style='background: #F0ADAD'>      &quot;version&quot; -&gt; s&quot;$appVersion-$buildNumber&quot;
-</span>68 <span style=''></span><span style='background: #F0ADAD'>    ))
-</span>69 <span style=''></span><span style='background: #F0ADAD'>  }</span><span style=''>
-</span>70 <span style=''>
-</span>71 <span style=''>}
+</span>33 <span style=''>
+</span>34 <span style=''>  /**
+</span>35 <span style=''>    * just to have something on /
+</span>36 <span style=''>    */
+</span>37 <span style=''>  def index: Action[AnyContent] = </span><span style='background: #F0ADAD'>Action {
+</span>38 <span style=''></span><span style='background: #F0ADAD'>    Ok(Json.obj(
+</span>39 <span style=''></span><span style='background: #F0ADAD'>      &quot;status&quot; -&gt; &quot;Ok&quot;,
+</span>40 <span style=''></span><span style='background: #F0ADAD'>      &quot;message&quot; -&gt; &quot;application is ready&quot;
+</span>41 <span style=''></span><span style='background: #F0ADAD'>    ))
+</span>42 <span style=''></span><span style='background: #F0ADAD'>  }</span><span style=''>
+</span>43 <span style=''>
+</span>44 <span style=''>  /**
+</span>45 <span style=''>    * cuts off any trailing &quot;/&quot; from the path
+</span>46 <span style=''>    * @param path
+</span>47 <span style=''>    * @return
+</span>48 <span style=''>    */
+</span>49 <span style=''>  def untrail(path: String): Action[AnyContent] = </span><span style='background: #F0ADAD'>Action {
+</span>50 <span style=''></span><span style='background: #F0ADAD'>    MovedPermanently(&quot;/&quot;.concat(path))
+</span>51 <span style=''></span><span style='background: #F0ADAD'>  }</span><span style=''>
+</span>52 <span style=''>
+</span>53 <span style=''>  /**
+</span>54 <span style=''>    * idea is to provide a listing of api usable endpoints with some parameter description,selectable by the fields param
+</span>55 <span style=''>    *
+</span>56 <span style=''>    * the BuildInfo object is generated through sbt-buildinfo plugin, src under target/scala-2.11/src_managed
+</span>57 <span style=''>    * configuration of this in build.sbt buildinfokeys
+</span>58 <span style=''>    *
+</span>59 <span style=''>    * @param fields
+</span>60 <span style=''>    * @return
+</span>61 <span style=''>    */
+</span>62 <span style=''>  def discovery(fields: Option[String]): Action[AnyContent] = </span><span style='background: #F0ADAD'>Action { request =&gt;
+</span>63 <span style=''></span><span style='background: #F0ADAD'>    val appName = utils.BuildInfo.name
+</span>64 <span style=''></span><span style='background: #F0ADAD'>    val appVersion = utils.BuildInfo.version
+</span>65 <span style=''></span><span style='background: #F0ADAD'>    val buildNumber = utils.BuildInfo.buildNumber
+</span>66 <span style=''></span><span style='background: #F0ADAD'>    Ok(Json.obj(
+</span>67 <span style=''></span><span style='background: #F0ADAD'>      &quot;appName&quot; -&gt; appName,
+</span>68 <span style=''></span><span style='background: #F0ADAD'>      &quot;version&quot; -&gt; s&quot;$appVersion-$buildNumber&quot;
+</span>69 <span style=''></span><span style='background: #F0ADAD'>    ))
+</span>70 <span style=''></span><span style='background: #F0ADAD'>  }</span><span style=''>
+</span>71 <span style=''>
+</span>72 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -106,15 +107,15 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          39
+          37
         </td>
         <td>
-          12
+          20
         </td>
         <td>
-          1387
+          1191
           -
-          1458
+          1293
         </td>
         <td>
           Apply
@@ -123,19 +124,19 @@
           play.api.mvc.ActionBuilder.apply
         </td>
         <td style="background: #F0ADAD">
-          play.api.mvc.Action.apply(MainController.this.Ok.apply[play.twirl.api.HtmlFormat.Appendable](views.html.index.apply(&quot;Your new application is ready.&quot;))(http.this.Writeable.writeableOf_Content[play.twirl.api.HtmlFormat.Appendable](mvc.this.Codec.utf_8, http.this.ContentTypeOf.contentTypeOf_Html(mvc.this.Codec.utf_8))))
+          play.api.mvc.Action.apply(MainController.this.Ok.apply[play.api.libs.json.JsObject](play.api.libs.json.Json.obj(scala.this.Predef.ArrowAssoc[String](&quot;status&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](&quot;Ok&quot;)(json.this.Writes.StringWrites)), scala.this.Predef.ArrowAssoc[String](&quot;message&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](&quot;application is ready&quot;)(json.this.Writes.StringWrites))))(http.this.Writeable.writeableOf_JsValue(mvc.this.Codec.utf_8)))
         </td>
       </tr><tr>
         <td>
-          40
+          38
         </td>
         <td>
-          8
+          17
         </td>
         <td>
-          1402
+          1206
           -
-          1402
+          1206
         </td>
         <td>
           Select
@@ -145,6 +146,174 @@
         </td>
         <td style="background: #F0ADAD">
           mvc.this.Codec.utf_8
+        </td>
+      </tr><tr>
+        <td>
+          38
+        </td>
+        <td>
+          16
+        </td>
+        <td>
+          1207
+          -
+          1288
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.libs.json.Json.obj
+        </td>
+        <td style="background: #F0ADAD">
+          play.api.libs.json.Json.obj(scala.this.Predef.ArrowAssoc[String](&quot;status&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](&quot;Ok&quot;)(json.this.Writes.StringWrites)), scala.this.Predef.ArrowAssoc[String](&quot;message&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](&quot;application is ready&quot;)(json.this.Writes.StringWrites)))
+        </td>
+      </tr><tr>
+        <td>
+          38
+        </td>
+        <td>
+          19
+        </td>
+        <td>
+          1204
+          -
+          1289
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.api.mvc.Results.Status.apply
+        </td>
+        <td style="background: #F0ADAD">
+          MainController.this.Ok.apply[play.api.libs.json.JsObject](play.api.libs.json.Json.obj(scala.this.Predef.ArrowAssoc[String](&quot;status&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](&quot;Ok&quot;)(json.this.Writes.StringWrites)), scala.this.Predef.ArrowAssoc[String](&quot;message&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](&quot;application is ready&quot;)(json.this.Writes.StringWrites))))(http.this.Writeable.writeableOf_JsValue(mvc.this.Codec.utf_8))
+        </td>
+      </tr><tr>
+        <td>
+          38
+        </td>
+        <td>
+          18
+        </td>
+        <td>
+          1206
+          -
+          1206
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.api.http.DefaultWriteables.writeableOf_JsValue
+        </td>
+        <td style="background: #F0ADAD">
+          http.this.Writeable.writeableOf_JsValue(mvc.this.Codec.utf_8)
+        </td>
+      </tr><tr>
+        <td>
+          39
+        </td>
+        <td>
+          8
+        </td>
+        <td>
+          1235
+          -
+          1235
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          play.api.libs.json.DefaultWrites.StringWrites
+        </td>
+        <td style="background: #F0ADAD">
+          json.this.Writes.StringWrites
+        </td>
+      </tr><tr>
+        <td>
+          39
+        </td>
+        <td>
+          7
+        </td>
+        <td>
+          1235
+          -
+          1239
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;Ok&quot;
+        </td>
+      </tr><tr>
+        <td>
+          39
+        </td>
+        <td>
+          10
+        </td>
+        <td>
+          1223
+          -
+          1239
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Predef.ArrowAssoc.-&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          scala.this.Predef.ArrowAssoc[String](&quot;status&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](&quot;Ok&quot;)(json.this.Writes.StringWrites))
+        </td>
+      </tr><tr>
+        <td>
+          39
+        </td>
+        <td>
+          9
+        </td>
+        <td>
+          1235
+          -
+          1239
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.api.libs.json.Json.toJsFieldJsValueWrapper
+        </td>
+        <td style="background: #F0ADAD">
+          json.this.Json.toJsFieldJsValueWrapper[String](&quot;Ok&quot;)(json.this.Writes.StringWrites)
+        </td>
+      </tr><tr>
+        <td>
+          39
+        </td>
+        <td>
+          6
+        </td>
+        <td>
+          1223
+          -
+          1231
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;status&quot;
         </td>
       </tr><tr>
         <td>
@@ -154,114 +323,114 @@
           11
         </td>
         <td>
-          1400
+          1247
           -
-          1454
+          1256
         </td>
         <td>
-          ApplyToImplicitArgs
+          Literal
         </td>
         <td>
-          play.api.mvc.Results.Status.apply
+          &lt;nosymbol&gt;
         </td>
         <td style="background: #F0ADAD">
-          MainController.this.Ok.apply[play.twirl.api.HtmlFormat.Appendable](views.html.index.apply(&quot;Your new application is ready.&quot;))(http.this.Writeable.writeableOf_Content[play.twirl.api.HtmlFormat.Appendable](mvc.this.Codec.utf_8, http.this.ContentTypeOf.contentTypeOf_Html(mvc.this.Codec.utf_8)))
+          &quot;message&quot;
         </td>
       </tr><tr>
         <td>
           40
         </td>
         <td>
-          7
+          14
         </td>
         <td>
-          1402
+          1260
           -
-          1402
+          1282
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.api.libs.json.Json.toJsFieldJsValueWrapper
+        </td>
+        <td style="background: #F0ADAD">
+          json.this.Json.toJsFieldJsValueWrapper[String](&quot;application is ready&quot;)(json.this.Writes.StringWrites)
+        </td>
+      </tr><tr>
+        <td>
+          40
+        </td>
+        <td>
+          13
+        </td>
+        <td>
+          1260
+          -
+          1260
         </td>
         <td>
           Select
         </td>
         <td>
-          play.api.mvc.Codec.utf_8
+          play.api.libs.json.DefaultWrites.StringWrites
         </td>
         <td style="background: #F0ADAD">
-          mvc.this.Codec.utf_8
+          json.this.Writes.StringWrites
         </td>
       </tr><tr>
         <td>
           40
         </td>
         <td>
-          10
+          12
         </td>
         <td>
-          1402
+          1260
           -
-          1402
+          1282
         </td>
         <td>
-          ApplyToImplicitArgs
+          Literal
         </td>
         <td>
-          play.api.http.LowPriorityWriteables.writeableOf_Content
+          &lt;nosymbol&gt;
         </td>
         <td style="background: #F0ADAD">
-          http.this.Writeable.writeableOf_Content[play.twirl.api.HtmlFormat.Appendable](mvc.this.Codec.utf_8, http.this.ContentTypeOf.contentTypeOf_Html(mvc.this.Codec.utf_8))
+          &quot;application is ready&quot;
         </td>
       </tr><tr>
         <td>
           40
-        </td>
-        <td>
-          9
-        </td>
-        <td>
-          1402
-          -
-          1402
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          play.api.http.DefaultContentTypeOfs.contentTypeOf_Html
-        </td>
-        <td style="background: #F0ADAD">
-          http.this.ContentTypeOf.contentTypeOf_Html(mvc.this.Codec.utf_8)
-        </td>
-      </tr><tr>
-        <td>
-          40
-        </td>
-        <td>
-          6
-        </td>
-        <td>
-          1403
-          -
-          1453
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          views.html.index_Scope0.index.apply
-        </td>
-        <td style="background: #F0ADAD">
-          views.html.index.apply(&quot;Your new application is ready.&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          48
         </td>
         <td>
           15
         </td>
         <td>
-          1601
+          1247
           -
-          1652
+          1282
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Predef.ArrowAssoc.-&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          scala.this.Predef.ArrowAssoc[String](&quot;message&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](&quot;application is ready&quot;)(json.this.Writes.StringWrites))
+        </td>
+      </tr><tr>
+        <td>
+          49
+        </td>
+        <td>
+          23
+        </td>
+        <td>
+          1436
+          -
+          1487
         </td>
         <td>
           Apply
@@ -274,15 +443,15 @@
         </td>
       </tr><tr>
         <td>
-          49
+          50
         </td>
         <td>
-          14
+          22
         </td>
         <td>
-          1614
+          1449
           -
-          1648
+          1483
         </td>
         <td>
           Apply
@@ -295,15 +464,15 @@
         </td>
       </tr><tr>
         <td>
-          49
+          50
         </td>
         <td>
-          13
+          21
         </td>
         <td>
-          1631
+          1466
           -
-          1647
+          1482
         </td>
         <td>
           Apply
@@ -316,15 +485,15 @@
         </td>
       </tr><tr>
         <td>
-          61
+          62
         </td>
         <td>
-          32
+          40
         </td>
         <td>
-          2062
+          1897
           -
-          2318
+          2153
         </td>
         <td>
           Apply
@@ -342,57 +511,57 @@
         </td>
       </tr><tr>
         <td>
-          62
-        </td>
-        <td>
-          16
-        </td>
-        <td>
-          2100
-          -
-          2120
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          utils.BuildInfo.name
-        </td>
-        <td style="background: #F0ADAD">
-          utils.BuildInfo.name
-        </td>
-      </tr><tr>
-        <td>
           63
         </td>
         <td>
-          17
+          24
         </td>
         <td>
-          2142
+          1935
           -
-          2165
+          1955
         </td>
         <td>
           Select
         </td>
         <td>
-          utils.BuildInfo.version
+          utils.BuildInfo.name
         </td>
         <td style="background: #F0ADAD">
-          utils.BuildInfo.version
+          utils.BuildInfo.name
         </td>
       </tr><tr>
         <td>
           64
         </td>
         <td>
-          18
+          25
         </td>
         <td>
-          2188
+          1977
           -
-          2215
+          2000
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          utils.BuildInfo.version
+        </td>
+        <td style="background: #F0ADAD">
+          utils.BuildInfo.version
+        </td>
+      </tr><tr>
+        <td>
+          65
+        </td>
+        <td>
+          26
+        </td>
+        <td>
+          2023
+          -
+          2050
         </td>
         <td>
           Select
@@ -405,78 +574,15 @@
         </td>
       </tr><tr>
         <td>
-          65
+          66
         </td>
         <td>
-          29
+          38
         </td>
         <td>
-          2222
+          2057
           -
-          2222
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          play.api.mvc.Codec.utf_8
-        </td>
-        <td style="background: #F0ADAD">
-          mvc.this.Codec.utf_8
-        </td>
-      </tr><tr>
-        <td>
-          65
-        </td>
-        <td>
-          31
-        </td>
-        <td>
-          2220
-          -
-          2314
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          play.api.mvc.Results.Status.apply
-        </td>
-        <td style="background: #F0ADAD">
-          MainController.this.Ok.apply[play.api.libs.json.JsObject](play.api.libs.json.Json.obj(scala.this.Predef.ArrowAssoc[String](&quot;appName&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](appName)(json.this.Writes.StringWrites)), scala.this.Predef.ArrowAssoc[String](&quot;version&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](scala.StringContext.apply(&quot;&quot;, &quot;-&quot;, &quot;&quot;).s(appVersion, buildNumber))(json.this.Writes.StringWrites))))(http.this.Writeable.writeableOf_JsValue(mvc.this.Codec.utf_8))
-        </td>
-      </tr><tr>
-        <td>
-          65
-        </td>
-        <td>
-          28
-        </td>
-        <td>
-          2223
-          -
-          2313
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          play.api.libs.json.Json.obj
-        </td>
-        <td style="background: #F0ADAD">
-          play.api.libs.json.Json.obj(scala.this.Predef.ArrowAssoc[String](&quot;appName&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](appName)(json.this.Writes.StringWrites)), scala.this.Predef.ArrowAssoc[String](&quot;version&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](scala.StringContext.apply(&quot;&quot;, &quot;-&quot;, &quot;&quot;).s(appVersion, buildNumber))(json.this.Writes.StringWrites)))
-        </td>
-      </tr><tr>
-        <td>
-          65
-        </td>
-        <td>
-          30
-        </td>
-        <td>
-          2222
-          -
-          2222
+          2057
         </td>
         <td>
           ApplyToImplicitArgs
@@ -492,75 +598,75 @@
           66
         </td>
         <td>
-          20
+          37
         </td>
         <td>
-          2252
+          2057
           -
-          2252
+          2057
         </td>
         <td>
           Select
         </td>
         <td>
-          play.api.libs.json.DefaultWrites.StringWrites
+          play.api.mvc.Codec.utf_8
         </td>
         <td style="background: #F0ADAD">
-          json.this.Writes.StringWrites
+          mvc.this.Codec.utf_8
         </td>
       </tr><tr>
         <td>
           66
         </td>
         <td>
-          22
+          36
         </td>
         <td>
-          2239
+          2058
           -
-          2259
+          2148
         </td>
         <td>
           Apply
         </td>
         <td>
-          scala.Predef.ArrowAssoc.-&gt;
+          play.api.libs.json.Json.obj
         </td>
         <td style="background: #F0ADAD">
-          scala.this.Predef.ArrowAssoc[String](&quot;appName&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](appName)(json.this.Writes.StringWrites))
+          play.api.libs.json.Json.obj(scala.this.Predef.ArrowAssoc[String](&quot;appName&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](appName)(json.this.Writes.StringWrites)), scala.this.Predef.ArrowAssoc[String](&quot;version&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](scala.StringContext.apply(&quot;&quot;, &quot;-&quot;, &quot;&quot;).s(appVersion, buildNumber))(json.this.Writes.StringWrites)))
         </td>
       </tr><tr>
         <td>
           66
         </td>
         <td>
-          19
+          39
         </td>
         <td>
-          2239
+          2055
           -
-          2248
+          2149
         </td>
         <td>
-          Literal
+          ApplyToImplicitArgs
         </td>
         <td>
-          &lt;nosymbol&gt;
+          play.api.mvc.Results.Status.apply
         </td>
         <td style="background: #F0ADAD">
-          &quot;appName&quot;
+          MainController.this.Ok.apply[play.api.libs.json.JsObject](play.api.libs.json.Json.obj(scala.this.Predef.ArrowAssoc[String](&quot;appName&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](appName)(json.this.Writes.StringWrites)), scala.this.Predef.ArrowAssoc[String](&quot;version&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](scala.StringContext.apply(&quot;&quot;, &quot;-&quot;, &quot;&quot;).s(appVersion, buildNumber))(json.this.Writes.StringWrites))))(http.this.Writeable.writeableOf_JsValue(mvc.this.Codec.utf_8))
         </td>
       </tr><tr>
         <td>
-          66
+          67
         </td>
         <td>
-          21
+          29
         </td>
         <td>
-          2252
+          2087
           -
-          2259
+          2094
         </td>
         <td>
           ApplyToImplicitArgs
@@ -576,54 +682,12 @@
           67
         </td>
         <td>
-          23
+          28
         </td>
         <td>
-          2267
+          2087
           -
-          2276
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;version&quot;
-        </td>
-      </tr><tr>
-        <td>
-          67
-        </td>
-        <td>
-          26
-        </td>
-        <td>
-          2280
-          -
-          2307
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          play.api.libs.json.Json.toJsFieldJsValueWrapper
-        </td>
-        <td style="background: #F0ADAD">
-          json.this.Json.toJsFieldJsValueWrapper[String](scala.StringContext.apply(&quot;&quot;, &quot;-&quot;, &quot;&quot;).s(appVersion, buildNumber))(json.this.Writes.StringWrites)
-        </td>
-      </tr><tr>
-        <td>
-          67
-        </td>
-        <td>
-          25
-        </td>
-        <td>
-          2280
-          -
-          2280
+          2087
         </td>
         <td>
           Select
@@ -642,9 +706,72 @@
           27
         </td>
         <td>
-          2267
+          2074
           -
-          2307
+          2083
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;appName&quot;
+        </td>
+      </tr><tr>
+        <td>
+          67
+        </td>
+        <td>
+          30
+        </td>
+        <td>
+          2074
+          -
+          2094
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Predef.ArrowAssoc.-&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          scala.this.Predef.ArrowAssoc[String](&quot;appName&quot;).-&gt;[play.api.libs.json.Json.JsValueWrapper](json.this.Json.toJsFieldJsValueWrapper[String](appName)(json.this.Writes.StringWrites))
+        </td>
+      </tr><tr>
+        <td>
+          68
+        </td>
+        <td>
+          32
+        </td>
+        <td>
+          2115
+          -
+          2142
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.StringContext.s
+        </td>
+        <td style="background: #F0ADAD">
+          scala.StringContext.apply(&quot;&quot;, &quot;-&quot;, &quot;&quot;).s(appVersion, buildNumber)
+        </td>
+      </tr><tr>
+        <td>
+          68
+        </td>
+        <td>
+          35
+        </td>
+        <td>
+          2102
+          -
+          2142
         </td>
         <td>
           Apply
@@ -657,24 +784,66 @@
         </td>
       </tr><tr>
         <td>
-          67
+          68
         </td>
         <td>
-          24
+          31
         </td>
         <td>
-          2280
+          2102
           -
-          2307
+          2111
         </td>
         <td>
-          Apply
+          Literal
         </td>
         <td>
-          scala.StringContext.s
+          &lt;nosymbol&gt;
         </td>
         <td style="background: #F0ADAD">
-          scala.StringContext.apply(&quot;&quot;, &quot;-&quot;, &quot;&quot;).s(appVersion, buildNumber)
+          &quot;version&quot;
+        </td>
+      </tr><tr>
+        <td>
+          68
+        </td>
+        <td>
+          34
+        </td>
+        <td>
+          2115
+          -
+          2142
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.api.libs.json.Json.toJsFieldJsValueWrapper
+        </td>
+        <td style="background: #F0ADAD">
+          json.this.Json.toJsFieldJsValueWrapper[String](scala.StringContext.apply(&quot;&quot;, &quot;-&quot;, &quot;&quot;).s(appVersion, buildNumber))(json.this.Writes.StringWrites)
+        </td>
+      </tr><tr>
+        <td>
+          68
+        </td>
+        <td>
+          33
+        </td>
+        <td>
+          2115
+          -
+          2115
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          play.api.libs.json.DefaultWrites.StringWrites
+        </td>
+        <td style="background: #F0ADAD">
+          json.this.Writes.StringWrites
         </td>
       </tr>
     </table>
