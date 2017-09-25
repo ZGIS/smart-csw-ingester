@@ -314,7 +314,9 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
 
     logger.debug(s"parsed shape is ${shape.toString}")
     val bboxStrategy: BBoxStrategy = BBoxStrategy.newInstance(SPATIAL_CONTEXT, "bbox")
-    bboxStrategy.makeQuery(new SpatialArgs(SpatialOperation.IsWithin, shape))
+    // bboxStrategy.makeQuery(new SpatialArgs(SpatialOperation.IsWithin, shape))
+    // FIXME AK intersects vs iswithin, should be selectable
+    bboxStrategy.makeQuery(new SpatialArgs(SpatialOperation.Intersects, shape))
   }
 
   /**
