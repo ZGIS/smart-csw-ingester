@@ -27,7 +27,7 @@ import models.gmd.MdMetadataSet
 import org.apache.lucene.document.Document
 import org.apache.lucene.index.{IndexWriter, IndexWriterConfig}
 import org.apache.lucene.store.{Directory, RAMDirectory}
-import play.api.{Configuration, Environment}
+import play.api.{Configuration, Environment, Mode}
 import play.api.http.Status
 import play.api.libs.ws.WSClient
 import services.LuceneIndexBuilderActor._
@@ -51,7 +51,9 @@ object LuceneIndexBuilderActor {
 
   // case class MergeLuceneIndexLocal(directory: Directory, catalogueName: String)
 
-  case class QueryCatalogue(catalogueName: String, catalogueUrl: String)
+  case class QueryCatalogueFirst(catalogueName: String, catalogueUrl: String)
+
+  case class QueryCatalogueNext(catalogueName: String, catalogueUrl: String, startDocument: Int, documentsToFetch: Int)
 
   case class ShutdownActor(catalogueName: String)
 
@@ -86,15 +88,23 @@ class LuceneIndexBuilderActor @Inject()(configuration: Configuration,
     case IndexCatalogue(catalogueName, catalogueUrl) => {
       logger.info(s"Initialising to index catalogue $catalogueName")
       context.become(indexing)
-      self ! QueryCatalogue(catalogueName, catalogueUrl)
+      self ! QueryCatalogueFirst(catalogueName, catalogueUrl)
     }
     //FIXME some kind of default behaviour?
   }
 
   def indexing: Receive = {
-    case QueryCatalogue(catalogueName, catalogueUrl) => {
+    case QueryCatalogueFirst(catalogueName, catalogueUrl) => {
       logger.info(s"Querying $catalogueName on url $catalogueUrl")
       queryCatalogue(catalogueName, catalogueUrl, 1, maxDocsPerFetch)
+    }
+
+    case QueryCatalogueNext(catalogueName, catalogueUrl, startDocument, documentsToFetch) => {
+      val secDelay = if (environment.mode.equals(Mode.Prod)) 5 + scala.util.Random.nextInt(6) else 1
+      logger.info(s"Querying next round $catalogueName on url $catalogueUrl in ${secDelay}s")
+      context.system.scheduler.scheduleOnce(secDelay.seconds) {
+        queryCatalogue(catalogueName, catalogueUrl, startDocument, documentsToFetch)
+      }
     }
 
     case IndexResponseDocument(cswGetRecordsResponse, catalogueName, isLast) => {
@@ -192,7 +202,7 @@ class LuceneIndexBuilderActor @Inject()(configuration: Configuration,
   }
 
   /**
-    * it all happens here
+    * it all happens here, we could have tried tailrec annotation to work in constant heap?
     *
     * @param catalogueName
     * @param catalogueUrl
@@ -234,7 +244,7 @@ class LuceneIndexBuilderActor @Inject()(configuration: Configuration,
                 else {
                   logger.info(s"Sending IndexResponseDocument - and start another query round. ($catalogueName)")
                   self ! IndexResponseDocument(cswGetRecResp, catalogueName, false)
-                  queryCatalogue(catalogueName, catalogueUrl, cswGetRecResp.nextRecord, documentsToFetch)
+                  self ! QueryCatalogueNext(catalogueName, catalogueUrl, cswGetRecResp.nextRecord, documentsToFetch)
                 }
               }
               case _ => {
