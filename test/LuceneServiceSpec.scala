@@ -187,18 +187,20 @@ class LuceneServiceSpec extends PlaySpec with WithLuceneService {
         }
       }
 
-      "find 1 document for [168,179,-34,-47]" in {
+      // intersect vs within
+      "find 5 documents for [168,179,-34,-47]" in {
         withLuceneService { service =>
           val result = service.query("*:*", Some("ENVELOPE(168, 179,-34,-47)"))
-          result.documents.size mustBe 1
-          result.documents.head.fileIdentifier mustBe "294f127b-addb-24d8-0df1-f014032dcd02"
+          result.documents.size mustBe 5
+          result.documents.exists(_.fileIdentifier.equalsIgnoreCase("294f127b-addb-24d8-0df1-f014032dcd02")) mustBe true
         }
       }
 
-      "find 2 documents for [166,-176,-34,-48]" in {
+      // intersect vs within
+      "find 5 documents for [166,-176,-34,-48]" in {
         withLuceneService { service =>
           val result = service.query("*:*", Some("ENVELOPE(166,-176,-34,-48)"))
-          result.documents.size mustBe 2
+          result.documents.size mustBe 5
           result.documents.exists(
             md => md.fileIdentifier.equalsIgnoreCase("23bdd7a3-fd21-daf1-7825-0d3bdc256f9d")) mustBe true
         }
