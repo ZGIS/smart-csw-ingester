@@ -17,12 +17,8 @@
  * limitations under the License.
  */
 
-import com.typesafe.sbt.packager.archetypes.JavaAppPackaging
-import com.typesafe.sbt.packager.docker._
-import com.sksamuel.scapegoat.sbt._
 import com.sksamuel.scapegoat.sbt.ScapegoatSbtPlugin.autoImport._
-import scoverage.ScoverageKeys._
-import java.util.Date
+import com.typesafe.sbt.packager.archetypes.JavaAppPackaging
 
 name := """smart-csw-ingester"""
 
@@ -108,7 +104,7 @@ lazy val coverageCopyTask = TaskKey[Unit]("copy-coverage")
 
 coverageCopyTask := {
   println(s"Copying: ./target/scala-2.11/scoverage-report/ to $genSiteDir")
-  val result = Seq("cp", "-r", "./target/scala-2.11/scoverage-report", genSiteDir + "/scoverage-report") !!
+  val result = Seq("cp", "-r", "./target/scala-2.11/scoverage-report", genSiteDir) !!
 }
 
 // vulnerabilities of dependencies
