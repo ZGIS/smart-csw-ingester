@@ -63,7 +63,17 @@ class MdMetadataJsonWriterSpec extends PlaySpec {
     "provide GeoJSON Feature for one MdMetadaset" in {
       val linzFeatureJsonResource = this.getClass().getResource("linzFeatureTest.json")
       val linzFeatureJsonString = scala.io.Source.fromURL(linzFeatureJsonResource).getLines.mkString
-      Json.toJson(parsedElement1.get) mustEqual Json.parse(linzFeatureJsonString)
+
+      val ps1 = Json.toJson(parsedElement1.get)
+      val ps2 = Json.parse(linzFeatureJsonString)
+
+      // play-json Diffson https://github.com/gnieh/diffson
+      import gnieh.diffson.playJson._
+      val patch = JsonDiff.diff(Json.stringify(ps1), Json.stringify(ps2), false)
+
+      println(patch)
+
+      ps1 mustEqual ps2
     }
 
     "provide List of GeoJSON as FeatureCollection for list of MdMetadaset" in {
@@ -74,7 +84,16 @@ class MdMetadataJsonWriterSpec extends PlaySpec {
       val jsResource = this.getClass().getResource("featureCollectionTest.json")
       val jsonTestFeatureCollection = scala.io.Source.fromURL(jsResource).getLines.mkString
 
-      geoJsonFeatureCollection mustEqual Json.parse(jsonTestFeatureCollection)
+      val ps1 = geoJsonFeatureCollection
+      val ps2 = Json.parse(jsonTestFeatureCollection)
+
+      // play-json Diffson https://github.com/gnieh/diffson
+      import gnieh.diffson.playJson._
+      val patch = JsonDiff.diff(Json.stringify(ps1), Json.stringify(ps2), false)
+
+      println(patch)
+
+      ps1 mustEqual ps2
 
     }
 

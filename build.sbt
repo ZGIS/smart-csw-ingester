@@ -47,6 +47,7 @@ libraryDependencies ++= Seq(
   "org.locationtech.spatial4j" % "spatial4j" % "0.6",
 
   "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test,
+  "org.gnieh" %% "diffson" % "2.0.2" % Test,
   specs2 % Test
 )
 

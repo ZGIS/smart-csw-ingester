@@ -53,6 +53,9 @@ import scala.xml.NodeSeq
   * @param lineageStmt     Lineage Statement
   * @param linkage         List of Linkages
   * @param origin          origin i.e. source catalogue where the record was loaded from
+  * @param originUrl       url of source catalogue where the record was loaded from
+  * @param searchScore     relative search score from lucene
+  * @param hierarchyLevel  type of the resource, i.e. dataset, nonGeographicDataset, service, etc
   */
 case class MdMetadataSet(fileIdentifier: String,
                          dateStamp: LocalDate,
@@ -70,7 +73,8 @@ case class MdMetadataSet(fileIdentifier: String,
                          linkage: List[CIOnlineResource],
                          origin: String,
                          originUrl: String,
-                         searchScore: Float = 0.0f) extends ClassnameLogger {
+                         searchScore: Float = 0.0f,
+                         hierarchyLevel: String = "dataset") extends ClassnameLogger {
   require(!fileIdentifier.trim.isEmpty, "FileIdentifier was empty")
 
   override def toString: String = {
@@ -92,6 +96,7 @@ case class MdMetadataSet(fileIdentifier: String,
        |${origin},
        |${originUrl}
        |${searchScore}
+       |${hierarchyLevel}
        |)
      """.stripMargin.replaceAll("\n", " ")
   }
@@ -145,6 +150,7 @@ case class MdMetadataSet(fileIdentifier: String,
 
     doc.add(new TextField("origin", origin, Field.Store.YES))
     doc.add(new TextField("originUrl", originUrl, Field.Store.YES))
+    doc.add(new TextField("hierarchyLevel", hierarchyLevel, Field.Store.YES))
 
     //FIXME decide if use catch_all field or how to build a query that queries all fields
     doc.add(new TextField("catch_all", fileIdentifier, Field.Store.YES))
@@ -165,6 +171,8 @@ case class MdMetadataSet(fileIdentifier: String,
     doc.add(new TextField("catch_all", license, Field.Store.YES))
     doc.add(new TextField("catch_all", lineageStmt, Field.Store.YES))
     doc.add(new TextField("catch_all", origin, Field.Store.YES))
+    doc.add(new TextField("catch_all", originUrl, Field.Store.YES))
+    doc.add(new TextField("catch_all", hierarchyLevel, Field.Store.YES))
 
     doc
   }
@@ -222,7 +230,25 @@ object MdMetadataSet extends ClassnameLogger {
     try {
       nodeSeq.head.label match {
         case "MD_Metadata" =>
-          Some(MdMetadataSet((nodeSeq \ "fileIdentifier" \ "CharacterString").text, dateFromXml(nodeSeq), (nodeSeq \\ "identificationInfo" \ "MD_DataIdentification" \ "citation" \ "CI_Citation" \ "title" \ "CharacterString").text, (nodeSeq \\ "identificationInfo" \ "MD_DataIdentification" \ "abstract" \ "CharacterString").text, keywordsFromXml(nodeSeq), smartCategoryFromXml(nodeSeq), topicCategoriesFromXml(nodeSeq), contactNameFromXml(nodeSeq), contactOrgFromXml(nodeSeq), contactEmailFromXml(nodeSeq), licenseFromXml(nodeSeq), bboxFromXml(nodeSeq), lineageFromXml(nodeSeq), linkageFromXml(nodeSeq, origin), origin, originUrl))
+          Some(MdMetadataSet(
+            // : Rectangle, : String, : List[CIOnlineResource], : String, : String, searchScore: Float, hierarchyLevel: String
+            fileIdentifier = (nodeSeq \ "fileIdentifier" \ "CharacterString").text,
+            dateStamp = dateFromXml(nodeSeq),
+            title = (nodeSeq \\ "identificationInfo" \ "MD_DataIdentification" \ "citation" \ "CI_Citation" \ "title" \ "CharacterString").text,
+            abstrakt = (nodeSeq \\ "identificationInfo" \ "MD_DataIdentification" \ "abstract" \ "CharacterString").text,
+            keywords = keywordsFromXml(nodeSeq),
+            smartCategory = smartCategoryFromXml(nodeSeq),
+            topicCategories = topicCategoriesFromXml(nodeSeq),
+            contactName = contactNameFromXml(nodeSeq),
+            contactOrg = contactOrgFromXml(nodeSeq),
+            contactEmail = contactEmailFromXml(nodeSeq),
+            license = licenseFromXml(nodeSeq),
+            bbox = bboxFromXml(nodeSeq),
+            lineageStmt = lineageFromXml(nodeSeq),
+            linkage = linkageFromXml(nodeSeq, origin),
+            origin = origin,
+            originUrl = originUrl,
+            hierarchyLevel = (nodeSeq \\ "hierarchyLevelName" \ "CharacterString").headOption.map(_.text).getOrElse("dataset")))
         case _ =>
           throw new IllegalArgumentException(f"Expected MDMetadataNode but found  ${nodeSeq.head.label}")
       }
@@ -538,9 +564,26 @@ object MdMetadataSet extends ClassnameLogger {
     * @return [[MdMetadataSet]] extracted from retrieved LuceneDocument
     */
   def fromLuceneDoc(doc: Document, score: Float): MdMetadataSet = {
-    MdMetadataSet(fileIdentifier = doc.get("fileIdentifier"), dateStamp = MdMetadataSet.dateFromStrings(List(doc.get("dateStampText"))), title = doc.get("title"), abstrakt = doc.get("abstrakt"), keywords = doc.getValues("keywords").toList, smartCategory = doc.getValues("smartCategory").toList, topicCategories = doc.getValues("topicCategory").toList, contactName = doc.get("contactName"), contactOrg = doc.get("contactOrg"), contactEmail = doc.get("contactEmail"), license = doc.get("license"), bbox = MdMetadataSet.bboxFromWkt(doc.get("bboxText")), lineageStmt = doc.get("lineageStmt"), linkage = doc.getValues("linkageFull").toList.map(str =>
-            Json.fromJson[CIOnlineResource](Json.parse(str)).get
-          ), origin = doc.get("origin"), originUrl = doc.get("originUrl"), score)
+    MdMetadataSet(fileIdentifier = doc.get("fileIdentifier"),
+      dateStamp = MdMetadataSet.dateFromStrings(List(doc.get("dateStampText"))),
+      title = doc.get("title"),
+      abstrakt = doc.get("abstrakt"),
+      keywords = doc.getValues("keywords").toList,
+      smartCategory = doc.getValues("smartCategory").toList,
+      topicCategories = doc.getValues("topicCategory").toList,
+      contactName = doc.get("contactName"),
+      contactOrg = doc.get("contactOrg"),
+      contactEmail = doc.get("contactEmail"),
+      license = doc.get("license"),
+      bbox = MdMetadataSet.bboxFromWkt(doc.get("bboxText")),
+      lineageStmt = doc.get("lineageStmt"),
+      linkage = doc.getValues("linkageFull").toList.map(str =>
+        Json.fromJson[CIOnlineResource](Json.parse(str)).get),
+      origin = doc.get("origin"),
+      originUrl = doc.get("originUrl"),
+      searchScore = score,
+      hierarchyLevel = doc.get("hierarchyLevel")
+    )
   }
 
   /**
@@ -622,7 +665,9 @@ object MdMetadataSetWriter extends Writes[MdMetadataSet] with ClassnameLogger {
       "linkage" -> gmd.linkage.map(Json.toJson(_)),
       "origin" -> gmd.origin,
       "originUrl" -> gmd.originUrl,
+      "hierarchyLevel" -> gmd.hierarchyLevel,
       "searchScore" -> gmd.searchScore
+
     )
 
     Json.obj(
