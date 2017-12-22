@@ -203,6 +203,21 @@ class MdMetadataSetSpec extends PlaySpec {
     }
   }
 
+  "MD_Metadata_NONGEOGRAPHICDATASET.xml" must {
+    lazy val xmlResource = this.getClass().getResource("MD_Metadata_NONGEOGRAPHICDATASET.xml")
+    lazy val xml = scala.xml.XML.load(xmlResource)
+    lazy val parsedElementOption = MdMetadataSet.fromXml(xml, "journals", "https://portal.smart-project.info/journalcsw/csw")
+
+    "parse without errors" in {
+      parsedElementOption mustBe defined
+    }
+
+    "have nonGeographicDataset" in {
+      val parsedElement = parsedElementOption.get
+      parsedElement.hierarchyLevel mustEqual "nonGeographicDataset"
+    }
+  }
+
   //TODO SR delete this. its a leftover from ancient times
   @Ignore def `test: Parsing Notes for Alex describe should`: Unit = {
 

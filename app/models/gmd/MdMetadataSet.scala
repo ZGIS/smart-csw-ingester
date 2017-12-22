@@ -248,7 +248,7 @@ object MdMetadataSet extends ClassnameLogger {
             linkage = linkageFromXml(nodeSeq, origin),
             origin = origin,
             originUrl = originUrl,
-            hierarchyLevel = (nodeSeq \\ "hierarchyLevelName" \ "CharacterString").headOption.map(_.text).getOrElse("dataset")))
+            hierarchyLevel = hierarchyLevelFromXml(nodeSeq)))
         case _ =>
           throw new IllegalArgumentException(f"Expected MDMetadataNode but found  ${nodeSeq.head.label}")
       }
@@ -370,6 +370,27 @@ object MdMetadataSet extends ClassnameLogger {
   def topicCategoriesFromXml(nodeSeq: NodeSeq): List[String] = {
     (nodeSeq \\ "identificationInfo" \ "MD_DataIdentification" \ "topicCategory" \ "MD_TopicCategoryCode").map(
       elem => elem.text).toList
+  }
+  /**
+    * extracts hierarchyLevel fields from the provided XML,
+    * there are three places, listed in preferential order:
+    * . gmd:hierarchyLevel \ gmd:MD_ScopeCode \ codeListValue="nonGeographicDataset"
+    * . gmd:hierarchyLevel \ gmd:MD_ScopeCode \ text
+    * . gmd:hierarchyLevelName \ gmd:CharacterString \ text
+    * and can be of typically dataset, service, software, model, sensor, series, nonGeographicDatset
+    *
+    * @param nodeSeq the provided xml
+    * @return a String of the decided hierarchyLevel
+    */
+  def hierarchyLevelFromXml(nodeSeq: NodeSeq): String = {
+    val hierarchyLevelScopeCodeListValueSeq = (nodeSeq \\ "hierarchyLevel" \ "MD_ScopeCode" \ "@codeListValue")
+    val hierarchyLevelScopeTextSeq = (nodeSeq \\ "hierarchyLevel" \ "MD_ScopeCode")
+    val hierarchyLevelNameOptSeq = (nodeSeq \\ "hierarchyLevelName" \ "CharacterString")
+
+    val levels = (hierarchyLevelScopeCodeListValueSeq ++ hierarchyLevelScopeTextSeq ++ hierarchyLevelNameOptSeq)
+      .map(elem => elem.text.trim).filter(hl => hl.length > 0)
+
+    levels.headOption.getOrElse("dataset")
   }
 
   /**
