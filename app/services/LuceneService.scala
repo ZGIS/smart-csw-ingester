@@ -20,10 +20,10 @@
 package services
 
 import java.io.{File, IOException}
-import java.nio.file.{Files, Paths}
+import java.nio.file.{Files, Path, Paths}
 import java.time.LocalDate
-import javax.inject.{Inject, Named, Singleton}
 
+import javax.inject.{Inject, Named, Singleton}
 import akka.actor.{ActorRef, ActorSystem, _}
 import akka.pattern.ask
 import models.gmd.MdMetadataSet
@@ -51,6 +51,8 @@ import scala.collection.JavaConverters._
 import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.util.{Failure, Success}
+import com.sksamuel.avro4s.{AvroInputStream, AvroOutputStream, AvroSchema}
+import org.apache.avro.Schema
 
 trait IndexService {
   //FIXME SR find a good place for this
@@ -88,6 +90,7 @@ trait SearchResult {
   val documents: List[MdMetadataSet]
 }
 
+case class CatalogueIdState(catalogueName: String, fileIdentifiers: Seq[String])
 
 /**
   * This service wraps around Lucene and controls all the CSW reading.
@@ -119,6 +122,9 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
 
   // in fs folder for possible re-open
   private val indexFileSystemDirectory = openOrCreateFileSystemIndex(indexBaseFolder)
+
+  private val catalogueStateDirectory = openOrCreateCatalogueStateDir(indexBaseFolder)
+  val avroSchema: Schema = AvroSchema[CatalogueIdState]
 
   private val indexDirectory = indexFileSystemDirectory
 
@@ -190,6 +196,23 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
   }
 
   def mergeUpdateDocsIndex(docs: Map[String, Document], catalogueName: String): Unit = {
+
+    // try load persisted catalogue state id list
+    val filename = s"$catalogueName.avro"
+    val avroFile = new File(catalogueStateDirectory + File.separator + filename)
+    val keys = docs.keys.toSet
+
+    val avroIn = AvroInputStream.data[CatalogueIdState](avroFile)
+    val oldCatalogueState = avroIn.iterator.toSeq.headOption
+    avroIn.close()
+
+    val inOldButnotInNew: Option[Set[String]] = oldCatalogueState.map { cs =>
+      cs.fileIdentifiers.toSet.diff(keys)
+    }
+    // if existent calcluate the diff of file ids in the old loaded list vs the file ids in the current merge opearation
+
+    // if ids in old, but not in new, go through the lucene directory and try to delete these by id from th ecurrent index
+
     val config = new IndexWriterConfig()
     config.setCommitOnClose(true)
     config.setOpenMode(OpenMode.CREATE_OR_APPEND)
@@ -202,9 +225,24 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
       iwriter.commit()
       // iwriter.forceMerge(1, true)
       logger.info(s"Update-merging index $catalogueName into main, ready ")
+
+      inOldButnotInNew.map(diffSet => diffSet.map(id => try {
+        iwriter.deleteDocuments(new Term("id", id))
+      }))
+
     }
     finally {
       iwriter.close()
+    }
+
+    // persist the new state for the catalogue
+    val avroOut = AvroOutputStream.data[CatalogueIdState](avroFile)
+    try {
+      avroOut.write(CatalogueIdState(catalogueName, keys.toSeq))
+      avroOut.flush()
+      logger.info(s"Updating catalogue state persistence for $catalogueName, ready ")
+    } finally {
+      avroOut.close()
     }
   }
 
@@ -444,5 +482,35 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
     }
 
     directory
+  }
+
+  /**
+    * creates the folder for the avro file identifier persistence list
+    *
+    * @param indexBaseFolder
+    * @return
+    */
+  private def openOrCreateCatalogueStateDir(indexBaseFolder: String): Path = {
+    val baseIndexDir = Paths.get(indexBaseFolder)
+    if (!Files.isWritable(baseIndexDir)) {
+      val errmsg = s"Main index storage directory ${baseIndexDir.toAbsolutePath} does not exist or is not writable, please check the path"
+      logger.error(errmsg)
+      throw new IOException(errmsg)
+    }
+    val catalogueStateDir = new File(Paths.get(indexBaseFolder) + File.separator + "state")
+
+    val preExistent = if (Files.isWritable(catalogueStateDir.toPath)) {
+      true
+    } else {
+      if (catalogueStateDir.mkdir()) {
+        false
+      } else {
+        val errmsg = s"catalogue state sub-directory ${catalogueStateDir.toPath.toString} could not be created"
+        logger.error(errmsg)
+        throw new IOException(errmsg)
+      }
+    }
+
+    catalogueStateDir.toPath
   }
 }

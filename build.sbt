@@ -30,6 +30,7 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala, BuildInfoPlugin,
 scalaVersion := "2.11.8"
 
 val luceneVersion = "6.4.0"
+val avro4sVersion = "1.8.3"
 
 libraryDependencies ++= Seq(
   ws,
@@ -45,6 +46,7 @@ libraryDependencies ++= Seq(
   "org.apache.lucene" % "lucene-spatial-extras" % luceneVersion,
 //  "com.vividsolutions" % "jts" 	% "1.14",
   "org.locationtech.spatial4j" % "spatial4j" % "0.6",
+  "com.sksamuel.avro4s" %% "avro4s-core" % avro4sVersion,
 
   "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test,
   "org.gnieh" %% "diffson" % "2.0.2" % Test,
