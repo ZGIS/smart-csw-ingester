@@ -226,9 +226,14 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
       // iwriter.forceMerge(1, true)
       logger.info(s"Update-merging index $catalogueName into main, ready ")
 
-      inOldButnotInNew.map(diffSet => diffSet.map(id => try {
-        iwriter.deleteDocuments(new Term("id", id))
-      }))
+      inOldButnotInNew.map(diffSet =>
+        diffSet.map(id => try {
+          iwriter.deleteDocuments(new Term("id", id))
+        }))
+
+      iwriter.commit()
+      // iwriter.forceMerge(1, true)
+      logger.info(s"Update-merging remove old ids from $catalogueName into main, ready ")
 
     }
     finally {
