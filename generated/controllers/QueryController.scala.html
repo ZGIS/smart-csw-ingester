@@ -180,7 +180,16 @@
 </span>156 <span style=''></span><span style='background: #F0ADAD'>    luceneService.buildIndex(catalogueName)
 </span>157 <span style=''></span><span style='background: #F0ADAD'>    Ok(s&quot;building index for $catalogueName&quot;)
 </span>158 <span style=''></span><span style='background: #F0ADAD'>  }</span><span style=''>
-</span>159 <span style=''>}
+</span>159 <span style=''>
+</span>160 <span style=''>  def deleteFromIndex(fileIdentifier: String): Action[AnyContent] = </span><span style='background: #F0ADAD'>Action {
+</span>161 <span style=''></span><span style='background: #F0ADAD'>    logger.info(s&quot;Request for deleting from default index for id $fileIdentifier&quot;)
+</span>162 <span style=''></span><span style='background: #F0ADAD'>    if (luceneService.deleteFromIndex(fileIdentifier)) {
+</span>163 <span style=''></span><span style='background: #F0ADAD'>      Ok(s&quot;deleted from index $fileIdentifier&quot;)
+</span>164 <span style=''></span><span style='background: #F0ADAD'>    } else {
+</span>165 <span style=''></span><span style='background: #F0ADAD'>      BadRequest(&quot;deletion from index caused error.&quot;)
+</span>166 <span style=''></span><span style='background: #F0ADAD'>    }
+</span>167 <span style=''></span><span style='background: #F0ADAD'>  }</span><span style=''>
+</span>168 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -3111,6 +3120,306 @@
         </td>
         <td style="background: #F0ADAD">
           http.this.Writeable.wString(mvc.this.Codec.utf_8)
+        </td>
+      </tr><tr>
+        <td>
+          160
+        </td>
+        <td>
+          190
+        </td>
+        <td>
+          6739
+          -
+          7012
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.mvc.ActionBuilder.apply
+        </td>
+        <td style="background: #F0ADAD">
+          play.api.mvc.Action.apply({
+  QueryController.this.logger.info(scala.StringContext.apply(&quot;Request for deleting from default index for id &quot;, &quot;&quot;).s(fileIdentifier));
+  if (QueryController.this.luceneService.deleteFromIndex(fileIdentifier))
+    QueryController.this.Ok.apply[String](scala.StringContext.apply(&quot;deleted from index &quot;, &quot;&quot;).s(fileIdentifier))(http.this.Writeable.wString(mvc.this.Codec.utf_8))
+  else
+    QueryController.this.BadRequest.apply[String](&quot;deletion from index caused error.&quot;)(http.this.Writeable.wString(mvc.this.Codec.utf_8))
+})
+        </td>
+      </tr><tr>
+        <td>
+          161
+        </td>
+        <td>
+          178
+        </td>
+        <td>
+          6752
+          -
+          6830
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.LoggerLike.info
+        </td>
+        <td style="background: #F0ADAD">
+          QueryController.this.logger.info(scala.StringContext.apply(&quot;Request for deleting from default index for id &quot;, &quot;&quot;).s(fileIdentifier))
+        </td>
+      </tr><tr>
+        <td>
+          161
+        </td>
+        <td>
+          177
+        </td>
+        <td>
+          6764
+          -
+          6829
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.StringContext.s
+        </td>
+        <td style="background: #F0ADAD">
+          scala.StringContext.apply(&quot;Request for deleting from default index for id &quot;, &quot;&quot;).s(fileIdentifier)
+        </td>
+      </tr><tr>
+        <td>
+          162
+        </td>
+        <td>
+          179
+        </td>
+        <td>
+          6839
+          -
+          6884
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          services.LuceneService.deleteFromIndex
+        </td>
+        <td style="background: #F0ADAD">
+          QueryController.this.luceneService.deleteFromIndex(fileIdentifier)
+        </td>
+      </tr><tr>
+        <td>
+          163
+        </td>
+        <td>
+          182
+        </td>
+        <td>
+          6896
+          -
+          6896
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.api.http.DefaultWriteables.wString
+        </td>
+        <td style="background: #F0ADAD">
+          http.this.Writeable.wString(mvc.this.Codec.utf_8)
+        </td>
+      </tr><tr>
+        <td>
+          163
+        </td>
+        <td>
+          184
+        </td>
+        <td>
+          6894
+          -
+          6935
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          play.api.mvc.Results.Status.apply
+        </td>
+        <td style="background: #F0ADAD">
+          QueryController.this.Ok.apply[String](scala.StringContext.apply(&quot;deleted from index &quot;, &quot;&quot;).s(fileIdentifier))(http.this.Writeable.wString(mvc.this.Codec.utf_8))
+        </td>
+      </tr><tr>
+        <td>
+          163
+        </td>
+        <td>
+          181
+        </td>
+        <td>
+          6896
+          -
+          6896
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          play.api.mvc.Codec.utf_8
+        </td>
+        <td style="background: #F0ADAD">
+          mvc.this.Codec.utf_8
+        </td>
+      </tr><tr>
+        <td>
+          163
+        </td>
+        <td>
+          180
+        </td>
+        <td>
+          6897
+          -
+          6934
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.StringContext.s
+        </td>
+        <td style="background: #F0ADAD">
+          scala.StringContext.apply(&quot;deleted from index &quot;, &quot;&quot;).s(fileIdentifier)
+        </td>
+      </tr><tr>
+        <td>
+          163
+        </td>
+        <td>
+          183
+        </td>
+        <td>
+          6894
+          -
+          6935
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.api.mvc.Results.Status.apply
+        </td>
+        <td style="background: #F0ADAD">
+          QueryController.this.Ok.apply[String](scala.StringContext.apply(&quot;deleted from index &quot;, &quot;&quot;).s(fileIdentifier))(http.this.Writeable.wString(mvc.this.Codec.utf_8))
+        </td>
+      </tr><tr>
+        <td>
+          165
+        </td>
+        <td>
+          185
+        </td>
+        <td>
+          6966
+          -
+          7001
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;deletion from index caused error.&quot;
+        </td>
+      </tr><tr>
+        <td>
+          165
+        </td>
+        <td>
+          187
+        </td>
+        <td>
+          6965
+          -
+          6965
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.api.http.DefaultWriteables.wString
+        </td>
+        <td style="background: #F0ADAD">
+          http.this.Writeable.wString(mvc.this.Codec.utf_8)
+        </td>
+      </tr><tr>
+        <td>
+          165
+        </td>
+        <td>
+          189
+        </td>
+        <td>
+          6955
+          -
+          7002
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          play.api.mvc.Results.Status.apply
+        </td>
+        <td style="background: #F0ADAD">
+          QueryController.this.BadRequest.apply[String](&quot;deletion from index caused error.&quot;)(http.this.Writeable.wString(mvc.this.Codec.utf_8))
+        </td>
+      </tr><tr>
+        <td>
+          165
+        </td>
+        <td>
+          186
+        </td>
+        <td>
+          6965
+          -
+          6965
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          play.api.mvc.Codec.utf_8
+        </td>
+        <td style="background: #F0ADAD">
+          mvc.this.Codec.utf_8
+        </td>
+      </tr><tr>
+        <td>
+          165
+        </td>
+        <td>
+          188
+        </td>
+        <td>
+          6955
+          -
+          7002
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.api.mvc.Results.Status.apply
+        </td>
+        <td style="background: #F0ADAD">
+          QueryController.this.BadRequest.apply[String](&quot;deletion from index caused error.&quot;)(http.this.Writeable.wString(mvc.this.Codec.utf_8))
         </td>
       </tr>
     </table>
