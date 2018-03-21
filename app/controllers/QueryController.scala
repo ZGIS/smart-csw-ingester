@@ -156,4 +156,13 @@ class QueryController @Inject()(luceneService: LuceneService) extends Controller
     luceneService.buildIndex(catalogueName)
     Ok(s"building index for $catalogueName")
   }
+
+  def deleteFromIndex(fileIdentifier: String): Action[AnyContent] = Action {
+    logger.info(s"Request for deleting from default index for id $fileIdentifier")
+    if (luceneService.deleteFromIndex(fileIdentifier)) {
+      Ok(s"deleted from index $fileIdentifier")
+    } else {
+      InternalServerError(s"deletion from index caused error.")
+    }
+  }
 }

@@ -139,7 +139,7 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
         val secDelay = if (environment.mode.equals(Mode.Prod)) 5 + scala.util.Random.nextInt(56) else 1
         val hoursRepeat = 24 + scala.util.Random.nextInt(49)
         logger.info(s"Schedule for next build index of $catalogueName is secDelay: $secDelay and hoursRepeat: $hoursRepeat")
-        system.scheduler.schedule(secDelay.second, hoursRepeat.hours){
+        system.scheduler.schedule(secDelay.second, hoursRepeat.hours) {
           buildIndex(catalogueName)
         }
     })
@@ -178,7 +178,7 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
       logger.info(s"Merging ${catalogueIndexes.keys} into master index")
       iwriter.deleteAll()
       iwriter.commit()
-      iwriter.addIndexes(catalogueIndexes.values.toArray : _*)
+      iwriter.addIndexes(catalogueIndexes.values.toArray: _*)
 
       iwriter.commit()
       iwriter.forceMerge(1, true)
@@ -202,6 +202,39 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
       iwriter.commit()
       // iwriter.forceMerge(1, true)
       logger.info(s"Update-merging index $catalogueName into main, ready ")
+    }
+    finally {
+      iwriter.close()
+    }
+  }
+
+  /**
+    * try t odelete a document
+    *
+    * @param fileIdentifier
+    * @return
+    */
+  def deleteFromIndex(fileIdentifier: String): Boolean = {
+    val config = new IndexWriterConfig()
+    config.setCommitOnClose(true)
+    val iwriter = new IndexWriter(indexDirectory, config)
+    try {
+      // don't use, only for index uniqueness and doc update
+      iwriter.deleteDocuments(new Term("id", fileIdentifier))
+
+      iwriter.commit()
+      // iwriter.forceMerge(1, true)
+      logger.info(s"deleting $fileIdentifier from index, ok ")
+      true
+    } catch {
+      case ex: IOException => {
+        logger.error(s"deleting $fileIdentifier from index, IO error: " + ex.getLocalizedMessage)
+        false
+      }
+      case _ => {
+        logger.error(s"deleting $fileIdentifier from index, other unspecified error: ")
+        false
+      }
     }
     finally {
       iwriter.close()
@@ -266,6 +299,7 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
 
   /**
     * returns the URL of a Catalogue.
+    *
     * @param name
     * @return
     */
@@ -385,7 +419,7 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
         val emptyDoc = new Document()
         // id field not used in our search semantics, only to provide lucene uniqueness
         emptyDoc.add(new StringField("id", "00000000-0000-0000-0000-000000000000", Field.Store.NO))
-        iwriter.updateDocument(new Term("fileIdentifier","00000000-0000-0000-0000-000000000000"), emptyDoc)
+        iwriter.updateDocument(new Term("fileIdentifier", "00000000-0000-0000-0000-000000000000"), emptyDoc)
         iwriter.commit()
         logger.info("Re-opened main index ready")
       }
