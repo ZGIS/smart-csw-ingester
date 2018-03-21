@@ -162,7 +162,7 @@ class QueryController @Inject()(luceneService: LuceneService) extends Controller
     if (luceneService.deleteFromIndex(fileIdentifier)) {
       Ok(s"deleted from index $fileIdentifier")
     } else {
-      InternalServerError(s"deletion from index caused error.")
+      BadRequest("deletion from index caused error.")
     }
   }
 }
