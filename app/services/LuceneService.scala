@@ -50,7 +50,7 @@ import utils.ClassnameLogger
 import scala.collection.JavaConverters._
 import scala.concurrent.Future
 import scala.concurrent.duration._
-import scala.util.{Failure, Success}
+import scala.util.{Failure, Success, Try}
 import com.sksamuel.avro4s.{AvroInputStream, AvroOutputStream, AvroSchema}
 import org.apache.avro.Schema
 
@@ -199,14 +199,18 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
 
     // try load persisted catalogue state id list
     val filename = s"$catalogueName.avro"
-    val avroFile = new File(catalogueStateDirectory + File.separator + filename)
     val keys = docs.keys.toSet
+    val avroFile = new File(catalogueStateDirectory + File.separator + filename)
+    val avroInTry = Try(AvroInputStream.data[CatalogueIdState](avroFile))
+    avroInTry.failed.map(ex => logger.warn(s"reading catalogue state not successful: ${ex.getLocalizedMessage}"))
+    val oldCatalogueStateOption = avroInTry.toOption.flatMap { avroIn =>
+      val oldCatalogueState = avroIn.iterator.toSeq.headOption
+      avroIn.close()
+      oldCatalogueState.foreach(cs => logger.info(s"restored list of ${cs.fileIdentifiers.size} for ${cs.catalogueName}"))
+      oldCatalogueState
+    }
 
-    val avroIn = AvroInputStream.data[CatalogueIdState](avroFile)
-    val oldCatalogueState = avroIn.iterator.toSeq.headOption
-    avroIn.close()
-
-    val inOldButnotInNew: Option[Set[String]] = oldCatalogueState.map { cs =>
+    val inOldButnotInNew: Option[Set[String]] = oldCatalogueStateOption.map { cs =>
       cs.fileIdentifiers.toSet.diff(keys)
     }
     // if existent calcluate the diff of file ids in the old loaded list vs the file ids in the current merge opearation
@@ -241,14 +245,16 @@ class LuceneService @Inject()(appLifecycle: ApplicationLifecycle,
     }
 
     // persist the new state for the catalogue
-    val avroOut = AvroOutputStream.data[CatalogueIdState](avroFile)
-    try {
-      avroOut.write(CatalogueIdState(catalogueName, keys.toSeq))
-      avroOut.flush()
-      logger.info(s"Updating catalogue state persistence for $catalogueName, ready ")
-    } finally {
-      avroOut.close()
-    }
+    val avroOutTry = Try(AvroOutputStream.data[CatalogueIdState](avroFile))
+    avroOutTry.failed.map(ex => logger.warn(s"persisting catalogue state not successful: ${ex.getLocalizedMessage}"))
+    avroOutTry.toOption.foreach(avroOut =>
+      try {
+        avroOut.write(CatalogueIdState(catalogueName, keys.toSeq))
+        avroOut.flush()
+        logger.info(s"Updating catalogue state persistence for $catalogueName, ready ")
+      } finally {
+        avroOut.close()
+      })
   }
 
   /**
