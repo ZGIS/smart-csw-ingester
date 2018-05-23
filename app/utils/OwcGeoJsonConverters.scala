@@ -71,19 +71,36 @@ object OwcGeoJsonConverters extends ClassnameLogger {
           href = cIOnlineResource.linkage,
           title = cIOnlineResource.name))
       }
-      case _ => cIOnlineResource.linkage match {
+      case Some("WWW:LINK-1.0-http--image-thumbnail") =>
+        val mimeType = cIOnlineResource.linkage.getFile.toLowerCase match {
+          case r".*\.jpe?g" => "image/jpeg"
+          case r".*\.png" => "image/png"
+          case r".*\.gif" => "image/gif"
+          case r".*\.tiff" => "image/tiff"
+          case _ => "image/png"
+        }
+        Some(OwcLink(rel = "icon",
+          mimeType = Some(mimeType),
+          href = cIOnlineResource.linkage,
+          title = cIOnlineResource.name))
+      case _ => cIOnlineResource.linkage.toString match {
         case r"https?:\/\/data.linz.govt.nz\/layer\/.*" =>
-          Some(OwcLink(rel = "alternates",
+          Some(OwcLink(rel = "alternate",
             mimeType = Some("text/html"),
             href = cIOnlineResource.linkage,
             title = cIOnlineResource.name))
         case r"https?:\/\/lris.scinfo.org.nz\/layer\/.*" =>
-          Some(OwcLink(rel = "alternates",
+          Some(OwcLink(rel = "alternate",
+            mimeType = Some("text/html"),
+            href = cIOnlineResource.linkage,
+            title = cIOnlineResource.name))
+        case r"https?:\/\/data.mfe.govt.nz\/layer\/.*" =>
+          Some(OwcLink(rel = "alternate",
             mimeType = Some("text/html"),
             href = cIOnlineResource.linkage,
             title = cIOnlineResource.name))
         case r"https?:\/\/geoportal\.doc\.govt\.nz\/(?i:ArcGIS)\/.*\/MapServer" =>
-          Some(OwcLink(rel = "alternates",
+          Some(OwcLink(rel = "alternate",
             mimeType = Some("text/html"),
             href = cIOnlineResource.linkage,
             title = cIOnlineResource.name))
@@ -92,7 +109,38 @@ object OwcGeoJsonConverters extends ClassnameLogger {
             mimeType = Some("text/html"),
             href = cIOnlineResource.linkage,
             title = cIOnlineResource.name))
-          case _ => None
+          case ResourceType.DOWNLOAD => Some(OwcLink(rel = "enclosure",
+            mimeType = Some("application/octet-stream"),
+            href = cIOnlineResource.linkage,
+            title = cIOnlineResource.name))
+          case ResourceType.MAP => Some(OwcLink(rel = "alternate",
+            mimeType = Some("text/html"),
+            href = cIOnlineResource.linkage,
+            title = cIOnlineResource.name))
+          case ResourceType.DATA => Some(OwcLink(rel = "enclosure",
+            mimeType = Some("application/octet-stream"),
+            href = cIOnlineResource.linkage,
+            title = cIOnlineResource.name))
+          case ResourceType.METADATA => Some(OwcLink(rel = "via",
+            mimeType = Some("text/xml"),
+            href = cIOnlineResource.linkage,
+            title = cIOnlineResource.name))
+          case ResourceType.IMAGE =>
+            val mimeType = cIOnlineResource.linkage.getFile.toLowerCase match {
+              case r".*\.jpe?g" => "image/jpeg"
+              case r".*\.png" => "image/png"
+              case r".*\.gif" => "image/gif"
+              case r".*\.tiff" => "image/tiff"
+              case _ => "image/png"
+            }
+            Some(OwcLink(rel = "icon",
+            mimeType = Some(mimeType),
+            href = cIOnlineResource.linkage,
+            title = cIOnlineResource.name))
+          case _ => Some(OwcLink(rel = "alternate",
+            mimeType = None,
+            href = cIOnlineResource.linkage,
+            title = cIOnlineResource.name))
         }
       }
     }
@@ -106,7 +154,7 @@ object OwcGeoJsonConverters extends ClassnameLogger {
     */
   def asOwcOfferings(cIOnlineResource: CIOnlineResource): List[OwcOffering] = {
     import utils.StringUtils._
-    cIOnlineResource.linkage match {
+    cIOnlineResource.linkage.toString match {
       case r"https?:\/\/geoportal\.doc\.govt\.nz\/(?i:ArcGIS)\/.*\/MapServer" =>
         // GeoPortals ArcGIS server offers WMS/WFS for all layers I have seen. So we generate offerings for that.
         List(
@@ -131,6 +179,19 @@ object OwcGeoJsonConverters extends ClassnameLogger {
         )
       case _ => Nil
     }
+  }
+
+  /**
+    * Converts List[String] to List of [[OwcCategory]]
+    *
+    * @param md
+    * @return
+    */
+  def asOwcCategory(md: MdMetadataSet): List[OwcCategory] = {
+    val hLevel = OwcCategory(term = md.hierarchyLevel, scheme = Some("hierarchyLevel"), label = Some(md.hierarchyLevel))
+    List(hLevel) ++
+      md.keywords.map(k => OwcCategory(term = k, scheme = None, label = Some(k))) ++
+      md.smartCategory.map(k => OwcCategory(term = k, scheme = Some("SAC Categories"), label = Some(k)))
   }
 
   /**
@@ -172,7 +233,7 @@ object OwcGeoJsonConverters extends ClassnameLogger {
       subtitle = mdMetadataSet.abstrakt.toOption(),
       updateDate = OffsetDateTime.of(mdMetadataSet.dateStamp.atStartOfDay(), ZoneId.systemDefault().getRules.getOffset(mdMetadataSet.dateStamp.atStartOfDay())),
       author = List(OwcAuthor(name = mdMetadataSet.contactName.toOption(), email = MdMetadataSet.parseEmailStringtoEmailAddress(mdMetadataSet.contactEmail), uri = None)),
-      publisher = None,
+      publisher = mdMetadataSet.contactOrg.toOption(),
       rights = mdMetadataSet.license.toOption(),
       temporalExtent = None,
 
@@ -194,7 +255,7 @@ object OwcGeoJsonConverters extends ClassnameLogger {
       offering = offerings,
       minScaleDenominator = None,
       maxScaleDenominator = None,
-      keyword = List(),
+      keyword = asOwcCategory(mdMetadataSet),
       folder = None)
   }
 
@@ -237,7 +298,7 @@ object OwcGeoJsonConverters extends ClassnameLogger {
       contextMetadata = List(),
       language = "en",
       title = "Search result list CSW ingester",
-      subtitle = Some("Originating query: "),
+      subtitle = Some("Originating from query"),
       updateDate = OffsetDateTime.now(),
       author = List(),
       publisher = None,

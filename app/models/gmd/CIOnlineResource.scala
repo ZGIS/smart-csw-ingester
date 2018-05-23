@@ -67,8 +67,16 @@ object ResourceType {
     val name = "data"
   }
 
+  case object SERVICE extends ResourceType {
+    val name = "service"
+  }
+
   case object METADATA extends ResourceType {
     val name = "metadata"
+  }
+
+  case object IMAGE extends ResourceType {
+    val name = "image"
   }
 
   def fromString(str: String): ResourceType = str match {
@@ -76,7 +84,9 @@ object ResourceType {
     case "download" => DOWNLOAD
     case "map" => MAP
     case "data" => DATA
+    case "service" => SERVICE
     case "metadata" => METADATA
+    case "image" => IMAGE
     case str => UnknownResourceType(str)
   }
 
@@ -164,12 +174,17 @@ object CIOnlineResource extends ClassnameLogger {
     import utils.StringUtils.Regex
     val resourceType = protocol match {
       case Some("WWW:LINK-1.0-http--metadata-URL") => ResourceType.METADATA
+      case Some("WWW:LINK-1.0-http--image-thumbnail") => ResourceType.IMAGE
       case Some("WWW:LINK-1.0-http--link") => linkage.toString match {
         case r"https?:\/\/data.gns.cri.nz\/rgmad\/(?:thumbs|images|layers)\/.*" => ResourceType.DOWNLOAD
         case _ => ResourceType.WEBSITE
       }
       case Some("WWW:LINK-1.0-http--downloaddata") => ResourceType.DOWNLOAD
-      case Some("OGC:WCS-1.1.0-http-get-capabilities") => ResourceType.METADATA
+      case Some("OGC:WMS") => ResourceType.SERVICE
+      case Some("OGC:WFS") => ResourceType.SERVICE
+      case Some("OGC:WCS") => ResourceType.SERVICE
+      case Some("OGC:WCS-1.1.0-http-get-capabilities") => ResourceType.SERVICE
+      case Some("OGC:SOS") => ResourceType.SERVICE
       case _ => linkage.toString match {
         //from here we start some magic by looking at URLs
         case r"https?:\/\/geoportal\.doc\.govt\.nz\/(?i:ArcGIS)\/.*\/MapServer" => ResourceType.METADATA

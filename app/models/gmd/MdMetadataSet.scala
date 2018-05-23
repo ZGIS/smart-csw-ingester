@@ -19,6 +19,7 @@
 
 package models.gmd
 
+import java.net.URL
 import java.time._
 import java.time.format._
 import java.util
@@ -371,6 +372,7 @@ object MdMetadataSet extends ClassnameLogger {
     (nodeSeq \\ "identificationInfo" \ "MD_DataIdentification" \ "topicCategory" \ "MD_TopicCategoryCode").map(
       elem => elem.text).toList
   }
+
   /**
     * extracts hierarchyLevel fields from the provided XML,
     * there are three places, listed in preferential order:
@@ -459,6 +461,21 @@ object MdMetadataSet extends ClassnameLogger {
   }
 
   /**
+    *
+    * @param nodeSeq
+    * @return
+    */
+  def iconPreviewFromXml(nodeSeq: NodeSeq): List[CIOnlineResource] = {
+    // <gmd:graphicOverview><gmd:MD_BrowseGraphic><gmd:fileName><gco:CharacterString>https://dev.smart-project.info/images/tnzg20.v060.i03.cover.jpg
+    (nodeSeq \\ "graphicOverview" \\ "MD_BrowseGraphic" \\ "fileName" \\ "CharacterString").flatMap {
+      elem =>
+        val urlT = Try(new URL(elem.text))
+        urlT.toOption.map(url => CIOnlineResource(url, Some(url.getFile), None, Some("WWW:LINK-1.0-http--image-thumbnail"), ResourceType.IMAGE))
+
+    }.toList
+  }
+
+  /**
     * Extracts linkage from XML. Looks for CI_OnlineResource in MD_Distribution
     *
     * @param nodeSeq the provided XML
@@ -479,7 +496,7 @@ object MdMetadataSet extends ClassnameLogger {
           "distributorTransferOptions" \\ "MD_DigitalTransferOptions" \\ "onLine" \\ "CI_OnlineResource")
       )
       .map(elem => CIOnlineResource.fromXml(elem, origin)
-      ).toList
+      ).toList ++ iconPreviewFromXml(nodeSeq)
   }
 
   /**
