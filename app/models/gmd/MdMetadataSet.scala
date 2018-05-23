@@ -231,12 +231,15 @@ object MdMetadataSet extends ClassnameLogger {
     try {
       nodeSeq.head.label match {
         case "MD_Metadata" =>
+          // TODO gmd:D_DataIdentification vs srv:SV_ServiceIdentification, use wildcard?
+          val identificationInfo = "_" // "MD_DataIdentification"  "SV_ServiceIdentification"
+
           Some(MdMetadataSet(
             // : Rectangle, : String, : List[CIOnlineResource], : String, : String, searchScore: Float, hierarchyLevel: String
             fileIdentifier = (nodeSeq \ "fileIdentifier" \ "CharacterString").text,
             dateStamp = dateFromXml(nodeSeq),
-            title = (nodeSeq \\ "identificationInfo" \ "MD_DataIdentification" \ "citation" \ "CI_Citation" \ "title" \ "CharacterString").text,
-            abstrakt = (nodeSeq \\ "identificationInfo" \ "MD_DataIdentification" \ "abstract" \ "CharacterString").text,
+            title = (nodeSeq \\ "identificationInfo" \ "_" \ "citation" \ "CI_Citation" \ "title" \ "CharacterString").text,
+            abstrakt = (nodeSeq \\ "identificationInfo" \ "_" \ "abstract" \ "CharacterString").text,
             keywords = keywordsFromXml(nodeSeq),
             smartCategory = smartCategoryFromXml(nodeSeq),
             topicCategories = topicCategoriesFromXml(nodeSeq),
@@ -337,7 +340,7 @@ object MdMetadataSet extends ClassnameLogger {
     * @return a List(String) of extracted fields
     */
   def keywordsFromXml(nodeSeq: NodeSeq): List[String] = {
-    val kwNode = (nodeSeq \\ "identificationInfo" \ "MD_DataIdentification" \ "descriptiveKeywords").filter(p => {
+    val kwNode = (nodeSeq \\ "identificationInfo" \ "_" \ "descriptiveKeywords").filter(p => {
       //TODO SR internally for smart csw we use "theme" as codelistValue. What are we going to do about that here?
       !((p \ "MD_Keywords" \ "type" \ "MD_KeywordTypeCode" \ "@codeListValue").text.equals("SMART"))
     })
@@ -354,7 +357,7 @@ object MdMetadataSet extends ClassnameLogger {
     * @return a List(String) of extracted fields
     */
   def smartCategoryFromXml(nodeSeq: NodeSeq): List[String] = {
-    val kwNode = (nodeSeq \\ "identificationInfo" \ "MD_DataIdentification" \ "descriptiveKeywords").filter(p => {
+    val kwNode = (nodeSeq \\ "identificationInfo" \ "_" \ "descriptiveKeywords").filter(p => {
       ((p \ "MD_Keywords" \ "type" \ "MD_KeywordTypeCode" \ "@codeListValue").text.equals("SMART"))
     })
     val resultList = (kwNode \ "MD_Keywords" \ "keyword" \ "CharacterString").map(elem => elem.text.trim).toList
@@ -369,7 +372,7 @@ object MdMetadataSet extends ClassnameLogger {
     * @return a List(String) of extracted fields
     */
   def topicCategoriesFromXml(nodeSeq: NodeSeq): List[String] = {
-    (nodeSeq \\ "identificationInfo" \ "MD_DataIdentification" \ "topicCategory" \ "MD_TopicCategoryCode").map(
+    (nodeSeq \\ "identificationInfo" \ "_" \ "topicCategory" \ "MD_TopicCategoryCode").map(
       elem => elem.text).toList
   }
 
@@ -435,7 +438,7 @@ object MdMetadataSet extends ClassnameLogger {
     */
   def licenseFromXml(nodeSeq: NodeSeq): String = {
     val resConstraints =
-      (nodeSeq \\ "identificationInfo" \ "MD_DataIdentification" \ "resourceConstraints" \ "MD_LegalConstraints"
+      (nodeSeq \\ "identificationInfo" \ "_" \ "resourceConstraints" \ "MD_LegalConstraints"
         \ "useLimitation" \ "CharacterString")
         .map(elem => elem.text.trim).mkString(", ")
     val metaConstraints =

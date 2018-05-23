@@ -29,3 +29,4 @@ project/.sbtserver*
 src/site/generated/*
 conf/catalogues.local.conf
 conf/application.local.conf
+/conf/logback-stdout-local.xml

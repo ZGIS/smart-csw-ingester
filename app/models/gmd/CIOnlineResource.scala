@@ -155,45 +155,56 @@ object CIOnlineResource extends ClassnameLogger {
     * @return
     */
   def fromXml(nodeSeq: NodeSeq, origin: String): CIOnlineResource = {
-    val linkage = new URL((nodeSeq \ "linkage" \ "URL").text.trim)
-    logger.debug(s"Linkage: ${linkage}")
 
     import utils.StringUtils._
-    val name = (nodeSeq \ "name" \ "CharacterString").text.toOption()
+    import utils.StringUtils.Regex
+
+    val urlString = new URL((nodeSeq \ "linkage" \ "URL").text.trim)
+    logger.debug(s"Linkage: ${urlString}")
+
+    val name = (nodeSeq \ "name" \ "CharacterString").text.trim.toOption()
     logger.debug(s"Name: ${name}")
-    val description = (nodeSeq \ "description" \ "CharacterString").text.toOption()
+    val description = (nodeSeq \ "description" \ "CharacterString").text.trim.toOption()
     logger.debug(s"Description: ${description}")
 
-    val protocol = linkage.toString match {
+    val protocol = urlString.toString match {
       // the GNS CSW has a little bit of a stupid way of assigning protocol to the linkages...
-      case r"https?:\/\/data.gns.cri.nz\/rgmad\/(?:thumbs|images|layers)\/.*" => "WWW:LINK-1.0-http--download".toOption()
-      case _ => (nodeSeq \ "protocol" \ "CharacterString").text.toOption()
+      case r"https?:\/\/data.gns.cri.nz\/rgmad\/thumbs\/.*" => "WWW:LINK-1.0-http--image-thumbnail".toOption()
+      case r"https?:\/\/data.gns.cri.nz\/rgmad\/(?:services|tiles)\/.*" => "WWW:LINK-1.0-http--link".toOption()
+      case r"https?:\/\/data.gns.cri.nz\/rgmad\/(?:layers|images)\/.*" => "WWW:LINK-1.0-http--download".toOption()
+      case _ => (nodeSeq \ "protocol" \ "CharacterString").text.trim.toOption()
     }
     logger.debug(s"Protocol ${protocol}")
 
-    import utils.StringUtils.Regex
+
     val resourceType = protocol match {
+      case Some("WWW:LINK-1.0-http--download") => ResourceType.DOWNLOAD
+      case Some("WWW:LINK-1.0-http--downloaddata") => ResourceType.DATA
       case Some("WWW:LINK-1.0-http--metadata-URL") => ResourceType.METADATA
       case Some("WWW:LINK-1.0-http--image-thumbnail") => ResourceType.IMAGE
-      case Some("WWW:LINK-1.0-http--link") => linkage.toString match {
-        case r"https?:\/\/data.gns.cri.nz\/rgmad\/(?:thumbs|images|layers)\/.*" => ResourceType.DOWNLOAD
+      case Some("WWW:LINK-1.0-http--link") => urlString.toString match {
+        case r"https?:\/\/data.gns.cri.nz\/rgmad\/thumbs\/.*" => ResourceType.IMAGE
+        case r"https?:\/\/data.gns.cri.nz\/rgmad\/(?:services|tiles)\/.*" => ResourceType.WEBSITE
+        case r"https?:\/\/data.gns.cri.nz\/rgmad\/(?:layers|images)\/.*" => ResourceType.DOWNLOAD
         case _ => ResourceType.WEBSITE
       }
-      case Some("WWW:LINK-1.0-http--downloaddata") => ResourceType.DOWNLOAD
-      case Some("OGC:WMS") => ResourceType.SERVICE
-      case Some("OGC:WFS") => ResourceType.SERVICE
-      case Some("OGC:WCS") => ResourceType.SERVICE
-      case Some("OGC:WCS-1.1.0-http-get-capabilities") => ResourceType.SERVICE
-      case Some("OGC:SOS") => ResourceType.SERVICE
-      case _ => linkage.toString match {
-        //from here we start some magic by looking at URLs
+      case Some(proto) if proto.contains("OGC:WMS") => ResourceType.SERVICE
+      case Some(proto) if proto.contains("OGC:WFS") => ResourceType.SERVICE
+      case Some(proto) if proto.contains("OGC:WCS") => ResourceType.SERVICE
+      case Some(proto) if proto.contains("OGC:WPS") => ResourceType.SERVICE
+      case Some(proto) if proto.contains("OGC:CSW") => ResourceType.SERVICE
+      case Some(proto) if proto.contains("OGC:SOS") => ResourceType.SERVICE
+
+      case _ => urlString.toString match {
         case r"https?:\/\/geoportal\.doc\.govt\.nz\/(?i:ArcGIS)\/.*\/MapServer" => ResourceType.METADATA
         case r"https?:\/\/data.linz.govt.nz\/layer\/.*" => ResourceType.MAP
+        case r"https?:\/\/data.mfe.govt.nz\/layer\/.*" => ResourceType.MAP
+        case r"https?:\/\/lris.scinfo.org.nz\/layer\/.*" => ResourceType.MAP
         case _ => ResourceType.WEBSITE
       }
     }
     logger.debug(s"ResourceType: ${resourceType}")
 
-    CIOnlineResource(linkage, name, description, protocol, resourceType)
+    CIOnlineResource(urlString, name, description, protocol, resourceType)
   }
 }

@@ -2,7 +2,8 @@
  * Copyright (c) 2011-2017 Interfaculty Department of Geoinformatics, University of
  * Salzburg (Z_GIS) & Institute of Geological and Nuclear Sciences Limited (GNS Science)
  * in the SMART Aquifer Characterisation (SAC) programme funded by the New Zealand
- * Ministry of Business, Innovation and Employment (MBIE)
+ * Ministry of Business, Innovation and Employment (MBIE) and Department of Geography,
+ * University of Tartu, Estonia (UT) under the ETAG Mobilitas Pluss grant No. MOBJD233.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,9 +23,12 @@ package utils
 import java.net.{URL, URLEncoder}
 import java.time._
 
-import info.smart.models.owc100.OwcOfferingType.{CSW, WFS, WMS}
+import info.smart.models.owc100.OwcOfferingType._
 import info.smart.models.owc100._
 import models.gmd.{CIOnlineResource, GeoJSONFeatureCollectionWriter, MdMetadataSet, ResourceType}
+import play.api.libs.MimeTypes
+
+import scala.util.Try
 
 object OwcGeoJsonConverters extends ClassnameLogger {
 
@@ -45,100 +49,80 @@ object OwcGeoJsonConverters extends ClassnameLogger {
   def asOwcLink(cIOnlineResource: CIOnlineResource): Option[OwcLink] = {
     import utils.StringUtils._
 
+    val filename = Try(cIOnlineResource.linkage.getFile.toLowerCase).toOption
+    val mimetypeOption = filename.flatMap(fn => MimeTypes.forFileName(fn))
+
     cIOnlineResource.protocol match {
       case Some("WWW:LINK-1.0-http--metadata-URL") =>
         Some(OwcLink(rel = "via",
-          mimeType = Some("application/xml"),
+          mimeType = mimetypeOption.orElse(Some("application/xml")),
           href = cIOnlineResource.linkage,
           title = cIOnlineResource.name))
       case Some("WWW:LINK-1.0-http--link") =>
         Some(OwcLink(rel = "alternate",
-          mimeType = Some("text/html"),
+          mimeType = mimetypeOption.orElse(Some("text/html")),
           href = cIOnlineResource.linkage,
           title = cIOnlineResource.name))
-      case Some(r"WWW:LINK-1.0-http--download(?:data)?") => {
-        val mimeType = cIOnlineResource.linkage.getFile.toLowerCase match {
-          case r".*\.jpe?g" => "image/jpeg"
-          case r".*\.png" => "image/png"
-          case r".*\.pdf" => "application/pdf"
-          case r".*\.xlsx?" => "application/excel"
-          case r".*\.txt" => "text/plain"
-          case r".*\.csv" => "text/csv"
-          case _ => "application/octet-stream"
-        }
+      case Some(r"WWW:LINK-1.0-http--download(?:data)?") =>
         Some(OwcLink(rel = "enclosure",
-          mimeType = Some(mimeType),
+          mimeType = mimetypeOption.orElse(Some("application/octet-stream")),
           href = cIOnlineResource.linkage,
           title = cIOnlineResource.name))
-      }
       case Some("WWW:LINK-1.0-http--image-thumbnail") =>
-        val mimeType = cIOnlineResource.linkage.getFile.toLowerCase match {
-          case r".*\.jpe?g" => "image/jpeg"
-          case r".*\.png" => "image/png"
-          case r".*\.gif" => "image/gif"
-          case r".*\.tiff" => "image/tiff"
-          case _ => "image/png"
-        }
         Some(OwcLink(rel = "icon",
-          mimeType = Some(mimeType),
+          mimeType = mimetypeOption.orElse(Some("image/png")),
           href = cIOnlineResource.linkage,
           title = cIOnlineResource.name))
+
       case _ => cIOnlineResource.linkage.toString match {
         case r"https?:\/\/data.linz.govt.nz\/layer\/.*" =>
-          Some(OwcLink(rel = "alternate",
+          Some(OwcLink(rel = "via",
             mimeType = Some("text/html"),
             href = cIOnlineResource.linkage,
             title = cIOnlineResource.name))
         case r"https?:\/\/lris.scinfo.org.nz\/layer\/.*" =>
-          Some(OwcLink(rel = "alternate",
+          Some(OwcLink(rel = "via",
             mimeType = Some("text/html"),
             href = cIOnlineResource.linkage,
             title = cIOnlineResource.name))
         case r"https?:\/\/data.mfe.govt.nz\/layer\/.*" =>
-          Some(OwcLink(rel = "alternate",
+          Some(OwcLink(rel = "via",
             mimeType = Some("text/html"),
             href = cIOnlineResource.linkage,
             title = cIOnlineResource.name))
         case r"https?:\/\/geoportal\.doc\.govt\.nz\/(?i:ArcGIS)\/.*\/MapServer" =>
-          Some(OwcLink(rel = "alternate",
+          Some(OwcLink(rel = "via",
             mimeType = Some("text/html"),
             href = cIOnlineResource.linkage,
             title = cIOnlineResource.name))
         case _ => cIOnlineResource.resourceType match {
           case ResourceType.WEBSITE => Some(OwcLink(rel = "alternate",
-            mimeType = Some("text/html"),
+            mimeType = mimetypeOption.orElse(Some("text/html")),
             href = cIOnlineResource.linkage,
             title = cIOnlineResource.name))
           case ResourceType.DOWNLOAD => Some(OwcLink(rel = "enclosure",
-            mimeType = Some("application/octet-stream"),
+            mimeType = mimetypeOption.orElse(Some("application/octet-stream")),
             href = cIOnlineResource.linkage,
             title = cIOnlineResource.name))
           case ResourceType.MAP => Some(OwcLink(rel = "alternate",
-            mimeType = Some("text/html"),
+            mimeType = mimetypeOption.orElse(Some("text/html")),
             href = cIOnlineResource.linkage,
             title = cIOnlineResource.name))
           case ResourceType.DATA => Some(OwcLink(rel = "enclosure",
-            mimeType = Some("application/octet-stream"),
+            mimeType = mimetypeOption.orElse(Some("application/octet-stream")),
             href = cIOnlineResource.linkage,
             title = cIOnlineResource.name))
           case ResourceType.METADATA => Some(OwcLink(rel = "via",
-            mimeType = Some("text/xml"),
+            mimeType = mimetypeOption.orElse(Some("text/xml")),
             href = cIOnlineResource.linkage,
             title = cIOnlineResource.name))
           case ResourceType.IMAGE =>
-            val mimeType = cIOnlineResource.linkage.getFile.toLowerCase match {
-              case r".*\.jpe?g" => "image/jpeg"
-              case r".*\.png" => "image/png"
-              case r".*\.gif" => "image/gif"
-              case r".*\.tiff" => "image/tiff"
-              case _ => "image/png"
-            }
             Some(OwcLink(rel = "icon",
-            mimeType = Some(mimeType),
-            href = cIOnlineResource.linkage,
-            title = cIOnlineResource.name))
+              mimeType = mimetypeOption.orElse(Some("image/png")),
+              href = cIOnlineResource.linkage,
+              title = cIOnlineResource.name))
           case _ => Some(OwcLink(rel = "alternate",
-            mimeType = None,
+            mimeType = mimetypeOption.orElse(None),
             href = cIOnlineResource.linkage,
             title = cIOnlineResource.name))
         }
@@ -154,29 +138,35 @@ object OwcGeoJsonConverters extends ClassnameLogger {
     */
   def asOwcOfferings(cIOnlineResource: CIOnlineResource): List[OwcOffering] = {
     import utils.StringUtils._
-    cIOnlineResource.linkage.toString match {
-      case r"https?:\/\/geoportal\.doc\.govt\.nz\/(?i:ArcGIS)\/.*\/MapServer" =>
-        // GeoPortals ArcGIS server offers WMS/WFS for all layers I have seen. So we generate offerings for that.
-        List(
-          OwcOffering(code = WMS.code,
-            operations = List(
-              OwcOperation(
-                code = "GetCapabilities",
-                method = "GET",
-                mimeType = Some("application/xml"),
-                requestUrl = new URL(s"${cIOnlineResource.linkage}/WMSServer?request=GetCapabilities&service=WMS"))
-            )
-          ),
-          OwcOffering(code = WFS.code,
-            operations = List(
-              OwcOperation(
-                code = "GetCapabilities",
-                method = "GET",
-                mimeType = Some("application/xml"),
-                requestUrl = new URL(s"${cIOnlineResource.linkage}/WFSServer?request=GetCapabilities&service=WFS"))
-            )
-          )
-        )
+
+    cIOnlineResource.resourceType match {
+
+      case ResourceType.SERVICE =>
+
+        cIOnlineResource.protocol match {
+
+          case Some(str) if str.contains("OGC:") =>
+            generateOwcOfferingFromServiceProto(str, cIOnlineResource.linkage)
+
+          case _ => Nil
+        }
+      case ResourceType.METADATA =>
+
+        cIOnlineResource.linkage.toString match {
+
+          case r"https?:\/\/geoportal\.doc\.govt\.nz\/(?i:ArcGIS)\/.*\/MapServer" =>
+            generateOwcOfferingForArcServer(cIOnlineResource.linkage)
+          case _ => Nil
+        }
+      case ResourceType.MAP =>
+
+        // TODO, some of those are available through WMS or WFS access, but require API key
+        // also not known how to find out from MD XML (not specified)
+        cIOnlineResource.linkage.toString match {
+          case r"https?:\/\/data.linz.govt.nz\/layer\/.*" => Nil
+          case r"https?:\/\/data.mfe.govt.nz\/layer\/.*" => Nil
+          case r"https?:\/\/lris.scinfo.org.nz\/layer\/.*" => Nil
+        }
       case _ => Nil
     }
   }
@@ -308,5 +298,132 @@ object OwcGeoJsonConverters extends ClassnameLogger {
       timeIntervalOfInterest = optDateInterval,
       keyword = List(),
       resource = owcResources)
+  }
+
+  /**
+    * tries to guess SERVICE based OGC offerings
+    *
+    * @param protocolString
+    * @param url
+    * @return
+    */
+  def generateOwcOfferingFromServiceProto(protocolString: String, url: URL): List[OwcOffering] = {
+
+    // OGC:WCS-1.0.0-http-get-capabilities
+    // OGC:WCS-1.0.0-http-get-coverage
+    // OGC:WMS-1.3.0-http-get-map
+    // OGC:WFS-2.0.0-http-get-feature
+    // OGC:SOS-1.0.0-http-get-observation
+    val protoInfo = protocolString.split(":")
+    if (protoInfo.length > 1) {
+      if (protoInfo(0).equalsIgnoreCase("OGC")) {
+        val operationInfo = protoInfo(1).split("-")
+        val offeringCode = operationInfo(0)
+        val offeringType = Try(applyOfferingType(offeringCode)).toOption
+        if (operationInfo.length > 1) {
+          val version = operationInfo(1)
+          val http = operationInfo(2)
+          val part1 = operationInfo(3)
+          val part2 = operationInfo(4)
+          val operationName = part1.toLowerCase.capitalize + part2.toLowerCase.capitalize
+          offeringType.map {
+            ot =>
+              OwcOffering(code = ot.code,
+                operations = List(
+                  OwcOperation(
+                    code = operationName,
+                    method = "GET",
+                    mimeType = Some("application/xml"),
+                    requestUrl = new URL(s"${url.toString}?service=${offeringCode.toUpperCase}&request=$operationName&version=$version"))
+                )
+              )
+          }.toList
+        } else {
+
+          offeringType.map {
+            ot =>
+              OwcOffering(code = ot.code,
+                operations = List(
+                  OwcOperation(
+                    code = "GetCapabilities",
+                    method = "GET",
+                    mimeType = Some("application/xml"),
+                    requestUrl = new URL(s"${url.toString}?request=GetCapabilities&service=${offeringCode.toUpperCase}"))
+                )
+              )
+          }.toList
+        }
+      } else {
+        List()
+      }
+    } else {
+      List()
+    }
+  }
+
+  /**
+    * little helper to generate OwcOfferingType
+    *
+    * @param v
+    * @return
+    */
+  def applyOfferingType(v: String): OwcOfferingType = {
+    v.toUpperCase match {
+      case "WMS" => WMS
+      case "WFS" => WFS
+      case "WCS" => WCS
+      case "SOS" => SOS
+      case "WPS" => WPS
+      case "CSW" => CSW
+      case _ =>
+        logger.warn(s"Value $v is not a supported OwcOfferingType value")
+        throw new IllegalArgumentException(s"Value $v is not a supported OwcOfferingType value")
+    }
+  }
+
+  def generateOwcOfferingForArcServer(url: URL): List[OwcOffering] = {
+
+    // GeoPortals ArcGIS server offers WMS/WFS for all layers I have seen. So we generate offerings for that.
+    // from http://geoportal.doc.govt.nz/ArcGIS/rest/services/GeoportalServices/DOC_BDIPEST_HimalayanThar_2007/MapServer
+    // to http://geoportal.doc.govt.nz/arcgis/services/GeoportalServices/DOC_Operations_Regions/MapServer/WFSServer?request=GetCapabilities&service=WFS
+
+    val urlParts = url.getPath.split("/")
+    logger.debug(urlParts.length.toString)
+
+    if (urlParts.length == 7) {
+      logger.debug(urlParts.mkString("::"))
+      if (urlParts(0).isEmpty &&
+        urlParts(1).equalsIgnoreCase("ArcGIS") &&
+        urlParts(2).equalsIgnoreCase("rest") &&
+        urlParts(3).equalsIgnoreCase("services")
+      ) {
+        logger.debug(s"${url.getProtocol}://${url.getHost}/arcgis/services/${urlParts(4)}/${urlParts(5)}/${urlParts(6)}")
+        val owcBaseUrl = new URL(s"${url.getProtocol}://${url.getHost}/arcgis/services/${urlParts(4)}/${urlParts(5)}/${urlParts(6)}")
+        List(
+          OwcOffering(code = WMS.code,
+            operations = List(
+              OwcOperation(
+                code = "GetCapabilities",
+                method = "GET",
+                mimeType = Some("application/xml"),
+                requestUrl = new URL(s"${owcBaseUrl.toString}/WMSServer?request=GetCapabilities&service=WMS"))
+            )
+          ),
+          OwcOffering(code = WFS.code,
+            operations = List(
+              OwcOperation(
+                code = "GetCapabilities",
+                method = "GET",
+                mimeType = Some("application/xml"),
+                requestUrl = new URL(s"${owcBaseUrl.toString}/WFSServer?request=GetCapabilities&service=WFS"))
+            )
+          )
+        )
+      } else {
+        List()
+      }
+    } else {
+      List()
+    }
   }
 }
