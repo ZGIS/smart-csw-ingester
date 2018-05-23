@@ -91,121 +91,147 @@
 </span>67 <span style=''>    val name = </span><span style='background: #F0ADAD'>&quot;data&quot;</span><span style=''>
 </span>68 <span style=''>  }
 </span>69 <span style=''>
-</span>70 <span style=''>  case object METADATA extends ResourceType {
-</span>71 <span style=''>    val name = </span><span style='background: #AEF1AE'>&quot;metadata&quot;</span><span style=''>
+</span>70 <span style=''>  case object SERVICE extends ResourceType {
+</span>71 <span style=''>    val name = </span><span style='background: #AEF1AE'>&quot;service&quot;</span><span style=''>
 </span>72 <span style=''>  }
 </span>73 <span style=''>
-</span>74 <span style=''>  def fromString(str: String): ResourceType = str match {
-</span>75 <span style=''>    case &quot;website&quot; =&gt; </span><span style='background: #AEF1AE'>WEBSITE</span><span style=''>
-</span>76 <span style=''>    case &quot;download&quot; =&gt; </span><span style='background: #F0ADAD'>DOWNLOAD</span><span style=''>
-</span>77 <span style=''>    case &quot;map&quot; =&gt; </span><span style='background: #AEF1AE'>MAP</span><span style=''>
-</span>78 <span style=''>    case &quot;data&quot; =&gt; </span><span style='background: #F0ADAD'>DATA</span><span style=''>
-</span>79 <span style=''>    case &quot;metadata&quot; =&gt; </span><span style='background: #AEF1AE'>METADATA</span><span style=''>
-</span>80 <span style=''>    case str =&gt; </span><span style='background: #F0ADAD'>UnknownResourceType(str)</span><span style=''>
-</span>81 <span style=''>  }
-</span>82 <span style=''>
-</span>83 <span style=''>  /**
-</span>84 <span style=''>    * JSON reader
-</span>85 <span style=''>    *
-</span>86 <span style=''>    * @see For more explanation on this little magic: [[https://groups.google.com/forum/?fromgroups=#!starred/play-framework/hGrveOkbJ6U]]
-</span>87 <span style=''>    */
-</span>88 <span style=''>  implicit val reads = </span><span style='background: #AEF1AE'>Reads[ResourceType](r =&gt; JsSuccess(ResourceType.fromString(r.as[String])))</span><span style=''>
-</span>89 <span style=''>  implicit val writes = </span><span style='background: #AEF1AE'>Writes[ResourceType](r =&gt; JsString(r.name))</span><span style=''>
-</span>90 <span style=''>}
-</span>91 <span style=''>
-</span>92 <span style=''>/**
-</span>93 <span style=''>  * Representation of an CI_OnlineResource
-</span>94 <span style=''>  *
-</span>95 <span style=''>  * @see [[https://geo-ide.noaa.gov/wiki/index.php?title=CI_OnlineResource NOAA EDM Wiki - CI_OnlineResource]]
-</span>96 <span style=''>  * @see [[https://geo-ide.noaa.gov/wiki/index.php?title=Online_Resources NOAA EDM Wiki - Online Resources]]
-</span>97 <span style=''>  */
-</span>98 <span style=''>case class CIOnlineResource(linkage: URL,
-</span>99 <span style=''>                            name: Option[String],
-</span>100 <span style=''>                            description: Option[String],
-</span>101 <span style=''>                            protocol: Option[String],
-</span>102 <span style=''>                            resourceType: ResourceType) extends ClassnameLogger {
-</span>103 <span style=''>  // require(!linkage.trim.isEmpty, &quot;LinkageURL was empty&quot;)
-</span>104 <span style=''>
-</span>105 <span style=''>  override def toString: String = {
-</span>106 <span style=''>    </span><span style='background: #F0ADAD'>f&quot;&quot;&quot;CIOnlineResource(
-</span>107 <span style=''></span><span style='background: #F0ADAD'>       |${linkage},
-</span>108 <span style=''></span><span style='background: #F0ADAD'>       |${name},
-</span>109 <span style=''></span><span style='background: #F0ADAD'>       |${description},
-</span>110 <span style=''></span><span style='background: #F0ADAD'>       |${protocol}
-</span>111 <span style=''></span><span style='background: #F0ADAD'>       |${resourceType}
-</span>112 <span style=''></span><span style='background: #F0ADAD'>     &quot;&quot;&quot;.stripMargin.replaceAll(&quot;\n&quot;, &quot; &quot;)</span><span style=''>
-</span>113 <span style=''>  }
-</span>114 <span style=''>}
-</span>115 <span style=''>
-</span>116 <span style=''>object CIOnlineResource extends ClassnameLogger {
-</span>117 <span style=''>  /**
-</span>118 <span style=''>    * JSON writer
-</span>119 <span style=''>    */
-</span>120 <span style=''>  implicit val writes = </span><span style='background: #AEF1AE'>(
-</span>121 <span style=''></span><span style='background: #AEF1AE'>    (JsPath \ &quot;linkage&quot;).write[URL](new UrlFormat) and
-</span>122 <span style=''></span><span style='background: #AEF1AE'>      (JsPath \ &quot;name&quot;).writeNullable[String] and
-</span>123 <span style=''></span><span style='background: #AEF1AE'>      (JsPath \ &quot;description&quot;).writeNullable[String] and
-</span>124 <span style=''></span><span style='background: #AEF1AE'>      (JsPath \ &quot;protocol&quot;).writeNullable[String] and
-</span>125 <span style=''></span><span style='background: #AEF1AE'>      (JsPath \ &quot;resourceType&quot;).write[ResourceType]
-</span>126 <span style=''></span><span style='background: #AEF1AE'>    ) (unlift(CIOnlineResource.unapply))</span><span style=''>
-</span>127 <span style=''>
-</span>128 <span style=''>  /**
-</span>129 <span style=''>    * JSON reader
-</span>130 <span style=''>    */
-</span>131 <span style=''>  implicit val reads = </span><span style='background: #AEF1AE'>(
-</span>132 <span style=''></span><span style='background: #AEF1AE'>    (JsPath \ &quot;linkage&quot;).read[URL](new UrlFormat) and
-</span>133 <span style=''></span><span style='background: #AEF1AE'>      (JsPath \ &quot;name&quot;).readNullable[String] and
-</span>134 <span style=''></span><span style='background: #AEF1AE'>      (JsPath \ &quot;description&quot;).readNullable[String] and
-</span>135 <span style=''></span><span style='background: #AEF1AE'>      (JsPath \ &quot;protocol&quot;).readNullable[String] and
-</span>136 <span style=''></span><span style='background: #AEF1AE'>      (JsPath \ &quot;resourceType&quot;).read[ResourceType]
-</span>137 <span style=''></span><span style='background: #AEF1AE'>    ) (CIOnlineResource.apply _)</span><span style=''>
-</span>138 <span style=''>
-</span>139 <span style=''>  /**
-</span>140 <span style=''>    * parse CIOnlineResource from XML
-</span>141 <span style=''>    *
-</span>142 <span style=''>    * @param nodeSeq that represents a gmd:CI_OnlineResource
-</span>143 <span style=''>    * @param origin  name of the cataloue origin (used to determine the link type in some cases)
-</span>144 <span style=''>    * @see [[https://geo-ide.noaa.gov/wiki/index.php?title=CI_OnlineResource NOAA EDM Wiki - CI_OnlineResource]]
-</span>145 <span style=''>    * @return
-</span>146 <span style=''>    */
-</span>147 <span style=''>  def fromXml(nodeSeq: NodeSeq, origin: String): CIOnlineResource = {
-</span>148 <span style=''>    val linkage = </span><span style='background: #AEF1AE'>new URL((nodeSeq \ &quot;linkage&quot; \ &quot;URL&quot;).text.trim)</span><span style=''>
-</span>149 <span style=''>    </span><span style='background: #AEF1AE'>logger.debug(s&quot;Linkage: ${linkage}&quot;)</span><span style=''>
-</span>150 <span style=''>
-</span>151 <span style=''>    import utils.StringUtils._
-</span>152 <span style=''>    val name = (</span><span style='background: #AEF1AE'>nodeSeq \ &quot;name&quot; \ &quot;CharacterString&quot;).text.toOption()</span><span style=''>
-</span>153 <span style=''>    </span><span style='background: #AEF1AE'>logger.debug(s&quot;Name: ${name}&quot;)</span><span style=''>
-</span>154 <span style=''>    val description = (</span><span style='background: #AEF1AE'>nodeSeq \ &quot;description&quot; \ &quot;CharacterString&quot;).text.toOption()</span><span style=''>
-</span>155 <span style=''>    </span><span style='background: #AEF1AE'>logger.debug(s&quot;Description: ${description}&quot;)</span><span style=''>
-</span>156 <span style=''>
-</span>157 <span style=''>    val protocol = </span><span style='background: #AEF1AE'>linkage.toString</span><span style=''> match {
-</span>158 <span style=''>      // the GNS CSW has a little bit of a stupid way of assigning protocol to the linkages...
-</span>159 <span style=''>      case r&quot;https?:\/\/data.gns.cri.nz\/rgmad\/(?:thumbs|images|layers)\/.*&quot; =&gt; </span><span style='background: #F0ADAD'>&quot;WWW:LINK-1.0-http--download&quot;.toOption()</span><span style=''>
-</span>160 <span style=''>      case _ =&gt; (</span><span style='background: #AEF1AE'>nodeSeq \ &quot;protocol&quot; \ &quot;CharacterString&quot;).text.toOption()</span><span style=''>
-</span>161 <span style=''>    }
-</span>162 <span style=''>    </span><span style='background: #AEF1AE'>logger.debug(s&quot;Protocol ${protocol}&quot;)</span><span style=''>
-</span>163 <span style=''>
-</span>164 <span style=''>    import utils.StringUtils.Regex
-</span>165 <span style=''>    val resourceType = protocol match {
-</span>166 <span style=''>      case Some(&quot;WWW:LINK-1.0-http--metadata-URL&quot;) =&gt; </span><span style='background: #AEF1AE'>ResourceType.METADATA</span><span style=''>
-</span>167 <span style=''>      case Some(&quot;WWW:LINK-1.0-http--link&quot;) =&gt; </span><span style='background: #AEF1AE'>linkage.toString</span><span style=''> match {
-</span>168 <span style=''>        case r&quot;https?:\/\/data.gns.cri.nz\/rgmad\/(?:thumbs|images|layers)\/.*&quot; =&gt; </span><span style='background: #F0ADAD'>ResourceType.DOWNLOAD</span><span style=''>
-</span>169 <span style=''>        case _ =&gt; </span><span style='background: #AEF1AE'>ResourceType.WEBSITE</span><span style=''>
-</span>170 <span style=''>      }
-</span>171 <span style=''>      case Some(&quot;WWW:LINK-1.0-http--downloaddata&quot;) =&gt; </span><span style='background: #F0ADAD'>ResourceType.DOWNLOAD</span><span style=''>
-</span>172 <span style=''>      case Some(&quot;OGC:WCS-1.1.0-http-get-capabilities&quot;) =&gt; </span><span style='background: #F0ADAD'>ResourceType.METADATA</span><span style=''>
-</span>173 <span style=''>      case _ =&gt; </span><span style='background: #AEF1AE'>linkage.toString</span><span style=''> match {
-</span>174 <span style=''>        //from here we start some magic by looking at URLs
-</span>175 <span style=''>        case r&quot;https?:\/\/geoportal\.doc\.govt\.nz\/(?i:ArcGIS)\/.*\/MapServer&quot; =&gt; </span><span style='background: #AEF1AE'>ResourceType.METADATA</span><span style=''>
-</span>176 <span style=''>        case r&quot;https?:\/\/data.linz.govt.nz\/layer\/.*&quot; =&gt; </span><span style='background: #AEF1AE'>ResourceType.MAP</span><span style=''>
-</span>177 <span style=''>        case _ =&gt; </span><span style='background: #AEF1AE'>ResourceType.WEBSITE</span><span style=''>
-</span>178 <span style=''>      }
-</span>179 <span style=''>    }
-</span>180 <span style=''>    </span><span style='background: #AEF1AE'>logger.debug(s&quot;ResourceType: ${resourceType}&quot;)</span><span style=''>
-</span>181 <span style=''>
-</span>182 <span style=''>    </span><span style='background: #AEF1AE'>CIOnlineResource(linkage, name, description, protocol, resourceType)</span><span style=''>
-</span>183 <span style=''>  }
-</span>184 <span style=''>}
+</span>74 <span style=''>  case object METADATA extends ResourceType {
+</span>75 <span style=''>    val name = </span><span style='background: #AEF1AE'>&quot;metadata&quot;</span><span style=''>
+</span>76 <span style=''>  }
+</span>77 <span style=''>
+</span>78 <span style=''>  case object IMAGE extends ResourceType {
+</span>79 <span style=''>    val name = </span><span style='background: #AEF1AE'>&quot;image&quot;</span><span style=''>
+</span>80 <span style=''>  }
+</span>81 <span style=''>
+</span>82 <span style=''>  def fromString(str: String): ResourceType = str match {
+</span>83 <span style=''>    case &quot;website&quot; =&gt; </span><span style='background: #AEF1AE'>WEBSITE</span><span style=''>
+</span>84 <span style=''>    case &quot;download&quot; =&gt; </span><span style='background: #F0ADAD'>DOWNLOAD</span><span style=''>
+</span>85 <span style=''>    case &quot;map&quot; =&gt; </span><span style='background: #AEF1AE'>MAP</span><span style=''>
+</span>86 <span style=''>    case &quot;data&quot; =&gt; </span><span style='background: #F0ADAD'>DATA</span><span style=''>
+</span>87 <span style=''>    case &quot;service&quot; =&gt; </span><span style='background: #F0ADAD'>SERVICE</span><span style=''>
+</span>88 <span style=''>    case &quot;metadata&quot; =&gt; </span><span style='background: #AEF1AE'>METADATA</span><span style=''>
+</span>89 <span style=''>    case &quot;image&quot; =&gt; </span><span style='background: #F0ADAD'>IMAGE</span><span style=''>
+</span>90 <span style=''>    case str =&gt; </span><span style='background: #F0ADAD'>UnknownResourceType(str)</span><span style=''>
+</span>91 <span style=''>  }
+</span>92 <span style=''>
+</span>93 <span style=''>  /**
+</span>94 <span style=''>    * JSON reader
+</span>95 <span style=''>    *
+</span>96 <span style=''>    * @see For more explanation on this little magic: [[https://groups.google.com/forum/?fromgroups=#!starred/play-framework/hGrveOkbJ6U]]
+</span>97 <span style=''>    */
+</span>98 <span style=''>  implicit val reads = </span><span style='background: #AEF1AE'>Reads[ResourceType](r =&gt; JsSuccess(ResourceType.fromString(r.as[String])))</span><span style=''>
+</span>99 <span style=''>  implicit val writes = </span><span style='background: #AEF1AE'>Writes[ResourceType](r =&gt; JsString(r.name))</span><span style=''>
+</span>100 <span style=''>}
+</span>101 <span style=''>
+</span>102 <span style=''>/**
+</span>103 <span style=''>  * Representation of an CI_OnlineResource
+</span>104 <span style=''>  *
+</span>105 <span style=''>  * @see [[https://geo-ide.noaa.gov/wiki/index.php?title=CI_OnlineResource NOAA EDM Wiki - CI_OnlineResource]]
+</span>106 <span style=''>  * @see [[https://geo-ide.noaa.gov/wiki/index.php?title=Online_Resources NOAA EDM Wiki - Online Resources]]
+</span>107 <span style=''>  */
+</span>108 <span style=''>case class CIOnlineResource(linkage: URL,
+</span>109 <span style=''>                            name: Option[String],
+</span>110 <span style=''>                            description: Option[String],
+</span>111 <span style=''>                            protocol: Option[String],
+</span>112 <span style=''>                            resourceType: ResourceType) extends ClassnameLogger {
+</span>113 <span style=''>  // require(!linkage.trim.isEmpty, &quot;LinkageURL was empty&quot;)
+</span>114 <span style=''>
+</span>115 <span style=''>  override def toString: String = {
+</span>116 <span style=''>    </span><span style='background: #F0ADAD'>f&quot;&quot;&quot;CIOnlineResource(
+</span>117 <span style=''></span><span style='background: #F0ADAD'>       |${linkage},
+</span>118 <span style=''></span><span style='background: #F0ADAD'>       |${name},
+</span>119 <span style=''></span><span style='background: #F0ADAD'>       |${description},
+</span>120 <span style=''></span><span style='background: #F0ADAD'>       |${protocol}
+</span>121 <span style=''></span><span style='background: #F0ADAD'>       |${resourceType}
+</span>122 <span style=''></span><span style='background: #F0ADAD'>     &quot;&quot;&quot;.stripMargin.replaceAll(&quot;\n&quot;, &quot; &quot;)</span><span style=''>
+</span>123 <span style=''>  }
+</span>124 <span style=''>}
+</span>125 <span style=''>
+</span>126 <span style=''>object CIOnlineResource extends ClassnameLogger {
+</span>127 <span style=''>  /**
+</span>128 <span style=''>    * JSON writer
+</span>129 <span style=''>    */
+</span>130 <span style=''>  implicit val writes = </span><span style='background: #AEF1AE'>(
+</span>131 <span style=''></span><span style='background: #AEF1AE'>    (JsPath \ &quot;linkage&quot;).write[URL](new UrlFormat) and
+</span>132 <span style=''></span><span style='background: #AEF1AE'>      (JsPath \ &quot;name&quot;).writeNullable[String] and
+</span>133 <span style=''></span><span style='background: #AEF1AE'>      (JsPath \ &quot;description&quot;).writeNullable[String] and
+</span>134 <span style=''></span><span style='background: #AEF1AE'>      (JsPath \ &quot;protocol&quot;).writeNullable[String] and
+</span>135 <span style=''></span><span style='background: #AEF1AE'>      (JsPath \ &quot;resourceType&quot;).write[ResourceType]
+</span>136 <span style=''></span><span style='background: #AEF1AE'>    ) (unlift(CIOnlineResource.unapply))</span><span style=''>
+</span>137 <span style=''>
+</span>138 <span style=''>  /**
+</span>139 <span style=''>    * JSON reader
+</span>140 <span style=''>    */
+</span>141 <span style=''>  implicit val reads = </span><span style='background: #AEF1AE'>(
+</span>142 <span style=''></span><span style='background: #AEF1AE'>    (JsPath \ &quot;linkage&quot;).read[URL](new UrlFormat) and
+</span>143 <span style=''></span><span style='background: #AEF1AE'>      (JsPath \ &quot;name&quot;).readNullable[String] and
+</span>144 <span style=''></span><span style='background: #AEF1AE'>      (JsPath \ &quot;description&quot;).readNullable[String] and
+</span>145 <span style=''></span><span style='background: #AEF1AE'>      (JsPath \ &quot;protocol&quot;).readNullable[String] and
+</span>146 <span style=''></span><span style='background: #AEF1AE'>      (JsPath \ &quot;resourceType&quot;).read[ResourceType]
+</span>147 <span style=''></span><span style='background: #AEF1AE'>    ) (CIOnlineResource.apply _)</span><span style=''>
+</span>148 <span style=''>
+</span>149 <span style=''>  /**
+</span>150 <span style=''>    * parse CIOnlineResource from XML
+</span>151 <span style=''>    *
+</span>152 <span style=''>    * @param nodeSeq that represents a gmd:CI_OnlineResource
+</span>153 <span style=''>    * @param origin  name of the cataloue origin (used to determine the link type in some cases)
+</span>154 <span style=''>    * @see [[https://geo-ide.noaa.gov/wiki/index.php?title=CI_OnlineResource NOAA EDM Wiki - CI_OnlineResource]]
+</span>155 <span style=''>    * @return
+</span>156 <span style=''>    */
+</span>157 <span style=''>  def fromXml(nodeSeq: NodeSeq, origin: String): CIOnlineResource = {
+</span>158 <span style=''>
+</span>159 <span style=''>    import utils.StringUtils._
+</span>160 <span style=''>    import utils.StringUtils.Regex
+</span>161 <span style=''>
+</span>162 <span style=''>    val urlString = </span><span style='background: #AEF1AE'>new URL((nodeSeq \ &quot;linkage&quot; \ &quot;URL&quot;).text.trim)</span><span style=''>
+</span>163 <span style=''>    </span><span style='background: #AEF1AE'>logger.debug(s&quot;Linkage: ${urlString}&quot;)</span><span style=''>
+</span>164 <span style=''>
+</span>165 <span style=''>    val name = (</span><span style='background: #AEF1AE'>nodeSeq \ &quot;name&quot; \ &quot;CharacterString&quot;).text.trim.toOption()</span><span style=''>
+</span>166 <span style=''>    </span><span style='background: #AEF1AE'>logger.debug(s&quot;Name: ${name}&quot;)</span><span style=''>
+</span>167 <span style=''>    val description = (</span><span style='background: #AEF1AE'>nodeSeq \ &quot;description&quot; \ &quot;CharacterString&quot;).text.trim.toOption()</span><span style=''>
+</span>168 <span style=''>    </span><span style='background: #AEF1AE'>logger.debug(s&quot;Description: ${description}&quot;)</span><span style=''>
+</span>169 <span style=''>
+</span>170 <span style=''>    val protocol = </span><span style='background: #AEF1AE'>urlString.toString</span><span style=''> match {
+</span>171 <span style=''>      // the GNS CSW has a little bit of a stupid way of assigning protocol to the linkages...
+</span>172 <span style=''>      case r&quot;https?:\/\/data.gns.cri.nz\/rgmad\/thumbs\/.*&quot; =&gt; </span><span style='background: #F0ADAD'>&quot;WWW:LINK-1.0-http--image-thumbnail&quot;.toOption()</span><span style=''>
+</span>173 <span style=''>      case r&quot;https?:\/\/data.gns.cri.nz\/rgmad\/(?:services|tiles)\/.*&quot; =&gt; </span><span style='background: #F0ADAD'>&quot;WWW:LINK-1.0-http--link&quot;.toOption()</span><span style=''>
+</span>174 <span style=''>      case r&quot;https?:\/\/data.gns.cri.nz\/rgmad\/(?:layers|images)\/.*&quot; =&gt; </span><span style='background: #F0ADAD'>&quot;WWW:LINK-1.0-http--download&quot;.toOption()</span><span style=''>
+</span>175 <span style=''>      case _ =&gt; (</span><span style='background: #AEF1AE'>nodeSeq \ &quot;protocol&quot; \ &quot;CharacterString&quot;).text.trim.toOption()</span><span style=''>
+</span>176 <span style=''>    }
+</span>177 <span style=''>    </span><span style='background: #AEF1AE'>logger.debug(s&quot;Protocol ${protocol}&quot;)</span><span style=''>
+</span>178 <span style=''>
+</span>179 <span style=''>
+</span>180 <span style=''>    val resourceType = protocol match {
+</span>181 <span style=''>      case Some(&quot;WWW:LINK-1.0-http--download&quot;) =&gt; </span><span style='background: #F0ADAD'>ResourceType.DOWNLOAD</span><span style=''>
+</span>182 <span style=''>      case Some(&quot;WWW:LINK-1.0-http--downloaddata&quot;) =&gt; </span><span style='background: #F0ADAD'>ResourceType.DATA</span><span style=''>
+</span>183 <span style=''>      case Some(&quot;WWW:LINK-1.0-http--metadata-URL&quot;) =&gt; </span><span style='background: #AEF1AE'>ResourceType.METADATA</span><span style=''>
+</span>184 <span style=''>      case Some(&quot;WWW:LINK-1.0-http--image-thumbnail&quot;) =&gt; </span><span style='background: #F0ADAD'>ResourceType.IMAGE</span><span style=''>
+</span>185 <span style=''>      case Some(&quot;WWW:LINK-1.0-http--link&quot;) =&gt; </span><span style='background: #AEF1AE'>urlString.toString</span><span style=''> match {
+</span>186 <span style=''>        case r&quot;https?:\/\/data.gns.cri.nz\/rgmad\/thumbs\/.*&quot; =&gt; </span><span style='background: #F0ADAD'>ResourceType.IMAGE</span><span style=''>
+</span>187 <span style=''>        case r&quot;https?:\/\/data.gns.cri.nz\/rgmad\/(?:services|tiles)\/.*&quot; =&gt; </span><span style='background: #F0ADAD'>ResourceType.WEBSITE</span><span style=''>
+</span>188 <span style=''>        case r&quot;https?:\/\/data.gns.cri.nz\/rgmad\/(?:layers|images)\/.*&quot; =&gt; </span><span style='background: #F0ADAD'>ResourceType.DOWNLOAD</span><span style=''>
+</span>189 <span style=''>        case _ =&gt; </span><span style='background: #AEF1AE'>ResourceType.WEBSITE</span><span style=''>
+</span>190 <span style=''>      }
+</span>191 <span style=''>      case Some(proto) if </span><span style='background: #AEF1AE'>proto.contains(&quot;OGC:WMS&quot;)</span><span style=''> =&gt; </span><span style='background: #F0ADAD'>ResourceType.SERVICE</span><span style=''>
+</span>192 <span style=''>      case Some(proto) if </span><span style='background: #AEF1AE'>proto.contains(&quot;OGC:WFS&quot;)</span><span style=''> =&gt; </span><span style='background: #F0ADAD'>ResourceType.SERVICE</span><span style=''>
+</span>193 <span style=''>      case Some(proto) if </span><span style='background: #AEF1AE'>proto.contains(&quot;OGC:WCS&quot;)</span><span style=''> =&gt; </span><span style='background: #F0ADAD'>ResourceType.SERVICE</span><span style=''>
+</span>194 <span style=''>      case Some(proto) if </span><span style='background: #AEF1AE'>proto.contains(&quot;OGC:WPS&quot;)</span><span style=''> =&gt; </span><span style='background: #F0ADAD'>ResourceType.SERVICE</span><span style=''>
+</span>195 <span style=''>      case Some(proto) if </span><span style='background: #AEF1AE'>proto.contains(&quot;OGC:CSW&quot;)</span><span style=''> =&gt; </span><span style='background: #F0ADAD'>ResourceType.SERVICE</span><span style=''>
+</span>196 <span style=''>      case Some(proto) if </span><span style='background: #AEF1AE'>proto.contains(&quot;OGC:SOS&quot;)</span><span style=''> =&gt; </span><span style='background: #AEF1AE'>ResourceType.SERVICE</span><span style=''>
+</span>197 <span style=''>
+</span>198 <span style=''>      case _ =&gt; </span><span style='background: #AEF1AE'>urlString.toString</span><span style=''> match {
+</span>199 <span style=''>        case r&quot;https?:\/\/geoportal\.doc\.govt\.nz\/(?i:ArcGIS)\/.*\/MapServer&quot; =&gt; </span><span style='background: #AEF1AE'>ResourceType.METADATA</span><span style=''>
+</span>200 <span style=''>        case r&quot;https?:\/\/data.linz.govt.nz\/layer\/.*&quot; =&gt; </span><span style='background: #AEF1AE'>ResourceType.MAP</span><span style=''>
+</span>201 <span style=''>        case r&quot;https?:\/\/data.mfe.govt.nz\/layer\/.*&quot; =&gt; </span><span style='background: #F0ADAD'>ResourceType.MAP</span><span style=''>
+</span>202 <span style=''>        case r&quot;https?:\/\/lris.scinfo.org.nz\/layer\/.*&quot; =&gt; </span><span style='background: #F0ADAD'>ResourceType.MAP</span><span style=''>
+</span>203 <span style=''>        case _ =&gt; </span><span style='background: #AEF1AE'>ResourceType.WEBSITE</span><span style=''>
+</span>204 <span style=''>      }
+</span>205 <span style=''>    }
+</span>206 <span style=''>    </span><span style='background: #AEF1AE'>logger.debug(s&quot;ResourceType: ${resourceType}&quot;)</span><span style=''>
+</span>207 <span style=''>
+</span>208 <span style=''>    </span><span style='background: #AEF1AE'>CIOnlineResource(urlString, name, description, protocol, resourceType)</span><span style=''>
+</span>209 <span style=''>  }
+</span>210 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -330,9 +356,30 @@
           284
         </td>
         <td>
-          1827
+          1826
           -
-          1837
+          1835
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;service&quot;
+        </td>
+      </tr><tr>
+        <td>
+          75
+        </td>
+        <td>
+          285
+        </td>
+        <td>
+          1902
+          -
+          1912
         </td>
         <td>
           Literal
@@ -345,15 +392,36 @@
         </td>
       </tr><tr>
         <td>
-          75
+          79
         </td>
         <td>
-          285
+          286
         </td>
         <td>
-          1923
+          1976
           -
-          1930
+          1983
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;image&quot;
+        </td>
+      </tr><tr>
+        <td>
+          83
+        </td>
+        <td>
+          287
+        </td>
+        <td>
+          2069
+          -
+          2076
         </td>
         <td>
           Select
@@ -366,15 +434,15 @@
         </td>
       </tr><tr>
         <td>
-          76
+          84
         </td>
         <td>
-          286
+          288
         </td>
         <td>
-          1954
+          2100
           -
-          1962
+          2108
         </td>
         <td>
           Select
@@ -387,15 +455,15 @@
         </td>
       </tr><tr>
         <td>
-          77
+          85
         </td>
         <td>
-          287
+          289
         </td>
         <td>
-          1981
+          2127
           -
-          1984
+          2130
         </td>
         <td>
           Select
@@ -408,15 +476,15 @@
         </td>
       </tr><tr>
         <td>
-          78
+          86
         </td>
         <td>
-          288
+          290
         </td>
         <td>
-          2004
+          2150
           -
-          2008
+          2154
         </td>
         <td>
           Select
@@ -429,15 +497,36 @@
         </td>
       </tr><tr>
         <td>
-          79
+          87
         </td>
         <td>
-          289
+          291
         </td>
         <td>
-          2032
+          2177
           -
-          2040
+          2184
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          models.gmd.ResourceType.SERVICE
+        </td>
+        <td style="background: #F0ADAD">
+          ResourceType.this.SERVICE
+        </td>
+      </tr><tr>
+        <td>
+          88
+        </td>
+        <td>
+          292
+        </td>
+        <td>
+          2208
+          -
+          2216
         </td>
         <td>
           Select
@@ -450,15 +539,36 @@
         </td>
       </tr><tr>
         <td>
-          80
+          89
         </td>
         <td>
-          290
+          293
         </td>
         <td>
-          2057
+          2237
           -
-          2081
+          2242
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          models.gmd.ResourceType.IMAGE
+        </td>
+        <td style="background: #F0ADAD">
+          ResourceType.this.IMAGE
+        </td>
+      </tr><tr>
+        <td>
+          90
+        </td>
+        <td>
+          294
+        </td>
+        <td>
+          2259
+          -
+          2283
         </td>
         <td>
           Apply
@@ -471,78 +581,15 @@
         </td>
       </tr><tr>
         <td>
-          88
+          98
         </td>
         <td>
           295
         </td>
         <td>
-          2311
+          2551
           -
-          2359
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          play.api.libs.json.JsSuccess.apply
-        </td>
-        <td style="background: #AEF1AE">
-          play.api.libs.json.JsSuccess.apply[models.gmd.ResourceType](ResourceType.fromString(r.as[String](play.api.libs.json.Reads.StringReads)), play.api.libs.json.JsSuccess.apply$default$2[Nothing])
-        </td>
-      </tr><tr>
-        <td>
-          88
-        </td>
-        <td>
-          292
-        </td>
-        <td>
-          2345
-          -
-          2357
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          play.api.libs.json.JsReadable.as
-        </td>
-        <td style="background: #AEF1AE">
-          r.as[String](play.api.libs.json.Reads.StringReads)
-        </td>
-      </tr><tr>
-        <td>
-          88
-        </td>
-        <td>
-          294
-        </td>
-        <td>
-          2311
-          -
-          2311
-        </td>
-        <td>
-          TypeApply
-        </td>
-        <td>
-          play.api.libs.json.JsSuccess.apply$default$2
-        </td>
-        <td style="background: #AEF1AE">
-          play.api.libs.json.JsSuccess.apply$default$2[Nothing]
-        </td>
-      </tr><tr>
-        <td>
-          88
-        </td>
-        <td>
-          291
-        </td>
-        <td>
-          2349
-          -
-          2349
+          2551
         </td>
         <td>
           Select
@@ -555,36 +602,36 @@
         </td>
       </tr><tr>
         <td>
-          88
+          98
         </td>
         <td>
-          293
+          298
         </td>
         <td>
-          2321
+          2513
           -
-          2358
+          2513
         </td>
         <td>
-          Apply
+          TypeApply
         </td>
         <td>
-          models.gmd.ResourceType.fromString
+          play.api.libs.json.JsSuccess.apply$default$2
         </td>
         <td style="background: #AEF1AE">
-          ResourceType.fromString(r.as[String](play.api.libs.json.Reads.StringReads))
+          play.api.libs.json.JsSuccess.apply$default$2[Nothing]
         </td>
       </tr><tr>
         <td>
-          88
+          98
         </td>
         <td>
-          296
+          300
         </td>
         <td>
-          2286
+          2488
           -
-          2360
+          2562
         </td>
         <td>
           Apply
@@ -597,36 +644,78 @@
         </td>
       </tr><tr>
         <td>
-          89
-        </td>
-        <td>
-          298
-        </td>
-        <td>
-          2411
-          -
-          2427
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          play.api.libs.json.JsString.apply
-        </td>
-        <td style="background: #AEF1AE">
-          play.api.libs.json.JsString.apply(r.name)
-        </td>
-      </tr><tr>
-        <td>
-          89
+          98
         </td>
         <td>
           297
         </td>
         <td>
-          2420
+          2523
           -
-          2426
+          2560
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          models.gmd.ResourceType.fromString
+        </td>
+        <td style="background: #AEF1AE">
+          ResourceType.fromString(r.as[String](play.api.libs.json.Reads.StringReads))
+        </td>
+      </tr><tr>
+        <td>
+          98
+        </td>
+        <td>
+          299
+        </td>
+        <td>
+          2513
+          -
+          2561
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.libs.json.JsSuccess.apply
+        </td>
+        <td style="background: #AEF1AE">
+          play.api.libs.json.JsSuccess.apply[models.gmd.ResourceType](ResourceType.fromString(r.as[String](play.api.libs.json.Reads.StringReads)), play.api.libs.json.JsSuccess.apply$default$2[Nothing])
+        </td>
+      </tr><tr>
+        <td>
+          98
+        </td>
+        <td>
+          296
+        </td>
+        <td>
+          2547
+          -
+          2559
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.api.libs.json.JsReadable.as
+        </td>
+        <td style="background: #AEF1AE">
+          r.as[String](play.api.libs.json.Reads.StringReads)
+        </td>
+      </tr><tr>
+        <td>
+          99
+        </td>
+        <td>
+          301
+        </td>
+        <td>
+          2622
+          -
+          2628
         </td>
         <td>
           Select
@@ -639,15 +728,15 @@
         </td>
       </tr><tr>
         <td>
-          89
+          99
         </td>
         <td>
-          299
+          303
         </td>
         <td>
-          2385
+          2587
           -
-          2428
+          2630
         </td>
         <td>
           Apply
@@ -660,15 +749,36 @@
         </td>
       </tr><tr>
         <td>
-          112
+          99
         </td>
         <td>
-          300
+          302
         </td>
         <td>
-          3094
+          2613
           -
-          3263
+          2629
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          play.api.libs.json.JsString.apply
+        </td>
+        <td style="background: #AEF1AE">
+          play.api.libs.json.JsString.apply(r.name)
+        </td>
+      </tr><tr>
+        <td>
+          122
+        </td>
+        <td>
+          304
+        </td>
+        <td>
+          3296
+          -
+          3465
         </td>
         <td>
           Apply
@@ -688,57 +798,15 @@
         </td>
       </tr><tr>
         <td>
-          121
+          131
         </td>
         <td>
-          304
+          307
         </td>
         <td>
-          3413
+          3585
           -
-          3413
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          play.api.libs.json.OWrites.functionalCanBuildOWrites
-        </td>
-        <td style="background: #AEF1AE">
-          json.this.OWrites.functionalCanBuildOWrites
-        </td>
-      </tr><tr>
-        <td>
-          121
-        </td>
-        <td>
-          301
-        </td>
-        <td>
-          3392
-          -
-          3401
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #AEF1AE">
-          &quot;linkage&quot;
-        </td>
-      </tr><tr>
-        <td>
-          121
-        </td>
-        <td>
-          303
-        </td>
-        <td>
-          3383
-          -
-          3428
+          3630
         </td>
         <td>
           Apply
@@ -751,15 +819,15 @@
         </td>
       </tr><tr>
         <td>
-          121
+          131
         </td>
         <td>
-          302
+          306
         </td>
         <td>
-          3414
+          3616
           -
-          3427
+          3629
         </td>
         <td>
           Apply
@@ -772,36 +840,57 @@
         </td>
       </tr><tr>
         <td>
-          122
+          131
         </td>
         <td>
-          307
+          308
         </td>
         <td>
-          3440
+          3615
           -
-          3478
+          3615
         </td>
         <td>
-          ApplyToImplicitArgs
+          Select
         </td>
         <td>
-          play.api.libs.json.JsPath.writeNullable
+          play.api.libs.json.OWrites.functionalCanBuildOWrites
         </td>
         <td style="background: #AEF1AE">
-          play.api.libs.json.JsPath.\(&quot;name&quot;).writeNullable[String](json.this.Writes.StringWrites)
+          json.this.OWrites.functionalCanBuildOWrites
         </td>
       </tr><tr>
         <td>
-          122
+          131
         </td>
         <td>
-          306
+          305
         </td>
         <td>
-          3470
+          3594
           -
-          3470
+          3603
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;linkage&quot;
+        </td>
+      </tr><tr>
+        <td>
+          132
+        </td>
+        <td>
+          310
+        </td>
+        <td>
+          3672
+          -
+          3672
         </td>
         <td>
           Select
@@ -814,15 +903,15 @@
         </td>
       </tr><tr>
         <td>
-          122
+          132
         </td>
         <td>
-          305
+          309
         </td>
         <td>
-          3449
+          3651
           -
-          3455
+          3657
         </td>
         <td>
           Literal
@@ -835,15 +924,15 @@
         </td>
       </tr><tr>
         <td>
-          123
+          132
         </td>
         <td>
-          310
+          311
         </td>
         <td>
-          3490
+          3642
           -
-          3535
+          3680
         </td>
         <td>
           ApplyToImplicitArgs
@@ -852,19 +941,19 @@
           play.api.libs.json.JsPath.writeNullable
         </td>
         <td style="background: #AEF1AE">
-          play.api.libs.json.JsPath.\(&quot;description&quot;).writeNullable[String](json.this.Writes.StringWrites)
+          play.api.libs.json.JsPath.\(&quot;name&quot;).writeNullable[String](json.this.Writes.StringWrites)
         </td>
       </tr><tr>
         <td>
-          123
+          133
         </td>
         <td>
-          309
+          313
         </td>
         <td>
-          3527
+          3729
           -
-          3527
+          3729
         </td>
         <td>
           Select
@@ -877,15 +966,15 @@
         </td>
       </tr><tr>
         <td>
-          123
+          133
         </td>
         <td>
-          308
+          312
         </td>
         <td>
-          3499
+          3701
           -
-          3512
+          3714
         </td>
         <td>
           Literal
@@ -898,15 +987,15 @@
         </td>
       </tr><tr>
         <td>
-          124
+          133
         </td>
         <td>
-          313
+          314
         </td>
         <td>
-          3547
+          3692
           -
-          3589
+          3737
         </td>
         <td>
           ApplyToImplicitArgs
@@ -915,19 +1004,19 @@
           play.api.libs.json.JsPath.writeNullable
         </td>
         <td style="background: #AEF1AE">
-          play.api.libs.json.JsPath.\(&quot;protocol&quot;).writeNullable[String](json.this.Writes.StringWrites)
+          play.api.libs.json.JsPath.\(&quot;description&quot;).writeNullable[String](json.this.Writes.StringWrites)
         </td>
       </tr><tr>
         <td>
-          124
+          134
         </td>
         <td>
-          312
+          316
         </td>
         <td>
-          3581
+          3783
           -
-          3581
+          3783
         </td>
         <td>
           Select
@@ -940,15 +1029,15 @@
         </td>
       </tr><tr>
         <td>
-          124
+          134
         </td>
         <td>
-          311
+          315
         </td>
         <td>
-          3556
+          3758
           -
-          3566
+          3768
         </td>
         <td>
           Literal
@@ -961,36 +1050,36 @@
         </td>
       </tr><tr>
         <td>
-          125
+          134
         </td>
         <td>
-          316
+          317
         </td>
         <td>
-          3601
+          3749
           -
-          3645
+          3791
         </td>
         <td>
           ApplyToImplicitArgs
         </td>
         <td>
-          play.api.libs.json.JsPath.write
+          play.api.libs.json.JsPath.writeNullable
         </td>
         <td style="background: #AEF1AE">
-          play.api.libs.json.JsPath.\(&quot;resourceType&quot;).write[models.gmd.ResourceType](gmd.this.ResourceType.writes)
+          play.api.libs.json.JsPath.\(&quot;protocol&quot;).writeNullable[String](json.this.Writes.StringWrites)
         </td>
       </tr><tr>
         <td>
-          125
+          135
         </td>
         <td>
-          315
+          319
         </td>
         <td>
-          3631
+          3833
           -
-          3631
+          3833
         </td>
         <td>
           Select
@@ -1003,15 +1092,15 @@
         </td>
       </tr><tr>
         <td>
-          125
+          135
         </td>
         <td>
-          314
+          318
         </td>
         <td>
-          3610
+          3812
           -
-          3624
+          3826
         </td>
         <td>
           Literal
@@ -1024,36 +1113,36 @@
         </td>
       </tr><tr>
         <td>
-          126
+          135
         </td>
         <td>
-          319
+          320
         </td>
         <td>
-          3652
+          3803
           -
-          3652
+          3847
         </td>
         <td>
-          Select
+          ApplyToImplicitArgs
         </td>
         <td>
-          play.api.libs.json.OWrites.contravariantfunctorOWrites
+          play.api.libs.json.JsPath.write
         </td>
         <td style="background: #AEF1AE">
-          json.this.OWrites.contravariantfunctorOWrites
+          play.api.libs.json.JsPath.\(&quot;resourceType&quot;).write[models.gmd.ResourceType](gmd.this.ResourceType.writes)
         </td>
       </tr><tr>
         <td>
-          126
+          136
         </td>
         <td>
-          318
+          322
         </td>
         <td>
-          3653
+          3855
           -
-          3685
+          3887
         </td>
         <td>
           Apply
@@ -1068,15 +1157,15 @@
         </td>
       </tr><tr>
         <td>
-          126
+          136
         </td>
         <td>
-          317
+          321
         </td>
         <td>
-          3660
+          3862
           -
-          3684
+          3886
         </td>
         <td>
           Apply
@@ -1089,15 +1178,15 @@
         </td>
       </tr><tr>
         <td>
-          126
+          136
         </td>
         <td>
-          320
+          324
         </td>
         <td>
-          3376
+          3578
           -
-          3686
+          3888
         </td>
         <td>
           ApplyToImplicitArgs
@@ -1112,57 +1201,36 @@
         </td>
       </tr><tr>
         <td>
-          132
+          136
         </td>
         <td>
-          322
+          323
         </td>
         <td>
-          3779
+          3854
           -
-          3792
+          3854
         </td>
         <td>
-          Apply
+          Select
         </td>
         <td>
-          info.smart.models.owc100.UrlFormat.&lt;init&gt;
+          play.api.libs.json.OWrites.contravariantfunctorOWrites
         </td>
         <td style="background: #AEF1AE">
-          new info.smart.models.owc100.UrlFormat()
+          json.this.OWrites.contravariantfunctorOWrites
         </td>
       </tr><tr>
         <td>
-          132
+          142
         </td>
         <td>
           325
         </td>
         <td>
-          3778
+          3960
           -
-          3778
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          play.api.libs.json.Reads.applicative
-        </td>
-        <td style="background: #AEF1AE">
-          play.api.libs.json.Reads.applicative(json.this.JsResult.applicativeJsResult)
-        </td>
-      </tr><tr>
-        <td>
-          132
-        </td>
-        <td>
-          321
-        </td>
-        <td>
-          3758
-          -
-          3767
+          3969
         </td>
         <td>
           Literal
@@ -1175,15 +1243,15 @@
         </td>
       </tr><tr>
         <td>
-          132
+          142
         </td>
         <td>
-          324
+          328
         </td>
         <td>
-          3778
+          3980
           -
-          3778
+          3980
         </td>
         <td>
           Select
@@ -1196,15 +1264,15 @@
         </td>
       </tr><tr>
         <td>
-          132
+          142
         </td>
         <td>
-          323
+          327
         </td>
         <td>
-          3749
+          3951
           -
-          3793
+          3995
         </td>
         <td>
           Apply
@@ -1217,15 +1285,15 @@
         </td>
       </tr><tr>
         <td>
-          132
+          142
         </td>
         <td>
-          326
+          330
         </td>
         <td>
-          3778
+          3980
           -
-          3778
+          3980
         </td>
         <td>
           ApplyToImplicitArgs
@@ -1238,36 +1306,57 @@
         </td>
       </tr><tr>
         <td>
-          133
+          142
         </td>
         <td>
-          328
+          326
         </td>
         <td>
-          3834
+          3981
           -
-          3834
+          3994
         </td>
         <td>
-          Select
+          Apply
         </td>
         <td>
-          play.api.libs.json.DefaultReads.StringReads
+          info.smart.models.owc100.UrlFormat.&lt;init&gt;
         </td>
         <td style="background: #AEF1AE">
-          play.api.libs.json.Reads.StringReads
+          new info.smart.models.owc100.UrlFormat()
         </td>
       </tr><tr>
         <td>
-          133
+          142
         </td>
         <td>
-          327
+          329
         </td>
         <td>
-          3814
+          3980
           -
-          3820
+          3980
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.api.libs.json.Reads.applicative
+        </td>
+        <td style="background: #AEF1AE">
+          play.api.libs.json.Reads.applicative(json.this.JsResult.applicativeJsResult)
+        </td>
+      </tr><tr>
+        <td>
+          143
+        </td>
+        <td>
+          331
+        </td>
+        <td>
+          4016
+          -
+          4022
         </td>
         <td>
           Literal
@@ -1280,15 +1369,15 @@
         </td>
       </tr><tr>
         <td>
-          133
+          143
         </td>
         <td>
-          329
+          333
         </td>
         <td>
-          3805
+          4007
           -
-          3842
+          4044
         </td>
         <td>
           ApplyToImplicitArgs
@@ -1301,15 +1390,15 @@
         </td>
       </tr><tr>
         <td>
-          134
+          143
         </td>
         <td>
-          331
+          332
         </td>
         <td>
-          3890
+          4036
           -
-          3890
+          4036
         </td>
         <td>
           Select
@@ -1322,15 +1411,15 @@
         </td>
       </tr><tr>
         <td>
-          134
+          144
         </td>
         <td>
-          330
+          334
         </td>
         <td>
-          3863
+          4065
           -
-          3876
+          4078
         </td>
         <td>
           Literal
@@ -1343,15 +1432,15 @@
         </td>
       </tr><tr>
         <td>
-          134
+          144
         </td>
         <td>
-          332
+          336
         </td>
         <td>
-          3854
+          4056
           -
-          3898
+          4100
         </td>
         <td>
           ApplyToImplicitArgs
@@ -1364,15 +1453,15 @@
         </td>
       </tr><tr>
         <td>
-          135
+          144
         </td>
         <td>
-          334
+          335
         </td>
         <td>
-          3943
+          4092
           -
-          3943
+          4092
         </td>
         <td>
           Select
@@ -1385,15 +1474,15 @@
         </td>
       </tr><tr>
         <td>
-          135
+          145
         </td>
         <td>
-          333
+          337
         </td>
         <td>
-          3919
+          4121
           -
-          3929
+          4131
         </td>
         <td>
           Literal
@@ -1406,15 +1495,15 @@
         </td>
       </tr><tr>
         <td>
-          135
+          145
         </td>
         <td>
-          335
+          339
         </td>
         <td>
-          3910
+          4112
           -
-          3951
+          4153
         </td>
         <td>
           ApplyToImplicitArgs
@@ -1427,36 +1516,36 @@
         </td>
       </tr><tr>
         <td>
-          136
+          145
         </td>
         <td>
-          337
+          338
         </td>
         <td>
-          3992
+          4145
           -
-          3992
+          4145
         </td>
         <td>
           Select
         </td>
         <td>
-          models.gmd.ResourceType.reads
+          play.api.libs.json.DefaultReads.StringReads
         </td>
         <td style="background: #AEF1AE">
-          gmd.this.ResourceType.reads
+          play.api.libs.json.Reads.StringReads
         </td>
       </tr><tr>
         <td>
-          136
+          146
         </td>
         <td>
-          336
+          340
         </td>
         <td>
-          3972
+          4174
           -
-          3986
+          4188
         </td>
         <td>
           Literal
@@ -1469,15 +1558,15 @@
         </td>
       </tr><tr>
         <td>
-          136
+          146
         </td>
         <td>
-          338
+          342
         </td>
         <td>
-          3963
+          4165
           -
-          4006
+          4208
         </td>
         <td>
           ApplyToImplicitArgs
@@ -1490,15 +1579,99 @@
         </td>
       </tr><tr>
         <td>
-          137
+          146
         </td>
         <td>
-          340
+          341
         </td>
         <td>
-          4013
+          4194
           -
-          4013
+          4194
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          models.gmd.ResourceType.reads
+        </td>
+        <td style="background: #AEF1AE">
+          gmd.this.ResourceType.reads
+        </td>
+      </tr><tr>
+        <td>
+          147
+        </td>
+        <td>
+          346
+        </td>
+        <td>
+          4215
+          -
+          4215
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.api.libs.json.Reads.functorReads
+        </td>
+        <td style="background: #AEF1AE">
+          play.api.libs.json.Reads.functorReads(play.api.libs.json.Reads.applicative(json.this.JsResult.applicativeJsResult))
+        </td>
+      </tr><tr>
+        <td>
+          147
+        </td>
+        <td>
+          343
+        </td>
+        <td>
+          4216
+          -
+          4238
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          models.gmd.CIOnlineResource.apply
+        </td>
+        <td style="background: #AEF1AE">
+          CIOnlineResource.apply(linkage, name, description, protocol, resourceType)
+        </td>
+      </tr><tr>
+        <td>
+          147
+        </td>
+        <td>
+          345
+        </td>
+        <td>
+          4215
+          -
+          4215
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          play.api.libs.json.Reads.applicative
+        </td>
+        <td style="background: #AEF1AE">
+          play.api.libs.json.Reads.applicative(json.this.JsResult.applicativeJsResult)
+        </td>
+      </tr><tr>
+        <td>
+          147
+        </td>
+        <td>
+          344
+        </td>
+        <td>
+          4215
+          -
+          4215
         </td>
         <td>
           Select
@@ -1511,15 +1684,15 @@
         </td>
       </tr><tr>
         <td>
-          137
+          147
         </td>
         <td>
-          343
+          347
         </td>
         <td>
-          3742
+          3944
           -
-          4039
+          4241
         </td>
         <td>
           ApplyToImplicitArgs
@@ -1534,78 +1707,15 @@
         </td>
       </tr><tr>
         <td>
-          137
+          162
         </td>
         <td>
-          339
+          349
         </td>
         <td>
-          4014
+          4743
           -
-          4036
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          models.gmd.CIOnlineResource.apply
-        </td>
-        <td style="background: #AEF1AE">
-          CIOnlineResource.apply(linkage, name, description, protocol, resourceType)
-        </td>
-      </tr><tr>
-        <td>
-          137
-        </td>
-        <td>
-          342
-        </td>
-        <td>
-          4013
-          -
-          4013
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          play.api.libs.json.Reads.functorReads
-        </td>
-        <td style="background: #AEF1AE">
-          play.api.libs.json.Reads.functorReads(play.api.libs.json.Reads.applicative(json.this.JsResult.applicativeJsResult))
-        </td>
-      </tr><tr>
-        <td>
-          137
-        </td>
-        <td>
-          341
-        </td>
-        <td>
-          4013
-          -
-          4013
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          play.api.libs.json.Reads.applicative
-        </td>
-        <td style="background: #AEF1AE">
-          play.api.libs.json.Reads.applicative(json.this.JsResult.applicativeJsResult)
-        </td>
-      </tr><tr>
-        <td>
-          148
-        </td>
-        <td>
-          345
-        </td>
-        <td>
-          4471
-          -
-          4519
+          4791
         </td>
         <td>
           Apply
@@ -1618,15 +1728,15 @@
         </td>
       </tr><tr>
         <td>
-          148
+          162
         </td>
         <td>
-          344
+          348
         </td>
         <td>
-          4480
+          4752
           -
-          4518
+          4790
         </td>
         <td>
           Apply
@@ -1639,36 +1749,15 @@
         </td>
       </tr><tr>
         <td>
-          149
+          163
         </td>
         <td>
-          346
+          351
         </td>
         <td>
-          4537
+          4796
           -
-          4559
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.StringContext.s
-        </td>
-        <td style="background: #AEF1AE">
-          scala.StringContext.apply(&quot;Linkage: &quot;, &quot;&quot;).s(linkage)
-        </td>
-      </tr><tr>
-        <td>
-          149
-        </td>
-        <td>
-          347
-        </td>
-        <td>
-          4524
-          -
-          4560
+          4834
         </td>
         <td>
           Apply
@@ -1677,40 +1766,19 @@
           play.api.LoggerLike.debug
         </td>
         <td style="background: #AEF1AE">
-          CIOnlineResource.this.logger.debug(scala.StringContext.apply(&quot;Linkage: &quot;, &quot;&quot;).s(linkage))
+          CIOnlineResource.this.logger.debug(scala.StringContext.apply(&quot;Linkage: &quot;, &quot;&quot;).s(urlString))
         </td>
       </tr><tr>
         <td>
-          152
+          163
         </td>
         <td>
-          348
+          350
         </td>
         <td>
-          4609
+          4809
           -
-          4662
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          utils.StringUtils.OptionConverters.toOption
-        </td>
-        <td style="background: #AEF1AE">
-          utils.StringUtils.OptionConverters(nodeSeq.\(&quot;name&quot;).\(&quot;CharacterString&quot;).text).toOption()
-        </td>
-      </tr><tr>
-        <td>
-          153
-        </td>
-        <td>
-          349
-        </td>
-        <td>
-          4680
-          -
-          4696
+          4833
         </td>
         <td>
           Apply
@@ -1719,19 +1787,40 @@
           scala.StringContext.s
         </td>
         <td style="background: #AEF1AE">
-          scala.StringContext.apply(&quot;Name: &quot;, &quot;&quot;).s(name)
+          scala.StringContext.apply(&quot;Linkage: &quot;, &quot;&quot;).s(urlString)
         </td>
       </tr><tr>
         <td>
-          153
+          165
         </td>
         <td>
-          350
+          352
         </td>
         <td>
-          4667
+          4852
           -
-          4697
+          4910
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          utils.StringUtils.OptionConverters.toOption
+        </td>
+        <td style="background: #AEF1AE">
+          utils.StringUtils.OptionConverters(nodeSeq.\(&quot;name&quot;).\(&quot;CharacterString&quot;).text.trim()).toOption()
+        </td>
+      </tr><tr>
+        <td>
+          166
+        </td>
+        <td>
+          354
+        </td>
+        <td>
+          4915
+          -
+          4945
         </td>
         <td>
           Apply
@@ -1744,36 +1833,15 @@
         </td>
       </tr><tr>
         <td>
-          154
+          166
         </td>
         <td>
-          351
+          353
         </td>
         <td>
-          4721
+          4928
           -
-          4781
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          utils.StringUtils.OptionConverters.toOption
-        </td>
-        <td style="background: #AEF1AE">
-          utils.StringUtils.OptionConverters(nodeSeq.\(&quot;description&quot;).\(&quot;CharacterString&quot;).text).toOption()
-        </td>
-      </tr><tr>
-        <td>
-          155
-        </td>
-        <td>
-          352
-        </td>
-        <td>
-          4799
-          -
-          4829
+          4944
         </td>
         <td>
           Apply
@@ -1782,19 +1850,40 @@
           scala.StringContext.s
         </td>
         <td style="background: #AEF1AE">
-          scala.StringContext.apply(&quot;Description: &quot;, &quot;&quot;).s(description)
+          scala.StringContext.apply(&quot;Name: &quot;, &quot;&quot;).s(name)
         </td>
       </tr><tr>
         <td>
-          155
+          167
         </td>
         <td>
-          353
+          355
         </td>
         <td>
-          4786
+          4969
           -
-          4830
+          5034
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          utils.StringUtils.OptionConverters.toOption
+        </td>
+        <td style="background: #AEF1AE">
+          utils.StringUtils.OptionConverters(nodeSeq.\(&quot;description&quot;).\(&quot;CharacterString&quot;).text.trim()).toOption()
+        </td>
+      </tr><tr>
+        <td>
+          168
+        </td>
+        <td>
+          357
+        </td>
+        <td>
+          5039
+          -
+          5083
         </td>
         <td>
           Apply
@@ -1807,15 +1896,36 @@
         </td>
       </tr><tr>
         <td>
-          157
+          168
         </td>
         <td>
-          354
+          356
         </td>
         <td>
-          4851
+          5052
           -
-          4867
+          5082
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.StringContext.s
+        </td>
+        <td style="background: #AEF1AE">
+          scala.StringContext.apply(&quot;Description: &quot;, &quot;&quot;).s(description)
+        </td>
+      </tr><tr>
+        <td>
+          170
+        </td>
+        <td>
+          358
+        </td>
+        <td>
+          5104
+          -
+          5122
         </td>
         <td>
           Apply
@@ -1824,19 +1934,61 @@
           java.net.URL.toString
         </td>
         <td style="background: #AEF1AE">
-          linkage.toString()
+          urlString.toString()
         </td>
       </tr><tr>
         <td>
-          159
+          172
         </td>
         <td>
-          355
+          359
         </td>
         <td>
-          5052
+          5289
           -
-          5092
+          5336
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          utils.StringUtils.OptionConverters.toOption
+        </td>
+        <td style="background: #F0ADAD">
+          utils.StringUtils.OptionConverters(&quot;WWW:LINK-1.0-http--image-thumbnail&quot;).toOption()
+        </td>
+      </tr><tr>
+        <td>
+          173
+        </td>
+        <td>
+          360
+        </td>
+        <td>
+          5412
+          -
+          5448
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          utils.StringUtils.OptionConverters.toOption
+        </td>
+        <td style="background: #F0ADAD">
+          utils.StringUtils.OptionConverters(&quot;WWW:LINK-1.0-http--link&quot;).toOption()
+        </td>
+      </tr><tr>
+        <td>
+          174
+        </td>
+        <td>
+          361
+        </td>
+        <td>
+          5523
+          -
+          5563
         </td>
         <td>
           Apply
@@ -1849,15 +2001,15 @@
         </td>
       </tr><tr>
         <td>
-          160
+          175
         </td>
         <td>
-          356
+          362
         </td>
         <td>
-          5110
+          5581
           -
-          5167
+          5643
         </td>
         <td>
           Apply
@@ -1866,19 +2018,19 @@
           utils.StringUtils.OptionConverters.toOption
         </td>
         <td style="background: #AEF1AE">
-          utils.StringUtils.OptionConverters(nodeSeq.\(&quot;protocol&quot;).\(&quot;CharacterString&quot;).text).toOption()
+          utils.StringUtils.OptionConverters(nodeSeq.\(&quot;protocol&quot;).\(&quot;CharacterString&quot;).text.trim()).toOption()
         </td>
       </tr><tr>
         <td>
-          162
+          177
         </td>
         <td>
-          358
+          364
         </td>
         <td>
-          5178
+          5654
           -
-          5215
+          5691
         </td>
         <td>
           Apply
@@ -1891,15 +2043,15 @@
         </td>
       </tr><tr>
         <td>
-          162
+          177
         </td>
         <td>
-          357
+          363
         </td>
         <td>
-          5191
+          5667
           -
-          5214
+          5690
         </td>
         <td>
           Apply
@@ -1912,57 +2064,15 @@
         </td>
       </tr><tr>
         <td>
-          166
+          181
         </td>
         <td>
-          359
+          365
         </td>
         <td>
-          5346
+          5784
           -
-          5367
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          models.gmd.ResourceType.METADATA
-        </td>
-        <td style="background: #AEF1AE">
-          ResourceType.METADATA
-        </td>
-      </tr><tr>
-        <td>
-          167
-        </td>
-        <td>
-          360
-        </td>
-        <td>
-          5414
-          -
-          5430
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          java.net.URL.toString
-        </td>
-        <td style="background: #AEF1AE">
-          linkage.toString()
-        </td>
-      </tr><tr>
-        <td>
-          168
-        </td>
-        <td>
-          361
-        </td>
-        <td>
-          5522
-          -
-          5543
+          5805
         </td>
         <td>
           Select
@@ -1975,15 +2085,162 @@
         </td>
       </tr><tr>
         <td>
-          169
+          182
         </td>
         <td>
-          362
+          366
         </td>
         <td>
-          5562
+          5860
           -
-          5582
+          5877
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          models.gmd.ResourceType.DATA
+        </td>
+        <td style="background: #F0ADAD">
+          ResourceType.DATA
+        </td>
+      </tr><tr>
+        <td>
+          183
+        </td>
+        <td>
+          367
+        </td>
+        <td>
+          5932
+          -
+          5953
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          models.gmd.ResourceType.METADATA
+        </td>
+        <td style="background: #AEF1AE">
+          ResourceType.METADATA
+        </td>
+      </tr><tr>
+        <td>
+          184
+        </td>
+        <td>
+          368
+        </td>
+        <td>
+          6011
+          -
+          6029
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          models.gmd.ResourceType.IMAGE
+        </td>
+        <td style="background: #F0ADAD">
+          ResourceType.IMAGE
+        </td>
+      </tr><tr>
+        <td>
+          185
+        </td>
+        <td>
+          369
+        </td>
+        <td>
+          6076
+          -
+          6094
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.net.URL.toString
+        </td>
+        <td style="background: #AEF1AE">
+          urlString.toString()
+        </td>
+      </tr><tr>
+        <td>
+          186
+        </td>
+        <td>
+          370
+        </td>
+        <td>
+          6168
+          -
+          6186
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          models.gmd.ResourceType.IMAGE
+        </td>
+        <td style="background: #F0ADAD">
+          ResourceType.IMAGE
+        </td>
+      </tr><tr>
+        <td>
+          187
+        </td>
+        <td>
+          371
+        </td>
+        <td>
+          6264
+          -
+          6284
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          models.gmd.ResourceType.WEBSITE
+        </td>
+        <td style="background: #F0ADAD">
+          ResourceType.WEBSITE
+        </td>
+      </tr><tr>
+        <td>
+          188
+        </td>
+        <td>
+          372
+        </td>
+        <td>
+          6361
+          -
+          6382
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          models.gmd.ResourceType.DOWNLOAD
+        </td>
+        <td style="background: #F0ADAD">
+          ResourceType.DOWNLOAD
+        </td>
+      </tr><tr>
+        <td>
+          189
+        </td>
+        <td>
+          373
+        </td>
+        <td>
+          6401
+          -
+          6421
         </td>
         <td>
           Select
@@ -1996,57 +2253,267 @@
         </td>
       </tr><tr>
         <td>
-          171
+          191
         </td>
         <td>
-          363
+          375
         </td>
         <td>
-          5645
+          6485
           -
-          5666
+          6505
         </td>
         <td>
           Select
         </td>
         <td>
-          models.gmd.ResourceType.DOWNLOAD
+          models.gmd.ResourceType.SERVICE
         </td>
         <td style="background: #F0ADAD">
-          ResourceType.DOWNLOAD
+          ResourceType.SERVICE
         </td>
       </tr><tr>
         <td>
-          172
+          191
         </td>
         <td>
-          364
+          374
         </td>
         <td>
-          5725
+          6456
           -
-          5746
+          6481
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.String.contains
+        </td>
+        <td style="background: #AEF1AE">
+          proto.contains(&quot;OGC:WMS&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          192
+        </td>
+        <td>
+          376
+        </td>
+        <td>
+          6532
+          -
+          6557
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.String.contains
+        </td>
+        <td style="background: #AEF1AE">
+          proto.contains(&quot;OGC:WFS&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          192
+        </td>
+        <td>
+          377
+        </td>
+        <td>
+          6561
+          -
+          6581
         </td>
         <td>
           Select
         </td>
         <td>
-          models.gmd.ResourceType.METADATA
+          models.gmd.ResourceType.SERVICE
         </td>
         <td style="background: #F0ADAD">
-          ResourceType.METADATA
+          ResourceType.SERVICE
         </td>
       </tr><tr>
         <td>
-          173
+          193
         </td>
         <td>
-          365
+          379
         </td>
         <td>
-          5763
+          6637
           -
-          5779
+          6657
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          models.gmd.ResourceType.SERVICE
+        </td>
+        <td style="background: #F0ADAD">
+          ResourceType.SERVICE
+        </td>
+      </tr><tr>
+        <td>
+          193
+        </td>
+        <td>
+          378
+        </td>
+        <td>
+          6608
+          -
+          6633
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.String.contains
+        </td>
+        <td style="background: #AEF1AE">
+          proto.contains(&quot;OGC:WCS&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          194
+        </td>
+        <td>
+          381
+        </td>
+        <td>
+          6713
+          -
+          6733
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          models.gmd.ResourceType.SERVICE
+        </td>
+        <td style="background: #F0ADAD">
+          ResourceType.SERVICE
+        </td>
+      </tr><tr>
+        <td>
+          194
+        </td>
+        <td>
+          380
+        </td>
+        <td>
+          6684
+          -
+          6709
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.String.contains
+        </td>
+        <td style="background: #AEF1AE">
+          proto.contains(&quot;OGC:WPS&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          195
+        </td>
+        <td>
+          382
+        </td>
+        <td>
+          6760
+          -
+          6785
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.String.contains
+        </td>
+        <td style="background: #AEF1AE">
+          proto.contains(&quot;OGC:CSW&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          195
+        </td>
+        <td>
+          383
+        </td>
+        <td>
+          6789
+          -
+          6809
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          models.gmd.ResourceType.SERVICE
+        </td>
+        <td style="background: #F0ADAD">
+          ResourceType.SERVICE
+        </td>
+      </tr><tr>
+        <td>
+          196
+        </td>
+        <td>
+          385
+        </td>
+        <td>
+          6865
+          -
+          6885
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          models.gmd.ResourceType.SERVICE
+        </td>
+        <td style="background: #AEF1AE">
+          ResourceType.SERVICE
+        </td>
+      </tr><tr>
+        <td>
+          196
+        </td>
+        <td>
+          384
+        </td>
+        <td>
+          6836
+          -
+          6861
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.String.contains
+        </td>
+        <td style="background: #AEF1AE">
+          proto.contains(&quot;OGC:SOS&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          198
+        </td>
+        <td>
+          386
+        </td>
+        <td>
+          6903
+          -
+          6921
         </td>
         <td>
           Apply
@@ -2055,19 +2522,19 @@
           java.net.URL.toString
         </td>
         <td style="background: #AEF1AE">
-          linkage.toString()
+          urlString.toString()
         </td>
       </tr><tr>
         <td>
-          175
+          199
         </td>
         <td>
-          366
+          387
         </td>
         <td>
-          5930
+          7013
           -
-          5951
+          7034
         </td>
         <td>
           Select
@@ -2080,15 +2547,15 @@
         </td>
       </tr><tr>
         <td>
-          176
+          200
         </td>
         <td>
-          367
+          388
         </td>
         <td>
-          6011
+          7094
           -
-          6027
+          7110
         </td>
         <td>
           Select
@@ -2101,15 +2568,57 @@
         </td>
       </tr><tr>
         <td>
-          177
+          201
         </td>
         <td>
-          368
+          389
         </td>
         <td>
-          6046
+          7169
           -
-          6066
+          7185
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          models.gmd.ResourceType.MAP
+        </td>
+        <td style="background: #F0ADAD">
+          ResourceType.MAP
+        </td>
+      </tr><tr>
+        <td>
+          202
+        </td>
+        <td>
+          390
+        </td>
+        <td>
+          7246
+          -
+          7262
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          models.gmd.ResourceType.MAP
+        </td>
+        <td style="background: #F0ADAD">
+          ResourceType.MAP
+        </td>
+      </tr><tr>
+        <td>
+          203
+        </td>
+        <td>
+          391
+        </td>
+        <td>
+          7281
+          -
+          7301
         </td>
         <td>
           Select
@@ -2122,15 +2631,15 @@
         </td>
       </tr><tr>
         <td>
-          180
+          206
         </td>
         <td>
-          370
+          393
         </td>
         <td>
-          6085
+          7320
           -
-          6131
+          7366
         </td>
         <td>
           Apply
@@ -2143,15 +2652,15 @@
         </td>
       </tr><tr>
         <td>
-          180
+          206
         </td>
         <td>
-          369
+          392
         </td>
         <td>
-          6098
+          7333
           -
-          6130
+          7365
         </td>
         <td>
           Apply
@@ -2164,15 +2673,15 @@
         </td>
       </tr><tr>
         <td>
-          182
+          208
         </td>
         <td>
-          371
+          394
         </td>
         <td>
-          6137
+          7372
           -
-          6205
+          7442
         </td>
         <td>
           Apply
@@ -2181,7 +2690,7 @@
           models.gmd.CIOnlineResource.apply
         </td>
         <td style="background: #AEF1AE">
-          CIOnlineResource.apply(linkage, name, description, protocol, resourceType)
+          CIOnlineResource.apply(urlString, name, description, protocol, resourceType)
         </td>
       </tr>
     </table>

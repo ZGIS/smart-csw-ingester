@@ -59,7 +59,7 @@
         Errors
         0
         Warnings
-        39
+        40
         Infos
         27
       </h3><div class="warning">
@@ -108,7 +108,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.CIOnlineResource.scala:147
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.CIOnlineResource.scala:157
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -119,7 +119,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:647
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:667
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -130,7 +130,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:230
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:231
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -139,14 +139,15 @@
           </div><div class="snippet">
                   Did you intend to catch all exceptions, consider catching a more specific exception class: try {
   nodeSeq.head.label match {
-    case &quot;MD_Metadata&quot; =&gt; scala.Some.apply[models.gmd.MdMetadataSet]({
-      &lt;artifact&gt; val x$7: String = nodeSeq.\(&quot;fileIdentifier&quot;).\(&quot;CharacterString&quot;).text;
-      &lt;artifact&gt; val x$8: java.time.LocalDate = MdMetadataSet.this.dateFromXml(nodeSeq);
-      &lt;artifact
+    case &quot;MD_Metadata&quot; =&gt; {
+      val identificationInfo: String = &quot;_&quot;;
+      scala.Some.apply[models.gmd.MdMetadataSet]({
+        &lt;artifact&gt; val x$7: String = nodeSeq.\(&quot;fileIdentifier&quot;).\(&quot;CharacterString&quot;).text;
+        &lt;artifact&gt; val x$8: java.time.LocalDate = 
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:325
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:329
           </div>
           <div class="title">
             <span class="label label-info">Info</span>
@@ -157,7 +158,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:326
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:330
           </div>
           <div class="title">
             <span class="label label-info">Info</span>
@@ -168,7 +169,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:758
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:778
           </div>
           <div class="title">
             <span class="label label-info">Info</span>
@@ -179,7 +180,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:767
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:787
           </div>
           <div class="title">
             <span class="label label-info">Info</span>
@@ -190,7 +191,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:818
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:838
           </div>
           <div class="title">
             <span class="label label-info">Info</span>
@@ -201,7 +202,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:318
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:322
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -212,7 +213,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:732
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:752
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -223,7 +224,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:733
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:753
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -234,7 +235,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:733
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:753
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -245,7 +246,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:734
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:754
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -256,7 +257,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:737
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:757
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -267,7 +268,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:549
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:569
           </div>
           <div class="title">
             <span class="label label-info">Info</span>
@@ -283,7 +284,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:231
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:232
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -294,7 +295,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:253
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:257
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -305,7 +306,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:328
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.MdMetadataSet.scala:332
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -313,6 +314,17 @@
             &nbsp;<span class="inspection">com.sksamuel.scapegoat.inspections.collections.TraversableHead</span>
           </div><div class="snippet">
                   datesList.head
+                </div>
+        </div><div class="warning">
+          <div class="source">
+            .home.travis.build.ZGIS.smart-csw-ingester.app.models.gmd.SVServiceIdentification.scala:50
+          </div>
+          <div class="title">
+            <span class="label label-warning">Warning</span>
+            &nbsp;Unused method parameter
+            &nbsp;<span class="inspection">com.sksamuel.scapegoat.inspections.unneccesary.UnusedMethodParameter</span>
+          </div><div class="snippet">
+                  Unused method parameter (val nodeSeq: scala.xml.NodeSeq = _)
                 </div>
         </div><div class="warning">
           <div class="source">
@@ -355,7 +367,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:204
+            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:205
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -366,7 +378,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:204
+            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:205
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -377,7 +389,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:204
+            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:205
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -388,7 +400,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:204
+            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:205
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -399,7 +411,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:248
+            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:249
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -410,7 +422,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:248
+            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:249
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -421,7 +433,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:248
+            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:249
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -432,7 +444,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:248
+            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:249
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -443,7 +455,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:131
+            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:132
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -454,7 +466,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:114
+            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:115
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -465,7 +477,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:115
+            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:116
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -476,7 +488,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:115
+            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:116
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -487,7 +499,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:328
+            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:329
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -498,7 +510,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:127
+            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:128
           </div>
           <div class="title">
             <span class="label label-info">Info</span>
@@ -509,7 +521,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:127
+            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:128
           </div>
           <div class="title">
             <span class="label label-info">Info</span>
@@ -520,7 +532,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:127
+            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:128
           </div>
           <div class="title">
             <span class="label label-info">Info</span>
@@ -531,7 +543,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:248
+            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:249
           </div>
           <div class="title">
             <span class="label label-info">Info</span>
@@ -542,7 +554,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:248
+            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:249
           </div>
           <div class="title">
             <span class="label label-info">Info</span>
@@ -553,7 +565,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:248
+            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:249
           </div>
           <div class="title">
             <span class="label label-info">Info</span>
@@ -564,7 +576,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:248
+            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:249
           </div>
           <div class="title">
             <span class="label label-info">Info</span>
@@ -575,7 +587,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:248
+            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:249
           </div>
           <div class="title">
             <span class="label label-info">Info</span>
@@ -586,7 +598,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:248
+            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:249
           </div>
           <div class="title">
             <span class="label label-info">Info</span>
@@ -597,7 +609,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:104
+            .home.travis.build.ZGIS.smart-csw-ingester.app.services.LuceneService.scala:105
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -608,7 +620,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.utils.OwcGeoJsonConverters.scala:181
+            .home.travis.build.ZGIS.smart-csw-ingester.app.utils.OwcGeoJsonConverters.scala:232
           </div>
           <div class="title">
             <span class="label label-info">Info</span>
@@ -619,7 +631,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.utils.OwcGeoJsonConverters.scala:185
+            .home.travis.build.ZGIS.smart-csw-ingester.app.utils.OwcGeoJsonConverters.scala:236
           </div>
           <div class="title">
             <span class="label label-info">Info</span>
@@ -630,7 +642,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.utils.OwcGeoJsonConverters.scala:189
+            .home.travis.build.ZGIS.smart-csw-ingester.app.utils.OwcGeoJsonConverters.scala:240
           </div>
           <div class="title">
             <span class="label label-info">Info</span>
@@ -641,7 +653,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.utils.OwcGeoJsonConverters.scala:193
+            .home.travis.build.ZGIS.smart-csw-ingester.app.utils.OwcGeoJsonConverters.scala:244
           </div>
           <div class="title">
             <span class="label label-info">Info</span>
@@ -652,7 +664,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.utils.OwcGeoJsonConverters.scala:181
+            .home.travis.build.ZGIS.smart-csw-ingester.app.utils.OwcGeoJsonConverters.scala:232
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -663,7 +675,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.utils.OwcGeoJsonConverters.scala:185
+            .home.travis.build.ZGIS.smart-csw-ingester.app.utils.OwcGeoJsonConverters.scala:236
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -674,7 +686,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.utils.OwcGeoJsonConverters.scala:189
+            .home.travis.build.ZGIS.smart-csw-ingester.app.utils.OwcGeoJsonConverters.scala:240
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -685,7 +697,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.utils.OwcGeoJsonConverters.scala:193
+            .home.travis.build.ZGIS.smart-csw-ingester.app.utils.OwcGeoJsonConverters.scala:244
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
@@ -696,7 +708,7 @@
                 </div>
         </div><div class="warning">
           <div class="source">
-            .home.travis.build.ZGIS.smart-csw-ingester.app.utils.OwcGeoJsonConverters.scala:220
+            .home.travis.build.ZGIS.smart-csw-ingester.app.utils.OwcGeoJsonConverters.scala:271
           </div>
           <div class="title">
             <span class="label label-warning">Warning</span>
