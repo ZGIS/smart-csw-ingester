@@ -10,10 +10,10 @@ Found 18 dependency updates for smart-csw-ingester
   com.typesafe.play:play-test:test                            : 2.5.12 -> 2.5.19 -> 2.7.3         
   com.typesafe.play:play-ws                                   : 2.5.12 -> 2.5.19 -> 2.7.3         
   com.typesafe.play:twirl-api                                 : 1.1.1            -> 1.4.2         
-  org.apache.lucene:lucene-analyzers-common                   : 6.4.0  -> 6.4.2  -> 6.6.6 -> 8.1.1
-  org.apache.lucene:lucene-core                               : 6.4.0  -> 6.4.2  -> 6.6.6 -> 8.1.1
-  org.apache.lucene:lucene-queryparser                        : 6.4.0  -> 6.4.2  -> 6.6.6 -> 8.1.1
-  org.apache.lucene:lucene-spatial                            : 6.4.0  -> 6.4.2  -> 6.6.6 -> 8.1.1
-  org.apache.lucene:lucene-spatial-extras                     : 6.4.0  -> 6.4.2  -> 6.6.6 -> 8.1.1
+  org.apache.lucene:lucene-analyzers-common                   : 6.4.0  -> 6.4.2  -> 6.6.6 -> 8.2.0
+  org.apache.lucene:lucene-core                               : 6.4.0  -> 6.4.2  -> 6.6.6 -> 8.2.0
+  org.apache.lucene:lucene-queryparser                        : 6.4.0  -> 6.4.2  -> 6.6.6 -> 8.2.0
+  org.apache.lucene:lucene-spatial                            : 6.4.0  -> 6.4.2  -> 6.6.6 -> 8.2.0
+  org.apache.lucene:lucene-spatial-extras                     : 6.4.0  -> 6.4.2  -> 6.6.6 -> 8.2.0
   org.locationtech.spatial4j:spatial4j                        : 0.6              -> 0.7           
   org.scalatestplus.play:scalatestplus-play:test              : 1.5.1                     -> 4.0.3
